@@ -1,7 +1,7 @@
 /* Make sure we can read and write long integers in other translation units */
 
 // the following are defined in long_global_var.c
-long int l;
+extern long int l;
 long return_l();
 int return_l_as_int();
 
