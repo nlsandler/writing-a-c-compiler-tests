@@ -4,6 +4,7 @@
 import argparse
 
 from enum import Enum
+from sys import executable
 from typing import Callable, List, Set
 from pathlib import Path
 import subprocess
@@ -20,6 +21,14 @@ class TestDirs:
     VALID = "valid"
 
 
+dirs = {"invalid": [TestDirs.INVALID_LEX,
+                    TestDirs.INVALID_PARSE,
+                    TestDirs.INVALID_SEMANTICS,
+                    TestDirs.INVALID_DECLARATIONS,
+                    TestDirs.INVALID_TYPES,
+                    TestDirs.INVALID_STRUCT_TAGS],
+        "valid": [TestDirs.VALID]}
+
 DIRECTORIES_BY_STAGE = {
     "lex": {"invalid": [TestDirs.INVALID_LEX],
             "valid": [TestDirs.INVALID_PARSE,
@@ -28,13 +37,16 @@ DIRECTORIES_BY_STAGE = {
                       TestDirs.INVALID_TYPES,
                       TestDirs.INVALID_STRUCT_TAGS,
                       TestDirs.VALID]},
-    "run": {"invalid": [TestDirs.INVALID_LEX,
-                        TestDirs.INVALID_PARSE,
-                        TestDirs.INVALID_SEMANTICS,
+    "parse": {"invalid": [TestDirs.INVALID_LEX, TestDirs.INVALID_PARSE],
+              "valid": [TestDirs.INVALID_SEMANTICS,
                         TestDirs.INVALID_DECLARATIONS,
                         TestDirs.INVALID_TYPES,
-                        TestDirs.INVALID_STRUCT_TAGS],
-            "valid": [TestDirs.VALID]}
+                        TestDirs.INVALID_STRUCT_TAGS,
+                        TestDirs.VALID]},
+    "validate": dirs,
+    "tacky": dirs,
+    "codegen": dirs,
+    "run": dirs
 }
 
 # maybe use a bitwise enum here to combine them?
@@ -54,13 +66,23 @@ class ExtraCredit(Enum):
 class TestChapter(unittest.TestCase):
     """Base per-chapter test case"""
     longMessage = False
-    # TODO: setup/teardown should delete any non-C files
+    test_dir: Path = None  # overridden per subclass
+
+    def tearDown(self) -> None:
+
+        # delete any non-C files aproduced during this testrun
+        garbage_files = (f for f in self.test_dir.rglob(
+            "*") if not f.is_dir() and f.suffix not in ['.c', '.h'])
+
+        for f in garbage_files:
+            f.unlink()
 
 
-def invoke_compiler(compiler_path: Path, stage: str, program_path: Path) -> int:
+def invoke_compiler(compiler_path: Path, program_path: Path, stage=None) -> int:
     """Invoke compiler and return CompletedProcess object"""
+    # TODO make this a method of TestChapter/include compiler_path etc in test_chapter?
     args = [compiler_path]
-    if stage != "run":
+    if stage is not None and stage != "run":
         args.append(f"--{stage}")
 
     args.append(program_path)
@@ -69,21 +91,28 @@ def invoke_compiler(compiler_path: Path, stage: str, program_path: Path) -> int:
     return proc
 
 
+def gcc_compile_and_run(prog: Path) -> subprocess.CompletedProcess:
+    exe = prog.with_stem(f"expected_{prog.stem}").with_suffix('')
+    subprocess.run(["gcc", prog, "-o", exe], check=True)
+    return subprocess.run(exe, check=False, text=True, capture_output=True)
+
+
 def make_invalid_test(compiler_path: Path, stage: str, program_path: Path) -> Callable:
 
     def test_invalid(self):
 
         # make sure compiler returned non-zero exit code -
         # if it does, subprocess.run will raise CalledProcessError
-        with self.assertRaises(subprocess.CalledProcessError, msg="Didn't catch error in bad program"):
-            invoke_compiler(compiler_path, stage, program_path)
+        with self.assertRaises(subprocess.CalledProcessError, msg=f"Didn't catch error in {program_path}"):
+            invoke_compiler(compiler_path, program_path, stage)
 
         # make sure we didn't emit executable or assembly code
 
         # if we compiled /path/to/foo.c, look for /path/to/foo.s
         stem = program_path.stem
         assembly_path = program_path.parent / f'{stem}.s'
-        self.assertFalse(assembly_path.exists())
+        self.assertFalse(assembly_path.exists(
+        ), msg=f"Found assembly file {assembly_path} for invalid program!")
 
         # now look for /path/to/foo
         executable_path = program_path.parent / stem
@@ -98,7 +127,7 @@ def make_valid_test(compiler_path: Path, stage: str, program_path: Path) -> Call
     def test_valid(self):
         # run compiler, make sure it doesn't throw an exception
         try:
-            invoke_compiler(compiler_path, stage, program_path)
+            invoke_compiler(compiler_path, program_path, stage)
         except subprocess.CalledProcessError as err:
             self.fail(f"compilation failed with error: {err.stderr}")
 
@@ -107,11 +136,40 @@ def make_valid_test(compiler_path: Path, stage: str, program_path: Path) -> Call
         # if we compiled /path/to/foo.c, look for /path/to/foo.s
         stem = program_path.stem
         assembly_path = program_path.parent / f'{stem}.s'
-        self.assertFalse(assembly_path.exists())
+        self.assertFalse(assembly_path.exists(
+        ), msg=f"Stage {stage} produced unexpected assembly file {assembly_path}!")
 
         # now look for /path/to/foo
         executable_path = program_path.parent / stem
-        self.assertFalse(executable_path.exists())
+        self.assertFalse(executable_path.exists(
+        ), msg=f"Stage {stage} produced unexpected executable {executable_path}")
+
+    return test_valid
+
+
+def make_running_test(compiler_path: Path, program_path: Path) -> Callable:
+    """Compile and run program, check results"""
+
+    def test_valid(self):
+
+        # first compile and run the program with GCC
+        expected_result = gcc_compile_and_run(program_path)
+
+        # run compiler, make sure it doesn't throw an exception
+        try:
+            invoke_compiler(compiler_path, program_path)
+        except subprocess.CalledProcessError as err:
+            self.fail(f"compilation failed with error: {err.stderr}")
+
+        # run the executable
+        exe = program_path.with_suffix('')
+
+        result = subprocess.run(
+            exe, check=False, capture_output=True, text=True)
+
+        self.assertEqual(expected_result.returncode, result.returncode)
+        self.assertEqual(expected_result.stdout, result.stdout)
+        self.assertEqual(expected_result.stderr, result.stderr)
 
     return test_valid
 
@@ -129,9 +187,9 @@ class TestBuilder:
         testclass_dict = {}
         for chapter in self.chapters:
             testclass_name = f"TestChapter{chapter}"
-            testclass_functions = self.build_tests_for_chapter(chapter)
+            testclass_attrs = self.build_tests_for_chapter(chapter)
             testclass_dict[testclass_name] = type(
-                testclass_name, (TestChapter,), testclass_functions)
+                testclass_name, (TestChapter,), testclass_attrs)
 
         return testclass_dict
 
@@ -140,27 +198,25 @@ class TestBuilder:
         test_dir = Path(__file__).parent.joinpath(
             f"chapter{chapter}").resolve()
 
-        test_functions = {}
+        testclass_attrs = {'test_dir': test_dir}
         # run invalid test cases up to the appropriate stage
         for invalid_subdir in DIRECTORIES_BY_STAGE[self.stage]["invalid"]:
             invalid_directory = test_dir / invalid_subdir
-            for program in invalid_directory.glob("**/*.c"):
-                test_functions[f'test_{invalid_subdir}_{program.stem}'] = make_invalid_test(
+            for program in invalid_directory.rglob("*.c"):
+                testclass_attrs[f'test_{invalid_subdir}_{program.stem}'] = make_invalid_test(
                     self.compiler, self.stage, program)
 
-        # for 'run' stage, compile and run all valid programs
-        if self.stage == "run":
-            pass
-        # for earlier stage, compile programs that should be valid at this stage,
-        # but don't try to run them
-        else:
-            for valid_subdir in DIRECTORIES_BY_STAGE[self.stage]["valid"]:
-                valid_directory = test_dir / valid_subdir
-                for program in valid_directory.glob("**/*.c"):
-                    test_functions[f'test_valid_{program.stem}'] = make_valid_test(
+        for valid_subdir in DIRECTORIES_BY_STAGE[self.stage]["valid"]:
+            valid_directory = test_dir / valid_subdir
+            for program in valid_directory.rglob("*.c"):
+                if self.stage == "run":
+                    testclass_attrs[f'test_valid_{program.stem}'] = make_running_test(
+                        self.compiler, program)
+                else:
+                    testclass_attrs[f'test_valid_{program.stem}'] = make_valid_test(
                         self.compiler, self.stage, program)
 
-        return test_functions
+        return testclass_attrs
 
 
 """
@@ -196,7 +252,7 @@ def parse_arguments() -> argparse.ArgumentParser:
     parser.add_argument("--latest-only", action="store_true",
                         help="Only run tests for the current chapter, not earlier chapters")
     parser.add_argument(
-        "--stage", type=str, choices=["lex", "parse", "tacky", "typecheck", "codegen"])
+        "--stage", type=str, choices=["lex", "parse", "validate", "tacky", "codegen"])
     parser.add_argument("--bitwise", action="store_const",
                         const=ExtraCredit.BITWISE, help="Include tests for bitwise operations")
     parser.add_argument("--compound", action="store_const",
@@ -243,7 +299,7 @@ def main():
     tests = unittest.defaultTestLoader.loadTestsFromName('TestCompiler')
 
     # TODO command-line arg to control verbosity
-    runner = unittest.TextTestRunner(verbosity=1)
+    runner = unittest.TextTestRunner(verbosity=2)
     runner.run(tests)
 
     # runner = unittest.TextTestRunner()
