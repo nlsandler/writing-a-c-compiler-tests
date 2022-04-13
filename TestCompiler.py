@@ -7,30 +7,19 @@ from enum import Flag, auto, unique
 from functools import reduce
 from operator import ior
 import re
-from typing import Callable, List, Set
+from typing import Dict, Callable, List, Set
 from pathlib import Path
 import subprocess
 import unittest
 
-"""
-which folders are we looking in?
-- invalid_lex/
-- invalid_parse/
-- invalid_semantics/
-- invalid_declarations/
-- invalid_types/
-    inconsistent --> shift from invalid_semantics/ to invalid_declarations/ and invalid_types/ in chapter 10! do we care?
-    this continues into chapter 12 and on
-    in chapter 18, we have invalid_types/pointer_conversions/, other subdirectories
-- invalid_struct_tags/
-    chapter 19
-- valid/
-    valid/libraries/
-        <x>.c and <x>_client.c
-    valid/arguments_in_registers/ chapter 10
-    valid/explicit_casts, etc in chapter 13, 14,
 
-"""
+def replace_stem(path: Path, new_stem: str) -> Path:
+    try:
+        return path.with_stem(new_stem)
+    except AttributeError:
+        # python versions before 3.9
+        # stick old suffix on new stem
+        return path.with_name(new_stem).with_suffix(path.suffix)
 
 
 class TestDirs:
@@ -82,6 +71,7 @@ class ExtraCredit(Flag):
     GOTO = auto()
     SWITCH = auto()
     NAN = auto()
+    NONE = 0
     ALL = BITWISE | COMPOUND | GOTO | SWITCH | NAN
 
     def to_regex(self):
@@ -120,14 +110,14 @@ class TestChapter(unittest.TestCase):
     def gcc_compile_and_run(self, *args: Path, prefix_output=False) -> subprocess.CompletedProcess:
         exe = args[0].with_suffix('')
         if prefix_output:
-            exe = exe.with_stem(f"expected_{exe.stem}")
+            exe = replace_stem(exe, f"expected_{exe.stem}")
 
         # capture output so we don't see warnings, and so we can report failures
         subprocess.run(["gcc"] + list(args) + ["-o", exe],
                        check=True, capture_output=True)
-        return subprocess.run(exe, check=False, text=True, capture_output=True)
+        return subprocess.run([exe], check=False, text=True, capture_output=True)
 
-    def invoke_compiler(self, program_path, cc_opt=None) -> subprocess.CompletedProcess[str]:
+    def invoke_compiler(self, program_path, cc_opt=None) -> subprocess.CompletedProcess:
         """Invoke compiler and return CompletedProcess object"""
         # when testing early stages, pass current stage as compiler option (e.g. --lex)
         # for testing library functions, we'll use -c to assemble without linking
@@ -159,9 +149,12 @@ class TestChapter(unittest.TestCase):
         self.assertFalse(executable_path.exists())
 
     def validate_runs(self, expected: subprocess.CompletedProcess, actual: subprocess.CompletedProcess):
-        self.assertEqual(expected.returncode, actual.returncode)
-        self.assertEqual(expected.stdout, actual.stdout)
-        self.assertEqual(expected.stderr, actual.stderr)
+        self.assertEqual(expected.returncode, actual.returncode,
+                         msg=f"Expected return code {expected.returncode}, found {actual.returncode}")
+        self.assertEqual(expected.stdout, actual.stdout,
+                         msg=f"Expected output {expected.stdout}, found {actual.stdout}")
+        self.assertEqual(expected.stderr, actual.stderr,
+                         msg=f"Expected error output {expected.stderr}, found {actual.stderr}")
 
     def compile_failure(self, program_path):
 
@@ -198,14 +191,14 @@ class TestChapter(unittest.TestCase):
         exe = program_path.with_suffix('')
 
         result = subprocess.run(
-            exe, check=False, capture_output=True, text=True)
+            [exe], check=False, capture_output=True, text=True)
 
         self.validate_runs(expected_result, result)
 
     def compile_client_and_run(self, program_path: Path):
         """Compile client with self.cc and library with GCC, make sure they work together"""
-        lib_source = program_path.with_stem(
-            program_path.stem.removesuffix('_client'))
+        lib_source = replace_stem(program_path,
+                                  program_path.stem[:-len('_client')])  # strip _client from filename
 
         gcc_build_obj(lib_source)
         self.invoke_compiler(program_path, cc_opt="-c")
@@ -223,7 +216,7 @@ class TestChapter(unittest.TestCase):
 
     def compile_lib_and_run(self, program_path: Path):
         """Compile lib with self.cc and client with GCC, make sure they work together"""
-        client_source = program_path.with_stem(program_path.stem+"_client")
+        client_source = replace_stem(program_path, program_path.stem+"_client")
 
         gcc_build_obj(client_source)
         self.invoke_compiler(program_path, cc_opt="-c")
@@ -290,7 +283,7 @@ def extra_credit_programs(source_dir: Path, extra_credit_flags: ExtraCredit) -> 
             yield source_prog
 
 
-def build_test_class(chapter: int, compiler: Path, stage: str, extra_credit: ExtraCredit) -> dict[str, Callable]:
+def build_test_class(chapter: int, compiler: Path, stage: str, extra_credit: ExtraCredit) -> Dict[str, Callable]:
 
     test_dir = Path(__file__).parent.joinpath(
         f"chapter{chapter}").resolve()
@@ -399,7 +392,10 @@ def main():
     compiler = Path(args.cc).resolve()
 
     # merge list of extra-credit features into bitvector
-    extra_credit = reduce(ior, args.extra_credit)
+    if args.extra_credit is not None:
+        extra_credit = reduce(ior, args.extra_credit)
+    else:
+        extra_credit = ExtraCredit.NONE
 
     if args.latest_only:
         chapters = [args.chapter]
@@ -418,7 +414,7 @@ def main():
     tests = unittest.defaultTestLoader.loadTestsFromName('TestCompiler')
 
     # TODO command-line arg to control verbosity
-    runner = unittest.TextTestRunner(verbosity=2)
+    runner = unittest.TextTestRunner(verbosity=1)
     runner.run(tests)
 
 
