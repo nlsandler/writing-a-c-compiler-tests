@@ -3,7 +3,10 @@
 
 import argparse
 
-from enum import Enum
+from enum import Flag, auto, unique
+from functools import reduce
+from operator import ior
+import re
 from typing import Callable, List, Set
 from pathlib import Path
 import subprocess
@@ -71,13 +74,20 @@ DIRECTORIES_BY_STAGE = {
 # maybe use a bitwise enum here to combine them?
 
 
-class ExtraCredit(Enum):
+@unique
+class ExtraCredit(Flag):
     """All extra-credit features"""
-    BITWISE = 1
-    COMPOUND = 2
-    GOTO = 3
-    SWITCH = 4
-    NAN = 5
+    BITWISE = auto()
+    COMPOUND = auto()
+    GOTO = auto()
+    SWITCH = auto()
+    NAN = auto()
+    ALL = BITWISE | COMPOUND | GOTO | SWITCH | NAN
+
+    def to_regex(self):
+        pattern = '|'.join(name.lower()
+                           for name, v in ExtraCredit.__members__.items() if v in self)
+        return re.compile(pattern)
 
 # adapted from https://eli.thegreenplace.net/2014/04/02/dynamically-generating-python-test-cases
 
@@ -113,14 +123,11 @@ class TestChapter(unittest.TestCase):
             exe = exe.with_stem(f"expected_{exe.stem}")
 
         # capture output so we don't see warnings, and so we can report failures
-        try:
-            subprocess.run(["gcc"] + list(args) + ["-o", exe],
-                           check=True, capture_output=True)
-        except subprocess.CalledProcessError as err:
-            self.fail(f"Command '{err.cmd}' failed: {err.stderr}")
+        subprocess.run(["gcc"] + list(args) + ["-o", exe],
+                       check=True, capture_output=True)
         return subprocess.run(exe, check=False, text=True, capture_output=True)
 
-    def invoke_compiler(self, program_path, cc_opt=None) -> int:
+    def invoke_compiler(self, program_path, cc_opt=None) -> subprocess.CompletedProcess[str]:
         """Invoke compiler and return CompletedProcess object"""
         # when testing early stages, pass current stage as compiler option (e.g. --lex)
         # for testing library functions, we'll use -c to assemble without linking
@@ -134,7 +141,8 @@ class TestChapter(unittest.TestCase):
 
         args.append(program_path)
 
-        proc = subprocess.run(args, capture_output=True, check=True, text=True)
+        proc = subprocess.run(args, capture_output=True,
+                              check=False, text=True)
         return proc
 
     def validate_no_output(self, program_path: str):
@@ -160,16 +168,16 @@ class TestChapter(unittest.TestCase):
         # make sure compiler returned non-zero exit code -
         # if it does, subprocess.run will raise CalledProcessError
         with self.assertRaises(subprocess.CalledProcessError, msg=f"Didn't catch error in {program_path}"):
-            self.invoke_compiler(program_path)
+            result = self.invoke_compiler(program_path)
+            result.check_returncode()
 
         self.validate_no_output(program_path)
 
     def compile_success(self, program_path):
         # run compiler up to stage, make sure it doesn't throw an exception
-        try:
-            self.invoke_compiler(program_path)
-        except subprocess.CalledProcessError as err:
-            self.fail(f"compilation failed with error: {err.stderr}")
+        result = self.invoke_compiler(program_path)
+        self.assertEqual(result.returncode, 0,
+                         msg=f"compilation failed with error: {result.stderr}")
 
         # make sure we didn't emit executable or assembly code
         self.validate_no_output(program_path)
@@ -181,10 +189,10 @@ class TestChapter(unittest.TestCase):
             program_path, prefix_output=True)
 
         # run compiler, make sure it doesn't throw an exception
-        try:
-            self.invoke_compiler(program_path)
-        except subprocess.CalledProcessError as err:
-            self.fail(f"compilation failed with error: {err.stderr}")
+
+        compile_result = self.invoke_compiler(program_path)
+        self.assertEqual(compile_result.returncode, 0,
+                         msg=f"compilation failed with error: {compile_result.stderr}")
 
         # run the executable
         exe = program_path.with_suffix('')
@@ -275,7 +283,14 @@ def make_lib_test(program_path: Path) -> Callable:
     return test_lib
 
 
-def build_test_class(chapter: int, compiler: Path, stage: str, extra_credit: Set[ExtraCredit]) -> dict[str, Callable]:
+def extra_credit_programs(source_dir: Path, extra_credit_flags: ExtraCredit) -> List[Path]:
+    extra_cred_regex = extra_credit_flags.to_regex()
+    for source_prog in source_dir.rglob("*.c"):
+        if extra_cred_regex.search(source_prog.stem):
+            yield source_prog
+
+
+def build_test_class(chapter: int, compiler: Path, stage: str, extra_credit: ExtraCredit) -> dict[str, Callable]:
 
     test_dir = Path(__file__).parent.joinpath(
         f"chapter{chapter}").resolve()
@@ -292,25 +307,57 @@ def build_test_class(chapter: int, compiler: Path, stage: str, extra_credit: Set
             testclass_attrs[f'test_{invalid_subdir}_{program.stem}'] = make_invalid_test(
                 program)
 
+        # if we've enabled any extra-credit features, look for programs that test those too
+        if extra_credit:
+            invalid_extra_credit_directory = test_dir / \
+                f"{invalid_subdir}_extra_credit"
+            for program in extra_credit_programs(invalid_extra_credit_directory, extra_credit):
+                testclass_attrs[f'test_{invalid_subdir}_extra_credit_{program.stem}'] = make_invalid_test(
+                    program)
+
     for valid_subdir in DIRECTORIES_BY_STAGE[stage]["valid"]:
 
         valid_directory = test_dir / valid_subdir
         lib_subdir = valid_directory / "libraries"
         for program in valid_directory.rglob("*.c"):
+            test_name = f"test_{valid_subdir}_{program.stem}"
             if stage == "run":
                 # programs in valid/libraries are special
                 if lib_subdir not in program.parents:
-                    testclass_attrs[f'test_valid_{program.stem}'] = make_running_test(
+                    testclass_attrs[test_name] = make_running_test(
                         program)
                 elif program.stem.endswith("client"):
-                    testclass_attrs[f'test_valid_{program.stem}'] = make_client_test(
+                    testclass_attrs[test_name] = make_client_test(
                         program)
                 else:
-                    testclass_attrs[f'test_valid_{program.stem}'] = make_lib_test(
+                    testclass_attrs[test_name] = make_lib_test(
                         program)
             else:
-                testclass_attrs[f'test_valid_{program.stem}'] = make_valid_test(
+                testclass_attrs[test_name] = make_valid_test(
                     program)
+
+        # add extra-credit tests
+        # TODO refactor w/ non-extra-credit code above
+        if extra_credit:
+            valid_extra_credit_directory = test_dir / \
+                f"{valid_subdir}_extra_credit"
+            valid_extra_credit_lib_subdir = valid_extra_credit_directory / "libraries"
+            for program in extra_credit_programs(valid_extra_credit_directory, extra_credit):
+                test_name = f"test_{valid_subdir}_extra_credit_{program.stem}"
+                if stage == "run":
+                    # programs in valid/libraries are special
+                    if valid_extra_credit_lib_subdir not in program.parents:
+                        testclass_attrs[test_name] = make_running_test(
+                            program)
+                    elif program.stem.endswith("client"):
+                        testclass_attrs[test_name] = make_client_test(
+                            program)
+                    else:
+                        testclass_attrs[test_name] = make_lib_test(
+                            program)
+                else:
+                    testclass_attrs[test_name] = make_valid_test(
+                        program)
 
     testclass_name = f"TestChapter{chapter}"
     testclass_type = type(testclass_name, (TestChapter,), testclass_attrs)
@@ -330,18 +377,18 @@ def parse_arguments() -> argparse.ArgumentParser:
                         help="Only run tests for the current chapter, not earlier chapters")
     parser.add_argument(
         "--stage", type=str, choices=["lex", "parse", "validate", "tacky", "codegen"])
-    parser.add_argument("--bitwise", action="store_const",
+    parser.add_argument("--bitwise", action="append_const", dest="extra_credit",
                         const=ExtraCredit.BITWISE, help="Include tests for bitwise operations")
-    parser.add_argument("--compound", action="store_const",
+    parser.add_argument("--compound", action="append_const", dest="extra_credit",
                         const=ExtraCredit.COMPOUND, help="Include tests for compound assignment")
-    parser.add_argument("--goto", action="store_const", const=ExtraCredit.GOTO,
+    parser.add_argument("--goto", action="append_const", const=ExtraCredit.GOTO, dest="extra_credit",
                         help="Include tests for goto and labeled statements")
-    parser.add_argument("--switch", action="store_const",
+    parser.add_argument("--switch", action="append_const", dest="extra_credit",
                         const=ExtraCredit.SWITCH, help="Include tests for switch statements")
-    parser.add_argument("--nan", action="store_const", const=ExtraCredit.NAN,
+    parser.add_argument("--nan", action="store_const", const=ExtraCredit.NAN, dest="append_const",
                         help="Include tests for floating-point NaN")
     # TODO should this be mutually exclusive with other extra-credit flags?
-    parser.add_argument("--extra-credit", action="store_true",
+    parser.add_argument("--extra-credit", action="append_const", const=ExtraCredit.ALL,
                         help="Include tests for all extra credit features")
     return parser.parse_args()
 
@@ -351,14 +398,8 @@ def main():
     args = parse_arguments()
     compiler = Path(args.cc).resolve()
 
-    # Get set of extra-credit features
-    if args.extra_credit:
-        extra_credit_features = set(list(ExtraCredit))
-    else:
-        # Get all extra-credit values specified on the command line,
-        # remove None, which indicates a command-line option wasn't set
-        extra_credit_features = set(
-            [args.bitwise, args.compound, args.goto, args.switch, args.nan]).remove(None)
+    # merge list of extra-credit features into bitvector
+    extra_credit = reduce(ior, args.extra_credit)
 
     if args.latest_only:
         chapters = [args.chapter]
@@ -371,7 +412,7 @@ def main():
     # dynamically adding a test case for each source program
     for chapter in chapters:
         class_name, class_type = build_test_class(
-            chapter, compiler, stage, extra_credit_features)
+            chapter, compiler, stage, extra_credit)
         globals()[class_name] = class_type
 
     tests = unittest.defaultTestLoader.loadTestsFromName('TestCompiler')
