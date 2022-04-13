@@ -4,11 +4,30 @@
 import argparse
 
 from enum import Enum
-from sys import executable
 from typing import Callable, List, Set
 from pathlib import Path
 import subprocess
 import unittest
+
+"""
+which folders are we looking in?
+- invalid_lex/
+- invalid_parse/
+- invalid_semantics/
+- invalid_declarations/
+- invalid_types/
+    inconsistent --> shift from invalid_semantics/ to invalid_declarations/ and invalid_types/ in chapter 10! do we care?
+    this continues into chapter 12 and on
+    in chapter 18, we have invalid_types/pointer_conversions/, other subdirectories
+- invalid_struct_tags/
+    chapter 19
+- valid/
+    valid/libraries/
+        <x>.c and <x>_client.c
+    valid/arguments_in_registers/ chapter 10
+    valid/explicit_casts, etc in chapter 13, 14,
+
+"""
 
 
 class TestDirs:
@@ -63,10 +82,21 @@ class ExtraCredit(Enum):
 # adapted from https://eli.thegreenplace.net/2014/04/02/dynamically-generating-python-test-cases
 
 
+def gcc_build_obj(prog: Path) -> None:
+    """Compile source file to an object file"""
+    objfile = prog.with_suffix('.o')
+    subprocess.run(["gcc", prog, "-c", "-o", objfile], check=True)
+
+
 class TestChapter(unittest.TestCase):
     """Base per-chapter test case"""
     longMessage = False
-    test_dir: Path = None  # overridden per subclass
+
+    # properties overridden by subclass
+    test_dir: Path = None
+    cc: Path = None
+    exit_stage: str = None
+    extra_credit: Set[ExtraCredit] = set()
 
     def tearDown(self) -> None:
 
@@ -77,36 +107,38 @@ class TestChapter(unittest.TestCase):
         for f in garbage_files:
             f.unlink()
 
+    def gcc_compile_and_run(self, *args: Path, prefix_output=False) -> subprocess.CompletedProcess:
+        exe = args[0].with_suffix('')
+        if prefix_output:
+            exe = exe.with_stem(f"expected_{exe.stem}")
 
-def invoke_compiler(compiler_path: Path, program_path: Path, stage=None) -> int:
-    """Invoke compiler and return CompletedProcess object"""
-    # TODO make this a method of TestChapter/include compiler_path etc in test_chapter?
-    args = [compiler_path]
-    if stage is not None and stage != "run":
-        args.append(f"--{stage}")
+        # capture output so we don't see warnings, and so we can report failures
+        try:
+            subprocess.run(["gcc"] + list(args) + ["-o", exe],
+                           check=True, capture_output=True)
+        except subprocess.CalledProcessError as err:
+            self.fail(f"Command '{err.cmd}' failed: {err.stderr}")
+        return subprocess.run(exe, check=False, text=True, capture_output=True)
 
-    args.append(program_path)
+    def invoke_compiler(self, program_path, cc_opt=None) -> int:
+        """Invoke compiler and return CompletedProcess object"""
+        # when testing early stages, pass current stage as compiler option (e.g. --lex)
+        # for testing library functions, we'll use -c to assemble without linking
+        # and to test optimizations we'll use -s to keep assembly code
+        if cc_opt is None and self.exit_stage is not None:
+            cc_opt = f"--{self.exit_stage}"
 
-    proc = subprocess.run(args, capture_output=True, check=True, text=True)
-    return proc
+        args = [self.cc]
+        if cc_opt is not None:
+            args.append(cc_opt)
 
+        args.append(program_path)
 
-def gcc_compile_and_run(prog: Path) -> subprocess.CompletedProcess:
-    exe = prog.with_stem(f"expected_{prog.stem}").with_suffix('')
-    subprocess.run(["gcc", prog, "-o", exe], check=True)
-    return subprocess.run(exe, check=False, text=True, capture_output=True)
+        proc = subprocess.run(args, capture_output=True, check=True, text=True)
+        return proc
 
-
-def make_invalid_test(compiler_path: Path, stage: str, program_path: Path) -> Callable:
-
-    def test_invalid(self):
-
-        # make sure compiler returned non-zero exit code -
-        # if it does, subprocess.run will raise CalledProcessError
-        with self.assertRaises(subprocess.CalledProcessError, msg=f"Didn't catch error in {program_path}"):
-            invoke_compiler(compiler_path, program_path, stage)
-
-        # make sure we didn't emit executable or assembly code
+    def validate_no_output(self, program_path: str):
+        """make sure we didn't emit executable or assembly code"""
 
         # if we compiled /path/to/foo.c, look for /path/to/foo.s
         stem = program_path.stem
@@ -118,46 +150,39 @@ def make_invalid_test(compiler_path: Path, stage: str, program_path: Path) -> Ca
         executable_path = program_path.parent / stem
         self.assertFalse(executable_path.exists())
 
-    return test_invalid
+    def validate_runs(self, expected: subprocess.CompletedProcess, actual: subprocess.CompletedProcess):
+        self.assertEqual(expected.returncode, actual.returncode)
+        self.assertEqual(expected.stdout, actual.stdout)
+        self.assertEqual(expected.stderr, actual.stderr)
 
+    def compile_failure(self, program_path):
 
-def make_valid_test(compiler_path: Path, stage: str, program_path: Path) -> Callable:
-    """Test that compilation up to given stage succeeds, but don't run program"""
+        # make sure compiler returned non-zero exit code -
+        # if it does, subprocess.run will raise CalledProcessError
+        with self.assertRaises(subprocess.CalledProcessError, msg=f"Didn't catch error in {program_path}"):
+            self.invoke_compiler(program_path)
 
-    def test_valid(self):
-        # run compiler, make sure it doesn't throw an exception
+        self.validate_no_output(program_path)
+
+    def compile_success(self, program_path):
+        # run compiler up to stage, make sure it doesn't throw an exception
         try:
-            invoke_compiler(compiler_path, program_path, stage)
+            self.invoke_compiler(program_path)
         except subprocess.CalledProcessError as err:
             self.fail(f"compilation failed with error: {err.stderr}")
 
         # make sure we didn't emit executable or assembly code
+        self.validate_no_output(program_path)
 
-        # if we compiled /path/to/foo.c, look for /path/to/foo.s
-        stem = program_path.stem
-        assembly_path = program_path.parent / f'{stem}.s'
-        self.assertFalse(assembly_path.exists(
-        ), msg=f"Stage {stage} produced unexpected assembly file {assembly_path}!")
-
-        # now look for /path/to/foo
-        executable_path = program_path.parent / stem
-        self.assertFalse(executable_path.exists(
-        ), msg=f"Stage {stage} produced unexpected executable {executable_path}")
-
-    return test_valid
-
-
-def make_running_test(compiler_path: Path, program_path: Path) -> Callable:
-    """Compile and run program, check results"""
-
-    def test_valid(self):
+    def compile_and_run(self, program_path):
 
         # first compile and run the program with GCC
-        expected_result = gcc_compile_and_run(program_path)
+        expected_result = self.gcc_compile_and_run(
+            program_path, prefix_output=True)
 
         # run compiler, make sure it doesn't throw an exception
         try:
-            invoke_compiler(compiler_path, program_path)
+            self.invoke_compiler(program_path)
         except subprocess.CalledProcessError as err:
             self.fail(f"compilation failed with error: {err.stderr}")
 
@@ -167,77 +192,129 @@ def make_running_test(compiler_path: Path, program_path: Path) -> Callable:
         result = subprocess.run(
             exe, check=False, capture_output=True, text=True)
 
-        self.assertEqual(expected_result.returncode, result.returncode)
-        self.assertEqual(expected_result.stdout, result.stdout)
-        self.assertEqual(expected_result.stderr, result.stderr)
+        self.validate_runs(expected_result, result)
+
+    def compile_client_and_run(self, program_path: Path):
+        """Compile client with self.cc and library with GCC, make sure they work together"""
+        lib_source = program_path.with_stem(
+            program_path.stem.removesuffix('_client'))
+
+        gcc_build_obj(lib_source)
+        self.invoke_compiler(program_path, cc_opt="-c")
+
+        # link both object files and run resulting executable
+        result = self.gcc_compile_and_run(lib_source.with_suffix(
+            '.o'), program_path.with_suffix('.o'))
+
+        # now compile both with gcc and run resulting executable
+        expected_result = self.gcc_compile_and_run(
+            lib_source, program_path, prefix_output=True)
+
+        # make sure results are the same
+        self.validate_runs(expected_result, result)
+
+    def compile_lib_and_run(self, program_path: Path):
+        """Compile lib with self.cc and client with GCC, make sure they work together"""
+        client_source = program_path.with_stem(program_path.stem+"_client")
+
+        gcc_build_obj(client_source)
+        self.invoke_compiler(program_path, cc_opt="-c")
+
+        # link both object files and run resulting executable
+        result = self.gcc_compile_and_run(program_path.with_suffix(
+            '.o'), client_source.with_suffix('.o'))
+
+        # now compile both with gcc and run resulting executable
+        expected_result = self.gcc_compile_and_run(
+            program_path, client_source, prefix_output=True)
+
+        # make sure results are the same
+        self.validate_runs(expected_result, result)
+
+
+def make_invalid_test(program_path: Path) -> Callable:
+    """Return a function to test that compiling program at program_path fails"""
+
+    def test_invalid(self: TestChapter):
+        self.compile_failure(program_path)
+
+    return test_invalid
+
+
+def make_valid_test(program_path: Path) -> Callable:
+    """Return a function to test that compiling program at program_path succeeds"""
+
+    def test_valid(self: TestChapter):
+        self.compile_success(program_path)
 
     return test_valid
 
 
-class TestBuilder:
-    def __init__(self, compiler: Path, stage: str,
-                 chapters: List[int],
-                 extra_credit_features: Set[ExtraCredit]) -> None:
-        self.compiler = compiler
-        self.stage = stage
-        self.extra_credit = extra_credit_features
-        self.chapters = chapters
+def make_running_test(program_path: Path) -> Callable:
+    """Compile and run program, check results"""
 
-    def build_tests(self) -> dict[str, type]:
-        testclass_dict = {}
-        for chapter in self.chapters:
-            testclass_name = f"TestChapter{chapter}"
-            testclass_attrs = self.build_tests_for_chapter(chapter)
-            testclass_dict[testclass_name] = type(
-                testclass_name, (TestChapter,), testclass_attrs)
+    def test_valid(self: TestChapter):
+        self.compile_and_run(program_path)
 
-        return testclass_dict
+    return test_valid
 
-    def build_tests_for_chapter(self, chapter: int) -> dict[str, Callable]:
 
-        test_dir = Path(__file__).parent.joinpath(
-            f"chapter{chapter}").resolve()
+def make_client_test(program_path: Path) -> Callable:
 
-        testclass_attrs = {'test_dir': test_dir}
-        # run invalid test cases up to the appropriate stage
-        for invalid_subdir in DIRECTORIES_BY_STAGE[self.stage]["invalid"]:
-            invalid_directory = test_dir / invalid_subdir
-            for program in invalid_directory.rglob("*.c"):
-                testclass_attrs[f'test_{invalid_subdir}_{program.stem}'] = make_invalid_test(
-                    self.compiler, self.stage, program)
+    def test_client(self):
+        self.compile_client_and_run(program_path)
 
-        for valid_subdir in DIRECTORIES_BY_STAGE[self.stage]["valid"]:
-            valid_directory = test_dir / valid_subdir
-            for program in valid_directory.rglob("*.c"):
-                if self.stage == "run":
+    return test_client
+
+
+def make_lib_test(program_path: Path) -> Callable:
+
+    def test_lib(self):
+        self.compile_lib_and_run(program_path)
+
+    return test_lib
+
+
+def build_test_class(chapter: int, compiler: Path, stage: str, extra_credit: Set[ExtraCredit]) -> dict[str, Callable]:
+
+    test_dir = Path(__file__).parent.joinpath(
+        f"chapter{chapter}").resolve()
+
+    testclass_attrs = {"test_dir": test_dir,
+                       "cc": compiler,
+                       "exit_stage": None if stage == "run" else stage,
+                       "extra_credit": extra_credit}
+
+    # generate invalid test cases up to the appropriate stage
+    for invalid_subdir in DIRECTORIES_BY_STAGE[stage]["invalid"]:
+        invalid_directory = test_dir / invalid_subdir
+        for program in invalid_directory.rglob("*.c"):
+            testclass_attrs[f'test_{invalid_subdir}_{program.stem}'] = make_invalid_test(
+                program)
+
+    for valid_subdir in DIRECTORIES_BY_STAGE[stage]["valid"]:
+
+        valid_directory = test_dir / valid_subdir
+        lib_subdir = valid_directory / "libraries"
+        for program in valid_directory.rglob("*.c"):
+            if stage == "run":
+                # programs in valid/libraries are special
+                if lib_subdir not in program.parents:
                     testclass_attrs[f'test_valid_{program.stem}'] = make_running_test(
-                        self.compiler, program)
+                        program)
+                elif program.stem.endswith("client"):
+                    testclass_attrs[f'test_valid_{program.stem}'] = make_client_test(
+                        program)
                 else:
-                    testclass_attrs[f'test_valid_{program.stem}'] = make_valid_test(
-                        self.compiler, self.stage, program)
+                    testclass_attrs[f'test_valid_{program.stem}'] = make_lib_test(
+                        program)
+            else:
+                testclass_attrs[f'test_valid_{program.stem}'] = make_valid_test(
+                    program)
 
-        return testclass_attrs
-
-
-"""
-which folders are we looking in?
-- invalid_lex/
-- invalid_parse/
-- invalid_semantics/
-- invalid_declarations/
-- invalid_types/
-    inconsistent --> shift from invalid_semantics/ to invalid_declarations/ and invalid_types/ in chapter 10! do we care?
-    this continues into chapter 12 and on
-    in chapter 18, we have invalid_types/pointer_conversions/, other subdirectories
-- invalid_struct_tags/
-    chapter 19
-- valid/
-    valid/libraries/
-        <x>.c and <x>_client.c
-    valid/arguments_in_registers/ chapter 10
-    valid/explicit_casts, etc in chapter 13, 14,
-
-"""
+    testclass_name = f"TestChapter{chapter}"
+    testclass_type = type(testclass_name, (TestChapter,), testclass_attrs)
+    return testclass_name, testclass_type
 
 
 def parse_arguments() -> argparse.ArgumentParser:
@@ -284,32 +361,24 @@ def main():
             [args.bitwise, args.compound, args.goto, args.switch, args.nan]).remove(None)
 
     if args.latest_only:
-        chapters = args.chapter
+        chapters = [args.chapter]
     else:
         chapters = range(2, args.chapter + 1)
 
     stage = args.stage or "run"  # by default, compile and run the program
-    test_builder = TestBuilder(compiler=compiler, stage=stage,
-                               chapters=chapters, extra_credit_features=set())  # TODO extra credit
 
-    names = []
-    for testcase_name, testcase_type in test_builder.build_tests().items():
-        globals()[testcase_name] = testcase_type
-        names.append(testcase_name)
+    # create a subclass of TestChapter for each chapter,
+    # dynamically adding a test case for each source program
+    for chapter in chapters:
+        class_name, class_type = build_test_class(
+            chapter, compiler, stage, extra_credit_features)
+        globals()[class_name] = class_type
+
     tests = unittest.defaultTestLoader.loadTestsFromName('TestCompiler')
 
     # TODO command-line arg to control verbosity
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(tests)
-
-    # runner = unittest.TextTestRunner()
-    # runner.run(suite)
-    # runner.run(TestChapter())
-
-    # stage = args.stage or "run"  # by default, compile and run the program
-
-    # test_runner = TestRunner(compiler, stage, extra_credit_features, chapters)
-    # test_runner.run()
 
 
 if __name__ == "__main__":
