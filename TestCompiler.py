@@ -85,6 +85,13 @@ class ExtraCredit(Flag):
 def gcc_build_obj(prog: Path) -> None:
     """Compile source file to an object file"""
     objfile = prog.with_suffix('.o')
+
+    # IMPORTANT: if we're building a library, and 'gcc' command actually
+    # points to clang, which it does on macOS, we must _not_ enable optimizations
+    # Clang optimizes out sign-/zero-extension for narrow args
+    # which violates the System V ABI and breaks ABI compatibility
+    # with our implementation
+    # see https://stackoverflow.com/a/36760539
     subprocess.run(["gcc", prog, "-c", "-o", objfile], check=True)
 
 
