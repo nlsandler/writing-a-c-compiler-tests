@@ -17,13 +17,13 @@ int use(int i)
 
 int main()
 {
-    int y = 10;
-    int x = y;
+    int y = 10; // gen y = 10
+    int x = y;  // gen x = y
     while (not_done())
     {
-        x = something_else();
+        x = something_else(); // kill x = y
         use(x);
-        x = y;
+        x = y; // gen x = y
     }
 
     return x; // should become "return 10"
