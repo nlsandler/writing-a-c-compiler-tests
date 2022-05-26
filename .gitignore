@@ -1,1 +1,7 @@
 *.out
+.DS_Store
+.vscode/
+.test_runner_37/
+.testrunner/
+**/*.s
+__pycache__/
