@@ -5,3 +5,8 @@ int f(int arg, int flag)
         return x;
     return 0;
 }
+
+int main()
+{
+    return f(20, 1) + f(3, 0);
+}

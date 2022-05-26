@@ -5,7 +5,9 @@ int stuff()
 }
 int something()
 {
-    return 2;
+    static int i = 2;
+    i = i - 1;
+    return i;
 }
 int main()
 {

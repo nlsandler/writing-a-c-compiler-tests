@@ -9,3 +9,10 @@ int f(int arg)
         putchar(x);
     return 0;
 }
+
+int main()
+{
+    f(0);
+    f(1);
+    return 0;
+}

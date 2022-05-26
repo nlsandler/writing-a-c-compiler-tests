@@ -1,4 +1,7 @@
-int foo(int *ptr);
+int foo(int *ptr)
+{
+    return 2;
+}
 
 int main()
 {

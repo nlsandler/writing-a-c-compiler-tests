@@ -2,7 +2,7 @@ struct s
 {
     int a;
     int b;
-    int c
+    int c;
 };
 
 struct s glob = {1, 2, 3};
