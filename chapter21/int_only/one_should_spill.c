@@ -24,3 +24,8 @@ int client()
     int f = get(); // spill f (we're out of callee-saved regs)
     return consume(a, b, c, d, e, f) + a + b + c + d + e + f;
 }
+
+int main()
+{
+    return client();
+}

@@ -22,3 +22,8 @@ int client()
     int f = get(); // store f in a non-callee-saved reg
     return consume(a, b, c, d, e, f);
 }
+
+int main()
+{
+    return client();
+}
