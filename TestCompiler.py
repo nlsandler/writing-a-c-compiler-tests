@@ -441,6 +441,8 @@ def main():
 
     tests = unittest.defaultTestLoader.loadTestsFromName('TestCompiler')
 
+    # handle ctlr-C cleanly
+    unittest.installHandler()
     runner = unittest.TextTestRunner(
         verbosity=args.verbose, failfast=args.failfast)
     runner.run(tests)
