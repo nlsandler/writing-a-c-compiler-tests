@@ -1,0 +1,17 @@
+set -e
+git switch -C test-runner-tmp
+git merge test-runner -m 'tmp'
+git merge chapter-12-and-11-extra-credit -m 'tmp'
+git merge chapter-13 -m 'tmp'
+git merge chapter-14 -m 'tmp'
+git merge chapter-15 -m 'tmp'
+git merge chapter-20 -m 'tmp'
+git merge chapter-21 -m 'tmp'
+git merge extra-tests -m 'tmp'
+
+cp $MY_COMPILER ./mycc
+chmod u+w mycc
+./test_compiler ./mycc --chapter 21 -v -f --
+./test_compiler ./mycc --chapter 21 -v -f -- -O
+./test_compiler ./mycc --chapter 21 -v -f -- -O -r
+./test_compiler ./mycc --chapter 21 -v -f -- -r
