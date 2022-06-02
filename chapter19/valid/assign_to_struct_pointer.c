@@ -1,0 +1,9 @@
+struct pair { int x ; int y; };
+
+void *malloc(unsigned long size);
+
+int main() {
+    struct pair *s = malloc(sizeof(struct pair));
+    s->x = 10;
+    return s->x;
+}
