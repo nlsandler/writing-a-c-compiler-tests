@@ -28,10 +28,10 @@ int client()
     int c = glob2;
     int d = glob3;
     reset_globals();
-    int e = glob0 - a; // now a interferes w/ b and c but not d
-    int f = glob1 - b; // now e interferes w/ d and c but not a or b
-    int g = glob2 - c; // f interferes with d and e
-    int h = glob3 - d;
+    int e = glob0 - a; // now e interferes w/ b, c, d but not a
+    int f = glob1 - b; // now f interferes w/ d, c and e but not a or b
+    int g = glob2 - c; // g interferes with d, e, f but not a, b, or c
+    int h = glob3 - d; // h interferes with e, f, g but not a, b, c, d
     reset_globals();
     if (e != 0)
         return 0;
