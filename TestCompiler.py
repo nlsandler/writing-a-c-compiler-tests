@@ -23,13 +23,23 @@ def replace_stem(path: Path, new_stem: str) -> Path:
 
 
 class TestDirs:
+    # invalid programs
     INVALID_LEX = "invalid_lex"
     INVALID_PARSE = "invalid_parse"
     INVALID_SEMANTICS = "invalid_semantics"
     INVALID_DECLARATIONS = "invalid_declarations"
     INVALID_TYPES = "invalid_types"
     INVALID_STRUCT_TAGS = "invalid_struct_tags"
+    # valid test programs for parts I & II
     VALID = "valid"
+    # valid test programs for part III
+    ALL_OPTS = "all_optimizations"
+    CONST = "constant_folding"
+    COPY_PROP = "copy_propagation"
+    DSE = "dead_store_elimination"
+    UCE = "unreachable_code_eimination"
+    REG_ALLOC = "int_only"
+    REG_ALLOC_PARTII = "all_types"
 
 
 dirs = {"invalid": [TestDirs.INVALID_LEX,
@@ -38,7 +48,10 @@ dirs = {"invalid": [TestDirs.INVALID_LEX,
                     TestDirs.INVALID_DECLARATIONS,
                     TestDirs.INVALID_TYPES,
                     TestDirs.INVALID_STRUCT_TAGS],
-        "valid": [TestDirs.VALID]}
+        "valid": [TestDirs.VALID, TestDirs.ALL_OPTS, TestDirs.CONST,
+                  TestDirs.COPY_PROP, TestDirs.DSE, TestDirs.UCE, TestDirs.REG_ALLOC,
+                  TestDirs.REG_ALLOC_PARTII]
+        }
 
 DIRECTORIES_BY_STAGE = {
     "lex": {"invalid": [TestDirs.INVALID_LEX],
@@ -46,14 +59,12 @@ DIRECTORIES_BY_STAGE = {
                       TestDirs.INVALID_SEMANTICS,
                       TestDirs.INVALID_DECLARATIONS,
                       TestDirs.INVALID_TYPES,
-                      TestDirs.INVALID_STRUCT_TAGS,
-                      TestDirs.VALID]},
+                      TestDirs.INVALID_STRUCT_TAGS] + dirs["valid"]},
     "parse": {"invalid": [TestDirs.INVALID_LEX, TestDirs.INVALID_PARSE],
               "valid": [TestDirs.INVALID_SEMANTICS,
                         TestDirs.INVALID_DECLARATIONS,
                         TestDirs.INVALID_TYPES,
-                        TestDirs.INVALID_STRUCT_TAGS,
-                        TestDirs.VALID]},
+                        TestDirs.INVALID_STRUCT_TAGS] + dirs["valid"]},
     "validate": dirs,
     "tacky": dirs,
     "codegen": dirs,
@@ -102,6 +113,7 @@ class TestChapter(unittest.TestCase):
     # properties overridden by subclass
     test_dir: Path = None
     cc: Path = None
+    options: List[str]
     exit_stage: str = None
     extra_credit: Set[ExtraCredit] = set()
 
@@ -132,7 +144,7 @@ class TestChapter(unittest.TestCase):
         if cc_opt is None and self.exit_stage is not None:
             cc_opt = f"--{self.exit_stage}"
 
-        args = [self.cc]
+        args = [self.cc] + self.options
         if cc_opt is not None:
             args.append(cc_opt)
 
@@ -290,30 +302,32 @@ def extra_credit_programs(source_dir: Path, extra_credit_flags: ExtraCredit) -> 
             yield source_prog
 
 
-def build_test_class(chapter: int, compiler: Path, stage: str, extra_credit: ExtraCredit) -> Dict[str, Callable]:
+def build_test_class(chapter: int, compiler: Path, options: List[str], stage: str, extra_credit: ExtraCredit, skip_invalid: bool) -> Dict[str, Callable]:
 
     test_dir = Path(__file__).parent.joinpath(
         f"chapter{chapter}").resolve()
 
     testclass_attrs = {"test_dir": test_dir,
                        "cc": compiler,
+                       "options": options,
                        "exit_stage": None if stage == "run" else stage,
                        "extra_credit": extra_credit}
 
     # generate invalid test cases up to the appropriate stage
-    for invalid_subdir in DIRECTORIES_BY_STAGE[stage]["invalid"]:
-        invalid_directory = test_dir / invalid_subdir
-        for program in invalid_directory.rglob("*.c"):
-            testclass_attrs[f'test_{invalid_subdir}_{program.stem}'] = make_invalid_test(
-                program)
-
-        # if we've enabled any extra-credit features, look for programs that test those too
-        if extra_credit:
-            invalid_extra_credit_directory = test_dir / \
-                f"{invalid_subdir}_extra_credit"
-            for program in extra_credit_programs(invalid_extra_credit_directory, extra_credit):
-                testclass_attrs[f'test_{invalid_subdir}_extra_credit_{program.stem}'] = make_invalid_test(
+    if not skip_invalid:
+        for invalid_subdir in DIRECTORIES_BY_STAGE[stage]["invalid"]:
+            invalid_directory = test_dir / invalid_subdir
+            for program in invalid_directory.rglob("*.c"):
+                testclass_attrs[f'test_{invalid_subdir}_{program.stem}'] = make_invalid_test(
                     program)
+
+            # if we've enabled any extra-credit features, look for programs that test those too
+            if extra_credit:
+                invalid_extra_credit_directory = test_dir / \
+                    f"{invalid_subdir}_extra_credit"
+                for program in extra_credit_programs(invalid_extra_credit_directory, extra_credit):
+                    testclass_attrs[f'test_{invalid_subdir}_extra_credit_{program.stem}'] = make_invalid_test(
+                        program)
 
     for valid_subdir in DIRECTORIES_BY_STAGE[stage]["valid"]:
 
@@ -371,10 +385,15 @@ def parse_arguments() -> argparse.ArgumentParser:
         "cc", type=str, help="Path to your compiler")
     # QUESTION: should this include tests from previous chapters too? yes, per chapters 3, 4
     # but maybe add an option to just run most recent tests?
-    parser.add_argument("--chapter", type=int, choices=range(0, 19),  required=True,  # let people specify optimization chapters?
+    parser.add_argument("--chapter", type=int, choices=range(0, 22),  required=True,
                         help="Specify which chapter to test. (By default, this will run the tests from earlier chapters as well.)")
     parser.add_argument("--latest-only", action="store_true",
                         help="Only run tests for the current chapter, not earlier chapters")
+    parser.add_argument("--skip-invalid", action="store_true",
+                        help="Only run valid test programs (useful when testing backend changes)")
+    parser.add_argument("--failfast", "-f", action="store_true",
+                        help="Stop on first test failure")
+    parser.add_argument("--verbose", "-v", action="count", default=0)
     parser.add_argument(
         "--stage", type=str, choices=["lex", "parse", "validate", "tacky", "codegen"])
     parser.add_argument("--bitwise", action="append_const", dest="extra_credit",
@@ -390,7 +409,9 @@ def parse_arguments() -> argparse.ArgumentParser:
     # TODO should this be mutually exclusive with other extra-credit flags?
     parser.add_argument("--extra-credit", action="append_const", const=ExtraCredit.ALL,
                         help="Include tests for all extra credit features")
-    return parser.parse_args()
+    # extra args to pass through to compiler, should be followed by --
+    parser.add_argument("extra_cc_options", type=str, nargs="*")
+    return parser.parse_intermixed_args()
 
 
 def main():
@@ -415,13 +436,13 @@ def main():
     # dynamically adding a test case for each source program
     for chapter in chapters:
         class_name, class_type = build_test_class(
-            chapter, compiler, stage, extra_credit)
+            chapter, compiler, args.extra_cc_options, stage, extra_credit, args.skip_invalid)
         globals()[class_name] = class_type
 
     tests = unittest.defaultTestLoader.loadTestsFromName('TestCompiler')
 
-    # TODO command-line arg to control verbosity
-    runner = unittest.TextTestRunner(verbosity=1)
+    runner = unittest.TextTestRunner(
+        verbosity=args.verbose, failfast=args.failfast)
     runner.run(tests)
 
 
