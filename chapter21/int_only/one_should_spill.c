@@ -7,7 +7,7 @@ int get()
 
 int consume(int a, int b, int c, int d, int e, int f)
 {
-    return a * b * c * d * e * f;
+    return a == 1 && b == 2 && c == 3 && d == 4 && e == 5 && f == 6;
 }
 
 /* 1. confirm no more than one spill here
@@ -22,7 +22,7 @@ int client()
     int d = get(); // store d in a callee-saved reg
     int e = get(); // store e in a callee-saved-reg
     int f = get(); // spill f (we're out of callee-saved regs)
-    return consume(a, b, c, d, e, f) + a + b + c + d + e + f;
+    return consume(a, b, c, d, e, f) * (a + b + c + d + e + f);
 }
 
 int main()
