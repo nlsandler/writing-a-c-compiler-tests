@@ -11,6 +11,7 @@ git merge extra-tests -m 'tmp'
 
 cp $MY_COMPILER ./mycc
 chmod u+w mycc
+set -x
 ./test_compiler ./mycc --chapter 21 -v -f --
 ./test_compiler ./mycc --chapter 21 -v -f -- -O
 ./test_compiler ./mycc --chapter 21 -v -f -- -O -r

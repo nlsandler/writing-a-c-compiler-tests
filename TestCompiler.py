@@ -168,12 +168,13 @@ class TestChapter(unittest.TestCase):
         self.assertFalse(executable_path.exists())
 
     def validate_runs(self, expected: subprocess.CompletedProcess, actual: subprocess.CompletedProcess):
+        exe = actual.args[0]
         self.assertEqual(expected.returncode, actual.returncode,
-                         msg=f"Expected return code {expected.returncode}, found {actual.returncode}")
+                         msg=f"Expected return code {expected.returncode}, found {actual.returncode} in {exe}")
         self.assertEqual(expected.stdout, actual.stdout,
-                         msg=f"Expected output {expected.stdout}, found {actual.stdout}")
+                         msg=f"Expected output {expected.stdout}, found {actual.stdout} in {exe}")
         self.assertEqual(expected.stderr, actual.stderr,
-                         msg=f"Expected error output {expected.stderr}, found {actual.stderr}")
+                         msg=f"Expected error output {expected.stderr}, found {actual.stderr} in {exe}")
 
     def compile_failure(self, program_path):
 
@@ -441,7 +442,7 @@ def main():
 
     tests = unittest.defaultTestLoader.loadTestsFromName('TestCompiler')
 
-    # handle ctlr-C cleanly
+    # handle ctrl-C cleanly
     unittest.installHandler()
     runner = unittest.TextTestRunner(
         verbosity=args.verbose, failfast=args.failfast)
