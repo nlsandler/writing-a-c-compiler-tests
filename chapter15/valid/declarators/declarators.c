@@ -4,9 +4,10 @@
  * These declarations all have the same type so they don't conflict.
  */
 int return_3();
-int (return_3());
-int (return_3)();
-int ((return_3))() {
+int(return_3());
+int(return_3)();
+int((return_3))()
+{
     return 3;
 }
 
@@ -14,40 +15,43 @@ int ((return_3))() {
  * These declarations all have the same type so they don't conflict
  */
 long l = 100;
-long *two_pointers(double val, double *ptr) {
+long *two_pointers(double val, double *ptr)
+{
     *ptr = val;
     return &l;
 }
-long (*two_pointers(double val, double (*d)));
+long(*two_pointers(double val, double(*d)));
 long *(two_pointers)(double val, double *(d));
-long *(two_pointers)(double val, double (*(d)));
+long *(two_pointers)(double val, double(*(d)));
 
 /* Multiple declarations of the function 'pointers_to_pointers'
  * These declarations all have the same type so they don't conflict
  */
-unsigned **pointers_to_pointers(int **p) {
+unsigned **pointers_to_pointers(int **p)
+{
     static unsigned u;
-    static unsigned *u_ptr = &u;
+    static unsigned *u_ptr;
+    u_ptr = &u;
     u = **p;
     return &u_ptr;
 }
-unsigned (**(pointers_to_pointers(int *(*p))));
-unsigned *(*pointers_to_pointers(int (**p)));
-unsigned (*(*((pointers_to_pointers)(int (*(*(p)))))));
+unsigned(**(pointers_to_pointers(int *(*p))));
+unsigned *(*pointers_to_pointers(int(**p)));
+unsigned(*(*((pointers_to_pointers)(int(*(*(p)))))));
 
-
-int main() {
+int main()
+{
     /* Declare some variables using a variety of declarators */
     int i = 0;
-    int (*i_ptr) = &i;
-    int (**ptr_to_iptr) = &i_ptr;
+    int(*i_ptr) = &i;
+    int(**ptr_to_iptr) = &i_ptr;
 
-    double (d1) = 0.0;
+    double(d1) = 0.0;
     double d2 = 10.0;
 
     double *(d_ptr) = &d1;
 
-    long (*(l_ptr));
+    long(*(l_ptr));
 
     unsigned *(*(ptr_to_uptr));
 
