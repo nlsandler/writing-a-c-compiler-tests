@@ -1,7 +1,9 @@
 /* addl x, y (or similar) causes interference if x is live afterwards */
 
 /* test that addl x, y does NOT create conflict b/t x and y if x is dead afterward
- * look for: no spills - exactly five callee-saved regs conflict at any time */
+ * look for: no spills - exactly five callee-saved regs conflict at any time
+ * consider looking for movl %r15, %r15 etc -- or maybe that's too stringent
+ * turn on optimizations to make sure we're testing the right thing */
 
 int glob0 = 0;
 int glob1 = 1;

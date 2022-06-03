@@ -23,23 +23,27 @@ int reset_globals()
 int client()
 {
     /* define some values - must be in calle-saved regs */
-    int a = glob0;
-    int b = glob1;
+    int a = glob4;
+    int b = glob3;
     int c = glob2;
-    int d = glob3;
+    int d = glob1;
+    int e = glob0;
     reset_globals();
-    int e = glob0 - a; // now e interferes w/ b, c, d but not a
-    int f = glob1 - b; // now f interferes w/ d, c and e but not a or b
-    int g = glob2 - c; // g interferes with d, e, f but not a, b, or c
-    int h = glob3 - d; // h interferes with e, f, g but not a, b, c, d
+    int f = a - glob0; // now f interferes w/ b, c, d, e but not a
+    int g = b - glob1; // now g interferes w/ d, c, e, f but not a or b
+    int h = c - glob2; // h interferes with d, e, f, g but not a, b, or c
+    int i = d - glob3; // i interferes with e, f, g, h but not a, b, c, d
+    int j = e - glob4; // j interferes with f, g, h, i, but not a, b, c, d
     reset_globals();
-    if (e != 0)
+    if (f != 4)
         return 0;
-    if (f != -1)
+    if (g != 3)
         return 0;
-    if (g != -2)
+    if (h != 2)
         return 0;
-    if (h != -3)
+    if (i != 1)
+        return 0;
+    if (j != 0)
         return 0;
     return 1;
 }

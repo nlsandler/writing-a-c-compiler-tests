@@ -5,7 +5,7 @@ int foo(int start, int end, int interval, int a, int b, int c)
     /* Test that we can assign non-conflicting pseudos
      * to the same register; there are more pseudoregisters than general-purpose registers,
      * BUT they don't all conflict, so we can allocate them without spills
-     * Look for: no spills */
+     * Look for: no spills (requires optimizations to be enabled) */
 
     /* first, we'll calculate these */
     int d = start * 2;
