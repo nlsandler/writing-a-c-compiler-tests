@@ -61,15 +61,17 @@ int client(int flag)
         g = 0;
         h = 0;
     }
-    if (e != 0)
+    if (f != 0)
         return 0;
-    if (f != -1)
+    if (g != 1)
         return 0;
-    if (g != -2)
+    if (h != 2)
         return 0;
-    if (h != -3)
+    if (i != 3)
         return 0;
-    if (glob0 != 6)
+    if (j != 4)
+        return 0;
+    if (glob0 != 10)
         return 0;
     return 1;
 }
