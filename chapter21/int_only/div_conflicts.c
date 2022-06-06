@@ -45,12 +45,6 @@ int main()
     int sum3 = glob3 + glob4;
     int sum4 = glob4 + glob5;
 
-    /*
-    glob0 = sum / sum2;
-    glob1 = sum3 / f;
-    glob2 = sum / sum4;
-    */
-
     glob0 = sum / sum3;
     glob1 = f / sum4;
     glob3 = sum2 / sum4;
