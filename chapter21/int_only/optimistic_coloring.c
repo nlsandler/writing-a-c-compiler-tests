@@ -42,7 +42,8 @@ int foo()
         int d = glob3;
         increase_globals();
         // note: f wouldn't actually conflict w/ a-d if we had live range splitting
-        consume(a, b, c, d, e);
+        if (consume(a, b, c, d, e) != 9)
+            return 0;
         f = glob0;
         increase_globals();
         f = f + a + b + c + d;
@@ -54,7 +55,8 @@ int foo()
         int i = glob2;
         int j = glob3;
         increase_globals();
-        consume(g, h, i, j, e);
+        if (consume(g, h, i, j, e) != 17)
+            return 0;
         f = glob0;
         increase_globals();
         f = f + g + h + i + j;
@@ -65,5 +67,9 @@ int foo()
 
 int main()
 {
-    return foo() + foo();
+    flag = 1;
+    int a = foo();
+    flag = 0;
+    int b = foo();
+    return (a == 10 && b == 20 && glob0 == 4);
 }
