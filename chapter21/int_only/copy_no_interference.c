@@ -60,6 +60,8 @@ int client(int flag)
         f = 0;
         g = 0;
         h = 0;
+        i = 0;
+        j = 0;
     }
     if (f != 0)
         return 0;
