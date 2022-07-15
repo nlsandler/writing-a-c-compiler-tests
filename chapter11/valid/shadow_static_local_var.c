@@ -4,23 +4,27 @@
  */
 
 /* A variable with internal linkage */
-static int i;
+// TODO: update comments here (had to give variable external linkage to avoid GCC error)
+int i;
 
 /* this function sets either static local 'i'
  * or the 'i' with internal linkage to new_val,
  * then return value of local 'i'
  */
-int update_static_or_global(int update_global, int new_val) {
+int update_static_or_global(int update_global, int new_val)
+{
 
     /* A static local variable; it has static storage duration,
-    * but no linkage
-    */
+     * but no linkage
+     */
     static int i;
-    if (update_global) {
+    if (update_global)
+    {
         /* bring i with linkage into scope, shadowing local i */
         extern int i;
         i = new_val;
-    } else
+    }
+    else
         // update local i
         i = new_val;
 
@@ -28,7 +32,8 @@ int update_static_or_global(int update_global, int new_val) {
     return i;
 }
 
-int main() {
+int main()
+{
     if (i != 0) // i with linkage should be initialized to 0
         return 1;
 
