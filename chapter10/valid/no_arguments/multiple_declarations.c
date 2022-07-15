@@ -1,9 +1,11 @@
-int main() {
+int main()
+{
     int f();
-    int f(void);
+    int f();
     return f();
 }
 
-int f(void) {
+int f()
+{
     return 3;
 }
