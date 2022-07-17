@@ -16,8 +16,8 @@ echo "$#"
 if [ "$#" -ne 0 ]
 then
     set -x
-    ./test_compiler ./mycc --chapter 21 -v -f --
-    ./test_compiler ./mycc --chapter 21 -v -f -- -O
-    ./test_compiler ./mycc --chapter 21 -v -f -- -O -r
-    ./test_compiler ./mycc --chapter 21 -v -f -- -r
+    ./test_compiler ./mycc --chapter 21 -v -f --extra-credit --
+    ./test_compiler ./mycc --chapter 21 -v -f --extra-credit -- -O
+    ./test_compiler ./mycc --chapter 21 -v -f --extra-credit -- -O -r
+    ./test_compiler ./mycc --chapter 21 -v -f --extra-credit -- -r
 fi
