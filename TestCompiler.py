@@ -201,9 +201,15 @@ class TestChapter(unittest.TestCase):
         expected_result = self.gcc_compile_and_run(
             program_path, prefix_output=True)
 
+        # HACK: include -lm for standard library test on linux
+        if "linux" in self.options and "standard_library_call" in str(program_path):
+            cc_opt = "-lm"
+        else:
+            cc_opt = None
+
         # run compiler, make sure it doesn't throw an exception
 
-        compile_result = self.invoke_compiler(program_path)
+        compile_result = self.invoke_compiler(program_path, cc_opt=cc_opt)
         self.assertEqual(compile_result.returncode, 0,
                          msg=f"compilation failed with error: {compile_result.stderr}")
 
