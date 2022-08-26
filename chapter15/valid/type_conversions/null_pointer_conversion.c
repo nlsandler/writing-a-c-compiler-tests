@@ -3,21 +3,29 @@
 // convert static variable initializer
 double *d = 0l;
 
-int expect_null_param(int *val) {
+int expect_null_param(int *val)
+{
     // validate that this is a null pointer
     return (val == 0u);
 }
 
-long *return_null_ptr() {
+long *return_null_ptr()
+{
     return 0; // convert return value to pointer
 }
 
-int main() {
+int main()
+{
     int x = 10;
     int *ptr = &x;
-    
+
     // convert to pointer for assignment
     ptr = 0ul;
+
+    // convert pointer in non-static initializer
+    int *y = 0;
+    if (y != 0)
+        return 0;
 
     // convert function argument to pointer
     if (!expect_null_param(0))

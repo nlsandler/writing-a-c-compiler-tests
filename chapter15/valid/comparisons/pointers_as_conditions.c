@@ -2,7 +2,8 @@
  * which implicitly compares them to zero
  */
 
-int main() {
+int main()
+{
     long x;
     long *ptr = &x;
     long *null_ptr = 0;
@@ -24,13 +25,19 @@ int main() {
     if (!ptr)
         return 0;
 
+    // use a pointer in a ternary expression
+    int j = ptr ? 1 : 2;
+    int k = null_ptr ? 3 : 4;
+    if (!(j == 1 && k == 4))
+        return 0;
+
     // use a pointer as the controlling condition in a loop
     int i = 0;
-    while (ptr) {
+    while (ptr)
+    {
         if (i > 10)
             ptr = 0;
         i = i + 1;
     }
     return i;
-
 }
