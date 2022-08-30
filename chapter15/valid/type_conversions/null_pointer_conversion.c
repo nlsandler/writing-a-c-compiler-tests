@@ -1,7 +1,9 @@
 /* Make sure we can implicity convert null pointer constants to pointer type */
 
-// convert static variable initializer
+// convert static variable initializers
 double *d = 0l;
+int *i = 0ul;
+int *i2 = 0u;
 
 int expect_null_param(int *val)
 {
@@ -18,6 +20,10 @@ int main()
 {
     int x = 10;
     int *ptr = &x;
+
+    // check static initializers
+    if (d || i || i2)
+        return 0;
 
     // convert to pointer for assignment
     ptr = 0ul;
