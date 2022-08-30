@@ -2,9 +2,9 @@
 
 long int(arr)[4] = {1, 2, 3, 4};
 
-int long arr[4];
+int long arr[4ul];
 
-int (*ptr_to_arr)[3][6];
+int (*ptr_to_arr)[3][6l];
 
 int((*(ptr_to_arr))[3l])[6u] = 0;
 
