@@ -1,15 +1,16 @@
-int main() {
+int main()
+{
     /* If a long is already in the range of 'int',
      * truncation doesn't change its value.
      */
     long l = 10l;
-    int i = (int) l;
+    int i = (int)l;
     if (i != 10)
         return 0;
 
     /* Truncating a negative int also preserves its value */
     l = -10l;
-    i = (int) l;
+    i = (int)l;
     if (i != -10)
         return 0;
 
@@ -17,7 +18,7 @@ int main() {
      * subtract 2^32 until it's in range
      */
     l = 17179869189l; // 2^34 + 5
-    i = (int) l;
+    i = (int)l;
     if (i != 5)
         return 0;
 
@@ -25,7 +26,14 @@ int main() {
      * add 2^32 until it's in range
      */
     l = -17179869179l; // (-2^34) + 5
-    i = (int) l;
+    i = (int)l;
+    if (i != 5)
+        return 0;
+
+    /* truncate negative long constant that can't
+     * be expressed in 32 bits, to test rewrite rule
+     */
+    i = (int)-17179869179l;
     if (i != 5)
         return 0;
 
