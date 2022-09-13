@@ -12,6 +12,11 @@ int main()
     if ((int)-uc != -1)
         return 2;
 
+    // b/c this is promoted to int before complement,
+    // result is -2 instead of wrapping around to 254
+    if ((int)~uc != -2)
+        return 2;
+
     signed char w = 127;
     signed char x = 3;
     signed char y = 2;
