@@ -11,6 +11,7 @@ git merge extra-tests -m 'tmp'
 git merge chapter-16 -m 'tmp'
 git merge -Xtheirs chapter-17 -m 'tmp'
 git merge -Xtheirs chapter-18 -m 'tmp'
+git merge -Xtheirs chapter-19 -m 'tmp'
 
 cp $MY_COMPILER ./mycc
 chmod u+w mycc
