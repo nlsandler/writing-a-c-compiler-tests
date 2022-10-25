@@ -2,9 +2,11 @@ from curses.ascii import SI, SP, isalnum, isdigit
 import io
 import itertools
 from lib2to3.pgen2 import token
+from pickle import POP
 import re
 import collections
 from enum import Enum, auto
+from sre_constants import CALL
 from typing import NamedTuple, Callable, Iterable, Iterator, NewType, Union, TextIO, Optional
 
 
@@ -18,7 +20,9 @@ class ParseError(RuntimeError):
 # Operands
 class Immediate(int):
     """Immediate operands like $3"""
-    pass
+
+    def __str__(self) -> str:
+        return f"${super().__str__()}"
 
 
 class Register(Enum):
@@ -78,13 +82,14 @@ Expr = list[Union[int, str, Operator]]
 
 class Memory(NamedTuple):
     """memory operands (including RIP-relative, stack, indexed)"""
-    disp: Optional[Expr]
+    disp: Expr
     base: Optional[Register]
     idx: Optional[Register]
     scale: int  # non-optional b/c defaults to 1 if not specified
 
     def __str__(self) -> str:
-        return f"{self.disp or ''}({self.base or ''}, {self.idx or ''}, {self.scale or ''})"
+        disp_str = "".join(map(str, self.disp))
+        return f"{disp_str}({self.base or ''}, {self.idx or ''}, {self.scale or ''})"
 
 
 # target of jump or call instruction
@@ -96,10 +101,40 @@ Operand = Union[Memory, Register, Immediate, Target]
 # Instructions (including labels)
 
 class Opcode(Enum):
+    # data movement/memory manipulation
     MOV = auto()
+    PUSH = auto()
+    POP = auto()
+    LEA = auto()
+    # conversions
+    MOVS = auto()
+    MOVZ = auto()
+    CVTTSD2SI = auto()
+    CVTSI2SD = auto()
+    # binary
     ADD = auto()
     SUB = auto()
-    OTHER = auto()
+    IDIV = auto()
+    DIV = auto()
+    IMUL = auto()
+    AND = auto()
+    OR = auto()
+    XOR = auto()
+    # unary
+    SHR = auto()
+    NOT = auto()
+    NEG = auto()
+    CDQ = auto()
+    # control flow and conditionals
+    JMP = auto()
+    JMPCC = auto()
+    SETCC = auto()
+    CMP = auto()
+    CALL = auto()
+    RET = auto()
+
+    def __str__(self) -> str:
+        return self.name.lower()
 
 
 class Instruction(NamedTuple):
@@ -316,15 +351,20 @@ def sym_to_instr(t: Token) -> Opcode:
     """Parse an instruction mnemonic"""
     if not (isinstance(t, SymToken) and t.isalpha()):
         raise ParseError
-    prefixes = {
-        "add": Opcode.ADD,
-        "sub": Opcode.SUB,
-        "mov": Opcode.MOV
-    }
-    for k, v in prefixes.items():
-        if t.startswith(k):
-            return v
-    return Opcode.OTHER  # TODO
+
+    # deal w/ special cases for
+    if t == "cqo":
+        return Opcode.CDQ
+    CONDITION_CODES = ["e", "ne", "g", "ge",
+                       "l", "le", "b", "be", "a", "ae", "po"]
+    if t[0] == "j" and t[1:] in CONDITION_CODES:
+        return Opcode.JMPCC
+
+    for opcode in Opcode:
+        if t.startswith(str(opcode)):
+            return opcode
+
+    raise ParseError(f"Unknown opcode {t}")
 
 
 def expect_next(*, toks: collections.deque[Token], expected: Token):
@@ -371,7 +411,7 @@ def parse_next_operand(toks: collections.deque[Token]) -> Operand:
         return next_tok
 
     # it's a memory operand
-    disp: Optional[Expr] = None
+    disp: Expr = []
     base: Optional[Register] = None
     idx: Optional[Register] = None
     scale = 1
