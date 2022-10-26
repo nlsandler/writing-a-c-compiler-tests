@@ -1,13 +1,8 @@
-from curses.ascii import SI, SP, isalnum, isdigit
-import io
 import itertools
-from lib2to3.pgen2 import token
-from pickle import POP
 import re
 import collections
 from enum import Enum, auto
-from sre_constants import CALL
-from typing import NamedTuple, Callable, Iterable, Iterator, NewType, Union, TextIO, Optional
+from typing import NamedTuple, Callable, Iterable, Iterator, NewType, Union, Optional
 
 
 class ParseError(RuntimeError):
@@ -89,6 +84,8 @@ class Memory(NamedTuple):
 
     def __str__(self) -> str:
         disp_str = "".join(map(str, self.disp))
+        if (not self.idx) and self.scale == 1:
+            return f"{disp_str}({self.base or ''})"
         return f"{disp_str}({self.base or ''}, {self.idx or ''}, {self.scale or ''})"
 
 
@@ -160,23 +157,14 @@ AsmItem = Union[Label, Instruction]
 
 
 class AssemblyFunction(NamedTuple):
-    name: str
+    name: Label
     instructions: list[AsmItem]
+
+    def __str__(self) -> str:
+        return f"{self.name}\n" + "\n".join(map(str, self.instructions))
 
 
 """Tokens"""
-
-
-class SymToken(str):
-    """Symbols that are _not_ labels"""
-    pass
-
-
-class ConstToken(str):
-    """Constants that appear in operands like 4(%rbp), distinct from immediates
-    just store as string, don't need actual value
-    """
-    pass
 
 
 class Punctuation(Enum):
@@ -185,11 +173,12 @@ class Punctuation(Enum):
     CLOSE_PAREN = auto()
     PLUS_SIGN = auto()
     MINUS_SIGN = auto()
+    COLON = auto()
+    PERCENT = auto()
+    DOLLAR = auto()
 
 
-Token = Union[Label, Immediate, Register, SymToken, ConstToken, Punctuation]
-
-Statement = list[Token]
+Token = Union[str, int, Punctuation]
 
 
 """Tokenizing"""
@@ -271,16 +260,67 @@ def take_chars_while(predicate: Callable[[str], bool], chars: collections.deque[
     return "".join(result)
 
 
-def tokenize(line: str) -> list[Token]:
-    chars = collections.deque(line)
-    toks: list[Token] = []
-    while chars:
-        next_char = chars.popleft()
-        # comment
-        if next_char == '#':
-            chars.clear()
+"""
+problem: distinguishing between constants and other symbols
+can't just rely on starting digit b/c both can start w/ .
+recognzing ints, floating-point values, and hex values would be a pain
+.1000 is a constant but .100f is not
+
+possible solutions:
+1. use re to get a "word" (all allowable characters in symbol), try to parse as float, treat as constant if it fails
+2. only treat integers as constants. if it starts with a digit, parse as an int. this is fine for instructions even if it wouldn't work for compiler directives
+    this also means we'll accept floats as labels but that's impossible in a valid program so it's fine
+
+
+"""
+
+# a symbol is a sequence of alphanumeric characters, $, _, and .
+# starting with a non-$ token
+# this also matches ints, so lex with INT_PATTERN first!
+# note that this may include some floats (e.g. .100), which is fine b/c we don't need to parse them
+SYMBOL_PATTERN = re.compile(r"[\w._][\w.$]*")
+
+
+INT_PATTERN = re.compile(r"(0b|0x)?[0-9a-f]+", flags=re.IGNORECASE)
+
+
+def tokenize(line: str) -> collections.deque[Token]:
+    toks: collections.deque[Token] = collections.deque()
+    remaining = line.lstrip()
+    while remaining:
+        # comments
+        if remaining[0] == '#':
+            return toks
+
+        # HACK: don't bother parsing string literals
+        if remaining[0] == '"':
+            return toks
+
+        # integer constants
+        # this may consume the first part of a float;
+        # this is fine b/c floats only appear in compiler directives, which we ignore
+        const_match = re.match(INT_PATTERN, remaining)
+        if const_match:
+            const_tok = const_match.group(0)
+            try:
+                toks.append(int(const_tok, base=0))
+                remaining = remaining[const_match.end(0):].lstrip()
+                continue
+
+            except ValueError:
+                # may be an identifier
+                pass
+
+        # identifiers
+        symbol_match = re.match(SYMBOL_PATTERN, remaining)
+        if symbol_match:
+            toks.append(symbol_match.group(0))
+            remaining = remaining[symbol_match.end(0):].lstrip()
+            continue
+
         # punctuation
-        elif next_char == ',':
+        next_char, remaining = remaining[0], remaining[1:].lstrip()
+        if next_char == ',':
             toks.append(Punctuation.COMMA)
         elif next_char == '(':
             toks.append(Punctuation.OPEN_PAREN)
@@ -290,43 +330,14 @@ def tokenize(line: str) -> list[Token]:
             toks.append(Punctuation.PLUS_SIGN)
         elif next_char == '-':
             toks.append(Punctuation.MINUS_SIGN)
-        # whitespace
-        elif next_char.isspace():
-            # ignore whitespace
-            continue
-        # constants
-        elif next_char.isdigit():
-            # it's a constant token
-            def is_const_char(c): return c.isalnum() or c in ".+-"
-            # next_char is part of token, so put it back
-            chars.appendleft(next_char)
-            num_tok = take_chars_while(is_const_char, chars)
-
-            toks.append(ConstToken(num_tok))
-        # registers
         elif next_char == '%':
-            # note: we don't permit space b/t prefix and reg name
-            # TODO use takewhile-type function here
-            reg_name = take_chars_while(str.isalpha, chars)
-            toks.append(lookup_reg(reg_name))
-        # labels, symbols, immediates
+            toks.append(Punctuation.PERCENT)
+        elif next_char == ':':
+            toks.append(Punctuation.COLON)
+        elif next_char == '$':
+            toks.append(Punctuation.DOLLAR)
         else:
-            # next_char is part of symbol, so put it back
-            chars.appendleft(next_char)
-            def is_symbol_char(x): return x.isalnum() or x in "_.$"
-            sym = take_chars_while(is_symbol_char, chars)
-            # if symbol is immediately followed by colon, it's a label
-            if chars[0] == ':':
-                chars.popleft()  # consume colon
-                toks.append(Label(sym))
-            elif sym[0] == '$':
-                # probably an immediate
-                try:
-                    toks.append(Immediate(int(sym[1:])))
-                except ValueError:
-                    toks.append(SymToken(sym))
-            else:
-                toks.append(SymToken(sym))
+            raise ParseError(f"Unknown token: {next_char}")
 
     return toks
 
@@ -334,27 +345,31 @@ def tokenize(line: str) -> list[Token]:
 """Parsing"""
 
 
-def is_directive(t: Token):
-    """Check whether the first token in a line is a directive (i.e. a symbol that starts with '.')
-    """
-    if isinstance(t, SymToken) and t[0] == '.':
-        return True
-    return False
-
-
-def is_compiler_directive(statement):
-    tok = statement[0]
-    return isinstance(tok, SymToken) and tok[0] == '.'
-
-
 def sym_to_instr(t: Token) -> Opcode:
     """Parse an instruction mnemonic"""
-    if not (isinstance(t, SymToken) and t.isalpha()):
-        raise ParseError
+    if not (isinstance(t, str) and t.isalnum()):
+        raise ParseError(f"Bad mnemonic: {t}")
 
-    # deal w/ special cases for
-    if t == "cqo":
+    # deal w/ special cases
+    if t == "cqo" or t.startswith("clt"):
         return Opcode.CDQ
+
+    if t.startswith("set"):
+        return Opcode.SETCC
+
+    # movs/movz are also prefixes of mov
+    if t.startswith("movs"):
+        return Opcode.MOVS
+
+    if t.startswith("movz"):
+        return Opcode.MOVZ
+
+    if t.startswith("comi"):
+        return Opcode.CMP
+
+    if t.startswith("mul"):
+        return Opcode.IMUL
+
     CONDITION_CODES = ["e", "ne", "g", "ge",
                        "l", "le", "b", "be", "a", "ae", "po"]
     if t[0] == "j" and t[1:] in CONDITION_CODES:
@@ -370,16 +385,15 @@ def sym_to_instr(t: Token) -> Opcode:
 def expect_next(*, toks: collections.deque[Token], expected: Token):
     next_tok = toks.popleft()
     if next_tok != expected:
-        raise ParseError(f"Expected {expected} but found {next_tok}")
-
-# Operand = Union[Data, Indexed, Memory, Register, Immediate]
+        raise ParseError(
+            f"Expected {expected} but found {next_tok}. Remaining tokens: {toks}")
 
 
 def parse_expr(toks: collections.deque[Token]) -> Expr:
     expr: Expr = []
     while True:
         next_tok = toks.popleft()
-        if isinstance(next_tok, SymToken) or isinstance(next_tok, ConstToken):
+        if isinstance(next_tok, str) or isinstance(next_tok, int):
             expr.append(next_tok)
         elif next_tok == Punctuation.PLUS_SIGN:
             expr.append(Operator.PLUS)
@@ -392,23 +406,51 @@ def parse_expr(toks: collections.deque[Token]) -> Expr:
     return expr
 
 
+def parse_register(toks: collections.deque[Token]) -> Register:
+    expect_next(toks=toks, expected=Punctuation.PERCENT)
+    reg_name = toks.popleft()
+    if not isinstance(reg_name, str):
+        raise ParseError(
+            f"Expected register name after %, found {reg_name}")
+    return lookup_reg(reg_name)
+
+
+def parse_immediate(toks: collections.deque[Token]) -> Immediate:
+    expect_next(toks=toks, expected=Punctuation.DOLLAR)
+    # next token may be punctuation or operator
+    next_tok = toks.popleft()
+    if isinstance(next_tok, int):
+        return Immediate(next_tok)
+    elif next_tok in [Punctuation.PLUS_SIGN, Punctuation.MINUS_SIGN]:
+        # following tok is punctuation
+        imm_val = toks.popleft()
+        if not isinstance(imm_val, int):
+            raise ParseError(f"bad immediate value: ${next_tok}{imm_val}")
+        if next_tok == Punctuation.MINUS_SIGN:
+            return Immediate(-imm_val)
+        return Immediate(imm_val)
+    else:
+        raise ParseError(f"Bad immediate value: ${next_tok}")
+
+
 def parse_next_operand(toks: collections.deque[Token]) -> Operand:
     """Convert a list of tokens following an instruction mnemonic into a list of operands
     accept two forms of memory operands: disp(base) and disp(opt_base,index,opt_scale)
     we don't accept special one-comma form e.g. foo(,1)
     """
 
-    next_tok = toks.popleft()
-    if isinstance(next_tok, Label):
-        # labels (w/ colons) shouldn't appear here
-        raise ParseError(
-            "Found label while trying to parse operands: " + str(next_tok))
-    if isinstance(next_tok, Register) or isinstance(next_tok, Immediate):
-        # it's valid as-is
-        return next_tok
+    if toks[0] == Punctuation.PERCENT:
+        # it's a register
+        return parse_register(toks)
 
-    if isinstance(next_tok, SymToken) and not toks:
-        return next_tok
+    if toks[0] == Punctuation.DOLLAR:
+        # it's an immediate, may have + or - sign
+        return parse_immediate(toks)
+
+    if isinstance(toks[0], str) and len(toks) == 1:
+        # identifier not followed by anything else
+        # is a call or jump target
+        return toks.popleft()
 
     # it's a memory operand
     disp: Expr = []
@@ -417,45 +459,34 @@ def parse_next_operand(toks: collections.deque[Token]) -> Operand:
     scale = 1
 
     # first get displacement
-    if next_tok != Punctuation.OPEN_PAREN:
-        # next_tok is part of displacement, put it back on deque
-        toks.appendleft(next_tok)
+    if toks[0] != Punctuation.OPEN_PAREN:
+        # next_tok is part of displacement
         disp = parse_expr(toks)
-        expect_next(toks=toks, expected=Punctuation.OPEN_PAREN)
+    expect_next(toks=toks, expected=Punctuation.OPEN_PAREN)
 
-    # now base
-    base_tok = toks.popleft()
-    if base_tok != Punctuation.COMMA:
+    # optional base
+    if toks[0] == Punctuation.PERCENT:
+        base = parse_register(toks)
 
-        if isinstance(base_tok, Register):
-            base = base_tok
-        else:
-            raise ParseError(
-                "base of memory operand must be register: " + str(toks))
+    # base register must be followed by close paren or comma
+    next_tok = toks.popleft()
+    if next_tok == Punctuation.CLOSE_PAREN:
+        # we're done, no index or scale
+        return Memory(disp=disp, base=base, idx=None, scale=1)
+    # otherwise next token must be comma
+    if next_tok != Punctuation.COMMA:
+        raise ParseError(
+            "Unexpected token after base register in memory operand: " + str(toks))
 
-        # base register must be followed by close paren or comma
-        next_tok = toks.popleft()
-        if next_tok == Punctuation.CLOSE_PAREN:
-            # we're done, no index or scale
-            return Memory(disp=disp, base=base, idx=None, scale=1)
-        # otherwise next token must be comma
-        if next_tok != Punctuation.COMMA:
-            raise ParseError(
-                "Unexpected token after base register in memory operand: " + str(toks))
-
-    # index
-    index_tok = toks.popleft()
-    if isinstance(index_tok, Register):
-        idx = index_tok
-    else:
-        raise ParseError("Index in memory operand isn't a register")
+    #  optional index
+    if toks[0] == Punctuation.PERCENT:
+        idx = parse_register(toks)
 
     expect_next(toks=toks, expected=Punctuation.COMMA)
 
     # scale
     next_tok = toks.popleft()
-    if isinstance(next_tok, ConstToken):
-        scale = int(next_tok)
+    if isinstance(next_tok, int):
         expect_next(toks=toks, expected=Punctuation.CLOSE_PAREN)
     elif next_tok != Punctuation.CLOSE_PAREN:
         raise ParseError(
@@ -464,58 +495,85 @@ def parse_next_operand(toks: collections.deque[Token]) -> Operand:
     return Memory(disp=disp, base=base, idx=idx, scale=scale)
 
 
-def stmt_to_instruction(stmt: Statement) -> AsmItem:
-    # convert label token to label
-    if len(stmt) == 1 and isinstance(stmt[0], Label):
-        return stmt[0]
+def parse_statement(line: str) -> Union[Label, Instruction, None]:
+    """Return a label or instruction, or None if this is a compiler directive"""
+    tokens = tokenize(line)
+    if not tokens:
+        # empty line
+        return None
 
-    # convert anything else to instruction
-    opcode_tok, operand_toks = stmt[0], stmt[1:]
-    mnemonic = sym_to_instr(opcode_tok)
+    label_or_mnemonic = tokens.popleft()
+    if not isinstance(label_or_mnemonic, str):
+        raise ParseError(
+            f"Statement must start with an identifier but found {label_or_mnemonic}")
 
+    if tokens and tokens[0] == Punctuation.COLON:
+        # it's a label
+        if len(tokens) > 1:
+            raise ParseError(
+                "We don't allow other stuff on the same line as labels")
+        return Label(label_or_mnemonic)
+    if label_or_mnemonic.startswith("."):
+        # it's a compiler directive
+        # note that identifiers starting with periods can be labels (or operands referring to labels)
+        return None
+
+    # it's an instruction
+    mnemonic = sym_to_instr(label_or_mnemonic)
     # convert remaining operands to list of tokens
     operands = []
-    if operand_toks:
-        op_deque = collections.deque(operand_toks)
-        while True:
-            operands.append(parse_next_operand(op_deque))
-            if not op_deque:
-                # we're done
-                break
 
-            # expect comma, then repeat
-            expect_next(toks=op_deque, expected=Punctuation.COMMA)
+    while tokens:
+        operands.append(parse_next_operand(tokens))
+        # expect either comma followed by another operand, or end of list
+        if tokens:
+            expect_next(toks=tokens, expected=Punctuation.COMMA)
+            if not tokens:
+                raise ParseError("Expected another operand after comma")
 
     return Instruction(mnemonic, operands)
 
 
 def parse(filename: str, function_names: set[str]) -> list[AssemblyFunction]:
     asm_functions: list[AssemblyFunction] = []
-
     with open(filename, encoding='utf-8') as f:
         current_function: Optional[AssemblyFunction] = None
 
+        # assume one statement per line; assume labels are on their own line
         for line in f:
-            tokens = tokenize(line)
-
-            if not tokens or is_compiler_directive(tokens):
-                # ignore empty lines and compiler directives
+            label_or_instruction = parse_statement(line)
+            if not label_or_instruction:
+                # it was a compiler directive
                 continue
-            if isinstance(tokens[0], Label) and tokens[0] in function_names:
+
+            if isinstance(label_or_instruction, Label) and label_or_instruction.startswith("_"):
+                # for now use _ as marker that something is a function,
+                # eventually check set of function names
+
+                #   tokens[0] in function_names:
                 # we've found start of a new function
                 if current_function:
                     asm_functions.append(current_function)
                 current_function = AssemblyFunction(
-                    name=tokens[0], instructions=[])
-                if tokens[1:]:
-                    raise NotImplementedError(
-                        "Label and other stuff on same line")
+                    name=label_or_instruction, instructions=[])
+
             elif current_function is None:
-                raise ParseError(
-                    f"instruction found outside of function: {tokens}")
+                if isinstance(label_or_instruction, Instruction):
+                    raise ParseError(
+                        f"instruction found outside of function: {label_or_instruction}")
+                # if it's a label, fine to be outside a function
             else:
                 # add instruction to current function
-                current_function.instructions.append(
-                    stmt_to_instruction(tokens))
+                current_function.instructions.append(label_or_instruction)
+
+        # we're done, append last function
+        if current_function:
+            asm_functions.append(current_function)
 
     return asm_functions
+
+
+if __name__ == "__main__":
+    asm = parse("asm/static_vars_at_exit.s", set())
+    for assembly_fun in asm:
+        print(assembly_fun)
