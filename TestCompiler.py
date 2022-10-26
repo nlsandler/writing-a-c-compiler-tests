@@ -87,12 +87,6 @@ def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTe
 
 def build_test_class(chapter: int, compiler: Path, options: List[str], stage: str, extra_credit: TestBase.ExtraCredit, skip_invalid: bool, optimization: AssemblyTest.Optimizations, int_only: bool) -> Tuple[str, Callable]:
 
-    # add optimization options (they're cumulative)
-    if optimization == AssemblyTest.Optimizations.CONSTANT_FOLD:
-        options.append("--fold-constants")
-    elif optimization == AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM:
-        options.extend(["--fold-constants", "--eliminate-unreachable-code"])
-
     test_dir = Path(__file__).parent.joinpath(
         f"chapter{chapter}").resolve()
 
@@ -242,12 +236,17 @@ def main():
         chapters = range(2, args.chapter + 1)
 
     stage = args.stage or "run"  # by default, compile and run the program
-
+    cc_options = args.extra_cc_options
+    # add optimization options (they're cumulative)
+    if args.optimization == AssemblyTest.Optimizations.CONSTANT_FOLD:
+        cc_options.append("--fold-constants")
+    elif args.optimization == AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM:
+        cc_options.extend(["--fold-constants", "--eliminate-unreachable-code"])
     # create a subclass of TestChapter for each chapter,
     # dynamically adding a test case for each source program
     for chapter in chapters:
         class_name, class_type = build_test_class(
-            chapter, compiler, args.extra_cc_options, stage, extra_credit, args.skip_invalid, args.optimization, args.int_only)
+            chapter, compiler, cc_options, stage, extra_credit, args.skip_invalid, args.optimization, args.int_only)
         globals()[class_name] = class_type
 
     tests = unittest.defaultTestLoader.loadTestsFromName('TestCompiler')

@@ -356,7 +356,10 @@ def sym_to_instr(t: Token) -> Opcode:
     if t.startswith("set"):
         return Opcode.SETCC
 
-    # movs/movz are also prefixes of mov
+    # overlapping prefixes
+    if t.startswith("movsd"):
+        return Opcode.MOV
+
     if t.startswith("movs"):
         return Opcode.MOVS
 

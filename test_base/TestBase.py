@@ -231,7 +231,10 @@ class TestChapter(unittest.TestCase):
         client_source = replace_stem(program_path, program_path.stem+"_client")
 
         gcc_build_obj(client_source)
-        self.invoke_compiler(program_path, cc_opt="-c")
+
+        compilation_result = self.invoke_compiler(program_path, cc_opt="-c")
+        self.assertEqual(compilation_result.returncode, 0,
+                         msg=f"Compilation failed for cmd: {compilation_result.args} with output {compilation_result.stdout} and stderr {compilation_result.stderr}")
 
         # link both object files and run resulting executable
         result = self.gcc_compile_and_run(program_path.with_suffix(

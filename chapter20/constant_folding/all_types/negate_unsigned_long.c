@@ -1,4 +1,7 @@
-unsigned long target() { unsigned long l = -(9223372036854775900ul); }
+unsigned long target() {
+  unsigned long l = -(9223372036854775900ul);
+  return l;
+}
 
 int main() {
   // equivalent test to negate_long
