@@ -1,19 +1,13 @@
-int foo()
-{
-    return 10;
+int callee() { return 1 / 0; }
+
+int target() {
+  // when we enable unreachable code elimination and constant folding,
+  // call to callee() shoudl be optimized away, initialized assignmnet (i = 10
+  // should not)
+  int i = 0;
+  for (i = 10; 0; i = i * 100)
+    callee();
+  return i;
 }
 
-int bar()
-{
-    return 1 / 0;
-}
-
-int main()
-{
-    // when we enable unreachable code elimination and constant folding,
-    // call to bar() should be optimized away, call to foo() shouldn't
-    int i = 0;
-    for (i = foo(); 0; i = i * 100)
-        bar();
-    return i;
-}
+int main() { return target(); }

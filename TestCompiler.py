@@ -57,8 +57,8 @@ def make_lib_test(program_path: Path) -> Callable:
 
 def make_constant_folding_test(program_path: Path) -> Callable:
 
-    def test_fold_const(self: AssemblyTest.OptimizationTest):
-        self.constant_fold_test(program_path)
+    def test_fold_const(self: AssemblyTest.ConstantFoldingTest):
+        self.optimization_test(program_path)
 
     return test_fold_const
 
@@ -74,14 +74,18 @@ def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTe
     if chapter < 20:
         return map(Path, TestBase.DIRECTORIES_BY_STAGE[stage]["valid"])
     if chapter == 20:
+
         if optimization == AssemblyTest.Optimizations.CONSTANT_FOLD:
             base_path = Path("constant_folding")
             test_dirs = [base_path / "int_only"]
             if not int_only:
                 test_dirs.append(base_path / "all_types")
-            return test_dirs
+        elif optimization == AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM:
+            test_dirs = [Path("unreachable_code_elimination")]
         else:
-            raise NotImplementedError("still gotta figure this out")
+            raise NotImplementedError("no tests for this yet")
+
+        return test_dirs
     raise NotImplementedError("reg allocation tests")
 
 
@@ -90,16 +94,29 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
     test_dir = Path(__file__).parent.joinpath(
         f"chapter{chapter}").resolve()
 
-    if chapter == 20:
-        base_class: Type[TestBase.TestChapter] = AssemblyTest.OptimizationTest
-    else:
-        base_class = TestBase.TestChapter
+    testclass_name = f"TestChapter{chapter}"
 
     testclass_attrs = {"test_dir": test_dir,
                        "cc": compiler,
                        "options": options,
                        "exit_stage": None if stage == "run" else stage,
                        "extra_credit": extra_credit}
+
+    if chapter == 20:
+
+        if optimization == AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM:
+            # don't go through usual test-finding process for unreachable code elimination tests
+            testclass_attrs["test_dir"] = test_dir / \
+                "unreachable_code_elimination"
+            testclass_type = type(
+                testclass_name, (AssemblyTest.UnreachableCodeTest,), testclass_attrs)
+            return testclass_name, testclass_type
+        elif optimization == AssemblyTest.Optimizations.CONSTANT_FOLD:
+            base_class: Type[TestBase.TestChapter] = AssemblyTest.ConstantFoldingTest
+        else:
+            raise NotImplementedError("other optimizations")
+    else:
+        base_class = TestBase.TestChapter
 
     # generate invalid test cases up to the appropriate stage
     # Note: there are no valid optimizaton tests
@@ -171,7 +188,6 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
                     testclass_attrs[test_name] = make_valid_test(
                         program)
 
-    testclass_name = f"TestChapter{chapter}"
     testclass_type = type(
         testclass_name, (base_class,), testclass_attrs)
     return testclass_name, testclass_type
@@ -211,7 +227,10 @@ def parse_arguments() -> argparse.Namespace:
     # optimization tests
     optimize_opts = parser.add_mutually_exclusive_group()
     optimize_opts.add_argument('--fold-constants', action='store_const', dest="optimization",
-                               const=AssemblyTest.Optimizations.CONSTANT_FOLD, help='In chapter 20, only run constant folding tests')
+                               const=AssemblyTest.Optimizations.CONSTANT_FOLD, help='Enable constant folding, and run constant folding tests in chapter 20')
+    optimize_opts.add_argument('--eliminate-unreachable-code', action='store_const', dest="optimization",
+                               const=AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM, help="Enable constant folding and unreachable code elimination; run unreachable code elimination tests in chapter 20"
+                               )
     parser.add_argument("--int-only", action="store_true",
                         help="Only run optimization tests that use Part I language features")
     # extra args to pass through to compiler, should be followed by --
