@@ -168,6 +168,9 @@ class UnreachableCodeTest(OptimizationTest):
         program_path = self.test_dir / "remove_useless_starting_label.c"
         self.optimization_test(program_path)
 
+    def test_loop_in_dead_branch(self):
+        program_path = self.test_dir / "loop_in_dead_branch.c"
+        self.optimization_test(program_path)
     # test for:
     # - we _do_ remove unreachable blocks
     #   x constant_if_else and dead_after_if_else give basic coverage
