@@ -80,10 +80,8 @@ def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTe
             test_dirs = [base_path / "int_only"]
             if not int_only:
                 test_dirs.append(base_path / "all_types")
-        elif optimization == AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM:
-            test_dirs = [Path("unreachable_code_elimination")]
         else:
-            raise NotImplementedError("no tests for this yet")
+            raise NotImplementedError("we handle these differently")
 
         return test_dirs
     raise NotImplementedError("reg allocation tests")
@@ -102,6 +100,7 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
                        "exit_stage": None if stage == "run" else stage,
                        "extra_credit": extra_credit}
 
+    base_class: Type[TestBase.TestChapter] = TestBase.TestChapter
     if chapter == 20:
 
         if optimization == AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM:
@@ -111,12 +110,18 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
             testclass_type = type(
                 testclass_name, (AssemblyTest.UnreachableCodeTest,), testclass_attrs)
             return testclass_name, testclass_type
+        elif optimization == AssemblyTest.Optimizations.COPY_PROP:
+            # don't go through usual test-finding process for copy prop tests
+            # TODO deal with not-int-only tests
+            testclass_attrs["test_dir"] = test_dir / \
+                "copy_propagation" / "int_only"
+            testclass_type = type(
+                testclass_name, (AssemblyTest.CopyPropTest,), testclass_attrs)
+            return testclass_name, testclass_type
         elif optimization == AssemblyTest.Optimizations.CONSTANT_FOLD:
-            base_class: Type[TestBase.TestChapter] = AssemblyTest.ConstantFoldingTest
+            base_class = AssemblyTest.ConstantFoldingTest
         else:
             raise NotImplementedError("other optimizations")
-    else:
-        base_class = TestBase.TestChapter
 
     # generate invalid test cases up to the appropriate stage
     # Note: there are no valid optimizaton tests
@@ -231,6 +236,8 @@ def parse_arguments() -> argparse.Namespace:
     optimize_opts.add_argument('--eliminate-unreachable-code', action='store_const', dest="optimization",
                                const=AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM, help="Enable constant folding and unreachable code elimination; run unreachable code elimination tests in chapter 20"
                                )
+    optimize_opts.add_argument('--propagate-copies', action='store_const', dest="optimization", const=AssemblyTest.Optimizations.COPY_PROP,
+                               help="Enable constant folding, unreachable code elimination, and copy propagation")
     parser.add_argument("--int-only", action="store_true",
                         help="Only run optimization tests that use Part I language features")
     # extra args to pass through to compiler, should be followed by --
@@ -261,6 +268,9 @@ def main():
         cc_options.append("--fold-constants")
     elif args.optimization == AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM:
         cc_options.extend(["--fold-constants", "--eliminate-unreachable-code"])
+    elif args.optimization == AssemblyTest.Optimizations.COPY_PROP:
+        cc_options.extend(
+            ["--fold-constants", "--eliminate-unreachable-code", "--propagate-copies"])
     # create a subclass of TestChapter for each chapter,
     # dynamically adding a test case for each source program
     for chapter in chapters:

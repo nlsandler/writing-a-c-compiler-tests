@@ -1,9 +1,8 @@
-from sqlite3 import ProgrammingError
 import sys
 from enum import Enum, unique, auto
 from test_base import TestBase
 from test_base import AssemblyParser
-from test_base.AssemblyParser import Opcode
+from test_base.AssemblyParser import Immediate, Instruction, Label, Opcode, Operand, Register
 from typing import Union
 from pathlib import Path
 
@@ -77,9 +76,9 @@ def build_msg(msg, *, bad_instructions=None, full_prog=None, program_path=None):
     return '\n'.join(msg_lines)
 
 
-def is_computation(i: Union[AssemblyParser.Instruction, AssemblyParser.Label]):
+def is_computation(i: Union[AssemblyParser.Instruction, Label]):
     """Check whether this is an acceptable instruction to see in a fully constant-folded function"""
-    if isinstance(i, AssemblyParser.Label):
+    if isinstance(i, Label):
         return False
 
     if i.mnemonic in NOT_COMPUTE_INSTRUCTIONS:
@@ -114,7 +113,7 @@ class UnreachableCodeTest(OptimizationTest):
         # make sure that we've eliminated all jumps, labels, and function cals
         # (in our test cases, all calls to other functions from target are in dead code)
         def bad(i):
-            if isinstance(i, AssemblyParser.Label):
+            if isinstance(i, Label):
                 return True
             if i.mnemonic in [Opcode.JMP, Opcode.JMPCC, Opcode.CALL]:
                 return True
@@ -190,6 +189,88 @@ class UnreachableCodeTest(OptimizationTest):
     #   remove_useless_starting_label and others
     # x we do not remove jump at end of final block
 
+
+def destination(i: Instruction):
+    # no (explicit) destination operand
+    if i.mnemonic in [Opcode.PUSH, Opcode.CDQ, Opcode.JMP, Opcode.JMPCC, Opcode.CMP, Opcode.CALL, Opcode.RET]:
+        return None
+    # otherwise last operand is desintation
+    return i.operands[-1]
+
+
+class CopyPropTest(OptimizationTest):
+
+    def find_return_value(self, parsed_asm: AssemblyParser.AssemblyFunction) -> Operand:
+        # TODO this assumes int return value
+        reversed_instrs = list(reversed(parsed_asm.instructions))
+        # last instruction should be ret
+        last_instruction = reversed_instrs[0]
+
+        def is_ret(i):
+            return (isinstance(i, Instruction) and i.mnemonic == Opcode.RET)
+
+        def is_mov_to_eax(i):
+            return isinstance(i, Instruction) and i.mnemonic == Opcode.MOV and i.operands[1] == Register.AX
+
+        # if asssembly doesn't match our expectations in ways that aren't specifically under test (e.g. there are multiple return value)
+        # raise an error
+        if not is_ret(last_instruction):
+            raise RuntimeError(
+                f"Last instruction in function should be ret but found {last_instruction}")
+
+        # no other ret instructions in the program
+        if any(is_ret(
+                i) for i in reversed_instrs[1:]):
+            raise RuntimeError(
+                "Last instruction should be only ret instruction")
+
+        # find instruction of the form mov op, eax
+        retval_instr: Instruction
+        retval_idx, retval_instr = next((idx, instr) for idx, instr in enumerate(
+            reversed_instrs) if is_mov_to_eax(instr))
+
+        def could_overwrite_eax(i: Union[Label, Instruction]):
+            # if this appears after an instruction of the form mov something, eax, could it clobber return value
+            if isinstance(i, Label):
+                return True  # could jump over mov instruction to reach ret
+
+            if i.mnemonic in [Opcode.CALL, Opcode.JMP, Opcode.JMPCC, Opcode.DIV, Opcode.IDIV]:
+                return True
+
+            if destination(i) == Register.AX:
+                return True
+
+            return False
+
+        # make sure this is definitely the correct instruction
+        clobber_instr = next((could_overwrite_eax(i)
+                             for i in reversed_instrs[:retval_idx]), None)
+        if clobber_instr:
+            raise RuntimeError(
+                f"Couldn't find return value: might be clobbered by {clobber_instr} ")
+
+        # now return src of mov instruction; this is our return value
+        return retval_instr.operands[0]
+
+    def retval_test(self, expected_retval: int, program_path: Path):
+
+        def validate_return_value(parsed_asm, *, program_path: Path):
+            expected_op = Immediate(expected_retval)
+            actual_retval = self.find_return_value(parsed_asm)
+            self.assertEqual(expected_op, actual_retval,
+                             msg=f"Expected {expected_op} as return value, found {actual_retval} ({program_path})")
+
+        self.optimization_test(program_path=program_path,
+                               validator=validate_return_value)
+
+    def test_constant_prop(self):
+        program_path = self.test_dir / "copy_prop_const_fold.c"
+
+        self.retval_test(6, program_path=program_path)
+
+    def test_fig_20_8(self):
+        program_path = self.test_dir / "fig_20_8.c"
+        self.retval_test(4, program_path=program_path)
     """
     things we could test with generic "make sure there are no jumps/labels/function calls and exactly one ret":
         - remove unreachable blocks

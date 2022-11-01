@@ -88,8 +88,11 @@ def gcc_build_obj(prog: Path) -> None:
     # which violates the System V ABI and breaks ABI compatibility
     # with our implementation
     # see https://stackoverflow.com/a/36760539
-    subprocess.run(["gcc", prog, "-c", "-fstack-protector-all", "-Wno-incompatible-library-redeclaration",
-                   "-o", objfile], check=True)
+    try:
+        subprocess.run(["gcc", prog, "-c", "-fstack-protector-all", "-Wno-incompatible-library-redeclaration",
+                        "-o", objfile], check=True)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(e.stderr) from e
 
 
 class TestChapter(unittest.TestCase):
@@ -118,8 +121,11 @@ class TestChapter(unittest.TestCase):
             exe = replace_stem(exe, f"expected_{exe.stem}")
 
         # capture output so we don't see warnings, and so we can report failures
-        subprocess.run(["gcc", "-Wno-incompatible-library-redeclaration"] + list(args) + ["-o", exe],
-                       check=True, capture_output=True)
+        try:
+            subprocess.run(["gcc", "-Wno-incompatible-library-redeclaration"] + list(args) + ["-o", exe],
+                           check=True, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(e.stderr) from e
         return subprocess.run([exe], check=False, text=True, capture_output=True)
 
     def invoke_compiler(self, program_path: Path, cc_opt: Optional[str] = None) -> subprocess.CompletedProcess:
@@ -135,7 +141,6 @@ class TestChapter(unittest.TestCase):
             args.append(cc_opt)
 
         args.append(program_path)
-
         proc = subprocess.run(args, capture_output=True,
                               check=False, text=True)
         return proc
