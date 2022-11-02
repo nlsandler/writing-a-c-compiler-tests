@@ -254,7 +254,8 @@ class CopyPropTest(OptimizationTest):
             "alias_analysis": cls.make_retval_test(24, path),
             "char_type_conversion": cls.make_retval_test(1, path),
             "copy_struct": cls.make_same_arg_test("callee", path),
-            "store_doesnt_kill": cls.make_same_arg_test("callee", path)
+            "store_doesnt_kill": cls.make_same_arg_test("callee", path),
+            "propagate_null_pointer": cls.make_retval_test(0, path)
         }
 
         # default test: compile, run and check results without inspecting assembly

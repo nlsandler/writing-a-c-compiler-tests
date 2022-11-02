@@ -92,6 +92,30 @@ def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTe
     raise NotImplementedError("reg allocation tests")
 
 
+def make_test(program: Path, lib_subdir: Path, stage: str) -> Callable:
+    if stage == "run":
+        # optimization tests are special
+        if any(p for p in program.parents if p.stem == "constant_folding"):
+            return make_constant_folding_test(
+                program)
+        elif any(p for p in program.parents if p.stem == "copy_propagation"):
+            return AssemblyTest.CopyPropTest.get_test_for_path(
+                program)
+        # programs in valid/libraries are special
+        elif lib_subdir not in program.parents:
+            return make_running_test(
+                program)
+        elif program.stem.endswith("client"):
+            return make_client_test(
+                program)
+        else:
+            return make_lib_test(
+                program)
+    else:
+        return make_valid_test(
+            program)
+
+
 def build_test_class(chapter: int, compiler: Path, options: List[str], stage: str, extra_credit: TestBase.ExtraCredit, skip_invalid: bool, optimization: AssemblyTest.Optimizations, int_only: bool) -> Tuple[str, Callable]:
 
     test_dir = Path(__file__).parent.joinpath(
@@ -148,27 +172,7 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
         lib_subdir = valid_directory / "libraries"
         for program in valid_directory.rglob("*.c"):
             test_name = f"test_{valid_subdir}_{program.stem}"
-            if stage == "run":
-                # optimization tests are special
-                if any(p for p in program.parents if p.stem == "constant_folding"):
-                    testclass_attrs[test_name] = make_constant_folding_test(
-                        program)
-                elif any(p for p in program.parents if p.stem == "copy_propagation"):
-                    testclass_attrs[test_name] = AssemblyTest.CopyPropTest.get_test_for_path(
-                        program)
-                # programs in valid/libraries are special
-                elif lib_subdir not in program.parents:
-                    testclass_attrs[test_name] = make_running_test(
-                        program)
-                elif program.stem.endswith("client"):
-                    testclass_attrs[test_name] = make_client_test(
-                        program)
-                else:
-                    testclass_attrs[test_name] = make_lib_test(
-                        program)
-            else:
-                testclass_attrs[test_name] = make_valid_test(
-                    program)
+            testclass_attrs[test_name] = make_test(program, lib_subdir, stage)
 
         # add extra-credit tests
         # TODO refactor w/ non-extra-credit code above
@@ -178,27 +182,8 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
             valid_extra_credit_lib_subdir = valid_extra_credit_directory / "libraries"
             for program in extra_credit_programs(valid_extra_credit_directory, extra_credit):
                 test_name = f"test_{valid_subdir}_extra_credit_{program.stem}"
-                if stage == "run":
-                    # optimization tests are special
-                    if any(p for p in program.parents if p.stem == "constant_folding"):
-                        testclass_attrs[test_name] = make_constant_folding_test(
-                            program)
-                    elif any(p for p in program.parents if p.stem == "copy_propagation"):
-                        testclass_attrs[test_name] = AssemblyTest.CopyPropTest.get_test_for_path(
-                            program)
-                    # programs in valid/libraries are special
-                    elif valid_extra_credit_lib_subdir not in program.parents:
-                        testclass_attrs[test_name] = make_running_test(
-                            program)
-                    elif program.stem.endswith("client"):
-                        testclass_attrs[test_name] = make_client_test(
-                            program)
-                    else:
-                        testclass_attrs[test_name] = make_lib_test(
-                            program)
-                else:
-                    testclass_attrs[test_name] = make_valid_test(
-                        program)
+                testclass_attrs[test_name] = make_test(
+                    program, valid_extra_credit_lib_subdir, stage)
 
     testclass_type = type(
         testclass_name, (base_class,), testclass_attrs)
