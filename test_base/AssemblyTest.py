@@ -233,37 +233,44 @@ def could_overwrite_reg(i: Union[Label, Instruction], r: Register) -> bool:
 
 class CopyPropTest(OptimizationTest):
 
+    TESTS = None
+
     @classmethod
     def get_test_for_path(cls, path: Path):
-        TESTS = {
-            "copy_prop_const_fold": cls.make_retval_test(6, path),
-            "fig_20_8": cls.make_retval_test(4, path),
-            "init_all_copies": cls.make_retval_test(3, path),
-            "prop_static_var": cls.make_retval_test(10, path),
-            "killed_then_redefined": cls.make_retval_test(2, path),
-            "complex_const_fold": cls.make_retval_test(-1, path),
-            "remainder_test": cls.make_retval_test(1, path),
-            "multi_path": cls.make_retval_test(3, path),
-            "loop": cls.make_retval_test(10, path),
-            "multi_path_no_kill": cls.make_retval_test(3, path),
-            "propagate_fun_args": cls.make_arg_test("callee", [None, 20], path),
-            "kill_and_add_copies": cls.make_arg_test("callee", [10, None], path),
-            "propagate_var": cls.make_same_arg_test("callee", path),
-            "multi_instance_same_copy": cls.make_same_arg_test("callee", path),
-            "redundant_copies": cls.make_redundant_copies_test(path),
-            "alias_analysis": cls.make_retval_test(24, path),
-            "char_type_conversion": cls.make_retval_test(1, path),
-            "copy_struct": cls.make_same_arg_test("callee", path),
-            "store_doesnt_kill": cls.make_same_arg_test("callee", path),
-            "propagate_null_pointer": cls.make_retval_test(0, path)
-        }
+        if cls.TESTS is None:
+            test_dict = {
+                "copy_prop_const_fold": lambda path: cls.make_retval_test(6, path),
+                "fig_20_8": lambda path: cls.make_retval_test(4, path),
+                "init_all_copies": lambda path: cls.make_retval_test(3, path),
+                "prop_static_var": lambda path: cls.make_retval_test(10, path),
+                "killed_then_redefined": lambda path: cls.make_retval_test(2, path),
+                "complex_const_fold": lambda path: cls.make_retval_test(-1, path),
+                "remainder_test": lambda path: cls.make_retval_test(1, path),
+                "multi_path": lambda path: cls.make_retval_test(3, path),
+                "loop": lambda path: cls.make_retval_test(10, path),
+                "multi_path_no_kill": lambda path: cls.make_retval_test(3, path),
+                "propagate_fun_args": lambda path: cls.make_arg_test("callee", [None, 20], path),
+                "kill_and_add_copies": lambda path: cls.make_arg_test("callee", [10, None], path),
+                "propagate_var": lambda path: cls.make_same_arg_test("callee", path),
+                "multi_instance_same_copy": lambda path: cls.make_same_arg_test("callee", path),
+                "redundant_copies": lambda path: cls.make_redundant_copies_test(path),
+                "alias_analysis": lambda path: cls.make_retval_test(24, path),
+                "char_type_conversion": lambda path: cls.make_retval_test(1, path),
+                "copy_struct": lambda path: cls.make_same_arg_test("callee", path),
+                "store_doesnt_kill": lambda path: cls.make_same_arg_test("callee", path),
+                "propagate_null_pointer": lambda path: cls.make_retval_test(0, path),
+                "const_fold_sign_extend": lambda path: cls.make_retval_test(-1000, path)
+            }
+            # default test: compile, run and check results without inspecting assembly
 
-        # default test: compile, run and check results without inspecting assembly
-        def test_valid(self: TestBase.TestChapter):
-            self.compile_and_run(path)
+            def default(p: Path):
+                def test_valid(self: TestBase.TestChapter):
+                    self.compile_and_run(p)
+                return test_valid
 
-        test_dict = defaultdict(lambda: test_valid, TESTS)
-        return test_dict[path.stem]
+            cls.TESTS = defaultdict(lambda: default, test_dict)
+
+        return cls.TESTS[path.stem](path)
 
     @ staticmethod
     def find_return_value(parsed_asm: AssemblyParser.AssemblyFunction) -> Operand:

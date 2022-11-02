@@ -421,6 +421,8 @@ def parse_immediate(toks: collections.deque[Token]) -> Immediate:
     expect_next(toks=toks, expected=Punctuation.DOLLAR)
     # next token may be punctuation or operator
     next_tok = toks.popleft()
+    # TODO this won't correctly normalize signed/unsigned representations of same value
+    # e.g. -1 and 255 are the same in one-byte instructions
     if isinstance(next_tok, int):
         return Immediate(next_tok)
     elif next_tok in [Punctuation.PLUS_SIGN, Punctuation.MINUS_SIGN]:
