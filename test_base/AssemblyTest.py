@@ -237,20 +237,24 @@ class CopyPropTest(OptimizationTest):
     def get_test_for_path(cls, path: Path):
         TESTS = {
             "copy_prop_const_fold": cls.make_retval_test(6, path),
-            "fig_20_8.c": cls.make_retval_test(4, path),
-            "init_all_copies.c": cls.make_retval_test(3, path),
-            "prop_static_var.c": cls.make_retval_test(10, path),
-            "killed_then_redefined.c": cls.make_retval_test(2, path),
-            "complex_const_fold.c": cls.make_retval_test(-1, path),
-            "remainder_test.c": cls.make_retval_test(1, path),
-            "multi_path.c": cls.make_retval_test(3, path),
-            "loop.c": cls.make_retval_test(10, path),
-            "multi_path_no_kill.c": cls.make_retval_test(3, path),
-            "propagate_fun_args.c": cls.make_arg_test("callee", [None, 20], path),
-            "kill_and_add_copies.c": cls.make_arg_test("callee", [10, None], path),
-            "propagate_var.c": cls.make_same_arg_test("callee", path),
-            "multi_instance_same_copy.c": cls.make_same_arg_test("callee", path),
-            "redundant_copies.c": cls.make_redundant_copies_test(path)
+            "fig_20_8": cls.make_retval_test(4, path),
+            "init_all_copies": cls.make_retval_test(3, path),
+            "prop_static_var": cls.make_retval_test(10, path),
+            "killed_then_redefined": cls.make_retval_test(2, path),
+            "complex_const_fold": cls.make_retval_test(-1, path),
+            "remainder_test": cls.make_retval_test(1, path),
+            "multi_path": cls.make_retval_test(3, path),
+            "loop": cls.make_retval_test(10, path),
+            "multi_path_no_kill": cls.make_retval_test(3, path),
+            "propagate_fun_args": cls.make_arg_test("callee", [None, 20], path),
+            "kill_and_add_copies": cls.make_arg_test("callee", [10, None], path),
+            "propagate_var": cls.make_same_arg_test("callee", path),
+            "multi_instance_same_copy": cls.make_same_arg_test("callee", path),
+            "redundant_copies": cls.make_redundant_copies_test(path),
+            "alias_analysis": cls.make_retval_test(24, path),
+            "char_type_conversion": cls.make_retval_test(1, path),
+            "copy_struct": cls.make_same_arg_test("callee", path),
+            "store_doesnt_kill": cls.make_same_arg_test("callee", path)
         }
 
         # default test: compile, run and check results without inspecting assembly
@@ -260,7 +264,7 @@ class CopyPropTest(OptimizationTest):
         test_dict = defaultdict(lambda: test_valid, TESTS)
         return test_dict[path.stem]
 
-    @staticmethod
+    @ staticmethod
     def find_return_value(parsed_asm: AssemblyParser.AssemblyFunction) -> Operand:
         # TODO this assumes int return value
         reversed_instrs = list(reversed(parsed_asm.instructions))
@@ -289,7 +293,7 @@ class CopyPropTest(OptimizationTest):
 
         # make sure this is definitely the correct instruction
         clobber_instr = next((could_overwrite_reg(i, Register.AX)
-                             for i in reversed_instrs[:retval_idx]), None)
+                              for i in reversed_instrs[:retval_idx]), None)
         if clobber_instr:
             raise RuntimeError(
                 f"Couldn't find return value: might be clobbered by {clobber_instr} ")
@@ -297,7 +301,7 @@ class CopyPropTest(OptimizationTest):
         # now return src of mov instruction; this is our return value
         return retval_instr.operands[0]
 
-    @staticmethod
+    @ staticmethod
     def make_retval_test(expected_retval: Union[int, str], program_path: Path) -> Callable:
 
         expected_op: Operand
@@ -318,7 +322,7 @@ class CopyPropTest(OptimizationTest):
                                    validator=validate_return_value)
         return test
 
-    @staticmethod
+    @ staticmethod
     def find_args(callee: str, arg_count: int, parsed_asm: AssemblyParser.AssemblyFunction) -> list[Optional[Operand]]:
         # TODO handle floating args
         # TODO refactor w/ find_return-value
@@ -372,7 +376,6 @@ class CopyPropTest(OptimizationTest):
             def validate_args(parsed_asm, *, program_path: Path):
                 actual_args = self.find_args(
                     callee, 2, parsed_asm)
-
                 # they're the same value if:
                 # same value moved into EDI and ESI, or
                 # EDI is moved into ESI, or

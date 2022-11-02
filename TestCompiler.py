@@ -153,6 +153,9 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
                 if any(p for p in program.parents if p.stem == "constant_folding"):
                     testclass_attrs[test_name] = make_constant_folding_test(
                         program)
+                elif any(p for p in program.parents if p.stem == "copy_propagation"):
+                    testclass_attrs[test_name] = AssemblyTest.CopyPropTest.get_test_for_path(
+                        program)
                 # programs in valid/libraries are special
                 elif lib_subdir not in program.parents:
                     testclass_attrs[test_name] = make_running_test(
@@ -180,7 +183,7 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
                     if any(p for p in program.parents if p.stem == "constant_folding"):
                         testclass_attrs[test_name] = make_constant_folding_test(
                             program)
-                    if any(p for p in program.parents if p.stem == "copy_propagation"):
+                    elif any(p for p in program.parents if p.stem == "copy_propagation"):
                         testclass_attrs[test_name] = AssemblyTest.CopyPropTest.get_test_for_path(
                             program)
                     # programs in valid/libraries are special
