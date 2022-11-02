@@ -1,4 +1,9 @@
-int callee(int i) { return i == 4; }
+static int is_called;
+
+int callee(int i) {
+  is_called = 1;
+  return i == 4;
+}
 
 int target() {
   int y = 3;
@@ -10,4 +15,7 @@ int target() {
   return y; // should become return 4
 }
 
-int main() { return target(); }
+int main() {
+  int result = target();
+  return result == 4 && is_called;
+}

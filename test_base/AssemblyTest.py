@@ -1,10 +1,12 @@
+from itertools import zip_longest
 import sys
 from enum import Enum, unique, auto
 from test_base import TestBase
 from test_base import AssemblyParser
 from test_base.AssemblyParser import Immediate, Instruction, Label, Opcode, Operand, Register
-from typing import Union
+from typing import Union, Optional
 from pathlib import Path
+import subprocess
 
 
 @unique
@@ -46,7 +48,10 @@ class OptimizationTest(TestBase.TestChapter):
 
         # now compile to assembly
         # note: don't need to add --fold-constants b/c it's already in cc_opt
-        self.invoke_compiler(program_path, cc_opt="-s")
+        try:
+            self.invoke_compiler(program_path, cc_opt="-s").check_returncode()
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(e.stderr) from e
         asm = program_path.with_suffix(".s")
 
         # compile the assembly code with GCC, run it, and make sure it gives expected result
@@ -55,7 +60,7 @@ class OptimizationTest(TestBase.TestChapter):
 
         # make sure we actually performed the optimization
         parsed_asm = self.get_target_functions(
-            asm, target_fun="target", other_funs=set(["main", "callee"]))
+            asm, target_fun="target", other_funs=set(["main", "callee", "count_down", "set_x"]))
 
         # validate_assembly is baseline assembly validation but we can override it for specific programs
         if not validator:
@@ -110,7 +115,7 @@ class UnreachableCodeTest(OptimizationTest):
                              msg=f"Expected at most one ret instruction, but found {ret_instruction_count}")
 
     def validate_assembly(self, parsed_asm, *, program_path: Path):
-        # make sure that we've eliminated all jumps, labels, and function cals
+        # make sure that we've eliminated all jumps, labels, and function calls
         # (in our test cases, all calls to other functions from target are in dead code)
         def bad(i):
             if isinstance(i, Label):
@@ -198,6 +203,33 @@ def destination(i: Instruction):
     return i.operands[-1]
 
 
+def is_mov_to(i: Union[Label, Instruction], r: Register) -> bool:
+    return isinstance(i, Instruction) and i.mnemonic == Opcode.MOV and i.operands[1] == r
+
+
+def could_overwrite_reg(i: Union[Label, Instruction], r: Register) -> bool:
+    # if this appears after an instruction of the form mov something, eax, could it clobber return value
+    if isinstance(i, Label):
+        return True  # could jump over mov instruction to reach ret
+
+    # function calls can clobber registers and jmp means we'll never reach ret
+    # conditional jump is actually okay if this is still last mov before ret
+    # and there are no intervening labels (it's still in ret's only predecessor)
+    if i.mnemonic in [Opcode.CALL, Opcode.JMP]:
+        return True
+
+    if i.mnemonic in [Opcode.DIV, Opcode.IDIV] and r in [Register.AX, Register.DX]:
+        return True
+
+    if i.mnemonic == Opcode.CDQ and r == Register.DX:
+        return True
+
+    if destination(i) == r:
+        return True
+
+    return False
+
+
 class CopyPropTest(OptimizationTest):
 
     def find_return_value(self, parsed_asm: AssemblyParser.AssemblyFunction) -> Operand:
@@ -208,9 +240,6 @@ class CopyPropTest(OptimizationTest):
 
         def is_ret(i):
             return (isinstance(i, Instruction) and i.mnemonic == Opcode.RET)
-
-        def is_mov_to_eax(i):
-            return isinstance(i, Instruction) and i.mnemonic == Opcode.MOV and i.operands[1] == Register.AX
 
         # if asssembly doesn't match our expectations in ways that aren't specifically under test (e.g. there are multiple return value)
         # raise an error
@@ -227,23 +256,10 @@ class CopyPropTest(OptimizationTest):
         # find instruction of the form mov op, eax
         retval_instr: Instruction
         retval_idx, retval_instr = next((idx, instr) for idx, instr in enumerate(
-            reversed_instrs) if is_mov_to_eax(instr))
-
-        def could_overwrite_eax(i: Union[Label, Instruction]):
-            # if this appears after an instruction of the form mov something, eax, could it clobber return value
-            if isinstance(i, Label):
-                return True  # could jump over mov instruction to reach ret
-
-            if i.mnemonic in [Opcode.CALL, Opcode.JMP, Opcode.JMPCC, Opcode.DIV, Opcode.IDIV]:
-                return True
-
-            if destination(i) == Register.AX:
-                return True
-
-            return False
+            reversed_instrs) if is_mov_to(instr, Register.AX))
 
         # make sure this is definitely the correct instruction
-        clobber_instr = next((could_overwrite_eax(i)
+        clobber_instr = next((could_overwrite_reg(i, Register.AX)
                              for i in reversed_instrs[:retval_idx]), None)
         if clobber_instr:
             raise RuntimeError(
@@ -252,10 +268,18 @@ class CopyPropTest(OptimizationTest):
         # now return src of mov instruction; this is our return value
         return retval_instr.operands[0]
 
-    def retval_test(self, expected_retval: int, program_path: Path):
+    def retval_test(self, expected_retval: Union[int, str], program_path: Path):
+
+        expected_op: Operand
+        if isinstance(expected_retval, int):
+            expected_op = Immediate(expected_retval)
+        else:
+            if sys.platform == "darwin":
+                expected_op = "_" + expected_op
+            expected_op = AssemblyParser.Memory(
+                disp=[expected_retval], base=Register.IP, idx=None, scale=1)
 
         def validate_return_value(parsed_asm, *, program_path: Path):
-            expected_op = Immediate(expected_retval)
             actual_retval = self.find_return_value(parsed_asm)
             self.assertEqual(expected_op, actual_retval,
                              msg=f"Expected {expected_op} as return value, found {actual_retval} ({program_path})")
@@ -271,6 +295,134 @@ class CopyPropTest(OptimizationTest):
     def test_fig_20_8(self):
         program_path = self.test_dir / "fig_20_8.c"
         self.retval_test(4, program_path=program_path)
+
+    def test_init_all_copies(self):
+        program_path = self.test_dir / "init_all_copies.c"
+        self.retval_test(3, program_path=program_path)
+
+    def test_propagate_static_var(self):
+        program_path = self.test_dir / "prop_static_var.c"
+        self.retval_test(10, program_path=program_path)
+
+    def test_killed_and_redefined(self):
+        program_path = self.test_dir / "killed_then_redefined.c"
+        self.retval_test(2, program_path=program_path)
+
+    def test_complex_const_fold(self):
+        program_path = self.test_dir / "complex_const_fold.c"
+        self.retval_test(-1, program_path=program_path)
+
+    def test_remainder(self):
+        program_path = self.test_dir / "remainder_test.c"
+        self.retval_test(1, program_path=program_path)
+
+    def test_multi_path(self):
+        program_path = self.test_dir / "multi_path.c"
+        self.retval_test(3, program_path=program_path)
+
+    def test_loop(self):
+        program_path = self.test_dir / "loop.c"
+        self.retval_test(10, program_path=program_path)
+
+    def test_multi_path_no_kill(self):
+        program_path = self.test_dir / "multi_path_no_kill.c"
+        self.retval_test(3, program_path=program_path)
+
+    def find_args(self, callee: str, arg_count: int, parsed_asm: AssemblyParser.AssemblyFunction) -> list[Optional[Operand]]:
+        # TODO handle floating args
+        # TODO refactor w/ find_return-value
+        reversed_instrs = list(reversed(parsed_asm.instructions))
+        if sys.platform == "darwin":
+            callee = "_" + callee
+        funcall_idx = reversed_instrs.index(Instruction(Opcode.CALL, [callee]))
+        before_funcall = reversed_instrs[funcall_idx + 1:]
+        arg_regs = [Register.DI, Register.SI, Register.DX,
+                    Register.CX, Register.R8, Register.R9]
+
+        args: list[Optional[Operand]] = []
+        for r in arg_regs[:arg_count]:
+            mov_instr_idx, mov_instr = next((idx, instr) for (
+                idx, instr) in enumerate(before_funcall) if is_mov_to(instr, r))
+
+            # found a possible move instruction
+            if any(could_overwrite_reg(instr, r) for instr in before_funcall[:mov_instr_idx]):
+                # None means "we couldn't find move instruction that populates this argument"
+                # only a problem if we expet this specific argument to be a constant
+                args.append(None)
+            else:
+                args.append(mov_instr.operands[0])
+
+        return args
+
+    def arg_test(self, callee: str, expected_args: list[Optional[int]], program_path: Path):
+        def validate_args(parsed_asm, *, program_path: Path):
+            expected_ops: list[Optional[Operand]] = [
+                Immediate(i) if i else None for i in expected_args]
+            actual_args = self.find_args(
+                callee, len(expected_args), parsed_asm)
+            for idx, (actual, expected) in enumerate(zip_longest(actual_args, expected_ops)):
+                if expected is not None:
+                    self.assertEqual(
+                        actual, expected, msg=f"Expected argument {idx} to function {callee} to be {expected}, found {actual}")
+
+        self.optimization_test(program_path=program_path,
+                               validator=validate_args)
+
+    def test_propagate_fun_args(self):
+        program_path = self.test_dir / "propagate_fun_args.c"
+        expected_args = [None, 20]
+        self.arg_test("callee", expected_args, program_path)
+
+    def test_kill_and_add(self):
+        program_path = self.test_dir / "kill_and_add_copies.c"
+        expected_args = [10, None]
+        self.arg_test("callee", expected_args, program_path)
+
+    def same_arg_test(self, callee: str, program_path: Path):
+        """Test that first and second arguments to callee are the same"""
+        def validate_args(parsed_asm, *, program_path: Path):
+            actual_args = self.find_args(
+                callee, 2, parsed_asm)
+
+            # they're the same value if:
+            # same value moved into EDI and ESI, or
+            # EDI is moved into ESI, or
+            # ESI is moved into EDI
+            same_value = (actual_args[0] == actual_args[1] or actual_args[0]
+                          == Register.SI or actual_args[1] == Register.DI)
+            self.assertTrue(
+                same_value, msg=f"Bad arguments {actual_args[0]} and {actual_args[1]} to {callee}: both args should have same value")
+
+        self.optimization_test(program_path=program_path,
+                               validator=validate_args)
+
+    def test_propagate_var(self):
+        program_path = self.test_dir / "propagate_var.c"
+
+        self.same_arg_test("callee", program_path)
+
+    def test_multi_instance_same_copy(self):
+        program_path = self.test_dir / "multi_instance_same_copy.c"
+        self.same_arg_test("callee", program_path)
+
+    def test_redundant_copies(self):
+
+        def validator(parsed_asm, *, program_path: Path):
+            """ validate no control flow"""
+            def bad(i):
+                if isinstance(i, Label):
+                    return True
+                if i.mnemonic in [Opcode.JMP, Opcode.JMPCC]:
+                    return True
+                return False
+
+            bad_instructions = [i for i in parsed_asm.instructions if bad(i)]
+            self.assertFalse(bad_instructions, msg=build_msg(
+                "Found instructions that should have been eliminated",
+                bad_instructions=bad_instructions, full_prog=parsed_asm, program_path=program_path))
+
+        program_path = self.test_dir / "redundant_copies.c"
+        self.optimization_test(program_path, validator)
     """
     things we could test with generic "make sure there are no jumps/labels/function calls and exactly one ret":
         - remove unreachable blocks
