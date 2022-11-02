@@ -1,10 +1,11 @@
 from itertools import zip_longest
 import sys
+from collections import defaultdict
 from enum import Enum, unique, auto
 from test_base import TestBase
 from test_base import AssemblyParser
 from test_base.AssemblyParser import Immediate, Instruction, Label, Opcode, Operand, Register
-from typing import Union, Optional
+from typing import Union, Optional, Callable
 from pathlib import Path
 import subprocess
 
@@ -232,7 +233,35 @@ def could_overwrite_reg(i: Union[Label, Instruction], r: Register) -> bool:
 
 class CopyPropTest(OptimizationTest):
 
-    def find_return_value(self, parsed_asm: AssemblyParser.AssemblyFunction) -> Operand:
+    @classmethod
+    def get_test_for_path(cls, path: Path):
+        TESTS = {
+            "copy_prop_const_fold": cls.make_retval_test(6, path),
+            "fig_20_8.c": cls.make_retval_test(4, path),
+            "init_all_copies.c": cls.make_retval_test(3, path),
+            "prop_static_var.c": cls.make_retval_test(10, path),
+            "killed_then_redefined.c": cls.make_retval_test(2, path),
+            "complex_const_fold.c": cls.make_retval_test(-1, path),
+            "remainder_test.c": cls.make_retval_test(1, path),
+            "multi_path.c": cls.make_retval_test(3, path),
+            "loop.c": cls.make_retval_test(10, path),
+            "multi_path_no_kill.c": cls.make_retval_test(3, path),
+            "propagate_fun_args.c": cls.make_arg_test("callee", [None, 20], path),
+            "kill_and_add_copies.c": cls.make_arg_test("callee", [10, None], path),
+            "propagate_var.c": cls.make_same_arg_test("callee", path),
+            "multi_instance_same_copy.c": cls.make_same_arg_test("callee", path),
+            "redundant_copies.c": cls.make_redundant_copies_test(path)
+        }
+
+        # default test: compile, run and check results without inspecting assembly
+        def test_valid(self: TestBase.TestChapter):
+            self.compile_and_run(path)
+
+        test_dict = defaultdict(lambda: test_valid, TESTS)
+        return test_dict[path.stem]
+
+    @staticmethod
+    def find_return_value(parsed_asm: AssemblyParser.AssemblyFunction) -> Operand:
         # TODO this assumes int return value
         reversed_instrs = list(reversed(parsed_asm.instructions))
         # last instruction should be ret
@@ -268,67 +297,29 @@ class CopyPropTest(OptimizationTest):
         # now return src of mov instruction; this is our return value
         return retval_instr.operands[0]
 
-    def retval_test(self, expected_retval: Union[int, str], program_path: Path):
+    @staticmethod
+    def make_retval_test(expected_retval: Union[int, str], program_path: Path) -> Callable:
 
         expected_op: Operand
         if isinstance(expected_retval, int):
             expected_op = Immediate(expected_retval)
         else:
             if sys.platform == "darwin":
-                expected_op = "_" + expected_op
+                expected_op = "_" + expected_retval
             expected_op = AssemblyParser.Memory(
                 disp=[expected_retval], base=Register.IP, idx=None, scale=1)
 
-        def validate_return_value(parsed_asm, *, program_path: Path):
-            actual_retval = self.find_return_value(parsed_asm)
-            self.assertEqual(expected_op, actual_retval,
-                             msg=f"Expected {expected_op} as return value, found {actual_retval} ({program_path})")
+        def test(self):
+            def validate_return_value(parsed_asm, *, program_path: Path):
+                actual_retval = self.find_return_value(parsed_asm)
+                self.assertEqual(expected_op, actual_retval,
+                                 msg=f"Expected {expected_op} as return value, found {actual_retval} ({program_path})")
+            self.optimization_test(program_path=program_path,
+                                   validator=validate_return_value)
+        return test
 
-        self.optimization_test(program_path=program_path,
-                               validator=validate_return_value)
-
-    def test_constant_prop(self):
-        program_path = self.test_dir / "copy_prop_const_fold.c"
-
-        self.retval_test(6, program_path=program_path)
-
-    def test_fig_20_8(self):
-        program_path = self.test_dir / "fig_20_8.c"
-        self.retval_test(4, program_path=program_path)
-
-    def test_init_all_copies(self):
-        program_path = self.test_dir / "init_all_copies.c"
-        self.retval_test(3, program_path=program_path)
-
-    def test_propagate_static_var(self):
-        program_path = self.test_dir / "prop_static_var.c"
-        self.retval_test(10, program_path=program_path)
-
-    def test_killed_and_redefined(self):
-        program_path = self.test_dir / "killed_then_redefined.c"
-        self.retval_test(2, program_path=program_path)
-
-    def test_complex_const_fold(self):
-        program_path = self.test_dir / "complex_const_fold.c"
-        self.retval_test(-1, program_path=program_path)
-
-    def test_remainder(self):
-        program_path = self.test_dir / "remainder_test.c"
-        self.retval_test(1, program_path=program_path)
-
-    def test_multi_path(self):
-        program_path = self.test_dir / "multi_path.c"
-        self.retval_test(3, program_path=program_path)
-
-    def test_loop(self):
-        program_path = self.test_dir / "loop.c"
-        self.retval_test(10, program_path=program_path)
-
-    def test_multi_path_no_kill(self):
-        program_path = self.test_dir / "multi_path_no_kill.c"
-        self.retval_test(3, program_path=program_path)
-
-    def find_args(self, callee: str, arg_count: int, parsed_asm: AssemblyParser.AssemblyFunction) -> list[Optional[Operand]]:
+    @staticmethod
+    def find_args(callee: str, arg_count: int, parsed_asm: AssemblyParser.AssemblyFunction) -> list[Optional[Operand]]:
         # TODO handle floating args
         # TODO refactor w/ find_return-value
         reversed_instrs = list(reversed(parsed_asm.instructions))
@@ -354,81 +345,65 @@ class CopyPropTest(OptimizationTest):
 
         return args
 
-    def arg_test(self, callee: str, expected_args: list[Optional[int]], program_path: Path):
-        def validate_args(parsed_asm, *, program_path: Path):
-            expected_ops: list[Optional[Operand]] = [
-                Immediate(i) if i else None for i in expected_args]
-            actual_args = self.find_args(
-                callee, len(expected_args), parsed_asm)
-            for idx, (actual, expected) in enumerate(zip_longest(actual_args, expected_ops)):
-                if expected is not None:
-                    self.assertEqual(
-                        actual, expected, msg=f"Expected argument {idx} to function {callee} to be {expected}, found {actual}")
+    @staticmethod
+    def make_arg_test(callee: str, expected_args: list[Optional[int]], program_path: Path):
+        expected_ops: list[Optional[Operand]] = [
+            Immediate(i) if i else None for i in expected_args]
 
-        self.optimization_test(program_path=program_path,
-                               validator=validate_args)
+        def test(self):
+            def validate_args(parsed_asm, *, program_path: Path):
 
-    def test_propagate_fun_args(self):
-        program_path = self.test_dir / "propagate_fun_args.c"
-        expected_args = [None, 20]
-        self.arg_test("callee", expected_args, program_path)
+                actual_args = self.find_args(
+                    callee, len(expected_args), parsed_asm)
+                for idx, (actual, expected) in enumerate(zip_longest(actual_args, expected_ops)):
+                    if expected is not None:
+                        self.assertEqual(
+                            actual, expected, msg=f"Expected argument {idx} to function {callee} to be {expected}, found {actual}")
+            self.optimization_test(program_path=program_path,
+                                   validator=validate_args)
 
-    def test_kill_and_add(self):
-        program_path = self.test_dir / "kill_and_add_copies.c"
-        expected_args = [10, None]
-        self.arg_test("callee", expected_args, program_path)
+        return test
 
-    def same_arg_test(self, callee: str, program_path: Path):
+    @staticmethod
+    def make_same_arg_test(callee: str, program_path: Path):
         """Test that first and second arguments to callee are the same"""
-        def validate_args(parsed_asm, *, program_path: Path):
-            actual_args = self.find_args(
-                callee, 2, parsed_asm)
 
-            # they're the same value if:
-            # same value moved into EDI and ESI, or
-            # EDI is moved into ESI, or
-            # ESI is moved into EDI
-            same_value = (actual_args[0] == actual_args[1] or actual_args[0]
-                          == Register.SI or actual_args[1] == Register.DI)
-            self.assertTrue(
-                same_value, msg=f"Bad arguments {actual_args[0]} and {actual_args[1]} to {callee}: both args should have same value")
+        def test(self):
+            def validate_args(parsed_asm, *, program_path: Path):
+                actual_args = self.find_args(
+                    callee, 2, parsed_asm)
 
-        self.optimization_test(program_path=program_path,
-                               validator=validate_args)
+                # they're the same value if:
+                # same value moved into EDI and ESI, or
+                # EDI is moved into ESI, or
+                # ESI is moved into EDI
+                same_value = (actual_args[0] == actual_args[1] or actual_args[0]
+                              == Register.SI or actual_args[1] == Register.DI)
+                self.assertTrue(
+                    same_value, msg=f"Bad arguments {actual_args[0]} and {actual_args[1]} to {callee}: both args should have same value")
 
-    def test_propagate_var(self):
-        program_path = self.test_dir / "propagate_var.c"
+            self.optimization_test(program_path=program_path,
+                                   validator=validate_args)
+        return test
 
-        self.same_arg_test("callee", program_path)
+    @staticmethod
+    def make_redundant_copies_test(program_path: Path):
 
-    def test_multi_instance_same_copy(self):
-        program_path = self.test_dir / "multi_instance_same_copy.c"
-        self.same_arg_test("callee", program_path)
+        def test(self):
+            def validator(parsed_asm, *, program_path: Path):
+                """ validate no control flow"""
+                def bad(i):
+                    if isinstance(i, Label):
+                        return True
+                    if i.mnemonic in [Opcode.JMP, Opcode.JMPCC]:
+                        return True
+                    return False
 
-    def test_redundant_copies(self):
+                bad_instructions = [
+                    i for i in parsed_asm.instructions if bad(i)]
+                self.assertFalse(bad_instructions, msg=build_msg(
+                    "Found instructions that should have been eliminated",
+                    bad_instructions=bad_instructions, full_prog=parsed_asm, program_path=program_path))
 
-        def validator(parsed_asm, *, program_path: Path):
-            """ validate no control flow"""
-            def bad(i):
-                if isinstance(i, Label):
-                    return True
-                if i.mnemonic in [Opcode.JMP, Opcode.JMPCC]:
-                    return True
-                return False
-
-            bad_instructions = [i for i in parsed_asm.instructions if bad(i)]
-            self.assertFalse(bad_instructions, msg=build_msg(
-                "Found instructions that should have been eliminated",
-                bad_instructions=bad_instructions, full_prog=parsed_asm, program_path=program_path))
-
-        program_path = self.test_dir / "redundant_copies.c"
-        self.optimization_test(program_path, validator)
-    """
-    things we could test with generic "make sure there are no jumps/labels/function calls and exactly one ret":
-        - remove unreachable blocks
-        - don't remove blocks w/ reachable/unreachable preds (just don't inspect assembly there)
-        - empty blocks
-        - useless jump
-    things we can't:
-        dead code inside of loop(need to specify what should be eliminated)
-    """
+            self.optimization_test(program_path, validator)
+        return test

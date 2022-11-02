@@ -80,6 +80,11 @@ def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTe
             test_dirs = [base_path / "int_only"]
             if not int_only:
                 test_dirs.append(base_path / "all_types")
+        elif optimization == AssemblyTest.Optimizations.COPY_PROP:
+            base_path = Path("copy_propagation")
+            test_dirs = [base_path/"int_only"]
+            if not int_only:
+                test_dirs.append(base_path / "all_types")
         else:
             raise NotImplementedError("we handle these differently")
 
@@ -113,11 +118,7 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
         elif optimization == AssemblyTest.Optimizations.COPY_PROP:
             # don't go through usual test-finding process for copy prop tests
             # TODO deal with not-int-only tests
-            testclass_attrs["test_dir"] = test_dir / \
-                "copy_propagation" / "int_only"
-            testclass_type = type(
-                testclass_name, (AssemblyTest.CopyPropTest,), testclass_attrs)
-            return testclass_name, testclass_type
+            base_class = AssemblyTest.CopyPropTest
         elif optimization == AssemblyTest.Optimizations.CONSTANT_FOLD:
             base_class = AssemblyTest.ConstantFoldingTest
         else:
@@ -178,6 +179,9 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
                     # optimization tests are special
                     if any(p for p in program.parents if p.stem == "constant_folding"):
                         testclass_attrs[test_name] = make_constant_folding_test(
+                            program)
+                    if any(p for p in program.parents if p.stem == "copy_propagation"):
+                        testclass_attrs[test_name] = AssemblyTest.CopyPropTest.get_test_for_path(
                             program)
                     # programs in valid/libraries are special
                     elif valid_extra_credit_lib_subdir not in program.parents:
