@@ -176,6 +176,7 @@ class UnreachableCodeTest(OptimizationTest):
     def test_loop_in_dead_branch(self):
         program_path = self.test_dir / "loop_in_dead_branch.c"
         self.optimization_test(program_path)
+
     # test for:
     # - we _do_ remove unreachable blocks
     #   x constant_if_else and dead_after_if_else give basic coverage
@@ -259,7 +260,16 @@ class CopyPropTest(OptimizationTest):
                 "copy_struct": lambda path: cls.make_same_arg_test("callee", path),
                 "store_doesnt_kill": lambda path: cls.make_same_arg_test("callee", path),
                 "propagate_null_pointer": lambda path: cls.make_retval_test(0, path),
-                "const_fold_sign_extend": lambda path: cls.make_retval_test(-1000, path)
+                "const_fold_sign_extend": lambda path: cls.make_retval_test(-1000, path),
+                "const_fold_sign_extend_2": lambda path: cls.make_retval_test(-1000, path),
+                "char_round_trip": lambda path: cls.make_retval_test(1, path),
+                "char_round_trip_2": lambda path: cls.make_retval_test(-1, path),
+                "unsigned_compare": lambda path: cls.make_retval_test(1, path),
+                "not_char": lambda path: cls.make_retval_test(1, path),
+                "signed_unsigned_conversion": lambda path: cls.make_retval_test(-11, path),
+                "unsigned_wrapround": lambda path: cls.make_retval_test(0, path),
+                "const_fold_type_conversions": lambda path: cls.make_retval_test(83333, path),
+                "pointer_arithmetic": lambda path: cls.make_no_computations_test(path)
             }
             # default test: compile, run and check results without inspecting assembly
 
@@ -272,7 +282,7 @@ class CopyPropTest(OptimizationTest):
 
         return cls.TESTS[path.stem](path)
 
-    @ staticmethod
+    @staticmethod
     def find_return_value(parsed_asm: AssemblyParser.AssemblyFunction) -> Operand:
         # TODO this assumes int return value
         reversed_instrs = list(reversed(parsed_asm.instructions))
@@ -417,4 +427,19 @@ class CopyPropTest(OptimizationTest):
                     bad_instructions=bad_instructions, full_prog=parsed_asm, program_path=program_path))
 
             self.optimization_test(program_path, validator)
+        return test
+
+    @staticmethod
+    def make_no_computations_test(program_path: Path):
+        def test(self):
+            # TODO refactor w/ ConstantFoldingTest
+            def validate_assembly(self, parsed_asm, *, program_path: Path):
+
+                compute_instructions = [
+                    i for i in parsed_asm.instructions if is_computation(i)]
+                self.assertFalse(compute_instructions, msg=build_msg(
+                    "Found instructions that should have been constant folded",
+                    bad_instructions=compute_instructions, full_prog=parsed_asm, program_path=program_path))
+            self.optimization_test(program_path, validate_assembly)
+
         return test

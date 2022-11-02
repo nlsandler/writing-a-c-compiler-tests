@@ -1,7 +1,7 @@
 import re
 import collections
 from enum import Enum, auto
-from typing import NamedTuple, Callable, Union, Optional, Iterable
+from typing import Tuple, NamedTuple, Callable, Union, Optional, Iterable
 
 
 class ParseError(RuntimeError):
@@ -183,69 +183,69 @@ Token = Union[str, int, Punctuation]
 """Tokenizing"""
 
 
-def lookup_reg(regname: str) -> Register:
+def lookup_reg(regname: str) -> Tuple[Register, Optional[int]]:
     alias_map = {
-        "rax": Register.AX,
-        "eax": Register.AX,
-        "al": Register.AX,
-        "rbx": Register.BX,
-        "ebx": Register.BX,
-        "bl": Register.BX,
-        "rcx": Register.CX,
-        "ecx": Register.CX,
-        "cl": Register.CX,
-        "rdx": Register.DX,
-        "edx": Register.DX,
-        "dl": Register.DX,
-        "rdi": Register.DI,
-        "edi": Register.DI,
-        "dil": Register.DI,
-        "rsi": Register.SI,
-        "esi": Register.SI,
-        "sil": Register.SI,
-        "r8": Register.R8,
-        "r8d": Register.R8,
-        "r8b": Register.R8,
-        "r9": Register.R9,
-        "r9d": Register.R9,
-        "r9b": Register.R9,
-        "r10": Register.R10,
-        "r10d": Register.R10,
-        "r10b": Register.R10,
-        "r11": Register.R11,
-        "r11d": Register.R11,
-        "r11b": Register.R11,
-        "r12": Register.R12,
-        "r12d": Register.R12,
-        "r12b": Register.R12,
-        "r13": Register.R13,
-        "r13d": Register.R13,
-        "r13b": Register.R13,
-        "r14": Register.R14,
-        "r14d": Register.R14,
-        "r14b": Register.R14,
-        "r15": Register.R15,
-        "r15d": Register.R15,
-        "r15b": Register.R15,
-        "rsp": Register.SP,
-        "rbp": Register.BP,
-        "rip": Register.IP,
-        "xmm0": Register.XMM0,
-        "xmm1": Register.XMM1,
-        "xmm2": Register.XMM2,
-        "xmm3": Register.XMM3,
-        "xmm4": Register.XMM4,
-        "xmm5": Register.XMM5,
-        "xmm6": Register.XMM6,
-        "xmm7": Register.XMM7,
-        "xmm8": Register.XMM8,
-        "xmm9": Register.XMM9,
-        "xmm10": Register.XMM10,
-        "xmm11": Register.XMM11,
-        "xmm12": Register.XMM12,
-        "xmm13": Register.XMM13,
-        "xmm14": Register.XMM14,
-        "xmm15": Register.XMM15,
+        "rax": (Register.AX, 8),
+        "eax": (Register.AX, 4),
+        "al": (Register.AX, 1),
+        "rbx": (Register.BX, 8),
+        "ebx": (Register.BX, 4),
+        "bl": (Register.BX, 1),
+        "rcx": (Register.CX, 8),
+        "ecx": (Register.CX, 4),
+        "cl": (Register.CX, 1),
+        "rdx": (Register.DX, 8),
+        "edx": (Register.DX, 4),
+        "dl": (Register.DX, 1),
+        "rdi": (Register.DI, 8),
+        "edi": (Register.DI, 4),
+        "dil": (Register.DI, 1),
+        "rsi": (Register.SI, 8),
+        "esi": (Register.SI, 4),
+        "sil": (Register.SI, 1),
+        "r8": (Register.R8, 8),
+        "r8d": (Register.R8, 4),
+        "r8b": (Register.R8, 1),
+        "r9": (Register.R9, 8),
+        "r9d": (Register.R9, 4),
+        "r9b": (Register.R9, 1),
+        "r10": (Register.R10, 8),
+        "r10d": (Register.R10, 4),
+        "r10b": (Register.R10, 1),
+        "r11": (Register.R11, 8),
+        "r11d": (Register.R11, 4),
+        "r11b": (Register.R11, 1),
+        "r12": (Register.R12, 8),
+        "r12d": (Register.R12, 4),
+        "r12b": (Register.R12, 1),
+        "r13": (Register.R13, 8),
+        "r13d": (Register.R13, 4),
+        "r13b": (Register.R13, 1),
+        "r14": (Register.R14, 8),
+        "r14d": (Register.R14, 4),
+        "r14b": (Register.R14, 1),
+        "r15": (Register.R15, 8),
+        "r15d": (Register.R15, 4),
+        "r15b": (Register.R15, 1),
+        "rsp": (Register.SP, 8),
+        "rbp": (Register.BP, 8),
+        "rip": (Register.IP, None),
+        "xmm0": (Register.XMM0, None),
+        "xmm1": (Register.XMM1, None),
+        "xmm2": (Register.XMM2, None),
+        "xmm3": (Register.XMM3, None),
+        "xmm4": (Register.XMM4, None),
+        "xmm5": (Register.XMM5, None),
+        "xmm6": (Register.XMM6, None),
+        "xmm7": (Register.XMM7, None),
+        "xmm8": (Register.XMM8, None),
+        "xmm9": (Register.XMM9, None),
+        "xmm10": (Register.XMM10, None),
+        "xmm11": (Register.XMM11, None),
+        "xmm12": (Register.XMM12, None),
+        "xmm13": (Register.XMM13, None),
+        "xmm14": (Register.XMM14, None),
+        "xmm15": (Register.XMM15, None),
         # TODO finish this
     }
     return alias_map[regname]
@@ -344,42 +344,67 @@ def tokenize(line: str) -> collections.deque[Token]:
 """Parsing"""
 
 
-def sym_to_instr(t: Token) -> Opcode:
+def sym_to_instr(t: Token) -> Tuple[Opcode, Optional[int]]:
     """Parse an instruction mnemonic"""
     if not (isinstance(t, str) and t.isalnum()):
         raise ParseError(f"Bad mnemonic: {t}")
 
     # deal w/ special cases
-    if t == "cqo" or t.startswith("clt"):
-        return Opcode.CDQ
+    if t == "cqo":
+        return Opcode.CDQ, 8
+
+    if t == "cdq" or t.startswith("clt"):
+        return Opcode.CDQ, 4
 
     if t.startswith("set"):
-        return Opcode.SETCC
+        return Opcode.SETCC, 1
 
     # overlapping prefixes
     if t.startswith("movsd"):
-        return Opcode.MOV
+        return Opcode.MOV, None
 
     if t.startswith("movs"):
-        return Opcode.MOVS
+        size = None
+        if t[-2] == "b":
+            size = 1
+        elif t[-2] == "l":
+            size = 4
+        return Opcode.MOVS, size
 
     if t.startswith("movz"):
-        return Opcode.MOVZ
+        size = None
+        if t[-2] == "b":
+            size = 1
+        elif t[-2] == "l":
+            size = 4
+        return Opcode.MOVZ, size
 
     if t.startswith("comi"):
-        return Opcode.CMP
+        return Opcode.CMP, None
 
     if t.startswith("mul"):
-        return Opcode.IMUL
+        return Opcode.IMUL, None
 
     CONDITION_CODES = ["e", "ne", "g", "ge",
                        "l", "le", "b", "be", "a", "ae", "po"]
     if t[0] == "j" and t[1:] in CONDITION_CODES:
-        return Opcode.JMPCC
+        return Opcode.JMPCC, None
 
     for opcode in Opcode:
-        if t.startswith(str(opcode)):
-            return opcode
+        op = str(opcode)
+        if t.startswith(op):
+            suffix = t[len(op):]
+            size = None
+            if suffix == "b":
+                size = 1
+            elif suffix == "l":
+                size = 4
+            elif suffix == "q":
+                size = 8
+
+            if opcode in [Opcode.POP, Opcode.PUSH, Opcode.LEA]:
+                size = 8
+            return opcode, size
 
     raise ParseError(f"Unknown opcode {t}")
 
@@ -408,7 +433,7 @@ def parse_expr(toks: collections.deque[Token]) -> Expr:
     return expr
 
 
-def parse_register(toks: collections.deque[Token]) -> Register:
+def parse_register(toks: collections.deque[Token]) -> Tuple[Register, Optional[int]]:
     expect_next(toks=toks, expected=Punctuation.PERCENT)
     reg_name = toks.popleft()
     if not isinstance(reg_name, str):
@@ -437,7 +462,7 @@ def parse_immediate(toks: collections.deque[Token]) -> Immediate:
         raise ParseError(f"Bad immediate value: ${next_tok}")
 
 
-def parse_next_operand(toks: collections.deque[Token]) -> Operand:
+def parse_next_operand(toks: collections.deque[Token]) -> Tuple[Operand, Optional[int]]:
     """Convert a list of tokens following an instruction mnemonic into a list of operands
     accept two forms of memory operands: disp(base) and disp(opt_base,index,opt_scale)
     we don't accept special one-comma form e.g. foo(,1)
@@ -449,13 +474,13 @@ def parse_next_operand(toks: collections.deque[Token]) -> Operand:
 
     if toks[0] == Punctuation.DOLLAR:
         # it's an immediate, may have + or - sign
-        return parse_immediate(toks)
+        return parse_immediate(toks), None
 
     if isinstance(toks[0], str) and len(toks) == 1:
         # identifier not followed by anything else
         # is a call or jump target
         # TODO deal w/ operands of form x@PLT
-        return toks.popleft()
+        return toks.popleft(), None
 
     # it's a memory operand
     disp: Expr = []
@@ -471,13 +496,13 @@ def parse_next_operand(toks: collections.deque[Token]) -> Operand:
 
     # optional base
     if toks[0] == Punctuation.PERCENT:
-        base = parse_register(toks)
+        base, _ = parse_register(toks)
 
     # base register must be followed by close paren or comma
     next_tok = toks.popleft()
     if next_tok == Punctuation.CLOSE_PAREN:
         # we're done, no index or scale
-        return Memory(disp=disp, base=base, idx=None, scale=1)
+        return Memory(disp=disp, base=base, idx=None, scale=1), None
     # otherwise next token must be comma
     if next_tok != Punctuation.COMMA:
         raise ParseError(
@@ -485,7 +510,7 @@ def parse_next_operand(toks: collections.deque[Token]) -> Operand:
 
     #  optional index
     if toks[0] == Punctuation.PERCENT:
-        idx = parse_register(toks)
+        idx, _ = parse_register(toks)
 
     expect_next(toks=toks, expected=Punctuation.COMMA)
 
@@ -497,7 +522,24 @@ def parse_next_operand(toks: collections.deque[Token]) -> Operand:
         raise ParseError(
             "expected scale or close paren at end of memory operand")
 
-    return Memory(disp=disp, base=base, idx=idx, scale=scale)
+    return Memory(disp=disp, base=base, idx=idx, scale=scale), None
+
+
+def fix_immediate(op: Operand, size: Optional[int]) -> Operand:
+    # normalize immediate values to signed representation
+    if isinstance(op, Immediate):
+        if size is None:
+            raise ParseError(
+                "Can't interpret immediate b/c instruction size is ambigous")
+        if op < 0:
+            return op
+        as_bytes = op.to_bytes(length=size, byteorder='little', signed=False)
+        from_bytes = int.from_bytes(as_bytes, byteorder='little', signed=True)
+        return Immediate(from_bytes)
+
+    else:
+        # not an immediate so we don't need to change it
+        return op
 
 
 def parse_statement(line: str) -> Union[Label, Instruction, None]:
@@ -523,19 +565,25 @@ def parse_statement(line: str) -> Union[Label, Instruction, None]:
         # note that identifiers starting with periods can be labels (or operands referring to labels)
         return None
 
+    # need to determine operand size so we can parse constants correctly
+    size: Optional[int]
+
     # it's an instruction
-    mnemonic = sym_to_instr(label_or_mnemonic)
+    mnemonic, size = sym_to_instr(label_or_mnemonic)
     # convert remaining operands to list of tokens
     operands = []
 
     while tokens:
-        operands.append(parse_next_operand(tokens))
+        next_operand, maybe_size = parse_next_operand(tokens)
+        operands.append(next_operand)
+        if maybe_size and not size:
+            size = maybe_size
         # expect either comma followed by another operand, or end of list
         if tokens:
             expect_next(toks=tokens, expected=Punctuation.COMMA)
             if not tokens:
                 raise ParseError("Expected another operand after comma")
-
+    operands = [fix_immediate(o, size) for o in operands]
     return Instruction(mnemonic, operands)
 
 
@@ -576,6 +624,6 @@ def parse(filename: str, function_names: Iterable[str]) -> list[AssemblyFunction
 
 
 if __name__ == "__main__":
-    asm = parse("asm/static_vars_at_exit.s", set())
+    asm = parse("complex_const_fold.s", ["_main", "_target"])
     for assembly_fun in asm:
         print(assembly_fun)
