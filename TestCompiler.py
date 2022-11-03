@@ -230,6 +230,8 @@ def parse_arguments() -> argparse.Namespace:
                                )
     optimize_opts.add_argument('--propagate-copies', action='store_const', dest="optimization", const=AssemblyTest.Optimizations.COPY_PROP,
                                help="Enable constant folding, unreachable code elimination, and copy propagation")
+    optimize_opts.add_argument('--whole-pipeline', action='store_const', dest="optimization",
+                               const=AssemblyTest.Optimizations.DEAD_STORE_ELIM, help="Enable all four optimizations")
     parser.add_argument("--int-only", action="store_true",
                         help="Only run optimization tests that use Part I language features")
     # extra args to pass through to compiler, should be followed by --
@@ -263,6 +265,9 @@ def main():
     elif args.optimization == AssemblyTest.Optimizations.COPY_PROP:
         cc_options.extend(
             ["--fold-constants", "--eliminate-unreachable-code", "--propagate-copies"])
+    elif args.optimization == AssemblyTest.Optimizations.DEAD_STORE_ELIM:
+        cc_options.extend(["--fold-constants", "--eliminate-unreachable-code",
+                          "--propagate-copies", "--eliminate-dead-stores"])
     # create a subclass of TestChapter for each chapter,
     # dynamically adding a test case for each source program
     for chapter in chapters:
