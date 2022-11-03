@@ -431,12 +431,21 @@ class CopyPropTest(OptimizationTest):
 
     @staticmethod
     def make_no_computations_test(program_path: Path):
+
+        def is_lea(i):
+            if isinstance(i, Instruction) and i.mnemonic == Opcode.LEA:
+                mem: AssemblyParser.Memory = i.operands[0]
+                if mem.idx is None and mem.scale == 1:
+                    return True
+
+            return False
+
         def test(self):
             # TODO refactor w/ ConstantFoldingTest
-            def validate_assembly(self, parsed_asm, *, program_path: Path):
+            def validate_assembly(parsed_asm, *, program_path: Path):
 
                 compute_instructions = [
-                    i for i in parsed_asm.instructions if is_computation(i)]
+                    i for i in parsed_asm.instructions if is_computation(i) and not is_lea(i)]
                 self.assertFalse(compute_instructions, msg=build_msg(
                     "Found instructions that should have been constant folded",
                     bad_instructions=compute_instructions, full_prog=parsed_asm, program_path=program_path))
