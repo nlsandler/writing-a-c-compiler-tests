@@ -85,6 +85,11 @@ def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTe
             test_dirs = [base_path/"int_only"]
             if not int_only:
                 test_dirs.append(base_path / "all_types")
+        elif optimization == AssemblyTest.Optimizations.DEAD_STORE_ELIM:
+            base_path = Path("dead_store_elimination")
+            test_dirs = [base_path/"int_only"]
+            if not int_only:
+                test_dirs.append(base_path / "all_types")
         else:
             raise NotImplementedError("we handle these differently")
 
@@ -101,6 +106,8 @@ def make_test(program: Path, lib_subdir: Path, stage: str) -> Callable:
         elif any(p for p in program.parents if p.stem == "copy_propagation"):
             return AssemblyTest.CopyPropTest.get_test_for_path(
                 program)
+        elif any(p for p in program.parents if p.stem == "dead_store_elimination"):
+            return AssemblyTest.DeadStoreEliminationTest.get_test_for_path(program)
         # programs in valid/libraries are special
         elif lib_subdir not in program.parents:
             return make_running_test(
@@ -140,11 +147,11 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
                 testclass_name, (AssemblyTest.UnreachableCodeTest,), testclass_attrs)
             return testclass_name, testclass_type
         elif optimization == AssemblyTest.Optimizations.COPY_PROP:
-            # don't go through usual test-finding process for copy prop tests
-            # TODO deal with not-int-only tests
             base_class = AssemblyTest.CopyPropTest
         elif optimization == AssemblyTest.Optimizations.CONSTANT_FOLD:
             base_class = AssemblyTest.ConstantFoldingTest
+        elif optimization == AssemblyTest.Optimizations.DEAD_STORE_ELIM:
+            base_class = AssemblyTest.DeadStoreEliminationTest
         else:
             raise NotImplementedError("other optimizations")
 
@@ -230,7 +237,7 @@ def parse_arguments() -> argparse.Namespace:
                                )
     optimize_opts.add_argument('--propagate-copies', action='store_const', dest="optimization", const=AssemblyTest.Optimizations.COPY_PROP,
                                help="Enable constant folding, unreachable code elimination, and copy propagation")
-    optimize_opts.add_argument('--whole-pipeline', action='store_const', dest="optimization",
+    optimize_opts.add_argument('--eliminate-dead-stores', action='store_const', dest="optimization",
                                const=AssemblyTest.Optimizations.DEAD_STORE_ELIM, help="Enable all four optimizations")
     parser.add_argument("--int-only", action="store_true",
                         help="Only run optimization tests that use Part I language features")

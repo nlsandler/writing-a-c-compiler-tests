@@ -61,7 +61,7 @@ class OptimizationTest(TestBase.TestChapter):
 
         # make sure we actually performed the optimization
         parsed_asm = self.get_target_functions(
-            asm, target_fun="target", other_funs=set(["main", "callee", "count_down", "set_x"]))
+            asm, target_fun="target", other_funs=set(["main", "callee", "callee2", "count_down", "set_x"]))
 
         # validate_assembly is baseline assembly validation but we can override it for specific programs
         if not validator:
@@ -267,9 +267,10 @@ class CopyPropTest(OptimizationTest):
                 "unsigned_compare": lambda path: cls.make_retval_test(1, path),
                 "not_char": lambda path: cls.make_retval_test(1, path),
                 "signed_unsigned_conversion": lambda path: cls.make_retval_test(-11, path),
-                "unsigned_wrapround": lambda path: cls.make_retval_test(0, path),
+                "unsigned_wraparound": lambda path: cls.make_retval_test(0, path),
                 "const_fold_type_conversions": lambda path: cls.make_retval_test(83333, path),
-                "pointer_arithmetic": lambda path: cls.make_no_computations_test(path)
+                "pointer_arithmetic": lambda path: cls.make_no_computations_test(path),
+                "propagate_doubles": lambda path: cls.make_retval_test(3000, path)
             }
             # default test: compile, run and check results without inspecting assembly
 
@@ -450,5 +451,80 @@ class CopyPropTest(OptimizationTest):
                     "Found instructions that should have been constant folded",
                     bad_instructions=compute_instructions, full_prog=parsed_asm, program_path=program_path))
             self.optimization_test(program_path, validate_assembly)
+
+        return test
+
+
+class DeadStoreEliminationTest(OptimizationTest):
+
+    TESTS = None
+
+    @classmethod
+    def get_test_for_path(cls, path: Path):
+        if cls.TESTS is None:
+            test_dict = {
+                "simple": lambda path: cls.make_dse_test(10, path),
+                "dead_store_static_var": lambda path: cls.make_dse_test(5, path),
+                "elim_second_copy": lambda path: cls.make_dse_test(10, path),
+                "fig_20_12": lambda path: cls.make_dse_test(10, path),
+                "loop_dead_store": lambda path: cls.make_dse_test(5, path),
+                "use_and_kill": lambda path: cls.make_return_const_test(5, path)
+            }
+            # default test: compile, run and check results without inspecting assembly
+
+            def default(p: Path):
+                def test_valid(self: TestBase.TestChapter):
+                    self.compile_and_run(p)
+                return test_valid
+
+            cls.TESTS = defaultdict(lambda: default, test_dict)
+
+        return cls.TESTS[path.stem](path)
+
+    @staticmethod
+    def make_dse_test(redundant_const: int, program_path: Path):
+
+        def bad(i: Instruction):
+            # we expect to remove an instruction of the form mov $redundant_const, <something>,
+            # so make sure $redundant_const never shows up in the program
+            return isinstance(i, Instruction) and i.operands and i.operands[0] == Immediate(redundant_const)
+
+        def test(self):
+            def validate(parsed_asm, *, program_path: Path):
+                bad_instructions = [
+                    i for i in parsed_asm.instructions if bad(i)]
+                self.assertFalse(bad_instructions, msg=build_msg(
+                    "Found dead store that should have been eliminated", bad_instructions=bad_instructions, full_prog=parsed_asm, program_path=program_path))
+
+            self.optimization_test(
+                program_path=program_path, validator=validate)
+
+        return test
+
+    @staticmethod
+    def make_return_const_test(const: int, program_path: Path):
+        """Validate that we don't have any computations or move instructions other than mov $const, %eax"""
+
+        def bad(i: Instruction):
+            if is_computation(i):
+                return True
+            if i.mnemonic == Opcode.MOV:
+                # only permitted mov instructions: mov specified return value into AX and manage stack frame
+                if i.operands[0] == Immediate(const) and i.operands[1] == Register.AX:
+                    return False
+                if i.operands[1] in [Register.SP, Register.BP]:
+                    return False
+                return True
+            return False
+
+        def test(self):
+            def validate(parsed_asm, *, program_path: Path):
+                bad_instructions = [
+                    i for i in parsed_asm.instructions if bad(i)]
+                self.assertFalse(bad_instructions, msg=build_msg(
+                    "Found instruction that should have been optimized out", bad_instructions=bad_instructions, full_prog=parsed_asm, program_path=program_path))
+
+            self.optimization_test(
+                program_path=program_path, validator=validate)
 
         return test
