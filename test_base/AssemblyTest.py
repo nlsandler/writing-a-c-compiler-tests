@@ -468,7 +468,8 @@ class DeadStoreEliminationTest(OptimizationTest):
                 "elim_second_copy": lambda path: cls.make_dse_test(10, path),
                 "fig_20_12": lambda path: cls.make_dse_test(10, path),
                 "loop_dead_store": lambda path: cls.make_dse_test(5, path),
-                "use_and_kill": lambda path: cls.make_return_const_test(5, path)
+                "use_and_kill": lambda path: cls.make_return_const_test(5, path),
+                "aliased_dead_at_exit": lambda path: cls.make_dse_test(50, path)
             }
             # default test: compile, run and check results without inspecting assembly
 
