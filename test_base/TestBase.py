@@ -218,7 +218,9 @@ class TestChapter(unittest.TestCase):
                                   program_path.stem[:-len('_client')])  # strip _client from filename
 
         gcc_build_obj(lib_source)
-        self.invoke_compiler(program_path, cc_opt="-c")
+        compilation_result = self.invoke_compiler(program_path, cc_opt="-c")
+        self.assertEqual(compilation_result.returncode, 0,
+                         msg=f"compilation failed with error: {compilation_result.stderr}")
 
         # link both object files and run resulting executable
         result = self.gcc_compile_and_run(lib_source.with_suffix(
