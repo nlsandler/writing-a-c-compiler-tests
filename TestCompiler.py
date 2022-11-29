@@ -94,7 +94,13 @@ def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTe
             raise NotImplementedError("we handle these differently")
 
         return test_dirs
-    raise NotImplementedError("reg allocation tests")
+    
+    if chapter == 21:
+        if int_only:
+            return [Path("int_only")]
+        else:
+            return [Path("int_only"), Path("all_types")]
+    raise NotImplementedError("what chapter is this???")
 
 
 def make_test(program: Path, lib_subdir: Path, stage: str) -> Callable:
@@ -108,6 +114,8 @@ def make_test(program: Path, lib_subdir: Path, stage: str) -> Callable:
                 program)
         elif any(p for p in program.parents if p.stem == "dead_store_elimination"):
             return AssemblyTest.DeadStoreEliminationTest.get_test_for_path(program)
+        elif any(p for p in program.parents if p.stem == "chapter21"):
+            return AssemblyTest.RegAllocTest.get_test_for_path(program)            
         # programs in valid/libraries are special
         elif lib_subdir not in program.parents:
             return make_running_test(
@@ -129,6 +137,10 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
         f"chapter{chapter}").resolve()
 
     testclass_name = f"TestChapter{chapter}"
+
+    if chapter == 21:
+        # test reg allocation w/ all TACKY optimizations enabled
+        options.append("--optimize")
 
     testclass_attrs = {"test_dir": test_dir,
                        "cc": compiler,
@@ -154,6 +166,9 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
             base_class = AssemblyTest.DeadStoreEliminationTest
         else:
             raise NotImplementedError("other optimizations")
+
+    if chapter == 21:
+        base_class = AssemblyTest.RegAllocTest
 
     # generate invalid test cases up to the appropriate stage
     # Note: there are no valid optimizaton tests

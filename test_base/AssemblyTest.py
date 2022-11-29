@@ -61,7 +61,7 @@ class OptimizationTest(TestBase.TestChapter):
 
         # make sure we actually performed the optimization
         parsed_asm = self.get_target_functions(
-            asm, target_fun="target", other_funs=set(["main", "callee", "callee2", "count_down", "set_x"]))
+            asm, target_fun="target", other_funs=set(["main", "callee", "callee2", "count_down", "set_x", "get" ,"consume"]))
 
         # validate_assembly is baseline assembly validation but we can override it for specific programs
         if not validator:
@@ -361,7 +361,7 @@ class CopyPropTest(OptimizationTest):
             # found a possible move instruction
             if any(could_overwrite_reg(instr, r) for instr in before_funcall[:mov_instr_idx]):
                 # None means "we couldn't find move instruction that populates this argument"
-                # only a problem if we expet this specific argument to be a constant
+                # only a problem if we expect this specific argument to be a constant
                 args.append(None)
             else:
                 args.append(mov_instr.operands[0])
@@ -529,3 +529,101 @@ class DeadStoreEliminationTest(OptimizationTest):
                 program_path=program_path, validator=validate)
 
         return test
+
+class RegAllocTest(OptimizationTest):
+    TESTS = None
+
+
+    @property
+    def wrapper_script(self):
+        return self.test_dir.joinpath("wrapper.s")
+
+
+    def tearDown(self) -> None:
+        
+        # identical to base TestChapter tearDown but don't kill wrapper_script
+
+        # delete any non-C files aproduced during this testrun
+        garbage_files = (f for f in self.test_dir.rglob(
+            "*") if not f.is_dir() and f.suffix not in ['.c', '.h'] and f.stem != "wrapper")
+
+        for f in garbage_files:
+            f.unlink()
+
+    def regalloc_test(self, program_path: Path, validator):
+        """Base class for register allocation tests
+        1. Compile the file at program_path to assembly
+        2. Link against check_calleed_saved_regs.s wrapper code
+        3. Run, compare results against same code compiled w/ GCC
+        4. Inspect assembly code w/ validator
+        """
+
+        # compile w/ GCC, check result
+        expected_result = self.gcc_compile_and_run(program_path, self.wrapper_script, prefix_output=True)
+        
+        # assemble
+                # now compile to assembly
+        # note: don't need to add --fold-constants b/c it's already in cc_opt
+        try:
+            self.invoke_compiler(program_path, cc_opt="-s").check_returncode()
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(e.stderr) from e
+        asm = program_path.with_suffix(".s")
+
+        actual_result = self.gcc_compile_and_run(asm, self.wrapper_script)
+        # make sure behavior is the same
+        self.validate_runs(expected_result, actual_result)
+
+        # make sure we actually performed the optimization
+        parsed_asm = self.get_target_functions(
+            asm, target_fun="target", other_funs=set(["main", "client"]))
+
+
+        validator(parsed_asm, program_path=program_path)
+
+
+    @classmethod
+    def get_test_for_path(cls, path: Path):
+        if cls.TESTS is None:
+            test_dict = {
+                "trivially_colorable": lambda path: cls.make_no_spills_test(path),
+                "use_most_hardregs": lambda path: cls.make_no_spills_test(path),
+                "use_all_hardregs": lambda path: cls.make_no_spills_test(path)
+            }
+            # default test: compile, run and check results without inspecting assembly
+
+            def default(p: Path):
+                def test_valid(self: TestBase.TestChapter):
+                    self.compile_and_run(p)
+                return test_valid
+
+            cls.TESTS = defaultdict(lambda: default, test_dict)
+
+        return cls.TESTS[path.stem](path)
+
+    @staticmethod
+    def uses_stack(i: Union[Instruction, Label]):
+        if isinstance(i, Label):
+            return False
+
+        if i.mnemonic == Opcode.POP and i.operands[0] != Register.BP:
+            # popping a value off the stack is a memory access (unelss we're popping RBP to manage the stack frame)
+            return True
+
+        def is_stack(operand):
+            return isinstance(operand, AssemblyParser.Memory) and operand.base == Register.BP
+        
+        return any(is_stack(op) for op in i.operands)
+    
+    @staticmethod
+    def make_no_spills_test(program_path: Path):
+
+        def test(self):
+
+            def validate(parsed_asm, *, program_path: Path):
+                bad_instructions = [i for i in parsed_asm.instructions if self.uses_stack(i)]
+                self.assertFalse(bad_instructions, msg=build_msg("Found instructions that use operands on the stack", bad_instructions=bad_instructions, full_prog=parsed_asm, program_path=program_path))
+            self.regalloc_test(program_path=program_path, validator=validate)
+        
+        return test
+    
