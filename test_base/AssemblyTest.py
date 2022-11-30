@@ -532,6 +532,7 @@ class DeadStoreEliminationTest(OptimizationTest):
 
 class RegAllocTest(OptimizationTest):
     TESTS = None
+    CALLEE_SAVED = [ Register.BX, Register.R12, Register.R13, Register.R14, Register.R15 ]
 
 
     @property
@@ -576,7 +577,7 @@ class RegAllocTest(OptimizationTest):
 
         # make sure we actually performed the optimization
         parsed_asm = self.get_target_functions(
-            asm, target_fun="target", other_funs=set(["main", "client"]))
+            asm, target_fun="target", other_funs=set(["main", "client", "callee"]))
 
 
         validator(parsed_asm, program_path=program_path)
@@ -587,8 +588,10 @@ class RegAllocTest(OptimizationTest):
         if cls.TESTS is None:
             test_dict = {
                 "trivially_colorable": lambda path: cls.make_no_spills_test(path),
-                "use_most_hardregs": lambda path: cls.make_no_spills_test(path),
-                "use_all_hardregs": lambda path: cls.make_no_spills_test(path)
+                "use_all_hardregs": lambda path: cls.make_no_spills_test(path),
+                "spill_callee_saved": lambda path: cls.make_only_callee_saved_spills_test(path),
+                "preserve_across_fun_call": lambda path: cls.make_only_callee_saved_spills_test(path, max_regs_spilled=3),
+                "track_arg_registers": lambda path: cls.make_no_spills_test(path)
             }
             # default test: compile, run and check results without inspecting assembly
 
@@ -627,3 +630,46 @@ class RegAllocTest(OptimizationTest):
         
         return test
     
+    @staticmethod
+    def make_only_callee_saved_spills_test(program_path: Path, max_regs_spilled=5):
+        """Create a test that validates that there are no spills, except for copies to/from callee-saved regs at start and end
+        
+        Optionally, specify maximum number of callee-saved regs we're allowed to spill (all 5 by default)
+        """
+
+        def test(self):
+
+            def validate(parsed_asm, *, program_path: Path):
+                stack_instructions = [i for i in parsed_asm.instructions if self.uses_stack(i)]
+
+                # for each callee-saved reg, we accept one move from it and one move to it
+                allowed_moves : dict[AssemblyParser.Register, dict[str, list]]= {r : { "to": [], "from": []} for r in self.CALLEE_SAVED}
+
+                bad = []
+                for si in stack_instructions:
+                    if si.mnemonic != Opcode.MOV:
+                        bad.append(si)
+                        continue
+                    src, dst = si.operands[0], si.operands[1]
+                    if src in self.CALLEE_SAVED:
+                        allowed_moves[src]["from"].append(si)
+                    
+                    elif dst in self.CALLEE_SAVED:
+                        allowed_moves[dst]["to"].append(si)
+                    else:
+                        bad.append(si)
+                
+                for v in allowed_moves.values():
+                    # if there's more than one copy to or from a particular callee-saved reg, that's bad
+                    bad.extend(v["to"][1:])
+                    bad.extend(v["from"][:-1])
+                self.assertFalse(bad, msg=build_msg("Found uses of spilled pseudos besides callee-saved tmps", bad_instructions=bad, full_prog=parsed_asm, program_path=program_path))
+
+                # make sure we don't spill more than the allowable number of callee-saved regs
+                max_stack_instructions = max_regs_spilled * 2
+                self.assertLessEqual(len(stack_instructions), max_stack_instructions,
+                    msg=build_msg(f"At most {max_stack_instructions/2} callee-saved registers should be spilled, but it looks like {len(stack_instructions)/2} were spilled.",
+                    bad_instructions=stack_instructions, full_prog=parsed_asm, program_path=program_path))
+            self.regalloc_test(program_path=program_path, validator=validate)
+
+        return test
