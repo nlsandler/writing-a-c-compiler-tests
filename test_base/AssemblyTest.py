@@ -606,7 +606,8 @@ class RegAllocTest(OptimizationTest):
                 "spill_callee_saved": lambda path: cls.make_only_callee_saved_spills_test(path),
                 "preserve_across_fun_call": lambda path: cls.make_only_callee_saved_spills_test(path, max_regs_spilled=3),
                 "track_arg_registers": lambda path: cls.make_no_spills_test(path, extra_lib=Path("track_arg_registers_lib.c")),
-                "force_spill": lambda path: cls.make_spill_test(path)
+                "force_spill": lambda path: cls.make_spill_test(path, extra_lib=Path("force_spill_lib.c")),
+                "test_spill_metric": lambda path: cls.make_spill_test(path, extra_lib=Path("test_spill_metric_lib.c"))
             }
             # default test: compile, run and check results without inspecting assembly
 
@@ -697,7 +698,7 @@ class RegAllocTest(OptimizationTest):
         return test
     
     @staticmethod
-    def make_spill_test(program_path: Path):
+    def make_spill_test(program_path: Path, extra_lib: Optional[Path]=None):
         """Test for a program with so many conflicts that it spills (not just callee-saved regs)
            Validate that our only stack instructions are:
            - saving/restoring callee-saved regs
@@ -708,15 +709,15 @@ class RegAllocTest(OptimizationTest):
 
             def validate(parsed_asm, *, program_path: Path):
 
-                _, spill_instructions = self.spill_instructions(parsed_asm)
+                _, spill_instructions = self.find_spills(parsed_asm)
                 self.assertLessEqual(len(spill_instructions), 3,
-                                     msg=build_msg(f"Should only need three instructions involving spilled pseudo but found {len(spill_instructions)}"),
-                                     bad_instructions=spill_instructions, full_prog=parsed_asm, program_path=program_path)
+                                     msg=build_msg(f"Should only need three instructions involving spilled pseudo but found {len(spill_instructions)}",
+                                     bad_instructions=spill_instructions, full_prog=parsed_asm, program_path=program_path))
                 
                 spilled_operands = set([op for i in spill_instructions for op in i if isinstance(op, AssemblyParser.Memory) ])
-                self.assertLessEqual(len(spilled_operands), 1, msg=build_msg(f"At most one pseudoreg should have been spilled looks like {len(spilled_operands)} were"),
-                                     bad_instructions=spill_instructions, full_prog=parsed_asm, program_path=program_path)
+                self.assertLessEqual(len(spilled_operands), 1, msg=build_msg(f"At most one pseudoreg should have been spilled, looks like {len(spilled_operands)} were",
+                                     bad_instructions=spill_instructions, full_prog=parsed_asm, program_path=program_path))
                 
-                self.regalloc_test(program_path=program_path, validator=validate)
+            self.regalloc_test(program_path=program_path, validator=validate, extra_lib=extra_lib)
         
         return test

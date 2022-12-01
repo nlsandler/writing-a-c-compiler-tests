@@ -9,6 +9,9 @@ int target(int one, int two, int three, int four, int five, int six)
     /* force spill by creating lots of conflicting pseudos
      * validate that we spill the variable should_spill, which is used least
      * and has highest degree
+     * Note: this isn't a good test of spill metric calculation;
+     * due to optimistic coloring, we coudl end up spilling just should_spill
+     * even if we end up choosing other nodes as spill candidates first
      */
     int should_spill = glob + 3;
     // all these registers conflict with should_spill and each other
