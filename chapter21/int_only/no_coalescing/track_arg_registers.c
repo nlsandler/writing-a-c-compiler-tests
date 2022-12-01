@@ -4,13 +4,11 @@
    (since they're never updated) and won't be able to allocate them, resuling in spills
 */
 
-int client (int a, int b, int c) {
-    return a == 1 && b == 8 && c == 6;
-}
+int callee(int a, int b, int c);
 
 int target(int one, int two, int three) {
     int four = one * one;
     int five = two * 4;
     int six = (one - two) + (one - three);
-    return client(four, five, six);
+    return callee(four, five, six);
 }

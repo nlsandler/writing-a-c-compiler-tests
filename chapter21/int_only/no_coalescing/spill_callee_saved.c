@@ -1,6 +1,6 @@
 int client(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l)
 {
-    return a == 12 && b == 11 && c == 10 && d == 9 && e == 8 && f == 7 && g == 6 && h == 5 && i == 4 && j == 3 && k == 2 && l == 1;
+    return a == 7 && b == 15 && c == 10 && d == 18 && e == 8 && f == 7 && g == 6 && h == 5 && i == 4 && j == 3 && k == 2 && l == 1;
 }
 
 int target(int one, int two, int three, int four, int five, int six)
