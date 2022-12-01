@@ -591,7 +591,7 @@ class RegAllocTest(OptimizationTest):
 
         # make sure we actually performed the optimization
         parsed_asm = self.get_target_functions(
-            asm, target_fun="target", other_funs=set(["main", "client", "callee"]))
+            asm, target_fun="target", other_funs=set(["main", "client", "callee", "use_value", "reset_globals"]))
 
 
         validator(parsed_asm, program_path=program_path)
@@ -607,7 +607,10 @@ class RegAllocTest(OptimizationTest):
                 "preserve_across_fun_call": lambda path: cls.make_only_callee_saved_spills_test(path, max_regs_spilled=3),
                 "track_arg_registers": lambda path: cls.make_no_spills_test(path, extra_lib=Path("track_arg_registers_lib.c")),
                 "force_spill": lambda path: cls.make_spill_test(path, extra_lib=Path("force_spill_lib.c")),
-                "test_spill_metric": lambda path: cls.make_spill_test(path, extra_lib=Path("test_spill_metric_lib.c"))
+                "test_spill_metric": lambda path: cls.make_spill_test(path, extra_lib=Path("test_spill_metric_lib.c")),
+                "test_spill_metric_2": lambda path: cls.make_spill_test(path, extra_lib=Path("test_spill_metric_2_lib.c")),
+                "cmp_liveness": lambda path: cls.make_only_callee_saved_spills_test(path),
+                "copy_no_interference": lambda path: cls.make_only_callee_saved_spills_test(path)
             }
             # default test: compile, run and check results without inspecting assembly
 
