@@ -10,7 +10,7 @@ int target(int one, int two, int three, int four, int five, int six)
      * validate that we spill the variable should_spill, which is used least
      * and has highest degree
      */
-    int should_spill = glob;
+    int should_spill = glob + 3;
     // all these registers conflict with should_spill and each other
     int seven = one * one + 6;
     int eight = two * 4;

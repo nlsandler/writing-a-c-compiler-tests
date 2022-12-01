@@ -539,6 +539,9 @@ class RegAllocTest(OptimizationTest):
     def wrapper_script(self):
         return self.test_dir.joinpath("wrapper.s")
 
+    @property
+    def lib_path(self):
+        return self.test_dir.joinpath("libraries")
 
     def tearDown(self) -> None:
         
@@ -551,7 +554,7 @@ class RegAllocTest(OptimizationTest):
         for f in garbage_files:
             f.unlink()
 
-    def regalloc_test(self, program_path: Path, validator):
+    def regalloc_test(self, program_path: Path, validator, extra_lib: Optional[Path]=None):
         """Base class for register allocation tests
         1. Compile the file at program_path to assembly
         2. Link against check_calleed_saved_regs.s wrapper code
@@ -559,8 +562,16 @@ class RegAllocTest(OptimizationTest):
         4. Inspect assembly code w/ validator
         """
 
+        extra_lib_path = None
+        if extra_lib:
+            extra_lib_path = self.lib_path / extra_lib
+
+        progs = [program_path, self.wrapper_script]
+
+        if extra_lib_path:
+            progs.append(extra_lib_path)
         # compile w/ GCC, check result
-        expected_result = self.gcc_compile_and_run(program_path, self.wrapper_script, prefix_output=True)
+        expected_result = self.gcc_compile_and_run(*progs, prefix_output=True)
         
         # assemble
                 # now compile to assembly
@@ -571,7 +582,10 @@ class RegAllocTest(OptimizationTest):
             raise RuntimeError(e.stderr) from e
         asm = program_path.with_suffix(".s")
 
-        actual_result = self.gcc_compile_and_run(asm, self.wrapper_script)
+        progs = [ asm, self.wrapper_script]
+        if extra_lib_path:
+            progs.append(extra_lib_path)
+        actual_result = self.gcc_compile_and_run(*progs)
         # make sure behavior is the same
         self.validate_runs(expected_result, actual_result)
 
@@ -591,7 +605,8 @@ class RegAllocTest(OptimizationTest):
                 "use_all_hardregs": lambda path: cls.make_no_spills_test(path),
                 "spill_callee_saved": lambda path: cls.make_only_callee_saved_spills_test(path),
                 "preserve_across_fun_call": lambda path: cls.make_only_callee_saved_spills_test(path, max_regs_spilled=3),
-                "track_arg_registers": lambda path: cls.make_no_spills_test(path)
+                "track_arg_registers": lambda path: cls.make_no_spills_test(path, extra_lib=Path("track_arg_registers_lib.c")),
+                "force_spill": lambda path: cls.make_spill_test(path)
             }
             # default test: compile, run and check results without inspecting assembly
 
@@ -619,17 +634,45 @@ class RegAllocTest(OptimizationTest):
         return any(is_stack(op) for op in i.operands)
     
     @staticmethod
-    def make_no_spills_test(program_path: Path):
+    def make_no_spills_test(program_path: Path, extra_lib: Optional[Path]=None):
 
         def test(self):
 
             def validate(parsed_asm, *, program_path: Path):
                 bad_instructions = [i for i in parsed_asm.instructions if self.uses_stack(i)]
                 self.assertFalse(bad_instructions, msg=build_msg("Found instructions that use operands on the stack", bad_instructions=bad_instructions, full_prog=parsed_asm, program_path=program_path))
-            self.regalloc_test(program_path=program_path, validator=validate)
+            self.regalloc_test(program_path=program_path, validator=validate, extra_lib=extra_lib)
         
         return test
     
+    @classmethod
+    def find_spills(cls, parsed_asm: AssemblyParser.AssemblyFunction):
+        stack_instructions : list[AssemblyParser.Instruction] = [i for i in parsed_asm.instructions if cls.uses_stack(i)]
+
+        # for each callee-saved reg, we accept one move from it and one move to it
+        # TODO recognize saving and restoring with push/pop too
+        allowed_moves : dict[AssemblyParser.Register, dict[str, list]]= {r : { "to": [], "from": []} for r in cls.CALLEE_SAVED}
+
+        spill_instructions = []
+        for si in stack_instructions:
+            if si.mnemonic != Opcode.MOV:
+                spill_instructions.append(si)
+                continue
+            src, dst = si.operands[0], si.operands[1]
+            if src in cls.CALLEE_SAVED:
+                allowed_moves[src]["from"].append(si)
+            
+            elif dst in cls.CALLEE_SAVED:
+                allowed_moves[dst]["to"].append(si)
+            else:
+                spill_instructions.append(si)
+        
+        for v in allowed_moves.values():
+            # if there's more than one copy to or from a particular callee-saved reg, that's bad
+            spill_instructions.extend(v["to"][1:])
+            spill_instructions.extend(v["from"][:-1])
+        return stack_instructions, spill_instructions
+
     @staticmethod
     def make_only_callee_saved_spills_test(program_path: Path, max_regs_spilled=5):
         """Create a test that validates that there are no spills, except for copies to/from callee-saved regs at start and end
@@ -640,29 +683,8 @@ class RegAllocTest(OptimizationTest):
         def test(self):
 
             def validate(parsed_asm, *, program_path: Path):
-                stack_instructions = [i for i in parsed_asm.instructions if self.uses_stack(i)]
+                stack_instructions, bad = self.find_spills(parsed_asm)
 
-                # for each callee-saved reg, we accept one move from it and one move to it
-                allowed_moves : dict[AssemblyParser.Register, dict[str, list]]= {r : { "to": [], "from": []} for r in self.CALLEE_SAVED}
-
-                bad = []
-                for si in stack_instructions:
-                    if si.mnemonic != Opcode.MOV:
-                        bad.append(si)
-                        continue
-                    src, dst = si.operands[0], si.operands[1]
-                    if src in self.CALLEE_SAVED:
-                        allowed_moves[src]["from"].append(si)
-                    
-                    elif dst in self.CALLEE_SAVED:
-                        allowed_moves[dst]["to"].append(si)
-                    else:
-                        bad.append(si)
-                
-                for v in allowed_moves.values():
-                    # if there's more than one copy to or from a particular callee-saved reg, that's bad
-                    bad.extend(v["to"][1:])
-                    bad.extend(v["from"][:-1])
                 self.assertFalse(bad, msg=build_msg("Found uses of spilled pseudos besides callee-saved tmps", bad_instructions=bad, full_prog=parsed_asm, program_path=program_path))
 
                 # make sure we don't spill more than the allowable number of callee-saved regs
@@ -672,4 +694,29 @@ class RegAllocTest(OptimizationTest):
                     bad_instructions=stack_instructions, full_prog=parsed_asm, program_path=program_path))
             self.regalloc_test(program_path=program_path, validator=validate)
 
+        return test
+    
+    @staticmethod
+    def make_spill_test(program_path: Path):
+        """Test for a program with so many conflicts that it spills (not just callee-saved regs)
+           Validate that our only stack instructions are:
+           - saving/restoring callee-saved regs
+           - up to 2 instructions using one spilled pseudo
+        """
+    
+        def test(self):
+
+            def validate(parsed_asm, *, program_path: Path):
+
+                _, spill_instructions = self.spill_instructions(parsed_asm)
+                self.assertLessEqual(len(spill_instructions), 3,
+                                     msg=build_msg(f"Should only need three instructions involving spilled pseudo but found {len(spill_instructions)}"),
+                                     bad_instructions=spill_instructions, full_prog=parsed_asm, program_path=program_path)
+                
+                spilled_operands = set([op for i in spill_instructions for op in i if isinstance(op, AssemblyParser.Memory) ])
+                self.assertLessEqual(len(spilled_operands), 1, msg=build_msg(f"At most one pseudoreg should have been spilled looks like {len(spilled_operands)} were"),
+                                     bad_instructions=spill_instructions, full_prog=parsed_asm, program_path=program_path)
+                
+                self.regalloc_test(program_path=program_path, validator=validate)
+        
         return test
