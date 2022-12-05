@@ -28,7 +28,6 @@ int target(int a, int b, int c, int d, int e, int flag) {
 
 
     int result = callee(a, b, c, d, e);
-    // TODO: wrapper needs to validate these
     glob1 = a;
     glob2 = b;
     glob3 = c;

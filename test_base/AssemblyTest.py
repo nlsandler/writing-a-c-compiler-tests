@@ -554,7 +554,7 @@ class RegAllocTest(OptimizationTest):
         for f in garbage_files:
             f.unlink()
 
-    def regalloc_test(self, program_path: Path, validator, extra_lib: Optional[Path]=None):
+    def regalloc_test(self, program_path: Path, validator, extra_lib: Optional[Path]=None, target_fun: str="target"):
         """Base class for register allocation tests
         1. Compile the file at program_path to assembly
         2. Link against check_calleed_saved_regs.s wrapper code
@@ -591,7 +591,7 @@ class RegAllocTest(OptimizationTest):
 
         # make sure we actually performed the optimization
         parsed_asm = self.get_target_functions(
-            asm, target_fun="target", other_funs=set(["main", "client", "callee", "use_value", "reset_globals"]))
+            asm, target_fun=target_fun, other_funs=set(["main", "client", "callee", "use_value", "reset_globals", "target", "validate_globs", "use", "get", "increase_globals"]))
 
 
         validator(parsed_asm, program_path=program_path)
@@ -606,11 +606,20 @@ class RegAllocTest(OptimizationTest):
                 "spill_callee_saved": lambda path: cls.make_only_callee_saved_spills_test(path),
                 "preserve_across_fun_call": lambda path: cls.make_only_callee_saved_spills_test(path, max_regs_spilled=3),
                 "track_arg_registers": lambda path: cls.make_no_spills_test(path, extra_lib=Path("track_arg_registers_lib.c")),
-                "force_spill": lambda path: cls.make_spill_test(path, extra_lib=Path("force_spill_lib.c")),
-                "test_spill_metric": lambda path: cls.make_spill_test(path, extra_lib=Path("test_spill_metric_lib.c")),
-                "test_spill_metric_2": lambda path: cls.make_spill_test(path, extra_lib=Path("test_spill_metric_2_lib.c")),
+                "force_spill": lambda path: cls.make_spill_test(path, max_spilled_instructions=3, max_spilled_pseudos=1, extra_lib=Path("force_spill_lib.c")),
+                "test_spill_metric": lambda path: cls.make_spill_test(path, max_spilled_instructions=3, max_spilled_pseudos=1, extra_lib=Path("test_spill_metric_lib.c")),
+                "test_spill_metric_2": lambda path: cls.make_spill_test(path, max_spilled_instructions=3, max_spilled_pseudos=1, extra_lib=Path("test_spill_metric_2_lib.c")),
                 "cmp_liveness": lambda path: cls.make_only_callee_saved_spills_test(path),
-                "copy_no_interference": lambda path: cls.make_only_callee_saved_spills_test(path)
+                "copy_no_interference": lambda path: cls.make_only_callee_saved_spills_test(path),
+                "copy_and_separate_interference": lambda path: cls.make_spill_test(path, max_spilled_pseudos=1, max_spilled_instructions=3),
+                "many_pseudos_fewer_conflicts": lambda path: cls.make_no_spills_test(path, extra_lib=Path("many_pseudos_fewer_conflicts_lib.c"), target_fun="no_spills"),
+                "same_instr_no_interference": lambda path: cls.make_only_callee_saved_spills_test(path),
+                "optimistic_coloring": lambda path: cls.make_spill_test(path, max_spilled_pseudos=5, max_spilled_instructions=20, target_fun="five_spills"),
+                "loop": lambda path: cls.make_no_spills_test(path),
+                "dbl_trivially_colorable": lambda path: cls.make_no_spills_test(path),
+                "fourteen_pseudos_interfere": lambda path: cls.make_no_spills_test(path),
+                "push_xmm": lambda path: cls.make_no_spills_test(path),
+                "track_dbl_arg_registers": lambda path: cls.make_no_spills_test(path, extra_lib=Path('track_dbl_arg_registers_lib.c'))
             }
             # default test: compile, run and check results without inspecting assembly
 
@@ -638,14 +647,14 @@ class RegAllocTest(OptimizationTest):
         return any(is_stack(op) for op in i.operands)
     
     @staticmethod
-    def make_no_spills_test(program_path: Path, extra_lib: Optional[Path]=None):
+    def make_no_spills_test(program_path: Path, extra_lib: Optional[Path]=None, target_fun: str="target"):
 
         def test(self):
 
             def validate(parsed_asm, *, program_path: Path):
                 bad_instructions = [i for i in parsed_asm.instructions if self.uses_stack(i)]
                 self.assertFalse(bad_instructions, msg=build_msg("Found instructions that use operands on the stack", bad_instructions=bad_instructions, full_prog=parsed_asm, program_path=program_path))
-            self.regalloc_test(program_path=program_path, validator=validate, extra_lib=extra_lib)
+            self.regalloc_test(program_path=program_path, validator=validate, extra_lib=extra_lib, target_fun=target_fun)
         
         return test
     
@@ -701,7 +710,7 @@ class RegAllocTest(OptimizationTest):
         return test
     
     @staticmethod
-    def make_spill_test(program_path: Path, extra_lib: Optional[Path]=None):
+    def make_spill_test(program_path: Path,  max_spilled_instructions: int, max_spilled_pseudos: int, extra_lib: Optional[Path]=None, target_fun: str="target"):
         """Test for a program with so many conflicts that it spills (not just callee-saved regs)
            Validate that our only stack instructions are:
            - saving/restoring callee-saved regs
@@ -713,14 +722,14 @@ class RegAllocTest(OptimizationTest):
             def validate(parsed_asm, *, program_path: Path):
 
                 _, spill_instructions = self.find_spills(parsed_asm)
-                self.assertLessEqual(len(spill_instructions), 3,
-                                     msg=build_msg(f"Should only need three instructions involving spilled pseudo but found {len(spill_instructions)}",
+                self.assertLessEqual(len(spill_instructions), max_spilled_instructions,
+                                     msg=build_msg(f"Should only need {max_spilled_instructions} instructions involving spilled pseudo but found {len(spill_instructions)}",
                                      bad_instructions=spill_instructions, full_prog=parsed_asm, program_path=program_path))
                 
                 spilled_operands = set([op for i in spill_instructions for op in i if isinstance(op, AssemblyParser.Memory) ])
-                self.assertLessEqual(len(spilled_operands), 1, msg=build_msg(f"At most one pseudoreg should have been spilled, looks like {len(spilled_operands)} were",
+                self.assertLessEqual(len(spilled_operands), max_spilled_pseudos, msg=build_msg(f"At most {max_spilled_pseudos} pseudoregs should have been spilled, looks like {len(spilled_operands)} were",
                                      bad_instructions=spill_instructions, full_prog=parsed_asm, program_path=program_path))
                 
-            self.regalloc_test(program_path=program_path, validator=validate, extra_lib=extra_lib)
+            self.regalloc_test(program_path=program_path, validator=validate, target_fun=target_fun, extra_lib=extra_lib)
         
         return test

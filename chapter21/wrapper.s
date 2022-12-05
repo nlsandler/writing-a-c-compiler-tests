@@ -1,8 +1,21 @@
-	.section	__TEXT,__text,regular,pure_instructions
-	.build_version macos, 13, 0	sdk_version 13, 0
-	.globl	_main                           ## -- Begin function main
-	.p2align	4, 0x90
-_main:                                  ## @main
+	.literal8
+Lone:
+	.double 1.0
+Ltwo:
+	.double 2.0
+Lthree:
+	.double 3.0
+Lfour:
+	.double 4.0
+Lfive:
+	.double 5.0
+Lsix:
+	.double 6.0
+Lseven:
+	.double 7.0					
+	.text
+	.globl	_main
+_main:
 ## %bb.0:
 	pushq	%rbp
 	movq	%rsp, %rbp
@@ -25,6 +38,13 @@ _main:                                  ## @main
 	movl	$4, %ecx
 	movl	$5, %r8d
 	movl	$6, %r9d
+	movsd	Lone(%rip), %xmm0
+	movsd	Ltwo(%rip), %xmm1
+	movsd	Lthree(%rip), %xmm2
+	movsd	Lfour(%rip), %xmm3
+	movsd	Lfive(%rip), %xmm4
+	movsd	Lsix(%rip), %xmm5
+	movsd	Lseven(%rip), %xmm7
 	callq	_target
 	# make sure values of callee-saved regs were preserved
 	cmpq	$-1, %rbx
