@@ -619,7 +619,8 @@ class RegAllocTest(OptimizationTest):
                 "dbl_trivially_colorable": lambda path: cls.make_no_spills_test(path),
                 "fourteen_pseudos_interfere": lambda path: cls.make_no_spills_test(path),
                 "push_xmm": lambda path: cls.make_no_spills_test(path),
-                "track_dbl_arg_registers": lambda path: cls.make_no_spills_test(path, extra_lib=Path('track_dbl_arg_registers_lib.c'))
+                "track_dbl_arg_registers": lambda path: cls.make_no_spills_test(path, extra_lib=Path('track_dbl_arg_registers_lib.c')),
+                "store_pointer_in_register": lambda path: cls.make_no_spills_test(path)
             }
             # default test: compile, run and check results without inspecting assembly
 
