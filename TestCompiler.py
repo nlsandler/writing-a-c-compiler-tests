@@ -70,7 +70,7 @@ def extra_credit_programs(source_dir: Path, extra_credit_flags: TestBase.ExtraCr
             yield source_prog
 
 
-def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTest.Optimizations, int_only: bool) -> Iterable[Path]:
+def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTest.Optimizations, int_only: bool, no_coalescing: bool) -> Iterable[Path]:
     if chapter < 20:
         return map(Path, TestBase.DIRECTORIES_BY_STAGE[stage]["valid"])
     if chapter == 20:
@@ -97,9 +97,19 @@ def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTe
     
     if chapter == 21:
         if int_only:
-            return [Path("int_only")]
+            base_paths = [Path("int_only")]
         else:
-            return [Path("int_only"), Path("all_types")]
+            base_paths = [Path("int_only"), Path("all_types")]
+        if no_coalescing:
+            sub_dirs = [ Path("no_coalescing")]
+        else:
+            sub_dirs = [Path("no_coalescing"), Path("with_coalescing")]
+        
+        test_dirs = []
+        for b in base_paths:
+            for s in sub_dirs:
+                test_dirs.append(b / s)
+        return test_dirs
     raise NotImplementedError("what chapter is this???")
 
 
@@ -131,7 +141,7 @@ def make_test(program: Path, lib_subdir: Path, stage: str) -> Callable:
             program)
 
 
-def build_test_class(chapter: int, compiler: Path, options: List[str], stage: str, extra_credit: TestBase.ExtraCredit, skip_invalid: bool, optimization: AssemblyTest.Optimizations, int_only: bool) -> Tuple[str, Callable]:
+def build_test_class(chapter: int, compiler: Path, options: List[str], stage: str, extra_credit: TestBase.ExtraCredit, skip_invalid: bool, optimization: AssemblyTest.Optimizations, int_only: bool, no_coalescing: bool) -> Tuple[str, Callable]:
 
     test_dir = Path(__file__).parent.joinpath(
         f"chapter{chapter}").resolve()
@@ -187,7 +197,7 @@ def build_test_class(chapter: int, compiler: Path, options: List[str], stage: st
                     testclass_attrs[f'test_{invalid_subdir}_extra_credit_{program.stem}'] = make_invalid_test(
                         program)
 
-    for valid_subdir in find_valid_subdirectories(chapter, stage, optimization, int_only):
+    for valid_subdir in find_valid_subdirectories(chapter, stage, optimization, int_only, no_coalescing):
 
         valid_directory = test_dir / valid_subdir
 
@@ -256,6 +266,7 @@ def parse_arguments() -> argparse.Namespace:
                                const=AssemblyTest.Optimizations.DEAD_STORE_ELIM, help="Enable all four optimizations")
     parser.add_argument("--int-only", action="store_true",
                         help="Only run optimization tests that use Part I language features")
+    parser.add_argument("--no-coalescing", action="store_true", help="Run register allocation tests that don't rely on coalescing")
     # extra args to pass through to compiler, should be followed by --
     parser.add_argument("extra_cc_options", type=str, nargs="*")
     return parser.parse_intermixed_args()
@@ -294,7 +305,7 @@ def main():
     # dynamically adding a test case for each source program
     for chapter in chapters:
         class_name, class_type = build_test_class(
-            chapter, compiler, cc_options, stage, extra_credit, args.skip_invalid, args.optimization, args.int_only)
+            chapter, compiler, cc_options, stage, extra_credit, args.skip_invalid, args.optimization, args.int_only, args.no_coalescing)
         globals()[class_name] = class_type
 
     tests = unittest.defaultTestLoader.loadTestsFromName('TestCompiler')

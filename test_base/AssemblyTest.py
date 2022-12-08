@@ -622,7 +622,9 @@ class RegAllocTest(OptimizationTest):
                 "track_dbl_arg_registers": lambda path: cls.make_no_spills_test(path, extra_lib=Path('track_dbl_arg_registers_lib.c')),
                 "store_pointer_in_register": lambda path: cls.make_no_spills_test(path),
                 "test_spilling_dbls": lambda path: cls.make_spill_test(path, max_spilled_instructions=4, max_spilled_pseudos=1, extra_lib=Path("force_spill_dbl_lib.c")),
-                "mixed_ints": lambda path: cls.make_spill_test(path, max_spilled_instructions=2, max_spilled_pseudos=1, extra_lib=Path("force_spill_mixed_int_lib.c"))
+                "mixed_ints": lambda path: cls.make_spill_test(path, max_spilled_instructions=2, max_spilled_pseudos=1, extra_lib=Path("force_spill_mixed_int_lib.c")),
+                "callee_saved_live_at_exit": lambda path: cls.make_no_spills_test(path, extra_lib=Path("callee_saved_live_at_exit_lib.c"), target_fun="cant_coalesce_fully"),
+                "funcall_generates_args": lambda path: cls.make_no_spills_test(path, extra_lib=Path("funcall_generates_args_lib.c"))
             }
             # default test: compile, run and check results without inspecting assembly
 
