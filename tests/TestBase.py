@@ -1,8 +1,9 @@
 """Base class for compiler tests"""
 from pathlib import Path
 from enum import Flag, auto, unique
-from typing import Optional
+from typing import Optional, Tuple, Callable, Iterable
 import re
+import itertools
 import subprocess
 import unittest
 
@@ -104,7 +105,6 @@ class TestChapter(unittest.TestCase):
     cc: Path = None
     options: list[str]
     exit_stage: str = None
-    extra_credit: set[ExtraCredit] = set()
 
     def tearDown(self) -> None:
 
@@ -253,3 +253,77 @@ class TestChapter(unittest.TestCase):
 
         # make sure results are the same
         self.validate_runs(expected_result, result)
+
+
+def extra_credit_programs(source_dir: Path, extra_credit_flags: Optional[ExtraCredit]) -> Iterable[Path]:
+    if not extra_credit_flags:
+        return
+    extra_cred_regex = extra_credit_flags.to_regex()
+    for source_prog in source_dir.rglob("*.c"):
+        if extra_cred_regex.search(source_prog.stem):
+            yield source_prog
+
+
+def get_programs(base_dir: Path, sub_dir: str, extra_credit_flags: ExtraCredit) -> Iterable[Path]:
+        normal_directory = base_dir / sub_dir
+        extra_credit_dir = base_dir/ f"{sub_dir}_extra_credit"
+        normal_progs = normal_directory.rglob("*.c")
+        extra_credit_progs = extra_credit_programs(extra_credit_dir, extra_credit_flags)
+        return itertools.chain(normal_progs, extra_credit_progs)
+
+def make_invalid_tests(test_dir: Path, stage: str, extra_credit_flags: ExtraCredit) -> list[Tuple[str, Callable]]:
+    """Generate one test method for each invalid test program under path"""
+    tests : list[Tuple[str, Callable]] = []
+    for invalid_subdir in DIRECTORIES_BY_STAGE[stage]["invalid"]:
+
+        for program in get_programs(test_dir, invalid_subdir, extra_credit_flags):
+            key = program.relative_to(test_dir).with_suffix("")
+            test_name = f"test_{key}"
+            def test_invalid(self: TestChapter):
+                self.compile_failure(program)
+            test_method = test_invalid
+            tests.append((test_name, test_invalid))
+
+    return tests
+
+def make_test_run(program: Path) -> Callable:
+    def test_run(self: TestChapter):
+        self.compile_and_run(program)
+    return test_run
+
+def make_test_client(program: Path) -> Callable:
+    def test_client(self: TestChapter):
+        self.compile_client_and_run(program)
+    return test_client
+
+def make_test_lib(program: Path) -> Callable:
+    def test_lib(self: TestChapter):
+        self.compile_lib_and_run(program)
+    return test_lib
+
+def make_test_valid(program: Path) -> Callable:
+    def test_valid(self: TestChapter):
+        self.compile_success(program)
+    return test_valid
+
+def make_valid_tests(test_dir: Path, stage: str, extra_credit_flags: ExtraCredit) -> list[Tuple[str, Callable]]:
+    tests : list[Tuple[str, Callable]] = []
+    for valid_subdir in DIRECTORIES_BY_STAGE[stage]["valid"]:
+
+        for program in get_programs(test_dir, valid_subdir, extra_credit_flags):
+            key = program.relative_to(test_dir).with_suffix("")
+            test_name = f"test_{key}"
+            test_method: Callable
+            # test depends on the stage and whether this is a library test
+            if stage == "run":
+                if "libraries" not in key.parts:
+                    test_method = make_test_run(program)
+
+                elif program.stem.endswith("client"):
+                    test_method = make_test_client(program)
+                else:
+                    test_method = make_test_lib(program)
+            else:
+                test_method = make_test_valid(program)
+            tests.append((test_name, test_method))
+    return tests

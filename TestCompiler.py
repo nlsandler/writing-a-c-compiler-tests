@@ -1,225 +1,45 @@
 
-"""Run test programs (TODO better docstring)"""
-from test_base import TestBase
+"""Entry point for test script"""
 import argparse
 
 from functools import reduce
 from operator import ior
-from typing import Callable, List, Tuple, Iterable, Type
+from typing import Type, Optional
 from pathlib import Path
 import unittest
 
-from test_base import AssemblyTest
+import tests
+from tests.Chapter20 import Optimizations
+from tests.TestBase import ExtraCredit
 
 
-def make_invalid_test(program_path: Path) -> Callable:
-    """Return a function to test that compiling program at program_path fails"""
-
-    def test_invalid(self: TestBase.TestChapter):
-        self.compile_failure(program_path)
-
-    return test_invalid
 
 
-def make_valid_test(program_path: Path) -> Callable:
-    """Return a function to test that compiling program at program_path succeeds"""
+def get_optimization_flags(latest_chapter: int, optimization_opt: Optional[Optimizations]) -> list[str]:
 
-    def test_valid(self: TestBase.TestChapter):
-        self.compile_success(program_path)
+    if optimization_opt is None:
+        if latest_chapter < 20:
+            # don't enable optimizations
+            return []
+        # otherwise, default to enabling all optimizations
+        return ["--fold-constants", "--eliminate-unreachable-code", "--propagate-copies", "--eliminate-dead-stores"]
 
-    return test_valid
+    # we enable optimizations cumulatively
+    # you can test each one in isolation by passing them as extra compiler arguments
+    if latest_chapter > 20:
+        raise ValueError(f"Option {optimization_opt} is incompatible with chapter 21 tests. All TACKY optimizations must be enabled.")
 
-
-def make_running_test(program_path: Path) -> Callable:
-    """Compile and run program, check results"""
-
-    def test_valid(self: TestBase.TestChapter):
-        self.compile_and_run(program_path)
-
-    return test_valid
-
-
-def make_client_test(program_path: Path) -> Callable:
-
-    def test_client(self):
-        self.compile_client_and_run(program_path)
-
-    return test_client
-
-
-def make_lib_test(program_path: Path) -> Callable:
-
-    def test_lib(self):
-        self.compile_lib_and_run(program_path)
-
-    return test_lib
-
-
-def make_constant_folding_test(program_path: Path) -> Callable:
-
-    def test_fold_const(self: AssemblyTest.ConstantFoldingTest):
-        self.optimization_test(program_path)
-
-    return test_fold_const
-
-
-def extra_credit_programs(source_dir: Path, extra_credit_flags: TestBase.ExtraCredit) -> Iterable[Path]:
-    extra_cred_regex = extra_credit_flags.to_regex()
-    for source_prog in source_dir.rglob("*.c"):
-        if extra_cred_regex.search(source_prog.stem):
-            yield source_prog
-
-
-def find_valid_subdirectories(chapter: int, stage: str, optimization: AssemblyTest.Optimizations, int_only: bool, no_coalescing: bool) -> Iterable[Path]:
-    if chapter < 20:
-        return map(Path, TestBase.DIRECTORIES_BY_STAGE[stage]["valid"])
-    if chapter == 20:
-
-        if optimization == AssemblyTest.Optimizations.CONSTANT_FOLD:
-            base_path = Path("constant_folding")
-            test_dirs = [base_path / "int_only"]
-            if not int_only:
-                test_dirs.append(base_path / "all_types")
-        elif optimization == AssemblyTest.Optimizations.COPY_PROP:
-            base_path = Path("copy_propagation")
-            test_dirs = [base_path/"int_only"]
-            if not int_only:
-                test_dirs.append(base_path / "all_types")
-        elif optimization == AssemblyTest.Optimizations.DEAD_STORE_ELIM:
-            base_path = Path("dead_store_elimination")
-            test_dirs = [base_path/"int_only"]
-            if not int_only:
-                test_dirs.append(base_path / "all_types")
-        else:
-            raise NotImplementedError("we handle these differently")
-
-        return test_dirs
+    if optimization_opt == Optimizations.CONSTANT_FOLD:
+        return ["--fold-constants"]
+    if optimization_opt == Optimizations.UNREACHABLE_CODE_ELIM:
+        return ["--fold-constants", "--eliminate-unreachable-code"]
+    if optimization_opt == Optimizations.COPY_PROP:
+        return ["--fold-constants", "--eliminate-unreachable-code", "--propagate-copies"]
+    if optimization_opt == Optimizations.DEAD_STORE_ELIM:
+        return ["--fold-constants", "--eliminate-unreachable-code", "--propagate-copies", "--eliminate-dead-stores"]
     
-    if chapter == 21:
-        if int_only:
-            base_paths = [Path("int_only")]
-        else:
-            base_paths = [Path("int_only"), Path("all_types")]
-        if no_coalescing:
-            sub_dirs = [ Path("no_coalescing")]
-        else:
-            sub_dirs = [Path("no_coalescing"), Path("with_coalescing")]
-        
-        test_dirs = []
-        for b in base_paths:
-            for s in sub_dirs:
-                test_dirs.append(b / s)
-        return test_dirs
-    raise NotImplementedError("what chapter is this???")
-
-
-def make_test(program: Path, lib_subdir: Path, stage: str) -> Callable:
-    if stage == "run":
-        # optimization tests are special
-        if any(p for p in program.parents if p.stem == "constant_folding"):
-            return make_constant_folding_test(
-                program)
-        elif any(p for p in program.parents if p.stem == "copy_propagation"):
-            return AssemblyTest.CopyPropTest.get_test_for_path(
-                program)
-        elif any(p for p in program.parents if p.stem == "dead_store_elimination"):
-            return AssemblyTest.DeadStoreEliminationTest.get_test_for_path(program)
-        elif any(p for p in program.parents if p.stem == "chapter21"):
-            return AssemblyTest.RegAllocTest.get_test_for_path(program)            
-        # programs in valid/libraries are special
-        elif lib_subdir not in program.parents:
-            return make_running_test(
-                program)
-        elif program.stem.endswith("client"):
-            return make_client_test(
-                program)
-        else:
-            return make_lib_test(
-                program)
-    else:
-        return make_valid_test(
-            program)
-
-
-def build_test_class(chapter: int, compiler: Path, options: List[str], stage: str, extra_credit: TestBase.ExtraCredit, skip_invalid: bool, optimization: AssemblyTest.Optimizations, int_only: bool, no_coalescing: bool) -> Tuple[str, Callable]:
-
-    test_dir = Path(__file__).parent.joinpath(
-        f"chapter{chapter}").resolve()
-
-    testclass_name = f"TestChapter{chapter}"
-
-    if chapter == 21:
-        # test reg allocation w/ all TACKY optimizations enabled
-        options.append("--optimize")
-
-    testclass_attrs = {"test_dir": test_dir,
-                       "cc": compiler,
-                       "options": options,
-                       "exit_stage": None if stage == "run" else stage,
-                       "extra_credit": extra_credit}
-
-    base_class: Type[TestBase.TestChapter] = TestBase.TestChapter
-    if chapter == 20:
-
-        if optimization == AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM:
-            # don't go through usual test-finding process for unreachable code elimination tests
-            testclass_attrs["test_dir"] = test_dir / \
-                "unreachable_code_elimination"
-            testclass_type = type(
-                testclass_name, (AssemblyTest.UnreachableCodeTest,), testclass_attrs)
-            return testclass_name, testclass_type
-        elif optimization == AssemblyTest.Optimizations.COPY_PROP:
-            base_class = AssemblyTest.CopyPropTest
-        elif optimization == AssemblyTest.Optimizations.CONSTANT_FOLD:
-            base_class = AssemblyTest.ConstantFoldingTest
-        elif optimization == AssemblyTest.Optimizations.DEAD_STORE_ELIM:
-            base_class = AssemblyTest.DeadStoreEliminationTest
-        else:
-            raise NotImplementedError("other optimizations")
-
-    if chapter == 21:
-        base_class = AssemblyTest.RegAllocTest
-
-    # generate invalid test cases up to the appropriate stage
-    # Note: there are no valid optimizaton tests
-    if not skip_invalid:
-        for invalid_subdir in TestBase.DIRECTORIES_BY_STAGE[stage]["invalid"]:
-            invalid_directory = test_dir / invalid_subdir
-            for program in invalid_directory.rglob("*.c"):
-                testclass_attrs[f'test_{invalid_subdir}_{program.stem}'] = make_invalid_test(
-                    program)
-
-            # if we've enabled any extra-credit features, look for programs that test those too
-            if extra_credit:
-                invalid_extra_credit_directory = test_dir / \
-                    f"{invalid_subdir}_extra_credit"
-                for program in extra_credit_programs(invalid_extra_credit_directory, extra_credit):
-                    testclass_attrs[f'test_{invalid_subdir}_extra_credit_{program.stem}'] = make_invalid_test(
-                        program)
-
-    for valid_subdir in find_valid_subdirectories(chapter, stage, optimization, int_only, no_coalescing):
-
-        valid_directory = test_dir / valid_subdir
-
-        lib_subdir = valid_directory / "libraries"
-        for program in valid_directory.rglob("*.c"):
-            test_name = f"test_{valid_subdir}_{program.stem}"
-            testclass_attrs[test_name] = make_test(program, lib_subdir, stage)
-
-        # add extra-credit tests
-        # TODO refactor w/ non-extra-credit code above
-        if extra_credit:
-            valid_extra_credit_directory = test_dir / \
-                f"{valid_subdir}_extra_credit"
-            valid_extra_credit_lib_subdir = valid_extra_credit_directory / "libraries"
-            for program in extra_credit_programs(valid_extra_credit_directory, extra_credit):
-                test_name = f"test_{valid_subdir}_extra_credit_{program.stem}"
-                testclass_attrs[test_name] = make_test(
-                    program, valid_extra_credit_lib_subdir, stage)
-
-    testclass_type = type(
-        testclass_name, (base_class,), testclass_attrs)
-    return testclass_name, testclass_type
+    # we got an unrecognizeable option (or ALL, which should never be passed to this function)
+    raise NotImplementedError(f"Don't know how to handle option {optimization_opt}")
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -241,29 +61,29 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--stage", type=str, choices=["lex", "parse", "validate", "tacky", "codegen"])
     parser.add_argument("--bitwise", action="append_const", dest="extra_credit",
-                        const=TestBase.ExtraCredit.BITWISE, help="Include tests for bitwise operations")
+                        const=ExtraCredit.BITWISE, help="Include tests for bitwise operations")
     parser.add_argument("--compound", action="append_const", dest="extra_credit",
-                        const=TestBase.ExtraCredit.COMPOUND, help="Include tests for compound assignment")
-    parser.add_argument("--goto", action="append_const", const=TestBase.ExtraCredit.GOTO, dest="extra_credit",
+                        const=ExtraCredit.COMPOUND, help="Include tests for compound assignment")
+    parser.add_argument("--goto", action="append_const", const=ExtraCredit.GOTO, dest="extra_credit",
                         help="Include tests for goto and labeled statements")
     parser.add_argument("--switch", action="append_const", dest="extra_credit",
-                        const=TestBase.ExtraCredit.SWITCH, help="Include tests for switch statements")
-    parser.add_argument("--nan", action="store_const", const=TestBase.ExtraCredit.NAN, dest="append_const",
+                        const=ExtraCredit.SWITCH, help="Include tests for switch statements")
+    parser.add_argument("--nan", action="store_const", const=ExtraCredit.NAN, dest="append_const",
                         help="Include tests for floating-point NaN")
     # TODO should this be mutually exclusive with other extra-credit flags?
-    parser.add_argument("--extra-credit", action="append_const", const=TestBase.ExtraCredit.ALL,
+    parser.add_argument("--extra-credit", action="append_const", const=ExtraCredit.ALL,
                         help="Include tests for all extra credit features")
     # optimization tests
     optimize_opts = parser.add_mutually_exclusive_group()
     optimize_opts.add_argument('--fold-constants', action='store_const', dest="optimization",
-                               const=AssemblyTest.Optimizations.CONSTANT_FOLD, help='Enable constant folding, and run constant folding tests in chapter 20')
+                               const=Optimizations.CONSTANT_FOLD, help='Enable constant folding, and run constant folding tests in chapter 20')
     optimize_opts.add_argument('--eliminate-unreachable-code', action='store_const', dest="optimization",
-                               const=AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM, help="Enable constant folding and unreachable code elimination; run unreachable code elimination tests in chapter 20"
+                               const=Optimizations.UNREACHABLE_CODE_ELIM, help="Enable constant folding and unreachable code elimination; run unreachable code elimination tests in chapter 20"
                                )
-    optimize_opts.add_argument('--propagate-copies', action='store_const', dest="optimization", const=AssemblyTest.Optimizations.COPY_PROP,
+    optimize_opts.add_argument('--propagate-copies', action='store_const', dest="optimization", const=Optimizations.COPY_PROP,
                                help="Enable constant folding, unreachable code elimination, and copy propagation")
     optimize_opts.add_argument('--eliminate-dead-stores', action='store_const', dest="optimization",
-                               const=AssemblyTest.Optimizations.DEAD_STORE_ELIM, help="Enable all four optimizations")
+                               const=Optimizations.DEAD_STORE_ELIM, help="Enable all four optimizations")
     parser.add_argument("--int-only", action="store_true",
                         help="Only run optimization tests that use Part I language features")
     parser.add_argument("--no-coalescing", action="store_true", help="Run register allocation tests that don't rely on coalescing")
@@ -272,7 +92,7 @@ def parse_arguments() -> argparse.Namespace:
     return parser.parse_intermixed_args()
 
 
-def main():
+def main() -> None:
     """Main entry point for test runner"""
     args = parse_arguments()
     compiler = Path(args.cc).resolve()
@@ -281,7 +101,7 @@ def main():
     if args.extra_credit is not None:
         extra_credit = reduce(ior, args.extra_credit)
     else:
-        extra_credit = TestBase.ExtraCredit.NONE
+        extra_credit = ExtraCredit.NONE
 
     if args.latest_only:
         chapters = [args.chapter]
@@ -290,32 +110,34 @@ def main():
 
     stage = args.stage or "run"  # by default, compile and run the program
     cc_options = args.extra_cc_options
-    # add optimization options (they're cumulative)
-    if args.optimization == AssemblyTest.Optimizations.CONSTANT_FOLD:
-        cc_options.append("--fold-constants")
-    elif args.optimization == AssemblyTest.Optimizations.UNREACHABLE_CODE_ELIM:
-        cc_options.extend(["--fold-constants", "--eliminate-unreachable-code"])
-    elif args.optimization == AssemblyTest.Optimizations.COPY_PROP:
-        cc_options.extend(
-            ["--fold-constants", "--eliminate-unreachable-code", "--propagate-copies"])
-    elif args.optimization == AssemblyTest.Optimizations.DEAD_STORE_ELIM:
-        cc_options.extend(["--fold-constants", "--eliminate-unreachable-code",
-                          "--propagate-copies", "--eliminate-dead-stores"])
+    optimization_flags = get_optimization_flags(args.chapter, args.optimization)
+    cc_options.extend(optimization_flags)
+
     # create a subclass of TestChapter for each chapter,
     # dynamically adding a test case for each source program
-    for chapter in chapters:
-        class_name, class_type = build_test_class(
-            chapter, compiler, cc_options, stage, extra_credit, args.skip_invalid, args.optimization, args.int_only, args.no_coalescing)
-        globals()[class_name] = class_type
 
-    tests = unittest.defaultTestLoader.loadTestsFromName('TestCompiler')
+    test_suite = unittest.TestSuite()
+
+    for chapter in chapters:
+        test_class: Type[unittest.TestCase]
+        if chapter < 20:
+            test_class = tests.build_test_class(chapter, compiler, cc_options, stage, extra_credit, args.skip_invalid)
+            test_instance = unittest.defaultTestLoader.loadTestsFromTestCase(test_class)
+            test_suite.addTest(test_instance)
+        elif chapter == 20:
+            test_classes = tests.Chapter20.build_test_suite(compiler, cc_options, extra_credit, args.optimization, args.int_only)
+            for tc in test_classes:
+                test_instance = unittest.defaultTestLoader.loadTestsFromTestCase(tc)
+                test_suite.addTest(test_instance)
+        elif chapter == 21:
+            test_class = tests.build_chapter_21_test_class(compiler, cc_options, extra_credit, args.int_only, args.no_coalescing)
+            test_instance = unittest.defaultTestLoader.loadTestsFromTestCase(test_class)
+            test_suite.addTest(test_instance)
+        else:
+            raise ValueError(f"There is no chapter {chapter}!")
 
     # handle ctrl-C cleanly
     unittest.installHandler()
     runner = unittest.TextTestRunner(
         verbosity=args.verbose, failfast=args.failfast)
-    runner.run(tests)
-
-
-if __name__ == "__main__":
-    main()
+    runner.run(test_suite)

@@ -5,7 +5,6 @@ git merge chapter-12-and-11-extra-credit -m 'tmp'
 git merge chapter-13 -m 'tmp'
 git merge chapter-14 -m 'tmp'
 git merge chapter-15 -m 'tmp'
-git merge chapter-21 -m 'tmp'
 git merge extra-tests -m 'tmp'
 git merge chapter-16 -m 'tmp'
 git merge -Xtheirs chapter-17 -m 'tmp'
@@ -19,8 +18,5 @@ echo "$#"
 if [ "$#" -ne 0 ]
 then
     set -x
-    ./test_compiler ./mycc --chapter 21 -v -f --extra-credit --
-    ./test_compiler ./mycc --chapter 21 -v -f --extra-credit -- -O
-    ./test_compiler ./mycc --chapter 21 -v -f --extra-credit -- -O -r
-    ./test_compiler ./mycc --chapter 21 -v -f --extra-credit -- -r
+    ./test_compiler ./mycc --chapter 21 -v -f
 fi

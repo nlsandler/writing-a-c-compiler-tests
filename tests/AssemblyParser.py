@@ -586,8 +586,12 @@ def parse_statement(line: str) -> Union[Label, Instruction, None]:
     operands = [fix_immediate(o, size) for o in operands]
     return Instruction(mnemonic, operands)
 
+def is_valid_c_identifier(lbl: str):
+    C_IDENTIFIER = re.compile("[_A-Za-z][_A-Za-z0-9]*")
+    return re.fullmatch(C_IDENTIFIER, lbl) is not None
 
-def parse(filename: str, function_names: Iterable[str]) -> list[AssemblyFunction]:
+
+def parse(filename: str) -> list[AssemblyFunction]:
 
     asm_functions: list[AssemblyFunction] = []
     with open(filename, encoding='utf-8') as f:
@@ -600,7 +604,7 @@ def parse(filename: str, function_names: Iterable[str]) -> list[AssemblyFunction
                 # it was a compiler directive
                 continue
 
-            if isinstance(label_or_instruction, Label) and label_or_instruction in function_names:
+            if isinstance(label_or_instruction, Label) and is_valid_c_identifier(label_or_instruction):
                 # we've found start of a new function
                 if current_function:
                     asm_functions.append(current_function)
@@ -621,9 +625,3 @@ def parse(filename: str, function_names: Iterable[str]) -> list[AssemblyFunction
             asm_functions.append(current_function)
 
     return asm_functions
-
-
-if __name__ == "__main__":
-    asm = parse("complex_const_fold.s", ["_main", "_target"])
-    for assembly_fun in asm:
-        print(assembly_fun)
