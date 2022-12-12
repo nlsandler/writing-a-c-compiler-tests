@@ -295,16 +295,20 @@ class CopyPropTest(AssemblyTest.OptimizationTest):
 
         args: list[Optional[Asm.Operand]] = []
         for r in arg_regs[:arg_count]:
-            mov_instr_idx, mov_instr = next((idx, instr) for (
-                idx, instr) in enumerate(before_funcall) if is_mov_to(instr, r))
+            try:
+                mov_instr_idx, mov_instr = next((idx, instr) for (
+                    idx, instr) in enumerate(before_funcall) if is_mov_to(instr, r))
 
-            # found a possible move instruction
-            if any(could_overwrite_reg(instr, r) for instr in before_funcall[:mov_instr_idx]):
-                # None means "we couldn't find move instruction that populates this argument"
-                # only a problem if we expect this specific argument to be a constant
+                # found a possible move instruction
+                if any(could_overwrite_reg(instr, r) for instr in before_funcall[:mov_instr_idx]):
+                    # None means "we couldn't find move instruction that populates this argument"
+                    # only a problem if we expect this specific argument to be a constant
+                    args.append(None)
+                else:
+                    args.append(mov_instr.operands[0])
+            except StopIteration:
+                # couldn't find a mov to this argument; sometimes expected one we've implemented coalescing
                 args.append(None)
-            else:
-                args.append(mov_instr.operands[0])
 
         return args
 
@@ -339,8 +343,8 @@ class CopyPropTest(AssemblyTest.OptimizationTest):
                 # same value moved into EDI and ESI, or
                 # EDI is moved into ESI, or
                 # ESI is moved into EDI
-                same_value = (actual_args[0] == actual_args[1] or actual_args[0]
-                              == Register.SI or actual_args[1] == Register.DI)
+                same_value = ((actual_args[0] is not None and actual_args[0] == actual_args[1])
+                              or actual_args[0] == Register.SI or actual_args[1] == Register.DI)
                 self.assertTrue(
                     same_value, msg=f"Bad arguments {actual_args[0]} and {actual_args[1]} to {callee}: both args should have same value")
 
@@ -442,23 +446,41 @@ class DeadStoreEliminationTest(AssemblyTest.OptimizationTest):
 
         return test
 
-    @staticmethod
-    def make_return_const_test(const: int, program_path: Path):
+    @classmethod
+    def make_return_const_test(cls, const: int, program_path: Path):
         """Validate that we don't have any computations or move instructions other than mov $const, %eax"""
 
-        def bad(i: Asm.Instruction):
-            if is_computation(i):
-                return True
-            if i.mnemonic == Opcode.MOV:
-                # only permitted mov instructions: mov specified return value into AX and manage stack frame
-                if i.operands[0] == Asm.Immediate(const) and i.operands[1] == Register.AX:
-                    return False
-                if i.operands[1] in [Register.SP, Register.BP]:
-                    return False
-                return True
-            return False
-
         def test(self):
+
+            allowed_moves : dict[Asm.Register, dict[str, bool]]= {r : { "to": True, "from": True} for r in cls.CALLEE_SAVED}
+
+            def bad(i: Asm.Instruction):
+
+                if is_computation(i):
+                    return True
+                if i.mnemonic == Opcode.MOV:
+                    # only permitted mov instructions:
+                    # 1. mov specified return value into AX
+                    # 2. manage stack frame
+                    # 3. save/restore callee-saved regs (in case we've implemented register allocation but not coalescing yet)
+                    # NOTE: save/restore moves could have callee-saved regs as source _and_ dest,
+                    # so we rely on the fact that we process instructions in order (and will see save instructions first) to figure out which is which
+                    src, dst = i.operands[0], i.operands[1]
+                    if src == Asm.Immediate(const) and dst == Register.AX:
+                        return False
+                    if src in [Register.SP, Register.BP]:
+                        return False
+                    if src in cls.CALLEE_SAVED and isinstance(dst, Register) and allowed_moves[src]["from"]:
+                        # this mov instruction is allowed b/c it saves this callee-saved reg
+                        # we shouldn't see any other moves rom this register
+                        allowed_moves[src]["from"]  = False
+                        return False
+                    if dst in cls.CALLEE_SAVED and isinstance(src, Register) and allowed_moves[dst]["to"]:
+                        allowed_moves[dst]["to"] = False
+                        return False
+                    return True
+                return False
+
             def validate(parsed_asm, *, program_path: Path):
                 bad_instructions = [
                     i for i in parsed_asm.instructions if bad(i)]

@@ -11,8 +11,6 @@ TEST_DIR = Path(__file__).parent.parent.joinpath("chapter21").resolve()
 
 class RegAllocTest(AssemblyTest.OptimizationTest):
     TESTS = None
-    CALLEE_SAVED = [ Register.BX, Register.R12, Register.R13, Register.R14, Register.R15 ]
-
 
     @property
     def wrapper_script(self):

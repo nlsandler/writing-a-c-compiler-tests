@@ -1,7 +1,7 @@
 import sys
 from . import TestBase
 from . import AssemblyParser
-from .AssemblyParser import Opcode
+from .AssemblyParser import Register
 from pathlib import Path
 import subprocess
 
@@ -9,6 +9,8 @@ import subprocess
 
 class OptimizationTest(TestBase.TestChapter):
 
+
+    CALLEE_SAVED = [ Register.BX, Register.R12, Register.R13, Register.R14, Register.R15 ]
     def get_target_functions(self, asm_file, *, target_fun: str) -> AssemblyParser.AssemblyFunction:
         if sys.platform == "darwin":
             target_fun = "_" + target_fun
