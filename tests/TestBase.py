@@ -271,6 +271,11 @@ def get_programs(base_dir: Path, sub_dir: str, extra_credit_flags: ExtraCredit) 
         extra_credit_progs = extra_credit_programs(extra_credit_dir, extra_credit_flags)
         return itertools.chain(normal_progs, extra_credit_progs)
 
+def make_invalid_test(program: Path) -> Callable:
+    def test_invalid(self: TestChapter):
+        self.compile_failure(program)
+    return test_invalid
+
 def make_invalid_tests(test_dir: Path, stage: str, extra_credit_flags: ExtraCredit) -> list[Tuple[str, Callable]]:
     """Generate one test method for each invalid test program under path"""
     tests : list[Tuple[str, Callable]] = []
@@ -279,10 +284,8 @@ def make_invalid_tests(test_dir: Path, stage: str, extra_credit_flags: ExtraCred
         for program in get_programs(test_dir, invalid_subdir, extra_credit_flags):
             key = program.relative_to(test_dir).with_suffix("")
             test_name = f"test_{key}"
-            def test_invalid(self: TestChapter):
-                self.compile_failure(program)
-            test_method = test_invalid
-            tests.append((test_name, test_invalid))
+            test_method = make_invalid_test(program)
+            tests.append((test_name, test_method))
 
     return tests
 
