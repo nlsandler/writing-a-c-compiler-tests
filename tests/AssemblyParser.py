@@ -175,7 +175,7 @@ class Punctuation(Enum):
     COLON = auto()
     PERCENT = auto()
     DOLLAR = auto()
-
+    AT = auto()
 
 Token = Union[str, int, Punctuation]
 
@@ -335,6 +335,8 @@ def tokenize(line: str) -> collections.deque[Token]:
             toks.append(Punctuation.COLON)
         elif next_char == '$':
             toks.append(Punctuation.DOLLAR)
+        elif next_char == '@':
+            toks.append(Punctuation.AT)
         else:
             raise ParseError(f"Unknown token: {next_char}")
 
@@ -476,11 +478,17 @@ def parse_next_operand(toks: collections.deque[Token]) -> Tuple[Operand, Optiona
         # it's an immediate, may have + or - sign
         return parse_immediate(toks), None
 
-    if isinstance(toks[0], str) and len(toks) == 1:
+    if isinstance(toks[0], str) and (len(toks) == 1 or toks[1] == Punctuation.AT):
         # identifier not followed by anything else
         # is a call or jump target
-        # TODO deal w/ operands of form x@PLT
-        return toks.popleft(), None
+        next_tok = toks.popleft()
+        # check whether this is followed by @PLT
+        if toks and toks[0] == Punctuation.AT:
+            toks.popleft()
+            suffix = toks.popleft()
+            next_tok = f"{next_tok}@{suffix}"
+            
+        return next_tok, None
 
     # it's a memory operand
     disp: Expr = []

@@ -1,4 +1,5 @@
-	.literal8
+	.section .rodata
+	.align 8
 Lone:
 	.double 1.0
 Ltwo:
@@ -14,8 +15,8 @@ Lsix:
 Lseven:
 	.double 7.0					
 	.text
-	.globl	_main
-_main:
+	.globl	main
+main:
 ## %bb.0:
 	pushq	%rbp
 	movq	%rsp, %rbp
@@ -45,7 +46,7 @@ _main:
 	movsd	Lfive(%rip), %xmm4
 	movsd	Lsix(%rip), %xmm5
 	movsd	Lseven(%rip), %xmm7
-	callq	_target
+	callq	target
 	# make sure values of callee-saved regs were preserved
 	cmpq	$-1, %rbx
 	jne		Lfail
@@ -67,7 +68,7 @@ _main:
 Lfail:
 	# raise SIGSEGV
 	movl	$11, %edi
-	call	_raise
+	call	raise
 	popq	%r15
 	popq	%r14
 	popq	%r13
