@@ -5,16 +5,22 @@ from typing import Optional, Union, Iterable, Callable, Tuple
 from pathlib import Path
 import subprocess
 from collections import defaultdict
+import platform
 import itertools
 
 TEST_DIR = Path(__file__).parent.parent.joinpath("chapter21").resolve()
+IS_OSX = platform.system().lower() == 'darwin'
 
 class RegAllocTest(AssemblyTest.OptimizationTest):
     TESTS = None
 
+
     @property
     def wrapper_script(self):
-        return self.test_dir.joinpath("wrapper.s")
+        if IS_OSX:
+            return self.test_dir.joinpath("wrapper_osx.s")
+        else:
+            return self.test_dir.joinpath("wrapper_linux.s")
 
     @property
     def lib_path(self):
@@ -26,7 +32,7 @@ class RegAllocTest(AssemblyTest.OptimizationTest):
 
         # delete any non-C files aproduced during this testrun
         garbage_files = (f for f in self.test_dir.rglob(
-            "*") if not f.is_dir() and f.suffix not in ['.c', '.h'] and f.stem != "wrapper")
+            "*") if not f.is_dir() and f.suffix not in ['.c', '.h'] and f.stem not in  ["wrapper_osx", "wrapper_linux"])
 
         for f in garbage_files:
             f.unlink()
