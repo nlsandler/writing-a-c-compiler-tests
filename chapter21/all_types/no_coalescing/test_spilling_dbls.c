@@ -1,7 +1,7 @@
 
 double callee(double fourteen, double thirteen, double twelve, double eleven, double ten, double nine, double eight, double seven, double six, double five, double four, double three, double two, double one);
 
-double glob = 3;
+int glob = 3;
 double glob2 = 4.0;
 
 int target(double one, double two, double three, double four, double five, double six)
