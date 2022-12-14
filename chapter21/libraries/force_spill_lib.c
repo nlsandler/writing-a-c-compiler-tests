@@ -10,7 +10,7 @@ int callee(int twelve, int eleven, int ten, int nine, int eight, int seven, int 
     }
 
     if (one == -377 && two == -469 && three == 0 && four == 92 && five == 60 && six == 550 && seven == 81 && eight == 79 && nine == 90 && ten == 2 && eleven == 30 && twelve == 20) {
-        // expected results for first call
+        // expected results for second call
         return 3;
     }
 

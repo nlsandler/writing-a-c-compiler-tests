@@ -1,7 +1,7 @@
 
 double callee(double fourteen, double thirteen, double twelve, double eleven, double ten, double nine, double eight, double seven, double six, double five, double four, double three, double two, double one);
 
-double glob = 3.0;
+double glob = 3;
 double glob2 = 4.0;
 
 int target(double one, double two, double three, double four, double five, double six)
@@ -13,7 +13,7 @@ int target(double one, double two, double three, double four, double five, doubl
      * due to optimistic coloring, we could end up spilling just should_spill
      * even if we end up choosing other nodes as spill candidates first
      */
-    double should_spill = glob + 3.0;
+    double should_spill = (double) glob;
     // all these registers conflict with should_spill and each other
     double seven = one * one + 6.0;
     double eight = two * 4;
