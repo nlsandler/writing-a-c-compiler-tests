@@ -5,7 +5,7 @@ int target(int flag, int y) {
 
   // make sure we optimize out jump/label here b/c y = x is redundnat
   if (flag) {
-    y = x;
+    x = y;
   }
   return y;
 }

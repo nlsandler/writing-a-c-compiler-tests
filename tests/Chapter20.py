@@ -195,6 +195,7 @@ class CopyPropTest(AssemblyTest.OptimizationTest):
                 "propagate_var": lambda path: cls.make_same_arg_test("callee", path),
                 "multi_instance_same_copy": lambda path: cls.make_same_arg_test("callee", path),
                 "redundant_copies": lambda path: cls.make_redundant_copies_test(path),
+                "redundant_copies_2": lambda path: cls.make_redundant_copies_test(path),
                 "alias_analysis": lambda path: cls.make_retval_test(24, path),
                 "char_type_conversion": lambda path: cls.make_retval_test(1, path),
                 "copy_struct": lambda path: cls.make_same_arg_test("callee", path),
