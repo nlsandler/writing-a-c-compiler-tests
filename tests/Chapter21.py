@@ -134,9 +134,6 @@ class RegAllocTest(AssemblyTest.OptimizationTest):
         if isinstance(i, Asm.Label):
             return False
 
-        if i.mnemonic == Opcode.POP and i.operands[0] != Register.BP:
-            # popping a value off the stack is a memory access (unelss we're popping RBP to manage the stack frame)
-            return True
 
         def is_stack(operand):
             return isinstance(operand, Asm.Memory) and operand.base == Register.BP
