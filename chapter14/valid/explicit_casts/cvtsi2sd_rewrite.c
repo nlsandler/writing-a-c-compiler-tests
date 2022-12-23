@@ -1,4 +1,6 @@
 // make sure we correctly rewrite cvtsi2sd where src is constant and dest is memory
+// NOTE: this doesn't work b/c when optimizations are enabled, cvtsi2sd is optmized way
+// and when they're disabled...we end up not storing result in memory. but maybe that's fixable
 // adapted from test_spilling_dbls in chapter 21 so it will work even once we have register coalescing
 // maybe there is a less messy way to do this?
 
