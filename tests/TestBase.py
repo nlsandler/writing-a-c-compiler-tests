@@ -1,12 +1,18 @@
 """Base class for compiler tests"""
 from pathlib import Path
 from enum import Flag, auto, unique
-from typing import Optional, Tuple, Callable, Iterable
+from typing import Optional, Tuple, Callable, Iterable, Any
 import re
 import itertools
+import json
 import subprocess
 import unittest
 
+
+EXPECTED_RESULTS : dict[str, Any]
+
+with open("expected_results.json", "r") as f:
+    EXPECTED_RESULTS = json.load(f)
 
 def replace_stem(path: Path, new_stem: str) -> Path:
     try:
@@ -158,14 +164,13 @@ class TestChapter(unittest.TestCase):
         executable_path = program_path.parent / stem
         self.assertFalse(executable_path.exists())
 
-    def validate_runs(self, expected: subprocess.CompletedProcess, actual: subprocess.CompletedProcess):
+    def validate_runs(self, expected_retcode: int, expected_stdout: str, actual: subprocess.CompletedProcess):
         exe = actual.args[0]
-        self.assertEqual(expected.returncode, actual.returncode,
-                         msg=f"Expected return code {expected.returncode}, found {actual.returncode} in {exe}")
-        self.assertEqual(expected.stdout, actual.stdout,
-                         msg=f"Expected output {expected.stdout}, found {actual.stdout} in {exe}")
-        self.assertEqual(expected.stderr, actual.stderr,
-                         msg=f"Expected error output {expected.stderr}, found {actual.stderr} in {exe}")
+        self.assertEqual(expected_retcode, actual.returncode,
+                         msg=f"Expected return code {expected_retcode}, found {actual.returncode} in {exe}")
+        self.assertEqual(expected_stdout, actual.stdout,
+                         msg=f"Expected output {expected_stdout}, found {actual.stdout} in {exe}")
+        self.assertFalse(actual.stderr, msg=f"Unexpected error output {actual.stderr} in {exe}")
 
     def compile_failure(self, program_path):
 
@@ -189,8 +194,7 @@ class TestChapter(unittest.TestCase):
     def compile_and_run(self, program_path):
 
         # first compile and run the program with GCC
-        expected_result = self.gcc_compile_and_run(
-            program_path, prefix_output=True)
+        expected_result = EXPECTED_RESULTS[str(program_path)]
 
         # HACK: include -lm for standard library test on linux
         if "linux" in self.options and "standard_library_call" in str(program_path):
@@ -210,7 +214,7 @@ class TestChapter(unittest.TestCase):
         result = subprocess.run(
             [exe], check=False, capture_output=True, text=True)
 
-        self.validate_runs(expected_result, result)
+        self.validate_runs(expected_result["return_code"], expected_result.get("stdout", ''), result)
 
     def compile_client_and_run(self, program_path: Path):
         """Compile client with self.cc and library with GCC, make sure they work together"""
@@ -231,7 +235,7 @@ class TestChapter(unittest.TestCase):
             lib_source, program_path, prefix_output=True)
 
         # make sure results are the same
-        self.validate_runs(expected_result, result)
+        self.validate_runs(expected_result.returncode, expected_result.stdout, result)
 
     def compile_lib_and_run(self, program_path: Path):
         """Compile lib with self.cc and client with GCC, make sure they work together"""
@@ -252,7 +256,7 @@ class TestChapter(unittest.TestCase):
             program_path, client_source, prefix_output=True)
 
         # make sure results are the same
-        self.validate_runs(expected_result, result)
+        self.validate_runs(expected_result.returncode, expected_result.stdout, result)
 
 
 def extra_credit_programs(source_dir: Path, extra_credit_flags: Optional[ExtraCredit]) -> Iterable[Path]:
