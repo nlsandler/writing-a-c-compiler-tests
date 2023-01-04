@@ -12,13 +12,21 @@ ROOT_DIR = Path(__file__).parent
 
 # iterate over all valid programs
 for prog in ROOT_DIR.glob("chapter*/valid/**/*.c"):
+    path_str = str(prog)
+    source_files = [path_str]
     if "libraries" in prog.parts:
-        continue # TODO
+        # if this is the client, don't compile here, we'll compile it when we get to the library
+        if prog.name.endswith("_client.c"):
+            continue
+        # compile client and library together
+        client = prog.parent.joinpath(prog.name.replace(".c", "_client.c"))
+        source_files.append(str(client))
+
     # compile the program
     # TODO this is copied from TestBase
-    path_str = str(prog)
+
     try:
-        subprocess.run(["gcc", "-Wno-incompatible-library-redeclaration"] + [path_str] + ["-o", prog.stem],
+        subprocess.run(["gcc"] + source_files + ["-Wno-incompatible-library-redeclaration", "-o", prog.stem],
                         check=True, capture_output=True)
     except subprocess.CalledProcessError as e:
         raise RuntimeError(e.stderr) from e

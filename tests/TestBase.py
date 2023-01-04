@@ -231,11 +231,9 @@ class TestChapter(unittest.TestCase):
             '.o'), program_path.with_suffix('.o'))
 
         # now compile both with gcc and run resulting executable
-        expected_result = self.gcc_compile_and_run(
-            lib_source, program_path, prefix_output=True)
-
+        expected_result = EXPECTED_RESULTS[str(lib_source)]
         # make sure results are the same
-        self.validate_runs(expected_result.returncode, expected_result.stdout, result)
+        self.validate_runs(expected_result["return_code"], expected_result.get("stdout", ''), result)
 
     def compile_lib_and_run(self, program_path: Path):
         """Compile lib with self.cc and client with GCC, make sure they work together"""
@@ -252,11 +250,10 @@ class TestChapter(unittest.TestCase):
             '.o'), client_source.with_suffix('.o'))
 
         # now compile both with gcc and run resulting executable
-        expected_result = self.gcc_compile_and_run(
-            program_path, client_source, prefix_output=True)
+        expected_result = EXPECTED_RESULTS[str(program_path)]
 
         # make sure results are the same
-        self.validate_runs(expected_result.returncode, expected_result.stdout, result)
+        self.validate_runs(expected_result["return_code"], expected_result.get("stdout", ''), result)
 
 
 def extra_credit_programs(source_dir: Path, extra_credit_flags: Optional[ExtraCredit]) -> Iterable[Path]:
