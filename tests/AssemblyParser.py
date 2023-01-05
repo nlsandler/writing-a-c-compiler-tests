@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import collections
 from enum import Enum, auto
-from typing import Tuple, NamedTuple, Callable, Union, Optional, Iterable
+from typing import NamedTuple, Callable, Union, Optional, List
 
 
 class ParseError(RuntimeError):
@@ -73,7 +73,8 @@ class Operator(Enum):
         raise NotImplementedError("what operator is this???")
 
 
-Expr = list[Union[int, str, Operator]]
+# use List here for backwards compatibility with Python 3.8
+Expr = List[Union[int, str, Operator]]
 
 
 class Memory(NamedTuple):
@@ -185,7 +186,7 @@ Token = Union[str, int, Punctuation]
 """Tokenizing"""
 
 
-def lookup_reg(regname: str) -> Tuple[Register, Optional[int]]:
+def lookup_reg(regname: str) -> tuple[Register, Optional[int]]:
     alias_map = {
         "rax": (Register.AX, 8),
         "eax": (Register.AX, 4),
@@ -348,7 +349,7 @@ def tokenize(line: str) -> collections.deque[Token]:
 """Parsing"""
 
 
-def sym_to_instr(t: Token) -> Tuple[Opcode, Optional[int]]:
+def sym_to_instr(t: Token) -> tuple[Opcode, Optional[int]]:
     """Parse an instruction mnemonic"""
     if not (isinstance(t, str) and t.isalnum()):
         raise ParseError(f"Bad mnemonic: {t}")
@@ -437,7 +438,7 @@ def parse_expr(toks: collections.deque[Token]) -> Expr:
     return expr
 
 
-def parse_register(toks: collections.deque[Token]) -> Tuple[Register, Optional[int]]:
+def parse_register(toks: collections.deque[Token]) -> tuple[Register, Optional[int]]:
     expect_next(toks=toks, expected=Punctuation.PERCENT)
     reg_name = toks.popleft()
     if not isinstance(reg_name, str):
@@ -466,7 +467,7 @@ def parse_immediate(toks: collections.deque[Token]) -> Immediate:
         raise ParseError(f"Bad immediate value: ${next_tok}")
 
 
-def parse_next_operand(toks: collections.deque[Token]) -> Tuple[Operand, Optional[int]]:
+def parse_next_operand(toks: collections.deque[Token]) -> tuple[Operand, Optional[int]]:
     """Convert a list of tokens following an instruction mnemonic into a list of operands
     accept two forms of memory operands: disp(base) and disp(opt_base,index,opt_scale)
     we don't accept special one-comma form e.g. foo(,1)
