@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """A utility script that runs every test program with the system compiler and records its return code and output"""
 
+from __future__ import annotations
+
 import itertools
 import json
 from pathlib import Path
@@ -10,6 +12,7 @@ from typing import Any
 
 results : dict[str, dict[str, Any]]= {}
 
+# NOTE: this doesn't work for Python 3.8 or earlier (for non-modules, __file__ is relative!)
 ROOT_DIR = Path(__file__).parent
 
 if sys.platform == 'darwin':

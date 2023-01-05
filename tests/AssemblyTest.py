@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 import sys
 from . import TestBase
 from . import AssemblyParser
 from .AssemblyParser import Register
 from pathlib import Path
 import subprocess
-
 
 
 class OptimizationTest(TestBase.TestChapter):

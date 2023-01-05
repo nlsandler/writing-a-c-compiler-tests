@@ -1,7 +1,9 @@
 """Base class for compiler tests"""
+from __future__ import annotations
+
 from pathlib import Path
 from enum import Flag, auto, unique
-from typing import Optional, Tuple, Callable, Iterable, Any
+from typing import Optional, Callable, Iterable, Any
 import re
 import itertools
 import json
@@ -278,9 +280,9 @@ def make_invalid_test(program: Path) -> Callable:
         self.compile_failure(program)
     return test_invalid
 
-def make_invalid_tests(test_dir: Path, stage: str, extra_credit_flags: ExtraCredit) -> list[Tuple[str, Callable]]:
+def make_invalid_tests(test_dir: Path, stage: str, extra_credit_flags: ExtraCredit) -> list[tuple[str, Callable]]:
     """Generate one test method for each invalid test program under path"""
-    tests : list[Tuple[str, Callable]] = []
+    tests : list[tuple[str, Callable]] = []
     for invalid_subdir in DIRECTORIES_BY_STAGE[stage]["invalid"]:
 
         for program in get_programs(test_dir, invalid_subdir, extra_credit_flags):
@@ -311,8 +313,8 @@ def make_test_valid(program: Path) -> Callable:
         self.compile_success(program)
     return test_valid
 
-def make_valid_tests(test_dir: Path, stage: str, extra_credit_flags: ExtraCredit) -> list[Tuple[str, Callable]]:
-    tests : list[Tuple[str, Callable]] = []
+def make_valid_tests(test_dir: Path, stage: str, extra_credit_flags: ExtraCredit) -> list[tuple[str, Callable]]:
+    tests : list[tuple[str, Callable]] = []
     for valid_subdir in DIRECTORIES_BY_STAGE[stage]["valid"]:
 
         for program in get_programs(test_dir, valid_subdir, extra_credit_flags):

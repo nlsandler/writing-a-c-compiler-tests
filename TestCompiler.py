@@ -1,5 +1,7 @@
-
 """Entry point for test script"""
+
+from __future__ import annotations
+
 import argparse
 
 from functools import reduce
@@ -11,7 +13,6 @@ import unittest
 import tests
 from tests.Chapter20 import Optimizations
 from tests.TestBase import ExtraCredit
-
 
 
 

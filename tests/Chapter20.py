@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from . import TestBase
 from . import AssemblyParser as Asm
 from .AssemblyParser import Opcode, Register
 from . import AssemblyTest
 from pathlib import Path
-from typing import Callable, Iterable, Union, Optional, Type
+from typing import Callable, Iterable, Union, Optional
 
 from enum import Enum, unique, auto
 import itertools
@@ -558,7 +560,7 @@ def build_dse_class(compiler: Path, cc_options: list[str], extra_credit: TestBas
     
     return type("TestDeadStoreElimination", (DeadStoreEliminationTest,), testclass_attrs)
 
-def build_test_suite(compiler: Path, cc_options: list[str], extra_credit: TestBase.ExtraCredit, optimization_under_test: Optimizations, int_only: bool) -> list[Type[unittest.TestCase]]:
+def build_test_suite(compiler: Path, cc_options: list[str], extra_credit: TestBase.ExtraCredit, optimization_under_test: Optimizations, int_only: bool) -> list[type[unittest.TestCase]]:
 
     if optimization_under_test is None or optimization_under_test == Optimizations.ALL:
         # testing the whole pipeline; return all four classes

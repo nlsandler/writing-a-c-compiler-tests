@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 import collections
 from enum import Enum, auto

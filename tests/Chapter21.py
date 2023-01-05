@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from . import AssemblyTest, TestBase
 from .AssemblyParser import Register, Opcode
 from . import AssemblyParser as Asm
-from typing import Optional, Union, Iterable, Callable, Tuple
+from typing import Optional, Union, Iterable, Callable
 from pathlib import Path
 import subprocess
 from collections import defaultdict
@@ -259,7 +261,7 @@ class RegAllocTest(AssemblyTest.OptimizationTest):
         
         return test
 
-def build_test_cases(extra_credit: TestBase.ExtraCredit, int_only: bool, no_coalescing: bool) -> list[Tuple[str, Callable]]:
+def build_test_cases(extra_credit: TestBase.ExtraCredit, int_only: bool, no_coalescing: bool) -> list[tuple[str, Callable]]:
     # figure out whcih directories are under test
     if int_only:
         subdirs = ["int_only"]
