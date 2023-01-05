@@ -53,8 +53,6 @@ class RegAllocTest(AssemblyTest.OptimizationTest):
 
         if extra_lib_path:
             progs.append(extra_lib_path)
-        # compile w/ GCC, check result
-        expected_result = self.gcc_compile_and_run(*progs, prefix_output=True)
         
         # assemble
                 # now compile to assembly
@@ -70,7 +68,7 @@ class RegAllocTest(AssemblyTest.OptimizationTest):
             progs.append(extra_lib_path)
         actual_result = self.gcc_compile_and_run(*progs)
         # make sure behavior is the same
-        self.validate_runs(expected_result, actual_result)
+        self.validate_runs(program_path, actual_result)
 
         # make sure we actually performed the optimization
         parsed_asm = self.get_target_functions(

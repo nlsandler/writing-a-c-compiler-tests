@@ -9,6 +9,8 @@ import subprocess
 import unittest
 
 
+ROOT_DIR = Path(__file__).parent.parent
+
 EXPECTED_RESULTS : dict[str, Any]
 
 with open("expected_results.json", "r") as f:
@@ -164,7 +166,13 @@ class TestChapter(unittest.TestCase):
         executable_path = program_path.parent / stem
         self.assertFalse(executable_path.exists())
 
-    def validate_runs(self, expected_retcode: int, expected_stdout: str, actual: subprocess.CompletedProcess):
+
+    def validate_runs(self, path: Path, actual: subprocess.CompletedProcess):
+        key = str(path.relative_to(ROOT_DIR))
+        expected = EXPECTED_RESULTS[key]
+        expected_retcode = expected["return_code"]
+        expected_stdout = expected.get("stdout", "")
+
         exe = actual.args[0]
         self.assertEqual(expected_retcode, actual.returncode,
                          msg=f"Expected return code {expected_retcode}, found {actual.returncode} in {exe}")
@@ -193,9 +201,6 @@ class TestChapter(unittest.TestCase):
 
     def compile_and_run(self, program_path):
 
-        # first compile and run the program with GCC
-        expected_result = EXPECTED_RESULTS[str(program_path)]
-
         # HACK: include -lm for standard library test on linux
         if "linux" in self.options and "standard_library_call" in str(program_path):
             cc_opt = "-lm"
@@ -214,7 +219,7 @@ class TestChapter(unittest.TestCase):
         result = subprocess.run(
             [exe], check=False, capture_output=True, text=True)
 
-        self.validate_runs(expected_result["return_code"], expected_result.get("stdout", ''), result)
+        self.validate_runs(program_path, result)
 
     def compile_client_and_run(self, program_path: Path):
         """Compile client with self.cc and library with GCC, make sure they work together"""
@@ -230,10 +235,9 @@ class TestChapter(unittest.TestCase):
         result = self.gcc_compile_and_run(lib_source.with_suffix(
             '.o'), program_path.with_suffix('.o'))
 
-        # now compile both with gcc and run resulting executable
-        expected_result = EXPECTED_RESULTS[str(lib_source)]
-        # make sure results are the same
-        self.validate_runs(expected_result["return_code"], expected_result.get("stdout", ''), result)
+        # validate results
+        # we pass lib_source as first arg here b/c it's the key for library tests in EXPECTED_RESULTS
+        self.validate_runs(lib_source, result)
 
     def compile_lib_and_run(self, program_path: Path):
         """Compile lib with self.cc and client with GCC, make sure they work together"""
@@ -249,11 +253,8 @@ class TestChapter(unittest.TestCase):
         result = self.gcc_compile_and_run(program_path.with_suffix(
             '.o'), client_source.with_suffix('.o'))
 
-        # now compile both with gcc and run resulting executable
-        expected_result = EXPECTED_RESULTS[str(program_path)]
-
-        # make sure results are the same
-        self.validate_runs(expected_result["return_code"], expected_result.get("stdout", ''), result)
+        # validate results
+        self.validate_runs(program_path, result)
 
 
 def extra_credit_programs(source_dir: Path, extra_credit_flags: Optional[ExtraCredit]) -> Iterable[Path]:

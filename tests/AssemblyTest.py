@@ -24,10 +24,6 @@ class OptimizationTest(TestBase.TestChapter):
     def optimization_test(self, program_path: Path, validator=None):
         """Make sure compiled program has correct results, then inspect its assembly code"""
 
-        # first compile and run the program with GCC
-        expected_result = self.gcc_compile_and_run(
-            program_path, prefix_output=True)
-
         # now compile to assembly
         # note: don't need to add --fold-constants b/c it's already in cc_opt
         try:
@@ -38,7 +34,7 @@ class OptimizationTest(TestBase.TestChapter):
 
         # compile the assembly code with GCC, run it, and make sure it gives expected result
         actual_result = self.gcc_compile_and_run(asm)
-        self.validate_runs(expected_result, actual_result)
+        self.validate_runs(program_path, actual_result)
 
         # make sure we actually performed the optimization
         parsed_asm = self.get_target_functions(asm, target_fun="target")
