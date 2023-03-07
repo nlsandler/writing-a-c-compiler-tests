@@ -1,4 +1,5 @@
-int main() {
-    int .x = 0;
-    return .x;
+int main()
+{
+    int 10 = 0;
+    return 10;
 }
