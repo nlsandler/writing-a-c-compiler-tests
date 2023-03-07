@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import itertools
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Callable
 
 from .. import basic
 from ..parser import asm
@@ -23,6 +22,8 @@ class TestDeadStoreElimination(common.TackyOptimizationTest):
     * store_eliminated_test: make sure a particular mov instrucion was eliminated
     * return_const_test: make sure entire funcion is reduce to a return instruction
     """
+
+    test_dir = common.TEST_DIR / "dead_store_elimination"
 
     def store_eliminated_test(self, *, source_file: Path, redundant_const: int) -> None:
         """Make sure a dead store of the form mov $redundant_const, <something> was eliminated."""
@@ -103,6 +104,9 @@ RETURN_CONST = {
 def make_dse_test(program: Path) -> Callable[[TestDeadStoreElimination], None]:
     """Generate test method for one test program."""
 
+    if "dont_elim" in program.parts:
+        return basic.make_test_run(program)
+
     if program.name in STORE_ELIMINATED:
         redundant_const = STORE_ELIMINATED[program.name]
 
@@ -124,40 +128,3 @@ def make_dse_test(program: Path) -> Callable[[TestDeadStoreElimination], None]:
         raise RuntimeError(f"Don't know what to do with {program.name}")
 
     return test
-
-
-def configure_tests(
-    common_attrs: dict[str, Any],
-    extra_credit_flags: basic.ExtraCredit,
-    int_only: bool,
-) -> None:
-    """Dynamically add test methods and attributes to dead store elimination tests.
-
-    Args:
-        common_attrs: basic properties including compiler under test and command-line options
-        extra_credit: TODO
-        int_only: True if we're skipping tests that use Part II features, False if we're
-                  including them
-    """
-    dir_under_test = (
-        basic.ROOT_DIR / f"chapter{common.CHAPTER}" / "dead_store_elimination"
-    )
-    testclass_attrs = {"test_dir": dir_under_test} | common_attrs
-
-    for k, v in testclass_attrs.items():
-        setattr(TestDeadStoreElimination, k, v)
-
-    tests: Iterable[Path] = (dir_under_test / "int_only").rglob("*.c")
-    if not int_only:
-        partii_tests = (dir_under_test / "all_types").rglob("*.c")
-        tests = itertools.chain(tests, partii_tests)
-
-    for program in tests:
-        if basic.excluded_extra_credit(program, extra_credit_flags):
-            continue
-        key = program.relative_to(dir_under_test).with_suffix("")
-        name = f"test_{key}"
-        if "dont_elim" in program.parts:
-            setattr(TestDeadStoreElimination, name, basic.make_test_run(program))
-        else:
-            setattr(TestDeadStoreElimination, name, make_dse_test(program))

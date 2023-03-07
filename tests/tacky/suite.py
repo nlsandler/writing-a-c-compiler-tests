@@ -1,9 +1,10 @@
 """Tests for TACKY optimizations."""
 from __future__ import annotations
 
+import itertools
 from enum import Enum, auto, unique
 from pathlib import Path
-from typing import List
+from typing import Callable, Iterable, List, Type, TypeVar
 
 from .. import basic
 from . import common, const_fold, copy_prop, dead_store_elim, unreachable
@@ -20,6 +21,55 @@ class Optimizations(Enum):
     COPY_PROP = auto()
     DEAD_STORE_ELIM = auto()
     ALL = auto()
+
+
+T = TypeVar("T", bound=common.TackyOptimizationTest)
+
+
+def configure_tests(
+    cls: Type[T],
+    test_maker: Callable[[Path], Callable[[T], None]],
+    compiler: Path,
+    options: list[str],
+    int_only: bool,
+    extra_credit_flags: basic.ExtraCredit,
+) -> None:
+    """Dynamically add test methods and attributes to one of the optimization test classes.
+
+    Args:
+        cls: the test class to configure
+        test_maker: a function that takes the path to a source program and returns a test method
+                    validating that we process that program correctly
+        compiler: absolute path to the compiler under test
+        options: extra command-line options to pass through to compiler
+                 (including optimization flags)
+        int_only: True if we're skipping tests that use Part II features, False if we're
+                  including them
+        extra_credit_flags:  extra credit features to test, represented as a bit vector
+    """
+
+    setattr(cls, "cc", compiler)
+    setattr(cls, "options", options)
+    setattr(cls, "exit_stage", None)
+
+    tests: Iterable[Path]
+    if cls == unreachable.TestUnreachableCodeElim:
+        # no distinction b/t int_only and all_types
+        tests = cls.test_dir.rglob("*.c")
+    else:
+
+        tests = (cls.test_dir / "int_only").rglob("*.c")
+        if not int_only:
+            partii_tests = (cls.test_dir / "all_types").rglob("*.c")
+            tests = itertools.chain(tests, partii_tests)
+
+    for program in tests:
+        if basic.excluded_extra_credit(program, extra_credit_flags):
+            continue
+        key = program.relative_to(cls.test_dir).with_suffix("")
+        name = f"test_{key}"
+
+        setattr(cls, name, test_maker(program))
 
 
 def build_tacky_test_suite(
@@ -50,23 +100,43 @@ def build_tacky_test_suite(
         a list of subclasses of OptimizationTest
     """
 
-    common_testclass_attrs = {
-        "cc": compiler,
-        "options": options,
-        "exit_stage": None,
-    }
-
     # TODO whole pipline tests!
-    # TODO refactor configure_tests from different moduels, they're basically identical
 
     if optimization_under_test is None or optimization_under_test == Optimizations.ALL:
         # testing the whole pipeline; return all four classes
-        const_fold.configure_tests(common_testclass_attrs, extra_credit_flags, int_only)
-        unreachable.configure_tests(common_testclass_attrs, extra_credit_flags)
-        copy_prop.configure_tests(common_testclass_attrs, extra_credit_flags, int_only)
-        dead_store_elim.configure_tests(
-            common_testclass_attrs, extra_credit_flags, int_only
+        configure_tests(
+            const_fold.TestConstantFolding,
+            const_fold.make_constant_fold_test,
+            compiler,
+            options,
+            int_only,
+            extra_credit_flags,
         )
+        configure_tests(
+            unreachable.TestUnreachableCodeElim,
+            unreachable.make_unreachable_code_test,
+            compiler,
+            options,
+            int_only,
+            extra_credit_flags,
+        )
+        configure_tests(
+            copy_prop.TestCopyProp,
+            copy_prop.make_copy_prop_test,
+            compiler,
+            options,
+            int_only,
+            extra_credit_flags,
+        )
+        configure_tests(
+            dead_store_elim.TestDeadStoreElimination,
+            dead_store_elim.make_dse_test,
+            compiler,
+            options,
+            int_only,
+            extra_credit_flags,
+        )
+
         return [
             const_fold.TestConstantFolding,
             unreachable.TestUnreachableCodeElim,
@@ -78,19 +148,45 @@ def build_tacky_test_suite(
     if optimization_under_test == Optimizations.CONSTANT_FOLD:
 
         # add tests to TestConstantFolding class
-        const_fold.configure_tests(common_testclass_attrs, extra_credit_flags, int_only)
+        configure_tests(
+            const_fold.TestConstantFolding,
+            const_fold.make_constant_fold_test,
+            compiler,
+            options,
+            int_only,
+            extra_credit_flags,
+        )
         return [const_fold.TestConstantFolding]
 
     if optimization_under_test == Optimizations.UNREACHABLE_CODE_ELIM:
         # this test suite doesn't include Part II-specific tests, so don't need int_only arg
-        unreachable.configure_tests(common_testclass_attrs, extra_credit_flags)
+        configure_tests(
+            unreachable.TestUnreachableCodeElim,
+            unreachable.make_unreachable_code_test,
+            compiler,
+            options,
+            int_only,
+            extra_credit_flags,
+        )
         return [unreachable.TestUnreachableCodeElim]
     if optimization_under_test == Optimizations.COPY_PROP:
-        copy_prop.configure_tests(common_testclass_attrs, extra_credit_flags, int_only)
+        configure_tests(
+            copy_prop.TestCopyProp,
+            copy_prop.make_copy_prop_test,
+            compiler,
+            options,
+            int_only,
+            extra_credit_flags,
+        )
         return [copy_prop.TestCopyProp]
     if optimization_under_test == Optimizations.DEAD_STORE_ELIM:
-        dead_store_elim.configure_tests(
-            common_testclass_attrs, extra_credit_flags, int_only
+        configure_tests(
+            dead_store_elim.TestDeadStoreElimination,
+            dead_store_elim.make_dse_test,
+            compiler,
+            options,
+            int_only,
+            extra_credit_flags,
         )
         return [dead_store_elim.TestDeadStoreElimination]
     raise ValueError(f"Unknown optimization {optimization_under_test}")

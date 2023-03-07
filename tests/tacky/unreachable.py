@@ -1,7 +1,7 @@
 """Tests for unreachable code elimination"""
 
 from pathlib import Path
-from typing import Any, Callable
+from typing import Callable
 
 from .. import basic
 from ..parser import asm
@@ -10,6 +10,9 @@ from . import common
 
 
 class TestUnreachableCodeElim(common.TackyOptimizationTest):
+
+    test_dir = common.TEST_DIR / "unreachable_code_elimination"
+
     def no_control_flow_test(self, program: Path) -> None:
 
         parsed_asm = self.run_and_parse(program)
@@ -69,6 +72,9 @@ def make_unreachable_code_test(
     program: Path,
 ) -> Callable[[TestUnreachableCodeElim], None]:
 
+    if "dont_elim" in program.parts:
+        return basic.make_test_run(program)
+
     if program.name in NO_FUNCALLS_TESTS:
 
         def test(self: TestUnreachableCodeElim) -> None:
@@ -82,30 +88,3 @@ def make_unreachable_code_test(
             self.no_control_flow_test(program)
 
         return test
-
-
-def configure_tests(
-    common_attrs: dict[str, Any],
-    extra_credit_flags: basic.ExtraCredit,
-) -> None:
-    """Generate unreachable code elimination tests.
-
-    We should be able to optimize away all control flow in every test program except one
-    """
-    dir_under_test = common.TEST_DIR / "unreachable_code_elimination"
-    testclass_attrs = {"test_dir": dir_under_test} | common_attrs
-
-    for k, v in testclass_attrs.items():
-        setattr(TestUnreachableCodeElim, k, v)
-
-    for prog in dir_under_test.rglob("*.c"):
-        if basic.excluded_extra_credit(prog, extra_credit_flags):
-            continue
-        key = prog.stem
-        test_name = f"test_{key}"
-        if "dont_elim" in prog.parts:
-            setattr(TestUnreachableCodeElim, test_name, basic.make_test_run(prog))
-        else:
-            setattr(
-                TestUnreachableCodeElim, test_name, make_unreachable_code_test(prog)
-            )

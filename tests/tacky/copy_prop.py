@@ -4,7 +4,7 @@ from __future__ import annotations
 import itertools
 import sys
 from pathlib import Path
-from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
+from typing import Callable, List, Optional, Sequence, Union
 
 from typing_extensions import TypeGuard
 
@@ -165,6 +165,8 @@ class TestCopyProp(common.TackyOptimizationTest):
     * no_computations_test: make sure that copy propagation, in conjunction with prior
       optimizations, allows us to eliminate all computations (e.g. arithmetic and type conversions)
     """
+
+    test_dir = common.TEST_DIR / "copy_propagation"
 
     def retval_test(self, expected_retval: Union[int, str], program_path: Path) -> None:
         """Validate that we propagate the expected value into return statement.
@@ -395,29 +397,3 @@ def make_copy_prop_test(program: Path) -> Callable[[TestCopyProp], None]:
     test.__doc__ = str(program)
 
     return test
-
-
-def configure_tests(
-    common_attrs: dict[str, Any],
-    extra_credit_flags: basic.ExtraCredit,
-    int_only: bool,
-) -> None:
-    """Dynamically add test methods and attributes to TestCopyProp."""
-    dir_under_test = basic.ROOT_DIR / f"chapter{common.CHAPTER}" / "copy_propagation"
-
-    for k, v in common_attrs.items():
-        setattr(TestCopyProp, k, v)
-    setattr(TestCopyProp, "test_dir", dir_under_test)
-
-    tests: Iterable[Path] = (dir_under_test / "int_only").rglob("*.c")
-    if not int_only:
-        partii_tests = (dir_under_test / "all_types").rglob("*.c")
-        tests = itertools.chain(tests, partii_tests)
-
-    for program in tests:
-        if basic.excluded_extra_credit(program, extra_credit_flags):
-            continue
-        key = program.relative_to(dir_under_test).with_suffix("")
-        name = f"test_{key}"
-
-        setattr(TestCopyProp, name, make_copy_prop_test(program))

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 import unittest
 from enum import Flag, auto, unique
 from pathlib import Path
@@ -91,12 +92,11 @@ def gcc_compile_and_run(*args: Path) -> subprocess.CompletedProcess[str]:
 
 def replace_stem(path: Path, new_stem: str) -> Path:
     """Return a new path with the stem changed and suffix the same"""
-    try:
+    if sys.version_info >= (3, 9):
         return path.with_stem(new_stem)
-    except AttributeError:
-        # python versions before 3.9
-        # stick old suffix on new stem
-        return path.with_name(new_stem).with_suffix(path.suffix)
+
+    # workaround for 3.8: stick old suffix on new stem
+    return path.with_name(new_stem).with_suffix(path.suffix)
 
 
 class TestChapter(unittest.TestCase):
