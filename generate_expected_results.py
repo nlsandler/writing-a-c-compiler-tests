@@ -5,104 +5,81 @@ from __future__ import annotations
 
 import itertools
 import json
-import subprocess
-import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, List
 
-results : dict[str, dict[str, Any]]= {}
+# NOTE: basic loads EXPECTED_RESULTS from a file so this whole script will fail
+# if expected_results.json doesn't already exist
+from tests import basic, regalloc
+from tests.basic import ROOT_DIR
 
-# NOTE: this doesn't work for Python 3.8 or earlier (for non-modules, __file__ is relative!)
-ROOT_DIR = Path(__file__).parent
-
-if sys.platform == 'darwin':
-    WRAPPER_SCRIPT = ROOT_DIR.joinpath('chapter21/wrapper_osx.s')
-else:
-    WRAPPER_SCRIPT = ROOT_DIR.joinpath('chapter21/wrapper_linux.s')
-
-LIBRARIES = {
-    "track_arg_registers": "track_arg_registers_lib.c",
-    "force_spill": "force_spill_lib.c",
-    "spills_and_rewrites": "force_spill_lib.c",
-    "spills_rewrites_compare":"force_spill_lib.c",
-    "rewrite_large_multiply":"force_spill_lib.c",
-    "spill_movz_dst": "force_spill_lib.c",
-    "test_spill_metric": "test_spill_metric_lib.c",
-    "test_spill_metric_2": "test_spill_metric_2_lib.c",
-    "many_pseudos_fewer_conflicts": "many_pseudos_fewer_conflicts_lib.c",
-    "track_dbl_arg_registers": "track_dbl_arg_registers_lib.c",
-    "test_spilling_dbls": "force_spill_dbl_lib.c",
-    "mixed_ints": "force_spill_mixed_int_lib.c",
-    "callee_saved_live_at_exit": "callee_saved_live_at_exit_lib.c",
-    "funcall_generates_args": "funcall_generates_args_lib.c",
-    "george_coalesce": "george_lib.c",
-    "coalesce_prevents_spill": "coalesce_prevents_spill_lib.c"
-}
-
-all_valid_progs = itertools.chain(ROOT_DIR.glob("chapter*/valid/**/*.c"),
-                                  ROOT_DIR.glob("chapter*/valid_extra_credit/**/*.c"),
-                                  ROOT_DIR.glob("chapter20/**/*.c"),
-                                  ROOT_DIR.glob("chapter21/**/*.c"))
-
-# iterate over all valid programs
-for prog in all_valid_progs:
-    source_files = [str(prog)]
-    if "libraries" in prog.parts:
-        if prog.name.endswith("_client.c"):
-
-            # if this is the client, don't compile here, we'll compile it when we get to the library
-            continue
-
-        if "chapter21" in prog.parts:
-            # these are libraries used by chapter 21 tests, not test programs themselves
-            continue
-
-        # compile client and library together
-        client = prog.parent.joinpath(prog.name.replace(".c", "_client.c"))
-        source_files.append(str(client))
-
-    # compile the program
-    # TODO this is copied from TestBase
-
-    try:
-        subprocess.run(["gcc"] + source_files + ["-Wno-incompatible-library-redeclaration", "-o", prog.stem],
-                        check=True, capture_output=True)
-    except subprocess.CalledProcessError as e:
+results: dict[str, dict[str, Any]] = {}
 
 
-        # if it's a chapter 21 test, may need to compile against wrapper script
-        if "chapter21" in prog.parts:
-            source_files.append(str(WRAPPER_SCRIPT))
-            if prog.stem in LIBRARIES:
-                lib_path = ROOT_DIR.joinpath("chapter21/libraries", LIBRARIES[prog.stem])
-                source_files.append(str(lib_path))
-            try:
-                subprocess.run(["gcc"] + source_files + ["-Wno-incompatible-library-redeclaration", "-o", prog.stem],
-                                check=True, capture_output=True)
-            except subprocess.CalledProcessError as inner_e:
-                raise RuntimeError(inner_e.stderr) from inner_e
-        else:
-            raise RuntimeError(e.stderr) from e
+def lookup_libs(prog: Path) -> List[Path]:
+    """Look up extra library we need to link against for regalloc tests"""
+    test_info = regalloc.REGALLOC_TESTS.get(prog.name)
+    if test_info is None:
+        return []
+    if test_info.extra_lib is None:
+        # this uses the wrapper script b/c test inspects assembly
+        # but doesn't use other library
+        return [regalloc.WRAPPER_SCRIPT]
+    # uses wrapper script and other library
+    return [
+        regalloc.WRAPPER_SCRIPT,
+        ROOT_DIR / "chapter20/libraries" / test_info.extra_lib,
+    ]
 
 
-    exe = Path.joinpath(ROOT_DIR, prog.stem)
-    # run the program
-    try:
-        result = subprocess.run([exe], check=False, text=True, capture_output=True)
-        if result.stderr:
-            raise RuntimeError(result.stderr)
-        
-        result_dict: dict[str, Any] = {"return_code": result.returncode}
-        if result.stdout:
-            result_dict["stdout"] = result.stdout
-        
+def main() -> None:
+    """Run all valid test programs and record results as JSON"""
+    all_valid_progs = itertools.chain(
+        ROOT_DIR.glob("chapter*/valid/**/*.c"),
+        ROOT_DIR.glob("chapter19/**/*.c"),
+        ROOT_DIR.glob("chapter20/all_types/**/*.c"),
+        ROOT_DIR.glob("chapter20/int_only/**/*.c"),
+    )
 
-        key = str(prog.relative_to(ROOT_DIR))
-        results[key] = result_dict
-    finally:
-        # delete executable
-        Path.unlink(exe)
+    # iterate over all valid programs
+    for prog in all_valid_progs:
+        source_files = [prog]
+        if "libraries" in prog.parts:
+            if prog.name.endswith("_client.c"):
+                # if this is the client, don't compile here,
+                # we'll compile it when we get to the library
+                continue
+
+            # compile client and library together
+            client = prog.parent.joinpath(prog.name.replace(".c", "_client.c"))
+            source_files.append(client)
+
+        if "chapter20" in prog.parts:
+            # we may need to include wrapper script and other library files
+            extra_libs = lookup_libs(prog)
+            source_files.extend(extra_libs)
+
+        # compile and run the program
+        try:
+            result = basic.gcc_compile_and_run(*source_files)
+
+            # record the result
+
+            result_dict: dict[str, Any] = {"return_code": result.returncode}
+            if result.stdout:
+                result_dict["stdout"] = result.stdout
+
+            key = str(prog.relative_to(ROOT_DIR))
+            results[key] = result_dict
+        finally:
+
+            # delete executable
+            exe = source_files[0].with_suffix("")
+            Path.unlink(exe)
+
+    with open("expected_results.json", "w", encoding="utf-8") as f:
+        json.dump(results, f)
 
 
-with open("expected_results.json", "w") as f:
-    json.dump(results, f)
+if __name__ == "__main__":
+    main()

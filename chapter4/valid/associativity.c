@@ -1,3 +1,3 @@
 int main() {
-    return 1 - 2 - 3;
+    return 5 >= 0 > 1 <= 0;
 }

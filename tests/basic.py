@@ -57,6 +57,38 @@ def gcc_build_obj(prog: Path) -> None:
         raise RuntimeError(err.stderr) from err
 
 
+def gcc_compile_and_run(*args: Path) -> subprocess.CompletedProcess[str]:
+    """Compile input files using 'gcc' command and run the resulting executable
+
+    Args:
+        args: list of input files - could be C, assembly, or object files
+
+    Returns:
+        a CompletedProecess object that captures the executable's return code and output
+    """
+
+    # output file is same as first input without suffix
+    exe = args[0].with_suffix("")
+
+    # compile it
+    try:
+        subprocess.run(
+            ["gcc", "-Wno-incompatible-library-redeclaration"]
+            + list(args)
+            + ["-o", exe],
+            check=True,
+            text=True,
+            capture_output=True,  # capture output so we don't see warnings
+        )
+    except subprocess.CalledProcessError as err:
+        # This is an internal error in the test suite
+        # TODO better handling of internal problems with test suite
+        raise RuntimeError(err.stderr) from err
+
+    # run it
+    return subprocess.run([exe], check=False, text=True, capture_output=True)
+
+
 def replace_stem(path: Path, new_stem: str) -> Path:
     """Return a new path with the stem changed and suffix the same"""
     try:
@@ -114,37 +146,6 @@ class TestChapter(unittest.TestCase):
 
         for junk in garbage_files:
             junk.unlink()
-
-    def gcc_compile_and_run(self, *args: Path) -> subprocess.CompletedProcess[str]:
-        """Compile input files using 'gcc' command and run the resulting executable
-
-        Args:
-            args: list of input files - could be C, assembly, or object files
-
-        Returns:
-            a CompletedProecess object that captures the executable's return code and output
-        """
-
-        # output file is same as first input without suffix
-        exe = args[0].with_suffix("")
-
-        # compile it
-        try:
-            subprocess.run(
-                ["gcc", "-Wno-incompatible-library-redeclaration"]
-                + list(args)
-                + ["-o", exe],
-                check=True,
-                text=True,
-                capture_output=True,  # capture output so we don't see warnings
-            )
-        except subprocess.CalledProcessError as err:
-            # This is an internal error in the test suite
-            # TODO better handling of internal problems with test suite
-            raise RuntimeError(err.stderr) from err
-
-        # run it
-        return subprocess.run([exe], check=False, text=True, capture_output=True)
 
     def invoke_compiler(
         self, source_file: Path, cc_opt: Optional[str] = None
@@ -310,7 +311,7 @@ class TestChapter(unittest.TestCase):
         gcc_build_obj(other_file)
 
         # link both object files and run resulting executable
-        result = self.gcc_compile_and_run(
+        result = gcc_compile_and_run(
             file_under_test.with_suffix(".o"), other_file.with_suffix(".o")
         )
 
@@ -401,11 +402,13 @@ class ExtraCredit(Flag):
 
     BITWISE = auto()
     COMPOUND = auto()
+    INCREMENT = auto()
     GOTO = auto()
     SWITCH = auto()
     NAN = auto()
+    UNION = auto()
     NONE = 0
-    ALL = BITWISE | COMPOUND | GOTO | SWITCH | NAN
+    ALL = BITWISE | COMPOUND | INCREMENT | GOTO | SWITCH | NAN | UNION
 
 
 def excluded_extra_credit(source_prog: Path, extra_credit_flags: ExtraCredit) -> bool:

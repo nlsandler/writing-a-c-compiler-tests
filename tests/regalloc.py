@@ -13,9 +13,16 @@ from .parser import asm, parse
 from .parser.asm import Opcode, Register
 from .tacky import common
 
-CHAPTER = 21  # TODO update
+CHAPTER = 20
 TEST_DIR = basic.ROOT_DIR.joinpath(f"chapter{CHAPTER}").resolve()
 IS_OSX = platform.system().lower() == "darwin"
+# The wappre script includes a handwritten assembly main function
+# which validates that callee-saved registers are preserved
+WRAPPER_SCRIPT: Path
+if IS_OSX:
+    WRAPPER_SCRIPT = TEST_DIR.joinpath("wrapper_osx.s")
+else:
+    WRAPPER_SCRIPT = TEST_DIR.joinpath("wrapper_linux.s")
 
 
 def uses_stack(i: asm.AsmItem) -> TypeGuard[asm.Instruction]:
@@ -40,16 +47,6 @@ class TestRegAlloc(basic.TestChapter):
     * spill_test: the number of spilled pesudos and the number of instructions that
         access the stack should both be below some upper bound
     """
-
-    @property
-    def wrapper_script(self) -> Path:
-        """Handwritten assembly definition of main
-
-        This wrapper validates that callee-saved registers are preserved"""
-        if IS_OSX:
-            return self.test_dir.joinpath("wrapper_osx.s")
-        else:
-            return self.test_dir.joinpath("wrapper_linux.s")
 
     @property
     def lib_path(self) -> Path:
@@ -87,7 +84,7 @@ class TestRegAlloc(basic.TestChapter):
 
         if program_path.suffix == ".s":
             # caller already compiled it to assembly
-            gcc_inputs = [program_path, self.wrapper_script]
+            gcc_inputs = [program_path, WRAPPER_SCRIPT]
         else:
             compilation_result = self.invoke_compiler(program_path, cc_opt="-c")
             self.assertEqual(
@@ -96,12 +93,12 @@ class TestRegAlloc(basic.TestChapter):
                 msg=f"compilation of {program_path} failed with error:\n\
                     {compilation_result.stderr}",
             )
-            gcc_inputs = [program_path.with_suffix(".o"), self.wrapper_script]
+            gcc_inputs = [program_path.with_suffix(".o"), WRAPPER_SCRIPT]
 
         if extra_lib:
             gcc_inputs.append(self.lib_path / extra_lib)
 
-        actual_result = self.gcc_compile_and_run(*gcc_inputs)
+        actual_result = basic.gcc_compile_and_run(*gcc_inputs)
         # make sure behavior is the same
         # NOTE: if program_path is assembly file (because we were called from another test method
         # that's going to parse this file and perform more validation on it),
@@ -504,8 +501,8 @@ def configure_tests(
     # can't test intermediate stages for reg allocation
     setattr(TestRegAlloc, "exit_stage", None)
 
-    # include all test programs in chapter21/int_only/
-    # if the reader completed part II, also include all the test programs in chapter21/all_types/
+    # include all test programs in chapter20/int_only/
+    # if the reader completed part II, also include all the test programs in chapter20/all_types/
     if int_only:
         subdirs = ["int_only"]
     else:

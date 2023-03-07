@@ -315,7 +315,7 @@ RETVAL_TESTS = {
     # int-only
     "complex_const_fold.c": -1,
     "copy_prop_const_fold.c": 6,
-    "fig_20_8.c": 4,  # TODO fix chapter number
+    "fig_19_8.c": 4,
     "init_all_copies.c": 3,
     "killed_then_redefined.c": 2,
     "loop.c": 10,

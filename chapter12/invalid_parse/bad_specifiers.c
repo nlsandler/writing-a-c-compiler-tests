@@ -1,5 +1,5 @@
 int main() {
-    /* Cannot declare a variable with two "int" specifiers */
-    int long int i = 0;
-    return i;
+    /* Can't combine signed and unsigned specifiers */
+    int i = 0;
+    return (signed unsigned) i;
 }

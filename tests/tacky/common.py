@@ -10,7 +10,7 @@ from .. import basic
 from ..parser import asm, parse
 from ..parser.asm import Opcode, Register
 
-CHAPTER = 20  # TODO update chapter number
+CHAPTER = 19
 TEST_DIR = basic.ROOT_DIR / f"chapter{CHAPTER}"
 
 
@@ -55,7 +55,7 @@ class TackyOptimizationTest(basic.TestChapter):
         asm_file = source_file.with_suffix(".s")
 
         # assemble/link asm_file, run it, and make sure it gives expected result
-        actual_result = self.gcc_compile_and_run(asm_file)
+        actual_result = basic.gcc_compile_and_run(asm_file)
         self.validate_runs(source_file, actual_result)
 
         # now parse the assembly file and extra the function named "target"

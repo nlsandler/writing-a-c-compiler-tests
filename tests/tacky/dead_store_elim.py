@@ -85,7 +85,7 @@ STORE_ELIMINATED = {
     # int-only
     "dead_store_static_var.c": 5,
     "elim_second_copy.c": 10,
-    "fig_20_12.c": 10,
+    "fig_19_12.c": 10,
     "loop_dead_store.c": 5,
     "simple.c": 10,
     # other types

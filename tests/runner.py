@@ -78,7 +78,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--chapter",
         type=int,
-        choices=range(0, 22),
+        choices=range(0, REGALLOC_CHAPTER + 1),
         required=True,
         help=(
             "Specify which chapter to test. "

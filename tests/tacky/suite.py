@@ -8,7 +8,7 @@ from typing import List
 from .. import basic
 from . import common, const_fold, copy_prop, dead_store_elim, unreachable
 
-TEST_DIR = Path(__file__).parent.parent.joinpath("chapter20").resolve()
+TEST_DIR = Path(__file__).parent.parent.joinpath("chapter19").resolve()
 
 
 @unique
