@@ -20,7 +20,7 @@ void *malloc(unsigned long size);
 int main() {
     struct outer *local_struct = (struct outer *) malloc(sizeof(struct outer));
     local_struct->l = 100;
-    local_struct->m.d == 1.0;
+    local_struct->m.d = 1.0;
     local_struct->m.i.a = 9;
     local_struct->m.i.b = 10;
     global_struct = *local_struct;

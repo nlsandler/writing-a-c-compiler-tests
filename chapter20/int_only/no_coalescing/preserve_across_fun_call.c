@@ -13,6 +13,7 @@ int callee() {
     glob3 = glob3 + 1;
     // call client to make sure we clobber all caller-saved regs
     glob4 = client(1,2,3,4,5,6);
+    return 0;
 }
 
 int target() {

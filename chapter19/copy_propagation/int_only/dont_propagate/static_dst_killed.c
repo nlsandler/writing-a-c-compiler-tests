@@ -3,6 +3,7 @@ int x;
 int update_x()
 {
     x = 4;
+    return 0;
 }
 
 int main()
