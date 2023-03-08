@@ -27,6 +27,7 @@ class TokType(Enum):
     PERCENT = auto()
     DOLLAR = auto()
     AT = auto()
+    STAR = auto()
     # line separators
     SEMICOLON = auto()
     NEWLINE = auto()
@@ -43,14 +44,15 @@ class Token:
 
 
 TOKENS = {
-    # a symbol is a letter, '.' or '_' followed by a sequence of alphanumeric, '.','_',
+    # we recognize decimal and hexadecimal ints (not octal or binary)
+    "INT": r"([0-9]+|0x[0-9a-f]+)\b",
+    # a symbol is a letter, digit, '.' or '_' followed by a sequence of alphanumeric, '.','_',
     # and '$' and characters
     # NOTE: we don't permit symbols to start with $ characters;
     # in GAS and llvm-as, you can seemingly define labels starting with $ but not use them since
     # $ in assembly operands triggers something involving absolute addressing
-    "SYMBOL": r"[A-Z._][\w.$]*",
-    # we recognize decimal and hexadecimal ints (not octal or binary)
-    "INT": r"([0-9]+|0x[0-9a-f]+)\b",
+    # NOTE 2: most symbols can't start with digits but some directive arguments (e.g. 8byte_literals) can
+    "SYMBOL": r"[\w.][\w.$]*",
     # NOTE: we accept \ followed by any digit as an escape sequence in a string literal
     "STRING_LITERAL": r'''"([^"\\\n]|\\.)*"''',
     # single characters
@@ -63,6 +65,7 @@ TOKENS = {
     "PERCENT": r"%",
     "DOLLAR": r"\$",
     "AT": r"@",
+    "STAR": r"\*",
     "SEMICOLON": r";",
     "NEWLINE": r"\n",
     # skip comments and whitespace

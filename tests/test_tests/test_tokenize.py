@@ -86,7 +86,7 @@ main:
 
     def test_invalid(self) -> None:
         """We raise an error when we encounter an invalid token"""
-        asm = io.StringIO("1foo")
+        asm = io.StringIO("=foo")
         with self.assertRaises(tokenize.TokError):
             list(tokenize.tokenize(asm))
 

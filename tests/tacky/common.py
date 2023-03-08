@@ -106,6 +106,7 @@ def is_control_flow(i: asm.AsmItem) -> bool:
         Opcode.JMP,
         Opcode.JMPCC,
         Opcode.CALL,
+        Opcode.CMOV,
     ]
 
 
@@ -115,3 +116,12 @@ def is_ret(i: asm.AsmItem) -> bool:
 
 def is_mov(i: asm.AsmItem) -> TypeGuard[asm.Instruction]:
     return isinstance(i, asm.Instruction) and i.opcode == Opcode.MOV
+
+
+def is_zero_instr(i: asm.AsmItem) -> TypeGuard[asm.Instruction]:
+    """Is this an instruction of the form xor %reg, %reg used to zero out a register?"""
+    return (
+        isinstance(i, asm.Instruction)
+        and i.opcode == Opcode.XOR
+        and i.operands[0] == i.operands[1]
+    )

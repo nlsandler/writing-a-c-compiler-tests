@@ -28,6 +28,8 @@ class TestConstantFolding(common.TackyOptimizationTest):
                 isinstance(i, Label)
                 or common.is_prologue_or_epilogue(i)
                 or i.opcode in [Opcode.MOV, Opcode.JMP]
+                # xor %r, %r is okay bcause it's equivalent to mov $0, %r
+                or common.is_zero_instr(i)
             )
 
         bad_instructions = [i for i in parsed_asm.instructions if not ok(i)]

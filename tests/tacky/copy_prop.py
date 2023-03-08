@@ -6,8 +6,6 @@ import sys
 from pathlib import Path
 from typing import Callable, List, Optional, Sequence, Union
 
-from typing_extensions import TypeGuard
-
 from .. import basic
 from ..parser import asm
 from ..parser.asm import Opcode, Register
@@ -31,8 +29,14 @@ def destination(i: asm.Instruction) -> Optional[asm.Operand]:
     return i.operands[-1]
 
 
-def is_mov_to(i: asm.AsmItem, r: asm.Register) -> TypeGuard[asm.Instruction]:
-    return common.is_mov(i) and i.operands[1] == r
+def get_src_val(i: asm.AsmItem, r: asm.Register) -> Optional[asm.Operand]:
+    """If i sets r to some value, return that value. Otherwise return None."""
+    # count xor %r, %r as equivalent to mov $0, %r
+    if common.is_zero_instr(i) and i.operands[1] == r:
+        return asm.Immediate(0)
+    if common.is_mov(i) and i.operands[1] == r:
+        return i.operands[0]
+    return None
 
 
 def stops_reaching_copy(i: asm.AsmItem, r: asm.Register) -> bool:
@@ -102,15 +106,13 @@ def find_reaching_copies(
     # now determine value of each dest reg
     vals: List[Optional[asm.Operand]] = []
     for reg in dest_regs:
+        # find the latest instruction (i.e. first instruction in reversed list)
+        # that moves a value into this register (or, equivalently, zeros it out)
+        maybe_movs = enumerate(get_src_val(i, reg) for i in instructions_before_point)
         try:
-            # find the last instruction before point P
-            # that moves a value in register r
-            mov_instr_idx, mov_instr = next(
-                (idx, instr)
-                for (idx, instr) in enumerate(instructions_before_point)
-                if is_mov_to(instr, reg)
+            mov_instr_idx, mov_src = next(
+                (idx, op) for (idx, op) in maybe_movs if op is not None
             )
-
             # are there any instructions between mov_instr and point P
             # that might prevent mov_instr from reaching P?
             if any(
@@ -121,10 +123,9 @@ def find_reaching_copies(
                 vals.append(None)
             else:
                 # mov_instr reaches P, so r will still have the value we moved into it at this point
-                vals.append(mov_instr.operands[0])
+                vals.append(mov_src)
         except StopIteration:
-            # couldn't find a mov to this register;
-            # sometimes expected one we've implemented coalescing
+            # didn't find an instruction that sets this register
             vals.append(None)
 
     return vals
@@ -291,13 +292,17 @@ class TestCopyProp(common.TackyOptimizationTest):
         parsed_asm = self.run_and_parse(program_path)
 
         def ok(i: asm.AsmItem) -> bool:
-            return common.is_prologue_or_epilogue(i) or (
-                isinstance(i, asm.Instruction)
-                and i.opcode
-                in [
-                    Opcode.MOV,
-                    Opcode.LEA,
-                ]
+            return (
+                common.is_prologue_or_epilogue(i)
+                or common.is_zero_instr(i)
+                or (
+                    isinstance(i, asm.Instruction)
+                    and i.opcode
+                    in [
+                        Opcode.MOV,
+                        Opcode.LEA,
+                    ]
+                )
             )
 
         bad_instructions = [i for i in parsed_asm.instructions if not ok(i)]

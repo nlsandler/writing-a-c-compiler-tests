@@ -94,8 +94,8 @@ def parse_opcode(tok: str) -> tuple[Opcode, Optional[int]]:
             size = 4
         return Opcode.MOVZ, size
 
-    # comisd is floating-point cmp
-    if tok.startswith("comi"):
+    # comisd and ucomisd are floating-point cmp
+    if tok.startswith("comi") or tok.startswith("ucomi"):
         return Opcode.CMP, None
 
     # for our purposes, okay to treat mul and imul as equivalent
@@ -106,8 +106,26 @@ def parse_opcode(tok: str) -> tuple[Opcode, Optional[int]]:
     if tok.startswith("set"):
         return Opcode.SETCC, 1
 
-    CONDITION_CODES = ["e", "ne", "g", "ge", "l", "le", "b", "be", "a", "ae", "po"]
-    if tok[0] == "j" and tok[1:] in CONDITION_CODES:
+    condition_codes = [
+        "e",
+        "g",
+        "ge",
+        "l",
+        "le",
+        "b",
+        "be",
+        "a",
+        "ae",
+        "p",
+        "po",
+        "pe",
+        "s",
+        "c",
+        "z",
+    ]
+    negated_condition_codes = ["n" + cc for cc in condition_codes]
+    all_condition_codes = condition_codes + negated_condition_codes
+    if tok[0] == "j" and tok[1:] in all_condition_codes:
         return Opcode.JMPCC, None
 
     # otherwise just look it up by string representation of opcode
@@ -359,6 +377,12 @@ def parse_operand(toks: List[Token]) -> tuple[Operand, Optional[int]]:
         # it's a jump target or function name
         target = toks.pop(0).tok_str
         return (target, None)
+    if start_tok_type == TokType.STAR:
+        # jump targets like *%rax (not supported in the book)
+        # HACK just return the register itself as an operand,
+        # since we don't analyze jump targets aside from functino names
+        toks.pop(0)
+        return parse_register(toks)
     if (
         len(toks) == 3
         and start_tok_type == TokType.SYMBOL

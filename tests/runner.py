@@ -235,7 +235,7 @@ def main() -> None:
     if args.latest_only:
         chapters: Iterable[int] = [args.chapter]
     else:
-        chapters = range(2, args.chapter + 1)
+        chapters = range(1, args.chapter + 1)
 
     # construct options to pass to compiler under test
     # including optimizations and options to stop after a particular stage

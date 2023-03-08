@@ -70,6 +70,8 @@ class Operator(Enum):
             return "+"
         if self == Operator.MINUS:
             return "-"
+        if self == Operator.AT:
+            return "@"
         raise NotImplementedError("what operator is this???")
 
 
@@ -108,7 +110,6 @@ class Opcode(Enum):
     """All instructions we recognize
 
     Simplified, e.g. we don't distinguish between different conditional jumps
-    TODO more support for other instrutions like cmov,
     consider further simplification, like using the same opcode for all unary computations
     (not, shr, neg, etc)"""
 
@@ -131,8 +132,12 @@ class Opcode(Enum):
     AND = auto()
     OR = auto()
     XOR = auto()
+    ADC = auto()
     # unary
     SHR = auto()
+    SHL = auto()
+    SAR = auto()
+    SAL = auto()
     NOT = auto()
     NEG = auto()
     CDQ = auto()
@@ -142,6 +147,8 @@ class Opcode(Enum):
     JMPCC = auto()
     SETCC = auto()
     CMP = auto()
+    TEST = auto()
+    CMOV = auto()
     CALL = auto()
     RET = auto()
     LEAVE = auto()

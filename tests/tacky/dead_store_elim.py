@@ -65,6 +65,12 @@ class TestDeadStoreElimination(common.TackyOptimizationTest):
                 asm.Opcode.MOV, [asm.Immediate(returned_const), asm.Register.AX]
             ):
                 return True
+
+            # if retval is 0, also accept xor %eax, %eax
+            if returned_const == 0 and i == asm.Instruction(
+                asm.Opcode.XOR, [asm.Register.AX, asm.Register.AX]
+            ):
+                return True
             return False
 
         parsed_asm = self.run_and_parse(source_file)
