@@ -2,9 +2,8 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional, Sequence
+from typing import List, Optional, Sequence
 
-from typing_extensions import TypeGuard
 
 from .. import basic
 from ..parser import asm, parse
@@ -61,6 +60,76 @@ class TackyOptimizationTest(basic.TestChapter):
         # now parse the assembly file and extra the function named "target"
         return parse.parse_target_function(asm_file, target_fun="target")
 
+    # methods used by dead store elimination and whole pipeline tests
+    def store_eliminated_test(
+        self, *, source_file: Path, redundant_consts: List[int]
+    ) -> None:
+        """Make sure any stores of the form mov $const, <something> were eliminated.
+        Args:
+            source_file: absolute path to program under test
+            redundant_consts: any constants that were sources of mov instructions in the
+                original program but shouldn't be after dead store elimination
+        """
+        redundant_operands = [asm.Immediate(c) for c in redundant_consts]
+
+        def is_dead_store(i: asm.AsmItem) -> bool:
+
+            # returns true if we find _any_ instruction where redundant_const is source operand
+            # this is more general than just looking for mov so we'll also catch any
+            # spurious copy propagation of this constant
+            return (
+                isinstance(i, asm.Instruction)
+                and bool(i.operands)
+                and i.operands[0] in redundant_operands
+            )
+
+        parsed_asm = self.run_and_parse(source_file)
+
+        bad_instructions = [i for i in parsed_asm.instructions if is_dead_store(i)]
+        self.assertFalse(
+            bad_instructions,
+            msg=build_msg(
+                "Found dead store that should have been eliminated",
+                bad_instructions=bad_instructions,
+                full_prog=parsed_asm,
+                program_path=source_file,
+            ),
+        )
+
+    def return_const_test(self, *, source_file: Path, returned_const: int) -> None:
+        """Validate that the function doesn't do anything except return a constant."""
+
+        def ok(i: asm.AsmItem) -> bool:
+            """We should optimize out everything except prologue, epilogue, and mov into EAX"""
+            if is_prologue_or_epilogue(i):
+                return True
+
+            # only okay instruction is mov $return_const, %eax (or %rax, we don't distinguish)
+            if i == asm.Instruction(
+                asm.Opcode.MOV, [asm.Immediate(returned_const), asm.Register.AX]
+            ):
+                return True
+
+            # if retval is 0, also accept xor %eax, %eax
+            if returned_const == 0 and i == asm.Instruction(
+                asm.Opcode.XOR, [asm.Register.AX, asm.Register.AX]
+            ):
+                return True
+            return False
+
+        parsed_asm = self.run_and_parse(source_file)
+
+        bad_instructions = [i for i in parsed_asm.instructions if not ok(i)]
+        self.assertFalse(
+            bad_instructions,
+            msg=build_msg(
+                "Found instruction that should have been optimized out",
+                bad_instructions=bad_instructions,
+                full_prog=parsed_asm,
+                program_path=source_file,
+            ),
+        )
+
 
 def build_msg(
     msg: str,
@@ -114,11 +183,11 @@ def is_ret(i: asm.AsmItem) -> bool:
     return isinstance(i, asm.Instruction) and i.opcode in [Opcode.RET, Opcode.LEAVE]
 
 
-def is_mov(i: asm.AsmItem) -> TypeGuard[asm.Instruction]:
+def is_mov(i: asm.AsmItem) -> bool:
     return isinstance(i, asm.Instruction) and i.opcode == Opcode.MOV
 
 
-def is_zero_instr(i: asm.AsmItem) -> TypeGuard[asm.Instruction]:
+def is_zero_instr(i: asm.AsmItem) -> bool:
     """Is this an instruction of the form xor %reg, %reg used to zero out a register?"""
     return (
         isinstance(i, asm.Instruction)

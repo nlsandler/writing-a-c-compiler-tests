@@ -3,7 +3,7 @@ int foo(int *ptr)
     return 2;
 }
 
-int main()
+int target()
 {
     int x = 10;
     int *ptr = 0;
@@ -14,6 +14,10 @@ int main()
         ptr = &x;
     }
     x = 5;    // this is a dead store
-    foo(ptr); // why isn't 0 propagated to here?
+    foo(ptr); // TODO could also validate that 0 is propagated to here as a function argument
     return 0;
+}
+
+int main() {
+    return target();
 }

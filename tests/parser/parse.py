@@ -98,6 +98,9 @@ def parse_opcode(tok: str) -> tuple[Opcode, Optional[int]]:
     if tok.startswith("comi") or tok.startswith("ucomi"):
         return Opcode.CMP, None
 
+    if tok.startswith("pxor"):
+        return Opcode.XOR, None
+
     # for our purposes, okay to treat mul and imul as equivalent
     if tok.startswith("mul"):
         return Opcode.IMUL, None

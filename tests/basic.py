@@ -16,12 +16,12 @@ ROOT_DIR = Path(__file__).parent.parent
 
 EXPECTED_RESULTS: dict[str, Any]
 
-with open("expected_results.json", "r", encoding="utf-8") as f:
+with open(ROOT_DIR / "expected_results.json", "r", encoding="utf-8") as f:
     EXPECTED_RESULTS = json.load(f)
 
 EXTRA_CREDIT_PROGRAMS: dict[str, list[str]]
 REQUIRES_MATHLIB: list[str]
-with open("test_properties.json", "r", encoding="utf-8") as f:
+with open(ROOT_DIR / "test_properties.json", "r", encoding="utf-8") as f:
     test_info = json.load(f)
     EXTRA_CREDIT_PROGRAMS = test_info["extra_credit_tests"]
     REQUIRES_MATHLIB = test_info["requires_mathlib"]

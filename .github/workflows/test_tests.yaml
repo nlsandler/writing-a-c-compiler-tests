@@ -3,9 +3,9 @@
 name: Compiler Test Suite CI 
 
 on:
-  #pull_request:
-  #  branches: [ "main" ]
-  # just trigger manually while experimenting with workflows
+  pull_request:
+    branches: [ "main" ]
+
   workflow_dispatch:
 
 jobs:
@@ -23,7 +23,12 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Test the test suite
+      run: |
+        python -m unittest
+    - name: Install linter dependencies
+      # note: we do this _after_ running tests, b/c tests should work without
+      # these linters or their dependencies (e.g. typing_extensions)
       run: |
         python -m pip install --upgrade pip
         python -m pip install mypy pylint
@@ -33,6 +38,3 @@ jobs:
         pylint -E tests
         # stop the build if there are type errors
         mypy tests
-    - name: Run unit tests
-      run: |
-        python -m unittest

@@ -220,7 +220,7 @@ def parse_arguments() -> argparse.Namespace:
     return args
 
 
-def main() -> None:
+def main() -> int:
     """Main entry point for test runner"""
     args = parse_arguments()
     compiler = Path(args.cc).resolve()
@@ -293,4 +293,7 @@ def main() -> None:
 
     # run it
     runner = unittest.TextTestRunner(verbosity=args.verbose, failfast=args.failfast)
-    runner.run(test_suite)
+    result = runner.run(test_suite)
+    if result.wasSuccessful():
+        return 0
+    return 1

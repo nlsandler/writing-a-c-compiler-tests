@@ -6,8 +6,6 @@ import subprocess
 from pathlib import Path
 from typing import Callable, List, Mapping, NamedTuple, Optional, Union
 
-from typing_extensions import TypeGuard
-
 from . import basic
 from .parser import asm, parse
 from .parser.asm import Opcode, Register
@@ -24,8 +22,9 @@ if IS_OSX:
 else:
     WRAPPER_SCRIPT = TEST_DIR.joinpath("wrapper_linux.s")
 
-
-def uses_stack(i: asm.AsmItem) -> TypeGuard[asm.Instruction]:
+# TypeGuard would be better return value here, but 3.8 and 3.9 don't support it
+# and we're avoiding additional dependencies like typing_extensions
+def uses_stack(i: asm.AsmItem) -> bool:
     """Is this an instruction that accesses a value on the stack?"""
     if isinstance(i, asm.Label):
         return False
@@ -206,7 +205,7 @@ class TestRegAlloc(basic.TestChapter):
         spill_instructions = [
             i
             for i in parsed_asm.instructions
-            if uses_stack(i) and i.opcode == Opcode.MOV
+            if uses_stack(i) and i.opcode == Opcode.MOV  # type: ignore # use_stack guarantees this is an instruction
         ]
         self.assertLessEqual(
             len(spill_instructions),
@@ -224,7 +223,7 @@ class TestRegAlloc(basic.TestChapter):
             [
                 str(op)  # convert to string b/c Operands themselves are not hashable
                 for i in spill_instructions
-                for op in i.operands
+                for op in i.operands  # type: ignore
                 if isinstance(op, asm.Memory)
             ]
         )
@@ -263,7 +262,7 @@ class TestRegAlloc(basic.TestChapter):
         def is_mov_between_regs(i: asm.AsmItem) -> bool:
             """Check whether this is a move between registers (other than RBP/RSP)"""
             if common.is_mov(i):
-                src, dst = i.operands[0], i.operands[1]
+                src, dst = i.operands[0], i.operands[1]  # type: ignore  # is_mov guarantees it's an instruction
                 return (
                     isinstance(src, asm.Register)
                     and src not in [Register.BP, Register.SP]

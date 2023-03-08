@@ -32,10 +32,10 @@ def destination(i: asm.Instruction) -> Optional[asm.Operand]:
 def get_src_val(i: asm.AsmItem, r: asm.Register) -> Optional[asm.Operand]:
     """If i sets r to some value, return that value. Otherwise return None."""
     # count xor %r, %r as equivalent to mov $0, %r
-    if common.is_zero_instr(i) and i.operands[1] == r:
+    if common.is_zero_instr(i) and i.operands[1] == r:  # type: ignore   # is_zero_instr proves it's an instruction
         return asm.Immediate(0)
-    if common.is_mov(i) and i.operands[1] == r:
-        return i.operands[0]
+    if common.is_mov(i) and i.operands[1] == r:  # type: ignore  # is_mov proves it's an instruction
+        return i.operands[0]  # type: ignore  # is_mov proves it's an instruction
     return None
 
 

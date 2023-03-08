@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Callable, Iterable, List, Type, TypeVar
 
 from .. import basic
-from . import common, const_fold, copy_prop, dead_store_elim, unreachable
+from . import common, const_fold, copy_prop, dead_store_elim, pipeline, unreachable
 
 TEST_DIR = Path(__file__).parent.parent.joinpath("chapter19").resolve()
 
@@ -100,8 +100,6 @@ def build_tacky_test_suite(
         a list of subclasses of OptimizationTest
     """
 
-    # TODO whole pipline tests!
-
     if optimization_under_test is None or optimization_under_test == Optimizations.ALL:
         # testing the whole pipeline; return all four classes
         configure_tests(
@@ -137,11 +135,20 @@ def build_tacky_test_suite(
             extra_credit_flags,
         )
 
+        configure_tests(
+            pipeline.TestWholePipeline,
+            pipeline.make_whole_pipeline_test,
+            compiler,
+            options,
+            int_only,
+            extra_credit_flags,
+        )
         return [
             const_fold.TestConstantFolding,
             unreachable.TestUnreachableCodeElim,
             copy_prop.TestCopyProp,
             dead_store_elim.TestDeadStoreElimination,
+            pipeline.TestWholePipeline,
         ]
 
     # otherwise we're only testing one optimiztion; generate tests for the appropriate class
