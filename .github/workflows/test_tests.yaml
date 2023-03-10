@@ -1,5 +1,6 @@
 # This workflow will test out our test suite; yes, it is a test for our tests
 # It runs the unit tests in tests/test_tests, and runs the whole test script to validate its results
+
 name: Compiler Test Suite CI 
 
 on:
@@ -10,15 +11,14 @@ on:
 
 jobs:
 
-  # QUESTION: would it be simpler to make these composite actions instead of jobs?
+  # QUESTION: would it be simpler to make these composite actions instead of jobs? no, then can't do them in parallel!
   # then we could just call them if there's a cache miss
   # also maybe separate out the cache key from that thing we want to copy it to?
   build-final-nqcc:
     uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
     with:
-      ref: main
+      ref: final
       os: ubuntu-latest
-      name: nqcc
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}
     
@@ -27,7 +27,6 @@ jobs:
     with:
       ref: 19.1
       os: ubuntu-latest
-      name: nqcc-partial
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}  
 
@@ -57,23 +56,25 @@ jobs:
     - name: Get final NQCC
       uses: actions/cache/restore@v3
       with:
-        path: |
-          ~/nqcc
-        key: needs.build-final-nqcc.outputs.cache-key
+        path: ~/.cache/nqcc
+        key: ${{ needs.build-final-nqcc.outputs.cache-key }}
+    
+    - run: cp ~/.cache/nqcc $GITHUB_WORKSPACE/nqcc
 
     - name: Get partial NQCC
       uses: actions/cache/restore@v3
       with:
-        path: |
-          ~/nqcc-partial
-        key: needs.build-partial-nqcc.outputs.cache-key
+        path: ~/.cache/nqcc
+        key: ${{ needs.build-partial-nqcc.outputs.cache-key }}
+
+    - run: cp ~/.cache/nqcc $GITHUB_WORKSPACE/nqcc-partial
 
     # run the test suite
     - name: Test the test suite
       run: |
         cd tests
-        export NQCC="~/nqcc"
-        export NQCC_PARTIAL="~/nqcc-partial"
+        export NQCC="$GITHUB_WORKSPACE/nqcc"
+        export NQCC_PARTIAL="$GITHUB_WORKSPACE/nqcc-partial"
         python -m unittest
     - name: Install linter dependencies
       # note: we do this _after_ running tests, b/c tests should work without
