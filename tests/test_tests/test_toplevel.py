@@ -1,11 +1,19 @@
-"""Tests of top-level test run script"""
+"""Tests of top-level test run script
+These assume we have access to two copies of the reference implementation:
+- $$NQCC is the path to the fully implemented compiler
+- $$NQCC_PARTIAL is a path to version of the compiler that is implemented
+  through the unreachable code elimination stage in chapter 19,
+  but doesn't include dead code elimination or register allocation
+"""
 from __future__ import annotations
+
 import re
 import shutil
 import subprocess
 import unittest
 from pathlib import Path
 from typing import Union
+
 
 ROOT_DIR = Path(__file__).parent.parent.parent
 TEST_PATTERN = re.compile("^Ran ([0-9]+) tests", flags=re.MULTILINE)
@@ -45,9 +53,7 @@ class TopLevelTest(unittest.TestCase):
     def test_one_chapter(self) -> None:
         expected_test_count = len(list((ROOT_DIR / "chapter2").rglob("*.c")))
         try:
-            testrun = run_test_script(
-                "./test_compiler scripts/gcc_wrapper.py --chapter 2 --latest-only"
-            )
+            testrun = run_test_script("./test_compiler $NQCC --chapter 2 --latest-only")
         except subprocess.CalledProcessError as err:
             self.fail(f"Test command failed with message {err.stderr}")
 
@@ -59,9 +65,7 @@ class TopLevelTest(unittest.TestCase):
             list((ROOT_DIR / "chapter2").rglob("*.c"))
         )
         try:
-            testrun = run_test_script(
-                "./test_compiler scripts/gcc_wrapper.py --chapter 2 --stage parse"
-            )
+            testrun = run_test_script("./test_compiler $NQCC --chapter 2 --stage parse")
         except subprocess.CalledProcessError as err:
             self.fail(f"Test command failed with message {err.stderr}")
 
@@ -69,7 +73,7 @@ class TopLevelTest(unittest.TestCase):
         self.assertEqual(expected_test_count, actual_test_count)
 
     def test_optimization_failure(self) -> None:
-        """Without optimizations, GCC fails some chapter 19 tests"""
+        """Partially-completed $NQCC fails some optimization tests"""
         expected_test_count = len(
             list((ROOT_DIR / "chapter19/dead_store_elimination").rglob("*.c"))
         )
@@ -85,7 +89,7 @@ class TopLevelTest(unittest.TestCase):
         expected_failure_count = expected_test_count - expected_success_count
         with self.assertRaises(subprocess.CalledProcessError) as err:
             run_test_script(
-                "./test_compiler scripts/gcc_wrapper.py --chapter 19 --eliminate-dead-stores --latest-only"
+                "./test_compiler $NQCC_PARTIAL --chapter 19 --eliminate-dead-stores --latest-only"
             )
         failure_count = get_failure_count(err.exception)
         test_count = get_test_count(err.exception)
@@ -98,7 +102,7 @@ class TopLevelTest(unittest.TestCase):
         # the -O option will be passed through to GCC
         try:
             testrun = run_test_script(
-                "./test_compiler scripts/gcc_wrapper.py --chapter 19 --latest-only -f -- -O"
+                "./test_compiler $NQCC --chapter 19 --latest-only"
             )
 
         except subprocess.CalledProcessError as err:
@@ -123,7 +127,7 @@ class BadSourceTest(unittest.TestCase):
 
         expected_test_count = len(list((ROOT_DIR / "chapter1").rglob("*.c")))
         with self.assertRaises(subprocess.CalledProcessError) as cpe:
-            run_test_script("./test_compiler scripts/gcc_wrapper.py --chapter 1")
+            run_test_script("./test_compiler $NQCC --chapter 1")
         actual_test_count = get_test_count(cpe.exception)
         failure_count = get_failure_count(cpe.exception)
         self.assertEqual(actual_test_count, expected_test_count)
@@ -133,9 +137,7 @@ class BadSourceTest(unittest.TestCase):
         """Changed code shouldn't impact intermediate stages"""
         expected_test_count = len(list((ROOT_DIR / "chapter1").rglob("*.c")))
         try:
-            testrun = run_test_script(
-                "./test_compiler scripts/gcc_wrapper.py --chapter 1 --stage parse"
-            )
+            testrun = run_test_script("./test_compiler $NQCC --chapter 1 --stage parse")
         except subprocess.CalledProcessError as err:
             self.fail(f"Test command failed with message {err.stderr}")
 

@@ -9,22 +9,71 @@ on:
   workflow_dispatch:
 
 jobs:
+
+  # QUESTION: would it be simpler to make these composite actions instead of jobs?
+  # then we could just call them if there's a cache miss
+  # also maybe separate out the cache key from that thing we want to copy it to?
+  build-final-nqcc:
+    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
+    with:
+      ref: main
+      os: ubuntu-latest
+      name: nqcc
+    secrets:
+      NQCC_PAT: ${{ secrets.NQCC_PAT }}
+    
+  build-partial-nqcc:
+    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
+    with:
+      ref: 19.1
+      os: ubuntu-latest
+      name: nqcc-partial
+    secrets:
+      NQCC_PAT: ${{ secrets.NQCC_PAT }}  
+
   test:
 
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
-        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.9"] #["3.8", "3.9", "3.10", "3.11"]
+        os: [ubuntu-latest] #[ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
+    needs: [build-final-nqcc, build-partial-nqcc]
     steps:
+
+    # now checkout test suite
     - uses: actions/checkout@v3
+      with:
+        path: tests
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+
+   # next, download both versions of NQCC
+
+    - name: Get final NQCC
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          ~/nqcc
+        key: needs.build-final-nqcc.outputs.cache-key
+
+    - name: Get partial NQCC
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          ~/nqcc-partial
+        key: needs.build-partial-nqcc.outputs.cache-key
+
+    # run the test suite
     - name: Test the test suite
       run: |
+        cd tests
+        export NQCC="~/nqcc"
+        export NQCC_PARTIAL="~/nqcc-partial"
         python -m unittest
     - name: Install linter dependencies
       # note: we do this _after_ running tests, b/c tests should work without
@@ -35,6 +84,6 @@ jobs:
     - name: Lint with mypy and pylint
       run: |
         # stop the build if there are errors
-        pylint -E tests
+        pylint -E tests/tests
         # stop the build if there are type errors
-        mypy tests
+        mypy tests/tests

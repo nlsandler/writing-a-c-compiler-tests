@@ -148,7 +148,8 @@ def parse_opcode(tok: str) -> tuple[Opcode, Optional[int]]:
                 size = 8
             return opcode, size
 
-    raise ParseError(f"Unknown opcode {tok}")
+    # we don't recognize this opcode, but allow parsing to continue
+    return Opcode.UNKNOWN, None
 
 
 # parsing register names

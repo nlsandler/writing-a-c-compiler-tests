@@ -18,6 +18,7 @@ def destination(i: asm.Instruction) -> Optional[asm.Operand]:
     if i.opcode in [
         Opcode.PUSH,
         Opcode.CDQ,
+        Opcode.CDQE,
         Opcode.JMP,
         Opcode.JMPCC,
         Opcode.CMP,
@@ -25,7 +26,12 @@ def destination(i: asm.Instruction) -> Optional[asm.Operand]:
         Opcode.RET,
     ]:
         return None
+
+    if not i.operands:
+        return None  # an instruction w/ no operands has no destination
     # otherwise last operand is desintation
+    # NOTE: may lead to spurious failures for UNKNOWN instructions
+    # that don't actually have destinations
     return i.operands[-1]
 
 
@@ -66,6 +72,9 @@ def stops_reaching_copy(i: asm.AsmItem, r: asm.Register) -> bool:
         return True
 
     if i.opcode == Opcode.CDQ and r == Register.DX:
+        return True
+
+    if i.opcode == Opcode.CDQE and r == Register.AX:
         return True
 
     # every instruction clobbers its destination (if it has one)

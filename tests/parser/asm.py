@@ -132,26 +132,23 @@ class Opcode(Enum):
     AND = auto()
     OR = auto()
     XOR = auto()
-    ADC = auto()
     # unary
     SHR = auto()
-    SHL = auto()
-    SAR = auto()
-    SAL = auto()
     NOT = auto()
     NEG = auto()
     CDQ = auto()
-    CDQE = auto()
+    CDQE = auto()  # not used in book, included here to distinguish from cdq
     # control flow and conditionals
     JMP = auto()
     JMPCC = auto()
     SETCC = auto()
     CMP = auto()
-    TEST = auto()
     CMOV = auto()
+    TEST = auto()
     CALL = auto()
     RET = auto()
     LEAVE = auto()
+    UNKNOWN = auto()
 
     def __str__(self) -> str:
         return self.name.lower()
