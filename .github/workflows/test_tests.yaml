@@ -17,7 +17,7 @@ jobs:
   build-final-nqcc:
     uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
     with:
-      ref: final
+      chapter: 20
       os: ubuntu-latest
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}
@@ -25,7 +25,7 @@ jobs:
   build-partial-nqcc:
     uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
     with:
-      ref: 19.1
+      chapter: 19.1
       os: ubuntu-latest
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}  
@@ -47,35 +47,35 @@ jobs:
         path: tests
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 
    # next, download both versions of NQCC
 
     - name: Get final NQCC
-      uses: actions/cache/restore@v3
+      uses: actions/download-artifact@v3
       with:
-        path: ~/.cache/nqcc
-        key: ${{ needs.build-final-nqcc.outputs.cache-key }}
+        name: nqcc-${{ matrix.os }}-20
+        path: nqcc
     
-    - run: cp ~/.cache/nqcc $GITHUB_WORKSPACE/nqcc
-
     - name: Get partial NQCC
-      uses: actions/cache/restore@v3
+      uses: actions/download-artifact@v3
       with:
-        path: ~/.cache/nqcc
-        key: ${{ needs.build-partial-nqcc.outputs.cache-key }}
-
-    - run: cp ~/.cache/nqcc $GITHUB_WORKSPACE/nqcc-partial
+        name: nqcc-${{ matrix.os }}-19.1
+        path: nqcc-partial
 
     # run the test suite
     - name: Test the test suite
       run: |
-        cd tests
-        export NQCC="$GITHUB_WORKSPACE/nqcc"
-        export NQCC_PARTIAL="$GITHUB_WORKSPACE/nqcc-partial"
+        chmod u+x $NQCC
+        chmod u+x $NQCC_PARTIAL
         python -m unittest
+      working-directory: tests
+      env:
+        NQCC: ${{ github.workspace }}/nqcc/main.exe
+        NQCC_PARTIAL: ${{ github.workspace }}/nqcc-partial/main.exe
+
     - name: Install linter dependencies
       # note: we do this _after_ running tests, b/c tests should work without
       # these linters or their dependencies (e.g. typing_extensions)
