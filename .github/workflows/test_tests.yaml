@@ -15,25 +15,34 @@ jobs:
   # then we could just call them if there's a cache miss
   # also maybe separate out the cache key from that thing we want to copy it to?
   build-final-nqcc:
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
     with:
       chapter: 20
-      os: ubuntu-latest
+      os: ${{ matrix.os }}
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}
     
   build-partial-nqcc:
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
     with:
       chapter: 19b
-      os: ubuntu-latest
+      os: ${{ matrix.os }}
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}  
 
   test:
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
         os: [ubuntu-latest, macos-latest]
