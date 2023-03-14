@@ -62,7 +62,7 @@ jobs:
     - name: Get partial NQCC
       uses: actions/download-artifact@v3
       with:
-        name: nqcc-${{ matrix.os }}-19.1
+        name: nqcc-${{ matrix.os }}-19b
         path: nqcc-partial
 
     # run the test suite
