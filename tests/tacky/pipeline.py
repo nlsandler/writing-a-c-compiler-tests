@@ -19,7 +19,6 @@ STORE_ELIMINATED = {"alias_analysis_change.c": [5, 10]}
 
 
 def make_whole_pipeline_test(program: Path) -> Callable[[TestWholePipeline], None]:
-
     if program.name in RETVAL_TESTS:
 
         def test(self: TestWholePipeline) -> None:

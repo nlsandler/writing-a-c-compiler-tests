@@ -72,7 +72,6 @@ def main() -> None:
             key = str(prog.relative_to(ROOT_DIR))
             results[key] = result_dict
         finally:
-
             # delete executable
             exe = source_files[0].with_suffix("")
             Path.unlink(exe)

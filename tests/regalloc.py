@@ -1,7 +1,6 @@
 """Register allocation tests"""
 from __future__ import annotations
 
-import platform
 import subprocess
 from pathlib import Path
 from typing import Callable, List, Mapping, NamedTuple, Optional, Union
@@ -13,14 +12,14 @@ from .tacky import common
 
 CHAPTER = 20
 TEST_DIR = basic.ROOT_DIR.joinpath(f"chapter{CHAPTER}").resolve()
-IS_OSX = platform.system().lower() == "darwin"
 # The wappre script includes a handwritten assembly main function
 # which validates that callee-saved registers are preserved
 WRAPPER_SCRIPT: Path
-if IS_OSX:
+if basic.IS_OSX:
     WRAPPER_SCRIPT = TEST_DIR.joinpath("wrapper_osx.s")
 else:
     WRAPPER_SCRIPT = TEST_DIR.joinpath("wrapper_linux.s")
+
 
 # TypeGuard would be better return value here, but 3.8 and 3.9 don't support it
 # and we're avoiding additional dependencies like typing_extensions
@@ -435,7 +434,6 @@ def make_regalloc_test(
             self.basic_test(program, extra_lib=extra_lib)
 
     elif isinstance(test_info, NoSpillTest):
-
         # assign test_info to another variable to make mypy happy
         # see https://github.com/python/mypy/issues/2608
         nospilltest_info = test_info
@@ -448,7 +446,6 @@ def make_regalloc_test(
             )
 
     elif isinstance(test_info, SpillTest):
-
         spilltest_info = test_info
 
         def test(self: TestRegAlloc) -> None:
@@ -460,11 +457,9 @@ def make_regalloc_test(
             )
 
     else:
-
         ti: CoalesceTest = test_info
 
         def test(self: TestRegAlloc) -> None:
-
             self.coalescing_test(
                 program,
                 target_fun=ti.target_fun,

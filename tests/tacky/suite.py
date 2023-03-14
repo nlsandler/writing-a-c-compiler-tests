@@ -57,7 +57,6 @@ def configure_tests(
         # no distinction b/t int_only and all_types
         tests = cls.test_dir.rglob("*.c")
     else:
-
         tests = (cls.test_dir / "int_only").rglob("*.c")
         if not int_only:
             partii_tests = (cls.test_dir / "all_types").rglob("*.c")
@@ -153,7 +152,6 @@ def build_tacky_test_suite(
 
     # otherwise we're only testing one optimiztion; generate tests for the appropriate class
     if optimization_under_test == Optimizations.CONSTANT_FOLD:
-
         # add tests to TestConstantFolding class
         configure_tests(
             const_fold.TestConstantFolding,

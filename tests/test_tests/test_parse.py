@@ -47,7 +47,6 @@ class ParseTestCase(unittest.TestCase):
         """Shared logic for parsing tests"""
         mockfile = mock_open(read_data=asm_text)
         with patch("builtins.open", mockfile):
-
             actual_assembly = parse.parse_target_function(
                 Path("dummy.asm"), target_fun=target_fun
             )
@@ -508,14 +507,12 @@ main:
         instructions1 = []
         instructions2 = []
         with patch("builtins.open", mock1):
-
             asm1_parsed = parse.parse_target_function(
                 Path("dummy.asm"), target_fun="main"
             )
             instructions1 = asm1_parsed.instructions
 
         with patch("builtins.open", mock2):
-
             asm2_parsed = parse.parse_target_function(
                 Path("dummy.asm"), target_fun="main"
             )

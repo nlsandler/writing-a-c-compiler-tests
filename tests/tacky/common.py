@@ -73,7 +73,6 @@ class TackyOptimizationTest(basic.TestChapter):
         redundant_operands = [asm.Immediate(c) for c in redundant_consts]
 
         def is_dead_store(i: asm.AsmItem) -> bool:
-
             # returns true if we find _any_ instruction where redundant_const is source operand
             # this is more general than just looking for mov so we'll also catch any
             # spurious copy propagation of this constant

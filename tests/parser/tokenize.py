@@ -95,7 +95,6 @@ def tokenize(input_file: io.TextIOBase) -> Generator[Token, None, None]:
     # TODO support /* */ comments?
 
     for line in input_file:
-
         for recognized_tok in re.finditer(TOKEN_PATTERN, line):
             tok_type = recognized_tok.lastgroup  # group name
             tok_value = recognized_tok.group()

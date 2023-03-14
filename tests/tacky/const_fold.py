@@ -48,7 +48,6 @@ def make_constant_fold_test(program: Path) -> Callable[[TestConstantFolding], No
     """Generate test method for a single test program."""
 
     def test(self: TestConstantFolding) -> None:
-
         self.const_fold_test(program)
 
     return test

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import platform
 import subprocess
 import sys
 import unittest
@@ -13,7 +14,7 @@ from typing import Any, Callable, Optional, Sequence, Type
 # TODO should this be in a separate module maybe?
 
 ROOT_DIR = Path(__file__).parent.parent
-
+IS_OSX = platform.system().lower() == "darwin"
 EXPECTED_RESULTS: dict[str, Any]
 
 with open(ROOT_DIR / "expected_results.json", "r", encoding="utf-8") as f:
@@ -263,7 +264,8 @@ class TestChapter(unittest.TestCase):
         """Compile a valid test program, run it, and validate the results"""
 
         # include -lm for standard library test on linux
-        if "linux" in self.options and str(source_file) in REQUIRES_MATHLIB:
+        key = str(source_file.relative_to(ROOT_DIR))
+        if key in REQUIRES_MATHLIB and not IS_OSX:
             cc_opt = "-lm"
         else:
             cc_opt = None
@@ -512,7 +514,6 @@ def make_invalid_tests(
     for invalid_subdir in DIRECTORIES_BY_STAGE[stage]["invalid"]:
         invalid_test_dir = test_dir / invalid_subdir
         for program in invalid_test_dir.rglob("*.c"):
-
             if excluded_extra_credit(program, extra_credit_flags):
                 continue
 
@@ -553,7 +554,6 @@ def make_valid_tests(
     for valid_subdir in DIRECTORIES_BY_STAGE[stage]["valid"]:
         valid_testdir = test_dir / valid_subdir
         for program in valid_testdir.rglob("*.c"):
-
             if excluded_extra_credit(program, extra_credit_flags):
                 # this requires extra credit features that aren't enabled
                 continue
@@ -621,12 +621,12 @@ def build_test_class(
     if not skip_invalid:
         invalid_tests = make_invalid_tests(test_dir, stage, extra_credit_flags)
         # test_name is the method name
-        for (test_name, test_cls) in invalid_tests:
+        for test_name, test_cls in invalid_tests:
             testclass_attrs[test_name] = test_cls
 
     # generate tests for valid test programs
     valid_tests = make_valid_tests(test_dir, stage, extra_credit_flags)
-    for (test_name, test_cls) in valid_tests:
+    for test_name, test_cls in valid_tests:
         # test_name is the method name
         testclass_attrs[test_name] = test_cls
 

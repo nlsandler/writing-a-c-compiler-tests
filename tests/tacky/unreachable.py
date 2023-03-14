@@ -10,11 +10,9 @@ from . import common
 
 
 class TestUnreachableCodeElim(common.TackyOptimizationTest):
-
     test_dir = common.TEST_DIR / "unreachable_code_elimination"
 
     def no_control_flow_test(self, program: Path) -> None:
-
         parsed_asm = self.run_and_parse(program)
 
         # first validate that there's exactly one ret instruction
@@ -71,7 +69,6 @@ NO_FUNCALLS_TESTS = ["dead_branch_inside_loop.c", "dead_after_if_else.c"]
 def make_unreachable_code_test(
     program: Path,
 ) -> Callable[[TestUnreachableCodeElim], None]:
-
     if "dont_elim" in program.parts:
         return basic.make_test_run(program)
 
