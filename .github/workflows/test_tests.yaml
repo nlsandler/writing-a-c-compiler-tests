@@ -25,7 +25,7 @@ jobs:
   build-partial-nqcc:
     uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
     with:
-      chapter: 19.1
+      chapter: 19b
       os: ubuntu-latest
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}  
