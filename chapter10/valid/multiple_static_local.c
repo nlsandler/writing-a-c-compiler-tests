@@ -3,7 +3,7 @@
  * and are distinct from each other.
  */
 
-int foo() {
+int foo(void) {
     /* 'a' is a static local variable.
      * its value doubles each time we call foo()
      */
@@ -12,7 +12,7 @@ int foo() {
     return a;
 }
 
-int bar() {
+int bar(void) {
     /* 'a' is a static local variable, distinct from the
      * 'a' variable declared in foo.
      * its value increases by one each time we call bar()
@@ -22,6 +22,6 @@ int bar() {
     return a;
 }
 
-int main() {
+int main(void) {
     return foo() + bar() + foo() + bar();
 }

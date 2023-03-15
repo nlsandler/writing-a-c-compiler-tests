@@ -1,6 +1,6 @@
 /* Test that naming scheme does not result in conflicting variable names after alpha conversion */
 
-int main() {
+int main(void) {
     int a; // a0
     int result;
     int a1 = 1; // a10

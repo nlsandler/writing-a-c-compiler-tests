@@ -1,5 +1,5 @@
 /* Test comparisons to several null pointer constants */
-int main()
+int main(void)
 {
     double x;
     double *null = 0;

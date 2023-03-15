@@ -2,12 +2,12 @@
 
 double glob = 3.0;
 
-double foo()
+double foo(void)
 {
     return 4.0;
 }
 
-int main()
+int main(void)
 {
     double d = glob;
     double x = foo();

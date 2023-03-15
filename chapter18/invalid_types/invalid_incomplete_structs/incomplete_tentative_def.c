@@ -6,4 +6,4 @@ struct s;
 // later in the same translation unit, but we don't.)
 static struct s x;
 
-int main() { return 0; }
+int main(void) { return 0; }

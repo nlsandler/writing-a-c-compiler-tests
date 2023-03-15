@@ -1,5 +1,5 @@
 /* Test that we correctly handle pointers to pointers */
-int main() {
+int main(void) {
     double d = 10.0;
     double *d_ptr = &d;
     double **d_ptr_ptr = &d_ptr;

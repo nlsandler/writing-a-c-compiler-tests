@@ -1,6 +1,6 @@
-int callee() { return 1 / 0; }
+int callee(void) { return 1 / 0; }
 
-int target() {
+int target(void) {
 
   int x = 0;
   if (0) {
@@ -14,4 +14,4 @@ int target() {
   return x;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

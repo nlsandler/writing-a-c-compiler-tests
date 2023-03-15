@@ -1,5 +1,5 @@
 char *x = "Hello, World!";
 
-int main() {
+int main(void) {
     return (x[2] == 'l');
 }

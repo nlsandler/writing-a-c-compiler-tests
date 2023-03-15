@@ -6,7 +6,7 @@ void set_foo(double a, double b) {
     foo.y = b;
 }
 
-int main() {
+int main(void) {
     set_foo(8.0, 7.0);
     return foo.y;
 }

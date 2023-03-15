@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
 
     long a = 4294967290l;
 

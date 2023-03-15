@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* A long integer where the upper 32 bits are 0 and lower 32 bits are 1 */
     long lower_32_bits_set = 4294967295; // 2^32 - 1
 

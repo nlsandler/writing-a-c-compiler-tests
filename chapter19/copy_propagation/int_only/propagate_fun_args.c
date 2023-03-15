@@ -12,4 +12,4 @@ int target(int a, int b) {
   return callee(x, y);
 }
 
-int main() { return target(5, 6); }
+int main(void) { return target(5, 6); }

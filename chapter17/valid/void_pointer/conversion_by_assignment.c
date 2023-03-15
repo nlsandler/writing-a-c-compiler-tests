@@ -7,7 +7,7 @@ void *return_ptr(char *i) {
   return i + 3;
 }
 
-int main() {
+int main(void) {
   void *four_bytes = malloc(4);
   // implicitly convert void * to int *
   int *int_ptr = four_bytes;

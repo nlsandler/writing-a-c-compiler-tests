@@ -1,4 +1,4 @@
-int  main() {
+int main(void) {
     struct pair {
         int x;
         int y;

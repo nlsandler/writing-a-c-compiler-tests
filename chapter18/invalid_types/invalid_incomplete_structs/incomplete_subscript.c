@@ -1,4 +1,4 @@
 struct s;
 extern struct s *ptr;
 
-int main() { ptr[0]; }
+int main(void) { ptr[0]; }

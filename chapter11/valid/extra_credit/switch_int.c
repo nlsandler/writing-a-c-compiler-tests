@@ -17,7 +17,7 @@ int switch_on_int(int i) {
     }
 }
 
-int main() {
+int main(void) {
     /* Call switch_on_int once for each case, validate
      * that we get the expected result
      */

@@ -13,7 +13,7 @@ int switch_on_long(long l) {
     }
 }
 
-int main() {
+int main(void) {
     if (switch_on_long(8589934592) != 2)
         return 0;
     if (switch_on_long(100) != 1)

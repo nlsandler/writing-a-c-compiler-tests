@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
   int y;
   void *x = &y;
   void *null = 0;

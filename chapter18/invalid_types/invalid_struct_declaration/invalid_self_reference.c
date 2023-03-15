@@ -3,6 +3,6 @@ struct s {
     struct s y;
 };
 
-int main() {
+int main(void) {
     return 0;
 }

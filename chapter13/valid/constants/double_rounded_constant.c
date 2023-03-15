@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* Test for double-rounding errors that could result
      * if your compiler uses an 80-bit (aka extended-precisions)
      * floating-point representation internally

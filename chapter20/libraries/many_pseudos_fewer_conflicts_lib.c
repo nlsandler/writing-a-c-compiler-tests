@@ -4,7 +4,7 @@ int client (int i) {
     return 100 * i;
 }
 
-int target() {
+int target(void) {
     if (no_spills(1,2,0) != 206)
         return 1;
     if (no_spills(1,2,1) != 308)

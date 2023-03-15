@@ -1,6 +1,6 @@
 /* Truncate unsigned long to int or unsigned int */
 
-int main() {
+int main(void) {
     /* 100 can be cast to an int or unsigned int without changing its value */
     unsigned long ul = 100ul;
 

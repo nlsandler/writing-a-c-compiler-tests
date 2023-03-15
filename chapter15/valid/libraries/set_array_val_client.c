@@ -1,6 +1,6 @@
 int set_nth_element(double *arr, int idx);
 
-int main() {
+int main(void) {
     double arr[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
     set_nth_element(arr, 4);
     for (int i = 0; i < 4; i = i + 1) {

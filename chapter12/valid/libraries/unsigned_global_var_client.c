@@ -2,11 +2,11 @@
 
 /* Declarations of variable/functions defined in library */
 extern unsigned int ui;
-unsigned int return_uint();
-int return_uint_as_signed();
-long return_uint_as_long();
+unsigned int return_uint(void);
+int return_uint_as_signed(void);
+long return_uint_as_long(void);
 
-int main() {
+int main(void) {
     if (ui != 4294967200u)
         return 0;
 

@@ -5,7 +5,7 @@ void f(int *arr)
     return;
 }
 
-int main()
+int main(void)
 {
     int arr[5] = {5, 5, 5, 5, 5};
     f(arr);

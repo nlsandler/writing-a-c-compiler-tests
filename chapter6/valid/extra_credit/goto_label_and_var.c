@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int ident = 5;
     goto ident;
     return 0;

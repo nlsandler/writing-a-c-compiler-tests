@@ -5,7 +5,7 @@
 /* A tentative definition */
 static int foo;
 
-int main() {
+int main(void) {
     return foo;
 }
 

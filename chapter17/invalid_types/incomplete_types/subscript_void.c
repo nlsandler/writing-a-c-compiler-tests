@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
   int x = 10;
   void *v = &x;
   v[0];

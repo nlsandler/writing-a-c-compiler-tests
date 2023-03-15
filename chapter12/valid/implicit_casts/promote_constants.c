@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* -1u evaluates to UINT_MAX; -1ul evaluates to ULONG_MAX */
     if (-1u >= -1ul)
         return 0;

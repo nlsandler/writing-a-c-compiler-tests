@@ -8,7 +8,7 @@ struct outer {
     int bar;
 };
 
-int main() {
+int main(void) {
     struct outer s;
     s.foo.a = 1.0;
     s.foo.b = 2;

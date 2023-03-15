@@ -1,6 +1,6 @@
 void *malloc(unsigned long size);
 
-int main() {
+int main(void) {
   void *buffer = malloc(100);
   // this will be 8 b/c buffer is a pointer
   return sizeof(buffer);

@@ -9,7 +9,7 @@ int glob4 = 5;
 int glob5 = 6;
 
 // use this to force pseudoregs to be callee-saved
-int reset_globals() {
+int reset_globals(void) {
   glob0 = 0;
   glob1 = 0;
   glob2 = 0;
@@ -24,7 +24,7 @@ int use_value(int v) {
   return 0;
 }
 
-int target() {
+int target(void) {
   /* define some values - must be in calle-saved regs */
   int a = glob0;
   int b = glob1;
@@ -54,4 +54,4 @@ int target() {
   return result;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

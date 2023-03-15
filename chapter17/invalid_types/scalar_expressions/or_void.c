@@ -1,1 +1,1 @@
-int main() { return 1 || (void)2; }
+int main(void) { return 1 || (void)2; }

@@ -6,4 +6,4 @@ int f(int arg, int flag) {
   return 0;
 }
 
-int main() { return f(20, 1) + f(3, 0); }
+int main(void) { return f(20, 1) + f(3, 0); }

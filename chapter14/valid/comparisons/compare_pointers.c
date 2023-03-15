@@ -1,6 +1,6 @@
 /* Test comparing pointers with == and != */
 
-int main() {
+int main(void) {
     int a;
     int b;
 

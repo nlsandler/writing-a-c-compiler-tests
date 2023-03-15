@@ -6,12 +6,12 @@
 /* a global variable 'a' */
 int a = 5;
 
-int return_a() {
+int return_a(void) {
     /* return the current value of the global variable */
     return a;
 }
 
-int main() {
+int main(void) {
     /* automatic variable 'a', distinct from the global variable 'a' */
     int a = 3;
     {

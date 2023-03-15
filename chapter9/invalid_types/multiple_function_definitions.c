@@ -1,12 +1,12 @@
 /* Function 'foo' is defined twice */
-int foo(){
+int foo(void){
     return 3;
 }
 
-int main() {
+int main(void) {
     return foo();
 }
 
-int foo(){
+int foo(void){
     return 4;
 }

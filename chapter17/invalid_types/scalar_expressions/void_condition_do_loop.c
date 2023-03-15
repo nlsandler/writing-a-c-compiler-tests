@@ -1,5 +1,5 @@
-void f() { return; }
-int main() {
+void f(void) { return; }
+int main(void) {
   int i = 0;
   do {
     i = i + 1;

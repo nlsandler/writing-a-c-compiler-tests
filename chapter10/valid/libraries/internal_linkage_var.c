@@ -5,7 +5,7 @@
  */
 static int x;
 
-int read_x() {
+int read_x(void) {
     return x;
 }
 

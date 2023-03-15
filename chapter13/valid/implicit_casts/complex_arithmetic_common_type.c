@@ -3,7 +3,7 @@
  * for each sub-expression
  */
 
-int main() {
+int main(void) {
     unsigned long ul = 10000ul;
     int i = -50;
     /* When we calculate ul + i, we first promote

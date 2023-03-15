@@ -8,7 +8,7 @@ struct chars {
   char null;
 };
 
-int main() {
+int main(void) {
   struct chars my_chars = "abc";
   return 0;
 }

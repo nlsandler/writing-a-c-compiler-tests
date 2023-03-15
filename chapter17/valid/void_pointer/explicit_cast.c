@@ -4,7 +4,7 @@ void *malloc(unsigned long size);
 void free(void *ptr);
 void *memcpy(void *s1, void *s2, unsigned long n);
 
-int main() {
+int main(void) {
   void *ptr = malloc(4 * sizeof(double));
   // cast void * to double *
   double *double_ptr = (double *)ptr;

@@ -6,7 +6,7 @@ struct s {
   int a;
 };
 
-int main() {
+int main(void) {
   // pointer to array of three pointers to s
   struct s *(*outer_arr)[3] = malloc(sizeof(void *) * 3);
   struct s outer_struct = {1};

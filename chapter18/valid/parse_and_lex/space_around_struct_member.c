@@ -1,7 +1,7 @@
 struct s {
   int a;
 };
-int main() {
+int main(void) {
   // struct member operator (.) can be separate by whitespace from
   // both struct and field name
   struct s foo;

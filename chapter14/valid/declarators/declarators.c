@@ -3,10 +3,10 @@
 /* Multiple declarations of the function 'return_3'
  * These declarations all have the same type so they don't conflict.
  */
-int return_3();
-int(return_3());
-int(return_3)();
-int((return_3))()
+int return_3(void);
+int(return_3(void));
+int(return_3)(void);
+int((return_3))(void)
 {
     return 3;
 }
@@ -39,7 +39,7 @@ unsigned(**(pointers_to_pointers(int *(*p))));
 unsigned *(*pointers_to_pointers(int(**p)));
 unsigned(*(*((pointers_to_pointers)(int(*(*(p)))))));
 
-int main()
+int main(void)
 {
     /* Declare some variables using a variety of declarators */
     int i = 0;

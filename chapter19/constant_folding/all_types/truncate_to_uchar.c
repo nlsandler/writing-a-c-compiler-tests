@@ -1,3 +1,3 @@
-unsigned char target() { return 1274; }
+unsigned char target(void) { return 1274; }
 
-int main() { return target() == 250; }
+int main(void) { return target() == 250; }

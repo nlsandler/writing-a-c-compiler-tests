@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int outer = 1;
     int foo = 0;
     if (outer) {

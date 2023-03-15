@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     unsigned x = 100u;
     /* if you interpret y's binary 
      * representation as a signed int,

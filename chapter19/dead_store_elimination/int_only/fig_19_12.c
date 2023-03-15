@@ -1,6 +1,6 @@
-int callee() { return 4; }
+int callee(void) { return 4; }
 
-int callee2() { return 5; }
+int callee2(void) { return 5; }
 
 int target(int flag) {
   int x = 10; // eliminate this!
@@ -12,4 +12,4 @@ int target(int flag) {
   return x;
 }
 
-int main() { return target(0) + target(1); }
+int main(void) { return target(0) + target(1); }

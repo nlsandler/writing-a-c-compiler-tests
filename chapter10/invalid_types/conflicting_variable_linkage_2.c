@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* A local variable with no linkage */
     int x = 3;
     {

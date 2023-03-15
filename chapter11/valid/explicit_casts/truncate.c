@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     /* If a long is already in the range of 'int',
      * truncation doesn't change its value.

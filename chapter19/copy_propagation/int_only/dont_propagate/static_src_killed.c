@@ -1,12 +1,12 @@
 int x = 1;
 
-int f()
+int f(void)
 {
     x = 4;
     return 0;
 }
 
-int main()
+int main(void)
 {
     int y = x;
     f();

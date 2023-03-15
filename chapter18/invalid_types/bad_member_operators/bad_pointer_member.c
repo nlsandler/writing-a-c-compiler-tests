@@ -10,7 +10,7 @@ struct b {
   int n;
 };
 
-int main() {
+int main(void) {
   struct a *ptr = malloc(sizeof(struct a));
   ptr->m = 10; // wrong member name
   return 0;

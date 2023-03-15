@@ -1,4 +1,4 @@
-int read_x() {
+int read_x(void) {
     //  define x without linkage
     int x = 4;
     if (x == 4) {

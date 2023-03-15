@@ -1,6 +1,6 @@
 extern void v1;
 
-int main() {
+int main(void) {
   // the standard is ambiguous about whether
   // you can declare void variables
   // but you definitely can't assign to them

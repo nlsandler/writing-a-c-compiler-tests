@@ -1,7 +1,7 @@
 // test that (at least one of) idiv and cdq makes eax live
 int glob = 10;
 
-int main() {
+int main(void) {
     int coalesce_into_eax = glob * 2;
     // in second round of coalescing, if we don't know eax if live, we'll coalesce it with product
     int product = coalesce_into_eax + 4;

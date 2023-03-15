@@ -4,9 +4,9 @@
 int glob = 1;
 int flag = 1;
 
-int f();
+int f(void);
 
-int target() {
+int target(void) {
     
     int a = 100;
     while (a) {
@@ -26,6 +26,6 @@ int target() {
     return glob;
 }
 
-int main() {
+int main(void) {
     return target();
 }

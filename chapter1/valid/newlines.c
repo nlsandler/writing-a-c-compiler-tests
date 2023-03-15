@@ -1,6 +1,7 @@
 int 
 main
-(   
+(
+void
 )
 {
 return

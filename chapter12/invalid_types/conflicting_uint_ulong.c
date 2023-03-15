@@ -1,9 +1,9 @@
-unsigned int foo();
+unsigned int foo(void);
 
-unsigned long foo() {
+unsigned long foo(void) {
     return 0;
 }
 
-int main() {
+int main(void) {
     return 0;
 }

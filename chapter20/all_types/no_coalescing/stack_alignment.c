@@ -14,7 +14,7 @@ int populate(char *arr, int idx)
     return populate(arr, idx - 1);
 }
 
-int main()
+int main(void)
 {
     char arr[7];
     int w = glob0;

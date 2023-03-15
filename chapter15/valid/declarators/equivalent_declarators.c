@@ -8,7 +8,7 @@ int (*ptr_to_arr)[3][6l];
 
 int((*(ptr_to_arr))[3l])[6u] = 0;
 
-int main()
+int main(void)
 {
     return arr[2] == 3 && ptr_to_arr == 0;
 }

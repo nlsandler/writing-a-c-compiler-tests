@@ -4,7 +4,7 @@ struct s;
 // but it's illegal to initialize them
 extern struct s x = {1};
 
-int main() { return 0; }
+int main(void) { return 0; }
 
 struct s {
   int a;

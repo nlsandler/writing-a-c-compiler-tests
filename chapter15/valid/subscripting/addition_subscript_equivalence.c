@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     unsigned long x[300][5];
     for (int i = 0; i < 300; i = i + 1)

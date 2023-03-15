@@ -13,7 +13,7 @@ int callee(int a, int b, int c, int d, int e) {
     return -100;
 }
 
-int check_globals() {
+int check_globals(void) {
     if (glob1 == 2 && glob2 == 0 && glob3 == 9 && glob4 == 1 && glob5 == 1)
         return 0;
     raise(SIGSEGV);

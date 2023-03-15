@@ -1,7 +1,7 @@
 /* Test that we can explicitly convert a pointer to an integer type */
 static long l;
 
-int main() {
+int main(void) {
     long *ptr = &l;
     unsigned long ptr_as_long = (unsigned long) ptr;
     // long is eight-byte aligned, so the address of l

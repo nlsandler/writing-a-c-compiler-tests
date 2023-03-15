@@ -1,6 +1,6 @@
 void *calloc(unsigned long nmemb, unsigned long size);
 void free(void *ptr);
-int main() {
+int main(void) {
   int i = 10;
   void *arr[4] = {calloc(2, sizeof(int)), &i, 0, arr};
 

@@ -6,7 +6,7 @@ long unsigned x;
 long int unsigned x;
 unsigned int long x = 4;
 
-int main() {
+int main(void) {
     /* Declare the same variable again with a storage-class specifier */
     long extern unsigned x;
     unsigned long extern x;

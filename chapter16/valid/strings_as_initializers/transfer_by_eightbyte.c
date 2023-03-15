@@ -3,7 +3,7 @@ int strcmp(char *s1, char *s2);
 // if you initialize arrays 4 or 8 bytes at a time,
 // make sure you don't overrrun neighboring memory
 
-int main()
+int main(void)
 {
     char strings[2][13] = {"abcdefghijkl", "z"};
     if (strcmp(strings[0], "abcdefghijkl"))

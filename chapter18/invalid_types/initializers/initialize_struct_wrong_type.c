@@ -8,7 +8,7 @@ struct two {
   int b;
 };
 
-int main() {
+int main(void) {
   struct one x = {1, 2};
   struct two y = x; // can't initialize from differnet struct type
   return 0;

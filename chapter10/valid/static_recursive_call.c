@@ -1,6 +1,6 @@
 int putchar (int ch);
 
-int print_alphabet() {
+int print_alphabet(void) {
     /* the value of count increases by 1
      * each time we call print_alphabet()
      */
@@ -13,6 +13,6 @@ int print_alphabet() {
     return count;
 }
 
-int main() {
+int main(void) {
     print_alphabet();
 }

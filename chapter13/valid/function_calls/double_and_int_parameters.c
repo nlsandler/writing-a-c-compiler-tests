@@ -6,6 +6,6 @@ int check_arguments(double d1, double d2, int i1, double d3, double d4, int i2, 
         && i4 == 104 && i5 == 105;
 }
 
-int main() {
+int main(void) {
     return check_arguments(1.0, 2.0, 101, 3.0, 4.0, 102, 103, 104, 5.0, 6.0, 7.0, 105, 8.0);
 }

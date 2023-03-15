@@ -1,3 +1,3 @@
 struct s {
-  int foo();
+  int foo(void);
 };

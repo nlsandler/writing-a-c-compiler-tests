@@ -1,6 +1,6 @@
 #include "classes.h"
 
-int main() {
+int main(void) {
   struct one_int one_int = {54320, 'c'};
   struct one_int_exactly one_long = {567890l};
   struct two_ints two_ints = {'_', {5, 6, 7}};

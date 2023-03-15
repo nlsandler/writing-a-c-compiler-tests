@@ -1,6 +1,6 @@
 void *malloc(unsigned long size);
 
-int main() {
+int main(void) {
     void (*ptr)[3] = malloc(3);
     return ptr == 0;
 }

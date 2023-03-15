@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* This constant is malformed.
      * The exponent must be an integer, 
      * not just a negative sign.

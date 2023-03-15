@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     unsigned long a = 10ul;
     unsigned long b = 20ul;
     /* a - b = -10

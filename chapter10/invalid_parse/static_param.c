@@ -3,6 +3,6 @@ int f(static int i) {
     return i;
 }
 
-int main() {
+int main(void) {
     return f(1);
 }

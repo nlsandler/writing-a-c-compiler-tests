@@ -1,4 +1,4 @@
-int target() {
+int target(void) {
   // look for:
   // - jmp lbl instead of je lbl
   // - no cmpl instructions
@@ -7,4 +7,4 @@ int target() {
   return 0;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

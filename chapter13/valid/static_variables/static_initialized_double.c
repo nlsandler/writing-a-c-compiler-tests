@@ -1,14 +1,14 @@
 // Test an explicitly initialized static double
 
 // Return old value increment by one
-double return_static_variable() {
+double return_static_variable(void) {
     static double d = 0.5;
     double ret = d;
     d = d + 1.0;
     return ret;
 }
 
-int main() {
+int main(void) {
     double d1 = return_static_variable();
     double d2 = return_static_variable();
     double d3 = return_static_variable();

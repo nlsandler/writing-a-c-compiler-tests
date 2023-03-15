@@ -2,6 +2,6 @@ int foo(void (*bad_array)[3]) {
     return bad_array == 0;
 }
 
-int main() {
+int main(void) {
     return 0;
 }

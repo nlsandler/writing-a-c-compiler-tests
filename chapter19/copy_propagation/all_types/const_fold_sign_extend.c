@@ -1,3 +1,3 @@
-long target() { return -1000; }
+long target(void) { return -1000; }
 
-int main() { return target() == -1000l; }
+int main(void) { return target() == -1000l; }

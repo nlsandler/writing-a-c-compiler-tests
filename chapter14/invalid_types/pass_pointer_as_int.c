@@ -6,7 +6,7 @@ int f(int i) {
     return i;
 }
 
-int main() {
+int main(void) {
     int x;
     return f(&x);
 }

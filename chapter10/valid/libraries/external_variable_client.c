@@ -5,13 +5,13 @@
  */
 
 int update_x(int new_val);
-int read_x();
+int read_x(void);
 
 
 // an external variable can be declared multiple times.
 extern int x;
 
-int main() {
+int main(void) {
     /* x is initialized to 3 in external_variable.c,
      * where it's defined.
      */

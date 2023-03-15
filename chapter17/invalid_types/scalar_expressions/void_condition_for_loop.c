@@ -1,8 +1,8 @@
-void foo() {
+void foo(void) {
     return;
 }
 
-int main() {
+int main(void) {
     for (int i = 0; foo(); )
         ;
     return 0;

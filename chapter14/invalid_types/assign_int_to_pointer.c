@@ -2,7 +2,7 @@
  * because an integer cannot be implicitly converted
  * to pointer type
  */
-int main() {
+int main(void) {
     int *x;
     x = 10;
     return 0;

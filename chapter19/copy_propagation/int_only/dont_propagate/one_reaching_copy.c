@@ -1,14 +1,14 @@
-int flag()
+int flag(void)
 {
     return 0;
 }
 
-int number()
+int number(void)
 {
     return 3;
 }
 
-int main()
+int main(void)
 {
     int x;
     if (flag())

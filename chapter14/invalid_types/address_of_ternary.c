@@ -2,7 +2,7 @@
  * an lvalue, even if the second and third operands
  * are both variables, so it's illegal to take its address.
  */
-int main() {
+int main(void) {
     int x = 1;
     int y = 2;
     int z = 3;

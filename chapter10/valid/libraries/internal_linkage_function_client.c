@@ -8,13 +8,13 @@
 /* forward declration of function with external linkage,
  * defined in this file
  */
-extern int my_fun();
+extern int my_fun(void);
 
 // functions with external linkage from other file
-int call_static_my_fun();
-int call_static_my_fun_2();
+int call_static_my_fun(void);
+int call_static_my_fun_2(void);
 
-int main() {
+int main(void) {
 
     if (call_static_my_fun() != 1)
         return 1;
@@ -25,6 +25,6 @@ int main() {
     return 0;
 }
 
-int my_fun() {
+int my_fun(void) {
     return 100;
 }

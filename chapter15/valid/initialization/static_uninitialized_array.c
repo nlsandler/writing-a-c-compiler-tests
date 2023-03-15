@@ -1,7 +1,7 @@
 /* If a static array isn't explicitly initialized, eveyr lement should be initialized to zero */
 int arr[5][2][4];
 
-int main()
+int main(void)
 {
     for (int i = 0; i < 5; i = i + 1)
         for (int j = 0; j < 2; j = j + 1)

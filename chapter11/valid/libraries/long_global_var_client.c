@@ -2,12 +2,12 @@
 
 // the following are defined in long_global_var.c
 extern long int l;
-long return_l();
-int return_l_as_int();
+long return_l(void);
+int return_l_as_int(void);
 
 
 
-int main() {
+int main(void) {
 
     /* Make sure l has the right value before we update it */
     if (return_l() != 8589934592l)

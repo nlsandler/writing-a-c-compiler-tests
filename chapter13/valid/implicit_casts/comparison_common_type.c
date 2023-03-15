@@ -1,7 +1,7 @@
 /* Test that we perform the usual arithmetic conversions
  * correctly on the operands of comparisons
  */
-int main() {
+int main(void) {
     double d = -9007199254751228.0;
     long l = -9007199254751227l;
 

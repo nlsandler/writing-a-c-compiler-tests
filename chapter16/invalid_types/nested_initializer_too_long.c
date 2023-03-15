@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     // initialize "bcde" is too long to initialize
     // nested array of type char[3]

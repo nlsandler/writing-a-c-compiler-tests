@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int flag = 0;
     int a = if (flag)
                 2;

@@ -1,6 +1,6 @@
 // check that we correctly propagate copies into type conversion instructions
 
-unsigned long target() {
+unsigned long target(void) {
   unsigned char c = 250;
   int i = c * 2;             // 500
   double d = i * 1000.;      // 500000.0
@@ -8,4 +8,4 @@ unsigned long target() {
   return l;
 }
 
-int main() { return target() == 83333u; }
+int main(void) { return target() == 83333u; }

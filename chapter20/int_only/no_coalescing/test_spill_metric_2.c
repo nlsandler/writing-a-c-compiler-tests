@@ -8,7 +8,7 @@ int glob5 = 5;
 int glob6 = 16;
 
 // when multiple pseudos have the same spill cost, make sure we spill the one with the highest degree
-int target() {
+int target(void) {
 
     // to_spill and a-e form a clique and must go in callee-saved regs
     int to_spill = glob1;

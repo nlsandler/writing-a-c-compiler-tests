@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int x = 10;
     // shouldn't corrupt anything if we add a null byte here,
     // so this is just to make sure it type checks

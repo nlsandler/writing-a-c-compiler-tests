@@ -5,7 +5,7 @@
 static char stat[5] = "hi";
 static signed char nested_stat[3][4] = {"", "bc"}; // empty string just initializes to null byte
 
-int main()
+int main(void)
 {
 
     // validate stat

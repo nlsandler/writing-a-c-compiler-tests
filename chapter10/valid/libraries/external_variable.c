@@ -16,7 +16,7 @@ int update_x(int new_val) {
     return 0;
 }
 
-int read_x() {
+int read_x(void) {
     return x;
 }
 

@@ -7,7 +7,7 @@ struct chars {
   char char_array[3];
 };
 
-int main() {
+int main(void) {
   // this test relies on the fact that we allocate variables contiguously on the
   // stack make sure copying an aggregate into one object doesn't overwrite the
   // ones next to it

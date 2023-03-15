@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     char z = 'z';
     char a = 'A';

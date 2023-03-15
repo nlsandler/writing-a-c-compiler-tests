@@ -1,8 +1,8 @@
 int callee(int a, int b) { return a + b; }
-int f() {
+int f(void) {
   return 3;
 }
-int target() {
+int target(void) {
   int x = f();
   int y = x;
   // look for: same value passed in ESI, EDI
@@ -11,4 +11,4 @@ int target() {
   return callee(x, y);
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

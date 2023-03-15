@@ -1,6 +1,6 @@
 /* Test conversions between signed and unsigned types of the same size */
 
-int main() {
+int main(void) {
     int x = 10;
     unsigned int y = (unsigned) x;
 

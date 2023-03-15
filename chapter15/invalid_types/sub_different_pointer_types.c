@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     long x[10];
     long *ptr = x;

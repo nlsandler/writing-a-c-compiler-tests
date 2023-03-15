@@ -3,7 +3,7 @@ int *return_pointer(int *in) {
     return in;
 }
 
-int main() {
+int main(void) {
     int x = 10;
     int *x_ptr = return_pointer(&x);
 

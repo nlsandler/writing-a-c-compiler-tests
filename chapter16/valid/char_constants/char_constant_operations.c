@@ -3,7 +3,7 @@
 // use character constants to initialize static variables of any arithmetic type
 double d = '\\';
 
-int main()
+int main(void)
 {
     // can use character constants to specify array dimensions,
     // and to initialize array elements of any int-compatible type

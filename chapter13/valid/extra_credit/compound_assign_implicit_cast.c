@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     double d = 1000.5;
     /* When we perform compound assignment, we convert both operands
      * to their common type, operate on them, and convert the result to the

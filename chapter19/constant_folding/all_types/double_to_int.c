@@ -1,3 +1,3 @@
-int target() { return 5.9; }
+int target(void) { return 5.9; }
 
-int main() { return target() == 5; }
+int main(void) { return target() == 5; }

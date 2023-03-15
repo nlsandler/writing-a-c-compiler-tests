@@ -1,6 +1,6 @@
 int callee(int i) { return i + 1; }
 
-int target() {
+int target(void) {
   int x = 5; // dead
   int y = 3; // not
   do {
@@ -10,4 +10,4 @@ int target() {
   return x + y;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

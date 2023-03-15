@@ -1,6 +1,6 @@
 
 int var = 0;
-int callee() {
+int callee(void) {
   var = var + 1;
   return 0;
 }
@@ -12,7 +12,7 @@ int target(int flag) {
   return x; // look for movl $3, %eax
 }
 
-int main() {
+int main(void) {
   int result = target(0);
   result = result + target(1);
   return result == 6 && var == 1;

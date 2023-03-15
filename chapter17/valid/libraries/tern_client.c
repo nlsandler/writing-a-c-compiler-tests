@@ -2,7 +2,7 @@ void* calloc( unsigned long num, unsigned long size );
 
 int foo(int flag, double *d, int **arr);
 
-int main() {
+int main(void) {
     int x = 0;
     int y = 1;
     int z = 2;

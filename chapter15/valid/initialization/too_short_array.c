@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
   /* if some elments are explicitly initialized, remaining elements
    * should be initialized to zero
    */

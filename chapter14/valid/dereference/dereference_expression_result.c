@@ -1,12 +1,12 @@
 /* Make sure we can dereference any expression of pointer type,
  * not just variables */
 
-int *return_pointer() {
+int *return_pointer(void) {
     static int var = 10;
     return &var;
 }
 
-int main() {
+int main(void) {
     int val = 100;
     int *ptr_var = &val;
 

@@ -1,7 +1,7 @@
-int target() {
+int target(void) {
   int i = 257;
   char c = i;
   return (int)c; //
 }
 
-int main() { return target() == 1; }
+int main(void) { return target() == 1; }

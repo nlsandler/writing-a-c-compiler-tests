@@ -1,3 +1,3 @@
-void f();
-void g();
-int main() { return !(1 ? f() : g()); }
+void f(void);
+void g(void);
+int main(void) { return !(1 ? f() : g()); }

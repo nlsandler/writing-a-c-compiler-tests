@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int a = 0;
     double d = 100.0;
     // Use a floating-point number as the controlling expression in a while loop

@@ -1,13 +1,13 @@
 // can use complete structs in conditional expressions
 
-int flag() {
+int flag(void) {
   static int result = 0;
   int retval = result;
   result = result + 1;
   return retval;
 }
 
-int main() {
+int main(void) {
   struct s {
     int x;
   };

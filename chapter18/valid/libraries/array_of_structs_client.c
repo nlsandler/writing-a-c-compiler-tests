@@ -3,7 +3,7 @@
 static struct outer static_array[3] = {
     {0, {0, {0, 0}}}, {2, {3, {4, 5}}}, {4, {6, {8, 10}}}};
 
-int main() {
+int main(void) {
   struct outer auto_array[3] = {
       {0, {0, {0, 0}}}, {2, {3, {4, 5}}}, {4, {6, {8, 10}}}};
 

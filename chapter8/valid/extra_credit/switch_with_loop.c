@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int cond = 10;
     switch (cond) {
         case 1:

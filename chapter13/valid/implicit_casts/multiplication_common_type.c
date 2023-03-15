@@ -1,7 +1,7 @@
 /* Test that we perform the usual arithmetic conversions
  * correctly on the operands of arithmetic operations
  */
-int main() {
+int main(void) {
     /* This should promote 10 to a double,
      * calculate 10.75 * 10.0, which is 107.5,
      * and then truncate back to an int, 107.

@@ -26,7 +26,7 @@ unsigned char uchar_from_ulong = 9223372037928517642ul;
 
 unsigned char uchar_from_double = 77.7;
 
-int main() {
+int main(void) {
   return (from_long == 0 && from_double == 15 && from_uint == -127 &&
           from_ulong == 10 && schar_from_uint == -6 && schar_from_ulong == 10 &&
           schar_from_double == 0 && uchar_from_int == 214 &&

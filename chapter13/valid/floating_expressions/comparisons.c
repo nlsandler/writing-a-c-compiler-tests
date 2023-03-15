@@ -1,5 +1,5 @@
 /* Test comparisons on doubles */
-int main() {
+int main(void) {
 
     // Evaluate true and false case for each comparison operator
     int greater_true = 55e5 > 54e4;

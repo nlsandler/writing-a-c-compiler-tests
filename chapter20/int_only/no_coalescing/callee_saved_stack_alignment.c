@@ -3,12 +3,12 @@ int glob1 = 1;
 int glob2 = 2;
 int glob3 = 3;
 
-int f()
+int f(void)
 {
     return 4;
 }
 
-int main()
+int main(void)
 {
     // make sure we adjust stack alignment correctly w/ an even number of callee-saved regs
     // when no other spills, no need to adjust

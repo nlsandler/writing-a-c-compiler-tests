@@ -17,7 +17,7 @@ int target(int flag) {
   return callee(x, y);
 }
 
-int main() {
+int main(void) {
   int result = target(0);
 
   if (result != 40)

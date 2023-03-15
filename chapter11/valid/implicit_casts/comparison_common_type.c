@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int i = -100;
     long l = 4294967296; // 2^32
 

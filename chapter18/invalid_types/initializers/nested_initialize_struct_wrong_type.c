@@ -7,7 +7,7 @@ struct outer {
   struct inner x;
 };
 
-int main() {
+int main(void) {
   struct outer x = {{1, 2}};
   // can't initialize second element of type 'struct inner'
   // from variable of type 'struct outer'

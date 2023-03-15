@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* Define constant doubles in a few different formats,
      * and make sure we can lex all of them.
      * Note that these can all be respresented exactly,

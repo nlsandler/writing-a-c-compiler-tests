@@ -7,7 +7,7 @@ struct s
 
 struct s glob = {1, 2, 3};
 
-int main()
+int main(void)
 {
     struct s my_struct = glob; // this isn't dead!
     // overwriting part of struct doesn't kill whole thing

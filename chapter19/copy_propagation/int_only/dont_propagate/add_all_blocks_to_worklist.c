@@ -1,14 +1,14 @@
-int flag()
+int flag(void)
 {
     return 1;
 }
 
-int bar()
+int bar(void)
 {
     return 4;
 }
 
-int main()
+int main(void)
 {
     int x = 1;
     // all copies reach this block, so processing its predecessor

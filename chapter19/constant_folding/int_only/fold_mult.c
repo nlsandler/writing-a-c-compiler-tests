@@ -1,3 +1,3 @@
-int target() { return 1000 * 1000; }
+int target(void) { return 1000 * 1000; }
 
-int main() { return target() == 1000000; }
+int main(void) { return target() == 1000000; }

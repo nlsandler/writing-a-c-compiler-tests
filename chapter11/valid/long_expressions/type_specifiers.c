@@ -15,7 +15,7 @@ int my_function(long int x, int long y, long z) {
     return x + y + z;
 }
 
-int main() {
+int main(void) {
     /* Several different ways to declare local long variables */
     long x = 1l;
     long int y = 2l;

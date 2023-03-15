@@ -1,3 +1,3 @@
-int target() { return 1111 != 1112; }
+int target(void) { return 1111 != 1112; }
 
-int main() { return target(); }
+int main(void) { return target(); }

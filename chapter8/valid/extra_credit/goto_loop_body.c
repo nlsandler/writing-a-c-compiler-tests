@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int i = 0;
     goto target;
     for (i = 5; i < 10; i = i + 1)

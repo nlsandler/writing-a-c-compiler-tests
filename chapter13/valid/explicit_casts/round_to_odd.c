@@ -1,5 +1,5 @@
 /* Test borderline conversions from unsigned long to double */
-int main() {
+int main(void) {
     // round_down is exactly halfway between doubles
     // 9223372036854775808.0 and 9223372036854777856.0
     // Using ties-to-even rounding, we'll round it down to

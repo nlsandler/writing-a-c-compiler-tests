@@ -3,7 +3,7 @@
  * unsigned type, convert the unsigned value to the signed type
  */
 
-int main() {
+int main(void) {
     /* This will be converted to a long
      * with value 100
      */

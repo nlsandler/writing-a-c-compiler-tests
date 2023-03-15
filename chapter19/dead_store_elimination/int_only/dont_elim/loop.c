@@ -3,7 +3,7 @@ int f(int a, int b)
     return a + b;
 }
 
-int main()
+int main(void)
 {
     int x = 3;
     int y = 2;

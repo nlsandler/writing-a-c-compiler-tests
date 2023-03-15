@@ -3,7 +3,7 @@ struct pair {
     int y;
 };
 
-int main() {
+int main(void) {
     struct pair p = { 0, 7 };
     {
         struct pair { double x; double z; };

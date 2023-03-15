@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     int multidim[6][7][4][2];
     int(*ptr1)[2] = multidim[3][4];

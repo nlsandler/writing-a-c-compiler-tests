@@ -1,4 +1,4 @@
-int target() {
+int target(void) {
   // we can eliminate both assignments to x
   // (look for: no movl $10, no addition, no inc...no function body basically)
   int x = 10;
@@ -7,4 +7,4 @@ int target() {
             // they're being clever
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

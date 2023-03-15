@@ -1,9 +1,9 @@
 extern long x;
 extern long *arr[4];
 
-long *set_pointer();
+long *set_pointer(void);
 
-int main() {
+int main(void) {
     if (set_pointer() != 0)
         return 0;
     if (*arr[2] != x)

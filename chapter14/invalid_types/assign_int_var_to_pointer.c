@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     int x = 0;
     // can't initialize pointer with value of type int

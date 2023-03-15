@@ -8,7 +8,7 @@ int f(struct s arg)
     return arg.i;
 }
 
-int target()
+int target(void)
 {
     struct s my_struct = {4};
     int x = f(my_struct);
@@ -16,6 +16,6 @@ int target()
     return x;
 }
 
-int main() {
+int main(void) {
     return target();
 }

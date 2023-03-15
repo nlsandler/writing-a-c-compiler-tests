@@ -1,12 +1,12 @@
 // test basic operations on pointers to constant strings - returning them, assigning them, pointer atihemtic, etc.
 
-char *return_string()
+char *return_string(void)
 {
     // constant strings have static storage duration,
     // so this will persist after the function call;
     return "I'm a string!";
 }
-int main()
+int main(void)
 {
     char *ptr = 0;
     ptr = return_string();

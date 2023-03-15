@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     // a mix of escaped and unescaped special characters
     char special[6] = "\a\b\n	";

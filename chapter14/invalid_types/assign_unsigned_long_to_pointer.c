@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     // can't assign an unsigned long to a pointer even though
     // it could conceivably be a valid memory address

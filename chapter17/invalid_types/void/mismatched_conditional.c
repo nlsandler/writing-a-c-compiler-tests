@@ -1,8 +1,8 @@
-void foo() {
+void foo(void) {
     return;
 }
 
-int main() {
+int main(void) {
     int a = 3;
     int flag = 4;
     flag ? foo() : (a = 3);

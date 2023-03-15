@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     char tab = '	';
     char vertical_tab = '';

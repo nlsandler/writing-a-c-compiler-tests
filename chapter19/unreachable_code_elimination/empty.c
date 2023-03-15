@@ -1,5 +1,5 @@
-int target() { return 0; }
+int target(void) { return 0; }
 
-int main() {
+int main(void) {
   // make sure optimization pass doesn't choke on an empty function
 }

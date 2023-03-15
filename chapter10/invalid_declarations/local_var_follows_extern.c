@@ -1,6 +1,6 @@
 int i = 10;
 
-int main() {
+int main(void) {
     /* This declaration has external linkage,
      * so it refers to the static global variable
      * defined above. */

@@ -5,7 +5,7 @@ struct triple
     char three;
 };
 
-int main()
+int main(void)
 {
     struct triple array[3] = {{0},
                               {0, 9.0, 4},

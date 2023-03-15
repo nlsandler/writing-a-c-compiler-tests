@@ -19,7 +19,7 @@ struct outermost {
 
 void *malloc(unsigned long size);
 
-int main() {
+int main(void) {
   struct outer *outer_pointer = malloc(sizeof(struct outer));
   outer_pointer->x = 0;
   outer_pointer->y = 0;

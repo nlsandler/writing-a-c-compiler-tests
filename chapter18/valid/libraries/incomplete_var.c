@@ -3,7 +3,7 @@ struct s {
 };
 static struct s internal = {2};
 
-struct s *get_struct_pointer() {
+struct s *get_struct_pointer(void) {
   return &internal;
 }
 

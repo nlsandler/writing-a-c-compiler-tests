@@ -5,7 +5,7 @@ struct pair {
 
 int foo(struct pair p);
 
-int main() {
+int main(void) {
     struct pair arg = { 1, 2};
     return foo(arg);
 }

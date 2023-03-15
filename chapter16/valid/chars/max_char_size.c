@@ -1,6 +1,6 @@
-int rand();
+int rand(void);
 
-int main() {
+int main(void) {
     for (int i = 0; i < 10; i = i + 1) {
         unsigned char c = rand();
         int casted = (int) c;

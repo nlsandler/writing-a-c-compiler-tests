@@ -1,9 +1,9 @@
-int foo()
+int foo(void)
 {
     return 10;
 }
 
-int main()
+int main(void)
 {
     int x = foo();
     int y = x; // generate y = x

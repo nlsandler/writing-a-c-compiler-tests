@@ -1,5 +1,5 @@
 /* Test conversions from double to the signed integer types */
-int main() {
+int main(void) {
 
     // when truncated, d will fit in a long
     // but not an int

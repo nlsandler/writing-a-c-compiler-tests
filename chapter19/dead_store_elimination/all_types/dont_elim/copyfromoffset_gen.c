@@ -7,7 +7,7 @@ struct s
 
 int flag = 1;
 
-int main()
+int main(void)
 {
     struct s s1 = {1, 2, 3};
     struct s s2 = {4, 5, 6};

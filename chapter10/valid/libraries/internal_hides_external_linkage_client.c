@@ -5,12 +5,12 @@
 static int x = 1;
 
 // read the value of this file's x variable
-int read_internal_x();
+int read_internal_x(void);
 
 // read the other file's x variable, which has external linkage
-int read_x();
+int read_x(void);
 
-int main() {
+int main(void) {
     // This refers to the variable with internal linkage
     // defined above
     extern int x;
@@ -31,7 +31,7 @@ int main() {
 // this refers to the 'x' variable defines in this file with internal linkage
 extern int x;
 
-int read_internal_x() {
+int read_internal_x(void) {
     return x;
 
 }

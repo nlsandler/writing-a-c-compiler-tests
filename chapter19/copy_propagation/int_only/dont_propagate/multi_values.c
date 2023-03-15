@@ -7,7 +7,7 @@ int multi_path(int flag)
     return x;
 }
 
-int main()
+int main(void)
 {
     return multi_path(1) + multi_path(0);
 }

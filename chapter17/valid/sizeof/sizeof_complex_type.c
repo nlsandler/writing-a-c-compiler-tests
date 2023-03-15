@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
   // get size of type specified by complex abstract declarator
   // this is an array of 3 arrays of 4 pointers, for total size
   // 3 * 4 * 8 = 96

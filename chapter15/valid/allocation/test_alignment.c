@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     int arr[5] = {0};
     int arr2[7] = {0};

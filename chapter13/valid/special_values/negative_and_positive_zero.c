@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     // make sure negative and positive zero are distinct constants
     double negative_zero = -0.0;

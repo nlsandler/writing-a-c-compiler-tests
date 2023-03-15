@@ -1,2 +1,2 @@
-int target() { return !1024; }
-int main() { return target(); }
+int target(void) { return !1024; }
+int main(void) { return target(); }

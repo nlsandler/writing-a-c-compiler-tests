@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* Both these values should round to
      * 1.000000000000000444089209850062616169452667236328125.
      * (I got these numbers from from example 2 in

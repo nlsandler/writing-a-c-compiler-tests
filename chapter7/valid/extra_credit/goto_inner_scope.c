@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int x = 5;
     goto inner;
     {

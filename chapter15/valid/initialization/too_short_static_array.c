@@ -3,7 +3,7 @@
  */
 int arr[3] = {1, 2};
 
-int main()
+int main(void)
 {
     return arr[0] + arr[1] + arr[2];
 }

@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     // make sure we recognize chars as integer types and accept them in pointer arithmetic
     char *ptr = "foo";

@@ -1,4 +1,4 @@
-int callee() { return 3; }
+int callee(void) { return 3; }
 
 int target(int flag, int y) {
   int x = y;
@@ -10,4 +10,4 @@ int target(int flag, int y) {
   return y;
 }
 
-int main() { return target(0, 10); }
+int main(void) { return target(0, 10); }

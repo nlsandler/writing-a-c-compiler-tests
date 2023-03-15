@@ -5,7 +5,7 @@ int glob4 = 4;
 int glob5 = 5;
 
 int callee(int a, int b, int c, int d, int e);
-int check_globals();
+int check_globals(void);
 
 int target(int a, int b, int c, int d, int e, int flag) {
     // make sure we spill nodes with lower spill costs first

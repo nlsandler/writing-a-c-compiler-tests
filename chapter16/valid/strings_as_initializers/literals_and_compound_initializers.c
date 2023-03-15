@@ -5,7 +5,7 @@ int strcmp(char *s1, char *s2);
 // static version
 signed char static_array[3][4] = {{'a', 'b', 'c', 'd'}, "efgh", "ijk"};
 
-int main()
+int main(void)
 {
     unsigned char auto_array[2][3] = {"lmn", {'o', 'p'}};
 

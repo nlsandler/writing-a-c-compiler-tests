@@ -1,6 +1,6 @@
 /* Test addition, subtraction, multiplication, division, and negation */
 
-int main() {
+int main(void) {
 
     double two = 2.0;
     double three = 3.0;

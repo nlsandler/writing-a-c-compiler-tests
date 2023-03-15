@@ -6,4 +6,4 @@ int target(int i) {
   return (j > 100);
 }
 
-int main() { return target(-1); }
+int main(void) { return target(-1); }

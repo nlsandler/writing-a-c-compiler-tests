@@ -5,7 +5,7 @@ static unsigned long x = 9223372036854775803ul; // 2^63 - 5
 unsigned long zero_long;
 unsigned zero_int;
 
-int main()
+int main(void)
 {
     if (x != 9223372036854775803ul)
         return 0;

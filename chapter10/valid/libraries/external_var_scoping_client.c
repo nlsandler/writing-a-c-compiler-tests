@@ -5,9 +5,9 @@
 
 int x = 10;
 
-int read_x();
+int read_x(void);
 
-int main() {
+int main(void) {
     // shadow x
     int x = 0;
 

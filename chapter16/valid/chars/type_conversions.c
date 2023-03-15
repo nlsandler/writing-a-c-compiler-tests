@@ -3,13 +3,13 @@ int f(int i, long l, unsigned u, unsigned long ul, double d, unsigned char uc)
     return (i == -10 && l == -10 && u == 4294967286u && ul == 18446744073709551606ul && d == -10.0 && uc == 246);
 }
 
-signed char return_char()
+signed char return_char(void)
 {
     // implicit conversion from int to signed char
     return 4091;
 }
 
-int main()
+int main(void)
 {
 
     // signed char types to other types

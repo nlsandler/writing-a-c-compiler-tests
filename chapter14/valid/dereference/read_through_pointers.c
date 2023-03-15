@@ -1,5 +1,5 @@
 /* Test reading values of several types through pointers */
-int main() {
+int main(void) {
 
     // define some variables
     int i = -100;

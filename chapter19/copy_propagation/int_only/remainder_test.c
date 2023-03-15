@@ -2,7 +2,7 @@
 // this is really a constant folding test but we couldn't test it until we had
 // copy prop since it requires operations w/ negative numbers
 
-int target() {
+int target(void) {
   // the remainder of 6 % -5 is 1
   // 1 = 6 - (-5) * (-1)
   // but 6 modulo -5 is -
@@ -10,4 +10,4 @@ int target() {
   return 6 % -5;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

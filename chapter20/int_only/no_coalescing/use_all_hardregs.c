@@ -3,7 +3,7 @@ int glob2 = 30;
 int glob3 = 40;
 
 
-int target() {
+int target(void) {
     // create a clique of 7 tmps that interfere
     // we can color all of them w/out spilling anything (includg callee-saved regs)
     int a = glob * glob;

@@ -4,7 +4,7 @@ int foo(int a)
     a = 10; // initialize ENTRY w/ empty set of copies, not including this one
 }
 
-int main()
+int main(void)
 {
     return foo(4);
 }

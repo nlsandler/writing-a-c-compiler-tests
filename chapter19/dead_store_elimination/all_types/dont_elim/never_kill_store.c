@@ -4,7 +4,7 @@ void f(int *ptr)
     return;
 }
 
-int main()
+int main(void)
 {
     int x = 0;
     f(&x);

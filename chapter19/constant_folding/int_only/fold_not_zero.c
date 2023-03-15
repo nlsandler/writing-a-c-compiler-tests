@@ -1,3 +1,3 @@
-int target() { return !0; }
+int target(void) { return !0; }
 
-int main() { return target(); }
+int main(void) { return target(); }

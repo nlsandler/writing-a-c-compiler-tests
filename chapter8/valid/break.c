@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int a = 10;
     int b = 20;
     for (b = -20; b < 0; b = b + 1) {

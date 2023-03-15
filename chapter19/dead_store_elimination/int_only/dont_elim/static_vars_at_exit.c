@@ -1,4 +1,4 @@
-int f()
+int f(void)
 {
     static int i = 10;
     if (i == 5)
@@ -7,7 +7,7 @@ int f()
     return 1;
 }
 
-int main()
+int main(void)
 {
     return f() + f();
 }

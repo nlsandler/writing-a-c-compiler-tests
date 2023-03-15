@@ -7,7 +7,7 @@ int target(int arg) {
   return i;
 }
 
-int main() {
+int main(void) {
   int result1 = target(2);
   int result2 = target(-1);
   return result1 == 2 && result2 == 2;

@@ -1,6 +1,6 @@
 // basic test of writing to a char array
 
-int main()
+int main(void)
 {
     char literal[4] = "abc";
     char b = literal[2];

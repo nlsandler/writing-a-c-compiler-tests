@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int arr[5] = { 5, 4, 3, 2, 1 };
     int *ptr4 = arr + 4;
     int *ptr2 = arr + 2;

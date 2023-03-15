@@ -3,7 +3,7 @@ int foo(int *ptr)
     return 2;
 }
 
-int target()
+int target(void)
 {
     int x = 10;
     int *ptr = 0;
@@ -18,6 +18,6 @@ int target()
     return 0;
 }
 
-int main() {
+int main(void) {
     return target();
 }

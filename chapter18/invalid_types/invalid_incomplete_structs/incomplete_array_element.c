@@ -5,6 +5,6 @@ struct s {
     int b;
 };
 
-int main() {
+int main(void) {
     return 0;
 }

@@ -5,7 +5,7 @@ char static1[4] = {1, 2};
 signed char static2[4] = {3, 4};
 unsigned char static3[3] = {5};
 
-int main()
+int main(void)
 {
 
     // validate static arrays

@@ -6,7 +6,7 @@ int f(int src, int flag)
     return x;
 }
 
-int main()
+int main(void)
 {
     return f(5, 1) + f(3, 0);
 }

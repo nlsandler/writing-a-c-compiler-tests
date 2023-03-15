@@ -2,7 +2,7 @@
 // NOTE: this is undefined but technically not a constraint violation so maybe don't test it?
 double arr[3] = 1.0;
 
-int main()
+int main(void)
 {
     return 0;
 }

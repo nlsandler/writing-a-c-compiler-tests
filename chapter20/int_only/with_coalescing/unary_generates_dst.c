@@ -3,7 +3,7 @@
 
 int glob = 100;
 
-int target() {
+int target(void) {
     int a = -100;
     while (a < 0) {
         // this addition becomes:
@@ -25,6 +25,6 @@ int target() {
     return glob;
 }
 
-int main() {
+int main(void) {
     return target();
 }

@@ -11,7 +11,7 @@ int compare_longs(long a, long b)
     return a == b;
 }
 
-int main()
+int main(void)
 {
     /* pass values w/ upper bytes set in RDI & RSI */
     if (compare_longs(-1, -2))

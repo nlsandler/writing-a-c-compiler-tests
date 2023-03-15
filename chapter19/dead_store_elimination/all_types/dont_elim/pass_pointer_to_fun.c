@@ -7,7 +7,7 @@ int return_pointer_val(int *arg)
     return *static_ptr;
 }
 
-int main()
+int main(void)
 {
     int x = 1;
     int *null = 0;

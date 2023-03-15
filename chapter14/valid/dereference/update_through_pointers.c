@@ -1,6 +1,6 @@
 /* Test assigning to values of several types through pointers */
 
-int main() {
+int main(void) {
     // define some variables
     unsigned int i = 2185232384u;
     signed long l = 144115196665790464l;

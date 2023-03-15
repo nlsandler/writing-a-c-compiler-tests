@@ -7,4 +7,4 @@ int target(int arg) {
   return y;
 }
 
-int main() { return target(4); }
+int main(void) { return target(4); }

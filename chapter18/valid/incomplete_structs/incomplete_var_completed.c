@@ -4,7 +4,7 @@ extern struct s x; // declare but don't define
 
 int get_member(struct s *param);
 
-int main() { return get_member(&x); }
+int main(void) { return get_member(&x); }
 
 // define the struct
 struct s {

@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     /* This won't match our regex
      * b/c "1.0e10" is followed by a .

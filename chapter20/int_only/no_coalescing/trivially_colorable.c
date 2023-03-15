@@ -5,7 +5,7 @@ int client(int x, int y, int z) {
     return x == 13 && y == 143 && z ==  -130;
 }
 
-int target() {
+int target(void) {
     int x = glob + 3;
     int y = glob2 * x;
     int z = x - y;

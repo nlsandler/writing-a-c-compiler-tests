@@ -1,6 +1,6 @@
 /* Test sign-extending a signed int to a long or unsigned long */
 
-int main() {
+int main(void) {
     int i = 10;
     /* Converting a positive int to a signed long preserves its value */
     if ((signed long) i != 10l)

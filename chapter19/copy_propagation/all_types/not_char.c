@@ -1,6 +1,6 @@
-int target() {
+int target(void) {
   char x = 256;
   return !x;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

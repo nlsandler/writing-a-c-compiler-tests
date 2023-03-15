@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* These two declarations conflict;
      * they declare the same identifier in the same
      * scope, but they don't refer to the same object,

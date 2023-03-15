@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* Negating -1 is equivalent to computing 0 - 1.
      * According to the rules for unsigned wraparound,
      * this results in ULONG_MAX

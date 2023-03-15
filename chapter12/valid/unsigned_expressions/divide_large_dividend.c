@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     // The upper bit of x is set
     unsigned int x = 4294967294u;
     // y = x / 2

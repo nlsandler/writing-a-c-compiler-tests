@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int i = -20;
     /* This statement is evaluated as follows:
      * 1. sign-extend i to a long with value -20

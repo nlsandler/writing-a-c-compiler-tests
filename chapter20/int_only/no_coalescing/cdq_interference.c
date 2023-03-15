@@ -158,7 +158,7 @@ int target(int flag) {
   return result;
 }
 
-int main() {
+int main(void) {
     glob2 = 0;
     if (target(-2) != 1)
         return 1;

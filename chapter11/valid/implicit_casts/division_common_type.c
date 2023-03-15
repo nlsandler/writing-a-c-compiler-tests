@@ -1,6 +1,6 @@
 /* Test that we perform the correct implicit conversions during division */
 
-int main() {
+int main(void) {
     long l = 2147483649l;
     int i = 10;
     /* The common type of i and l is long.

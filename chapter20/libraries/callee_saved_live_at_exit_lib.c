@@ -19,7 +19,7 @@ int callee(int a, int b, int c, int d, int e, int f) {
     return -2000; // something went wrong
 }
 
-int target() {
+int target(void) {
     int result = cant_coalesce_fully(1, 0);
     if (result != 1)
         return -10;

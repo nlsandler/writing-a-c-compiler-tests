@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int sum = 0;
     int counter;
     for (int i = 0; i <= 10; i = i + 1) {

@@ -21,7 +21,7 @@ int flag = 1;
 
 int *store_a;
 
-int target() {
+int target(void) {
   // create a clique of 7 tmps that interfere
   // each tmp is a pointer that we write through, whcih remains live afterwards
   // this is colorable w/out spills as long as none of these conflict with the

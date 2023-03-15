@@ -5,12 +5,12 @@ void save_ptr(double *to_save)
     ptr = to_save;
 }
 
-void update_ptr()
+void update_ptr(void)
 {
     *ptr = 2.0;
 }
 
-int main()
+int main(void)
 {
     double d = 10.0;
     double *ptr = &d;

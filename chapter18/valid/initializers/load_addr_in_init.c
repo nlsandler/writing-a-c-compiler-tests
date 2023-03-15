@@ -3,7 +3,7 @@ struct pair {
     int *y;
 };
 
-int main() {
+int main(void) {
     struct pair p = { 3, &(p.x) };
     return p.x + *p.y;
 }

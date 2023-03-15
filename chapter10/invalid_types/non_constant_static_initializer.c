@@ -4,6 +4,6 @@ int a = 10;
  */
 int b = 1 + a;
 
-int main() {
+int main(void) {
     return b;
 }

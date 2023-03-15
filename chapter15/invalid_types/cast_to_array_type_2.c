@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     long arr[10];
     // cast to array of pointers  to int

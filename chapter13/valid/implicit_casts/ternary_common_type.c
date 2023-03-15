@@ -1,5 +1,5 @@
 /* Test that we perform the usual arithmetic operations correctly in ternary expressions */
-int main() {
+int main(void) {
     // If the first operand of a ternary operator is a double,
     // you don't need to convert the second and third operands to double.
     // In this case we'll converting the second and third operands to the common type

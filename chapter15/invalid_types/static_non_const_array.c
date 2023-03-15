@@ -3,6 +3,6 @@ int foo(int p) {
     return arr[2];
 }
 
-int main() {
+int main(void) {
     return foo(5);
 }

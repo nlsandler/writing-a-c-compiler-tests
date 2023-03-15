@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     int dim2[1][2] = {{1, 2}};
     int dim[2] = {3, 4};

@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int a = 10;
     do
         break;

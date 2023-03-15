@@ -8,7 +8,7 @@ void callee(int *ptr) {
   *ptr = 100;
 }
 
-int target() {
+int target(void) {
   int x = 10;
   callee(&x); // uses x
   int y = x;
@@ -16,7 +16,7 @@ int target() {
   return y;
 }
 
-int main() {
+int main(void) {
   int a = target();
   return a == 100 && b == 10;
 }

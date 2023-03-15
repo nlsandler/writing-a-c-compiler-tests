@@ -1,3 +1,3 @@
-void f();
+void f(void);
 
-int main() { return f() ? 1 : 2; }
+int main(void) { return f() ? 1 : 2; }

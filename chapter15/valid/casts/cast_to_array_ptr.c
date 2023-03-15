@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     long arr[4] = {4, 5, 6, 7};
     long *ptr = arr;

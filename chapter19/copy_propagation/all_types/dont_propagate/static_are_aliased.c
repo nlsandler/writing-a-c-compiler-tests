@@ -6,7 +6,7 @@ int target(int *stat_ptr) {
   return stat;
 }
 
-int main() {
+int main(void) {
   int *ptr = &stat;
   return target(ptr);
 }

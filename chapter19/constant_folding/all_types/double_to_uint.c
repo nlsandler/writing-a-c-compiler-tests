@@ -1,3 +1,3 @@
-unsigned target() { return 2147483750.5; }
+unsigned target(void) { return 2147483750.5; }
 
-int main() { return target() == 2147483750u; }
+int main(void) { return target() == 2147483750u; }

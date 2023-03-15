@@ -1,9 +1,9 @@
 struct s;
 
-struct s foo();
+struct s foo(void);
 
-int main() {
+int main(void) {
   struct s;
-  struct s foo(); // conflict w/ earlier def; wrong return type
+  struct s foo(void); // conflict w/ earlier def; wrong return type
   return 0;
 }

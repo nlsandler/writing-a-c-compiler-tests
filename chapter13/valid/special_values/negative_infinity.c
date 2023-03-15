@@ -1,5 +1,5 @@
 /* Test that we correctly handle negative infinity */
-int main() {
+int main(void) {
     double negated_inf = -2E308;
 
     /* make sure that -1/0 is negative infinity */

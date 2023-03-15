@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
   int arr[3] = {1, 2, 3};
   void *void_ptr = arr;
   int *int_ptr = arr + 1;

@@ -1,6 +1,6 @@
 #include "pass_wonky_struct.h"
 
-int main() {
+int main(void) {
   // because this is static, it will be initialized to all zeros
   static struct wonky all_zeros;
 

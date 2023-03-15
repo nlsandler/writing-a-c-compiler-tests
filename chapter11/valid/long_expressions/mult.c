@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     long int a = 4294967290l;
     /* Multiplying two longs should produce the correct result,
      * even when that result is too large for an int to represent 

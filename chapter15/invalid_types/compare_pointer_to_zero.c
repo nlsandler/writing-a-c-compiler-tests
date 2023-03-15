@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     int *x = 0;
     // illegal to compare a pointer w/ an intege

@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* Converting a positive or negative int to a long preserves its value */ 
 
     int pos = 10;

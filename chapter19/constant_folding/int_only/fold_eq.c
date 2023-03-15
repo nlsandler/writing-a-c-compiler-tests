@@ -1,6 +1,6 @@
-int target() {
+int target(void) {
   int flag1 = 100 == 100;
   return flag1;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

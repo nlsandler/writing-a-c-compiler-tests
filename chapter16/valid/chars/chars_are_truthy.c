@@ -1,6 +1,6 @@
 // use chars in contexts that treat them as boolean values (&&, ||, controlling expressions)
 
-int main()
+int main(void)
 {
     char c = 0;
     if (c)

@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
 
     double not_zero = 2.5e-10;
     double zero = 0.0;

@@ -3,7 +3,7 @@
  * convert the signed value to the unsigned type
  */
 
-int main() {
+int main(void) {
     /* This value is 2^64 - 10,
      * which is too large to represent as an unsigned int
      * or signed long

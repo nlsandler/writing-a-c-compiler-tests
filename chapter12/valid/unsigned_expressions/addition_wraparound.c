@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     unsigned int a = 4294967294u;
     unsigned int b = 2u;
     /* a + b = 4294967296, or 2^32.

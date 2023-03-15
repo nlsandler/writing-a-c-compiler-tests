@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
 
     /* Make sure subnormal numbers are not rounded to zero */
     double subnormal = 2.5e-320;

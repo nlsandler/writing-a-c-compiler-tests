@@ -1,6 +1,6 @@
 int x = 10;
 
-int main()
+int main(void)
 {
     int *static_ptr = &x;
     x = 20;

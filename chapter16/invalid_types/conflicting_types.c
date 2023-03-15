@@ -1,6 +1,6 @@
 char c = 10;
 
-int main()
+int main(void)
 {
     // this conflicts with previous definition of char,
     // because char and signed char are different types

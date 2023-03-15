@@ -2,7 +2,7 @@ void *calloc(unsigned long nmemb, unsigned long size);
 void free(void *ptr);
 
 // the common pointer type of void * and another pointer type is void *
-int main() {
+int main(void) {
   // get a pointer to void
   void *void_ptr = calloc(3, sizeof(unsigned int));
   unsigned int array[3] = {1, 2, 3};

@@ -9,4 +9,4 @@ int target(int a) {
   } while (1);
 }
 
-int main() { return target(10); }
+int main(void) { return target(10); }

@@ -1,4 +1,4 @@
-int indirect_update();
+int indirect_update(void);
 
 int f(int new_total)
 {
@@ -11,13 +11,13 @@ int f(int new_total)
     return total; // can't propagate this
 }
 
-int indirect_update()
+int indirect_update(void)
 {
     f(101);
     return 0;
 }
 
-int main()
+int main(void)
 {
     return f(1);
 }

@@ -1,6 +1,6 @@
 int arr[6];
 
-int main() {
+int main(void) {
     return arr[0];
 }
 

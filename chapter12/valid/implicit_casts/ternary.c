@@ -2,7 +2,7 @@
  * convert the result to the common type of both branches
  */
 
-int main() {
+int main(void) {
     unsigned long cond = 100u;
 
     int i = -1;

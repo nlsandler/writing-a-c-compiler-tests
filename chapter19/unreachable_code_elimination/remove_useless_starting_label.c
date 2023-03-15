@@ -1,4 +1,4 @@
-int target() {
+int target(void) {
   // make sure we remove useless label at very beginning of function
   do {
 
@@ -7,4 +7,4 @@ int target() {
   return 99;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     unsigned int x = -1u; // 2^32 - 1
     /* 1. convert x to a signed long, which preserves its value
      * 2. divide by -10, resulting in -429496729

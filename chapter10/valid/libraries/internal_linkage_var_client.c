@@ -9,10 +9,10 @@
 static int x;
 static int x;
 
-int read_x();
+int read_x(void);
 int update_x(int x);
 
-int main() {
+int main(void) {
 
     /* Check initial values */
     if (x != 0)

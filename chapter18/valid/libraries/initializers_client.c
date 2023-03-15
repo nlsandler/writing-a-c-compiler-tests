@@ -1,9 +1,9 @@
 #include "initializers.h"
 
-char *get_string() { return "foo"; }
+char *get_string(void) { return "foo"; }
 
 // validate static/global variables defined in the other file
-int validate_static() {
+int validate_static(void) {
   // first validate basic
   if (basic.d != 1.0 || strcmp(basic.str, "hi"))
     return 1;
@@ -39,7 +39,7 @@ int validate_static() {
   return 0;
 }
 
-int main() {
+int main(void) {
 
   int static_result = validate_static();
   if (static_result) {

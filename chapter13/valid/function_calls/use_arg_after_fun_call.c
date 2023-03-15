@@ -13,6 +13,6 @@ double fun(double x) {
     }
 }
 
-int main() {
+int main(void) {
     return fun(1.0);
 }

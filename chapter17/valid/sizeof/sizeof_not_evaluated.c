@@ -1,7 +1,7 @@
 void exit(int status);
-int foo() { exit(10); }
+int foo(void) { exit(10); }
 
-int main() {
+int main(void) {
   // make sure foo isn't actually called
   return sizeof(foo());
 }

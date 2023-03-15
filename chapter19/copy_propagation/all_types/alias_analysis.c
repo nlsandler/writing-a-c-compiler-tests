@@ -1,6 +1,6 @@
 void callee(int *ptr) { *ptr = -1; }
 
-int target() {
+int target(void) {
   int i = 10;
   int j = 20;
   callee(&i);
@@ -13,4 +13,4 @@ int target() {
   return i + j;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

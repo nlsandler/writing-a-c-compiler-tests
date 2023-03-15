@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     long a = 4294967290l;
     long b = 5l;
     /* Adding two longs should produce the correct result,

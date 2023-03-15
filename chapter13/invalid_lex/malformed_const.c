@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     // this shouldn't match our floating-point regex b/c
     // "2."" is followed by a word character

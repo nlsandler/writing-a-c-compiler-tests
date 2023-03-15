@@ -1,6 +1,6 @@
 /* Test that we perform the correct implicit conversions during addition */
 
-int main() {
+int main(void) {
     long l = 2147483653;
     int i = 10;
     /* The common type of i and l is long, so we should

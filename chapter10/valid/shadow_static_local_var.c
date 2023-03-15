@@ -31,7 +31,7 @@ int update_static_or_global(int update_global, int new_val)
     return i;
 }
 
-int main()
+int main(void)
 {
     if (i != 0) // i with external linkage should be initialized to 0
         return 1;

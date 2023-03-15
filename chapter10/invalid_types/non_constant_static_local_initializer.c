@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int a = 1;
     /* b has static storage duration,
      * so its initializer must be constant.

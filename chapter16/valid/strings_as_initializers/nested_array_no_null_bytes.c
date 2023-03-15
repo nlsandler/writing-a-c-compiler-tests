@@ -1,6 +1,6 @@
 int strcmp(char *s1, char *s2);
 
-int main()
+int main(void)
 {
     char nested[3][3] = {"yes", "no", "ok"};
     char *whole_array = (char *)nested;

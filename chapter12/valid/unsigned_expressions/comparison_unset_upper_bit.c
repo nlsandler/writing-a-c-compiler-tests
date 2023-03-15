@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     unsigned long x = 100ul;
     /* This test case is identical to comparison_set_upper_bit.c,
      * except both numbers have the same value whether they're interpreted

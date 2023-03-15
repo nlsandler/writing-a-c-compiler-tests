@@ -3,7 +3,7 @@
 
 int puts(char *c);
 
-int main()
+int main(void)
 {
     char str_array[2][6] = {"Hello", "World"};
     puts(str_array[0]);

@@ -1,7 +1,7 @@
 // if we've already defined/declared a struct, declaring it again in the same
 // scope does nothing
 
-int main() {
+int main(void) {
   struct s {
     int a;
   };

@@ -12,7 +12,7 @@ struct outer {
   char last;
 };
 
-int main() {
+int main(void) {
   // this test relies on the fact that we allocate variables contiguously on the
   // stack to validate that copying an aggregate into one object doesn't
   // overwrite the ones next to it. it won't test this anymore once we implement

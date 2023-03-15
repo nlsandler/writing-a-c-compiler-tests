@@ -14,7 +14,7 @@ struct outer {
   struct middle middle_member;
 };
 
-int main() {
+int main(void) {
   static struct inner i = {5e41, 'x'};
 
   struct middle m = {i, &m};

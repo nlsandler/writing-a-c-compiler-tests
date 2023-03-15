@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int *arr[3];
     int a = 4;
     int b = 5;

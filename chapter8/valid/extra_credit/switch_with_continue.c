@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     switch(4) {
         case 0:
             return 0;

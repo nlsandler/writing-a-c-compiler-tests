@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* Zero-extend 4294967200
      * from an unsigned int to an unsigned long
      * to test the assembly rewrite rule for MovZeroExtend

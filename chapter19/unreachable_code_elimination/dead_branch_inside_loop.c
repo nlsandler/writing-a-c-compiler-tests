@@ -1,6 +1,6 @@
-int callee() { return 1 / 0; }
+int callee(void) { return 1 / 0; }
 
-int target() {
+int target(void) {
   int result = 105;
   // loop is not optimized away but inner function call is
   for (int i = 0; i < 100; i = i + 1) {
@@ -12,4 +12,4 @@ int target() {
   return result;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

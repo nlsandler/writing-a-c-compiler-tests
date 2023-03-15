@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     int simple_array[2] = {1, 2};
     int(*ptr_arr[3])[2] = {&simple_array, 0, &simple_array};

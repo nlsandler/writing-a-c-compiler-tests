@@ -1,7 +1,7 @@
 /* Converting a value to a different type, then back to the original type, 
  * does not always recover its original value
  */
-int main() {
+int main(void) {
     unsigned long a = 8589934580ul; // 2^33 - 12
 
     /* casting to unsigned int and back reduces is equivalent to subtracting

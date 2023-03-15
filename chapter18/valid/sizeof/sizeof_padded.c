@@ -37,7 +37,7 @@ struct medium_big {
   struct twobyte b; // bytes 17-18
 };                  // 20 bytes b/c it's four-byte aligned
 
-int main() {
+int main(void) {
   if (sizeof(struct twobyte) == 2 && sizeof(struct threebyte) == 3 &&
       sizeof(struct big) == 16 && sizeof(struct medium) == 7 &&
       sizeof(struct biggest) == 24 && sizeof(struct medium_big) == 20) {

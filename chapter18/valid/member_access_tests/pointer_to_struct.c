@@ -5,7 +5,7 @@ struct pair {
     int second_tag;
 };
 
-int main() {
+int main(void) {
     struct pair *ptr = (struct pair *) malloc(sizeof(struct pair));
     ptr->second_tag = 3;
     ptr->first_tag = -1;

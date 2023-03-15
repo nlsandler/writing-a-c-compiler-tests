@@ -4,7 +4,7 @@ unsigned x;
 int unsigned x;
 unsigned int x = 6;
 
-int main() {
+int main(void) {
     return x;
 }
 

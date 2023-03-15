@@ -1,5 +1,5 @@
 /* Test that we handle negative zero correctly */
-int main() {
+int main(void) {
     double negative_zero = -0.0;
 
     // 0.0 and -0.0 should compare equal

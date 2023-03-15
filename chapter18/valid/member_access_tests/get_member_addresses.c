@@ -38,7 +38,7 @@ struct medium_big {
   struct twobyte twobyte_2; // bytes 17-18
 };                          // 20 bytes b/c it's four-byte aligned
 
-int main() {
+int main(void) {
   // declare some static arrays of structs
   static struct medium_big x;
 

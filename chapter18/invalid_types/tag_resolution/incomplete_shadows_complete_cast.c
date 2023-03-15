@@ -4,7 +4,7 @@ struct s {
   int a;
 };
 
-int main() {
+int main(void) {
   void *ptr = malloc(sizeof(struct s));
   struct s;
   // struct s specifier in cast expression refers to inner, incomplete type

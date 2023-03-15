@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int x = 10;
     // make sure null byte here doesn't corrupt ints on either side
     char letters[4] = "abcd";

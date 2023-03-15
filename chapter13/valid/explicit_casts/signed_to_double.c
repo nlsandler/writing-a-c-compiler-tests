@@ -1,6 +1,6 @@
 /* Test conversions from signed integer types to double */
 
-int main() {
+int main(void) {
     int i = -100000;
     double d = (double) i;
 

@@ -1,6 +1,6 @@
 int callee(int *p1, int *p2) { return p1 == p2; }
 
-int target() {
+int target(void) {
   int i = 0;
   int *ptr = &i;
   int *ptr2 = ptr; // generate copy ptr2 = ptr
@@ -9,4 +9,4 @@ int target() {
   return callee(ptr, ptr2);
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

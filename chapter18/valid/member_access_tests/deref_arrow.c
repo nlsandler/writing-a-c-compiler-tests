@@ -7,7 +7,7 @@ void update_char(struct pair *p) {
     *p->c_ptr = 3;
 }
 
-int main() {
+int main(void) {
     char c = 5;
     struct pair p = { 4.6, &c };
     update_char(&p);

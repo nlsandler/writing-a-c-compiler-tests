@@ -5,7 +5,7 @@ struct struct_with_array {
   double arr[3];
 };
 
-int main() {
+int main(void) {
   struct struct_with_array *s = malloc(sizeof(struct struct_with_array));
   double *d = s->arr;
   s->arr[2] = 4.5;

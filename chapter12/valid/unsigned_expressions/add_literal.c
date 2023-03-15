@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     unsigned int x = 10;
     /* Test out rewrite rule for addition;
      * even when adding numbers we interpret as unsigned,

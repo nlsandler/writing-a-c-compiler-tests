@@ -3,6 +3,6 @@
  */
 static var = 0;
 
-int main() {
+int main(void) {
     return var;
 }

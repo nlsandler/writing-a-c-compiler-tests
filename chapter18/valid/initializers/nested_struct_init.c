@@ -13,7 +13,7 @@ struct outer {
   long l2;
 };
 
-int main() {
+int main(void) {
   struct outer foo = {100, {3, 4, "!?"}, 10000000};
   if (strcmp(foo.i.arr, "!?"))
     return 0;

@@ -1,6 +1,6 @@
-int callee() { return 1 / 0; }
+int callee(void) { return 1 / 0; }
 
-int target() {
+int target(void) {
   // when we enable unreachable code elimination and constant folding,
   // call to callee() shoudl be optimized away, initialized assignmnet (i = 10
   // should not)
@@ -10,4 +10,4 @@ int target() {
   return i;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

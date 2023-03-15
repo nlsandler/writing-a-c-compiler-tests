@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int a = 5;
     switch(0) {
         default:

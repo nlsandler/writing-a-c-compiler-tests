@@ -17,7 +17,7 @@ struct outer global_struct = {{1.0, {9, 10}}, 100};
 
 void *malloc(unsigned long size);
 
-int main() {
+int main(void) {
   struct outer *local_struct = (struct outer *)malloc(sizeof(struct outer));
   *local_struct = global_struct;
   return (local_struct->l == 100 && local_struct->m.d == 1.0 &&

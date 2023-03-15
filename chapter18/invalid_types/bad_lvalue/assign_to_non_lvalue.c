@@ -3,7 +3,7 @@ struct s {
   double d;
 };
 
-int main() {
+int main(void) {
   struct s x = {{1, 2, 3}, 4.0};
   struct s y = {{9, 8, 7}, 6.0};
   // can't assign to this struct, it's not an lvalue

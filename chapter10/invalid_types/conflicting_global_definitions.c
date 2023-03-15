@@ -3,7 +3,7 @@
  */
 int foo = 3;
 
-int main() {
+int main(void) {
     return 0;
 }
 

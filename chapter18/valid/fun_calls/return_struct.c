@@ -3,11 +3,11 @@ struct pair {
     long y;
 };
 
-struct pair return_pair() {
+struct pair return_pair(void) {
     struct pair ret = { 1, 11l };
     return ret;
 }
 
-int main() {
+int main(void) {
     return return_pair().y;
 }

@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int x = 3;
 
     /* Can't declare the same identifier in the same scope both with and

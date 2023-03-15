@@ -1,7 +1,7 @@
 /* This declares foo with internal linkage */
 static int foo;
 
-int main() {
+int main(void) {
     return foo;
 }
 

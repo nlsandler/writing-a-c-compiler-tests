@@ -2,7 +2,7 @@ int f(int a, int b);
 
 int glob = 10;
 
-int target() {
+int target(void) {
     static int x;
     static int y;
     int a = glob + 1;

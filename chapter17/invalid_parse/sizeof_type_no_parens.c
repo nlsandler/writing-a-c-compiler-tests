@@ -1,1 +1,1 @@
-int main() { return sizeof int; }
+int main(void) { return sizeof int; }

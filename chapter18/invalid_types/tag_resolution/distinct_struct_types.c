@@ -1,4 +1,4 @@
-int foo() {
+int foo(void) {
   struct s {
     int a;
     int b;
@@ -7,7 +7,7 @@ int foo() {
   return result.a + result.b;
 }
 
-int main() {
+int main(void) {
   // previously define struct s is not visible here,
   // so this is trying to define a variable with incomplete type
   struct s blah = {foo(), foo()};

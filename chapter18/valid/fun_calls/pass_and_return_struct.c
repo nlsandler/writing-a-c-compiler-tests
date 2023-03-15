@@ -8,7 +8,7 @@ struct pair add_to_x(struct pair p) {
     return p;
 }
 
-int main() {
+int main(void) {
     struct pair arg = { 1, 4 };
     struct pair result = add_to_x(arg);
     return result.x + arg.x + result.y;

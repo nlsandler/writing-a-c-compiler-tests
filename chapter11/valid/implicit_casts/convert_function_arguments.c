@@ -29,7 +29,7 @@ int foo(long a, int b, long c, int d, long e, int f, long g, int h) {
     return 1;
 }
 
-int main() {
+int main(void) {
     int a = -1;
     long int b = 4294967298; // 2^32 + 2, becomes 2 when converted to an int
     long c = -4294967296;

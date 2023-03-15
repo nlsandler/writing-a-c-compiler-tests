@@ -1,6 +1,6 @@
 /* The order in which multiple casts are applied matters */
 
-int main() {
+int main(void) {
 
     unsigned int ui = 4294967200u;
 

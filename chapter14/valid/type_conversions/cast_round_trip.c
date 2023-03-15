@@ -4,7 +4,7 @@
  * upper bits are discarded; we don't cover that case here.)
  */
 
-int main() {
+int main(void) {
     /* Cast long to pointer and back */
     long x = 10;
     int *ptr = (int *) x;

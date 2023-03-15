@@ -2,4 +2,4 @@
 // (note that GCC/Clang allow this as an extenision)
 struct s {};
 
-int main() { return 0; }
+int main(void) { return 0; }

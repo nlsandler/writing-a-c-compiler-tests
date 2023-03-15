@@ -6,7 +6,7 @@ int strcmp(char *s1, char *s2);
 unsigned char flat[4] = "dog";
 char nested[2][4] = {"yes", "yup"};
 
-int main()
+int main(void)
 {
     if (flat[0] != 'd' || flat[1] != 'o' || flat[2] != 'g' || flat[3])
         return 1;

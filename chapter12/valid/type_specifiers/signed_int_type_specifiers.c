@@ -4,7 +4,7 @@ signed extern x;
 int static signed x = 5;
 signed int static x;
 
-int main() {
+int main(void) {
     int signed extern x;
     return x;
 }

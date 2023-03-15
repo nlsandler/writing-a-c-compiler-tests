@@ -1,6 +1,6 @@
 /* Test zero-extending a uint to a long or ulong */
 
-int main() {
+int main(void) {
     unsigned int ui = 4294967200u;
 
     /* Extending an unsigned int to a signed long preserves its value */

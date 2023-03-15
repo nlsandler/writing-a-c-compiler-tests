@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     long a = 4294967290l;
     long b = a / 128l;
     /* Make sure division works correctly even when the first operand

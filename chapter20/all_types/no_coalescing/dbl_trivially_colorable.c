@@ -8,7 +8,7 @@ int target(double x, double y)
     return 10 - (3.0 * y + x);
 }
 /*
-int target()
+int target(void)
 {
     return dbl_target(2, 3) + dbl_target(-4, -8);
 }

@@ -5,7 +5,7 @@ struct a {
   int y;
 };
 
-int main() {
+int main(void) {
   struct a *ptr = malloc(sizeof(struct a));
   ptr.x = 10; // can't apply . operator to struct pointer
 }

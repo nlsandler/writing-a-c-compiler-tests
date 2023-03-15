@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     int *x = 0;
     // can't subtract a pointer from an integer

@@ -7,7 +7,7 @@ struct s {
     int b;
 };
 
-int main() {
+int main(void) {
     struct s arg = { 1, 2};
     return foo(arg);
 }

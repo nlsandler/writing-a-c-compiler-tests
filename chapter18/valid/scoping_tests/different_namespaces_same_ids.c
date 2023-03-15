@@ -7,4 +7,4 @@ struct x {
 
 struct x x = {10};
 
-int main() { return x.x; }
+int main(void) { return x.x; }

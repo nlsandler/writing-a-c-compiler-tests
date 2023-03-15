@@ -5,7 +5,7 @@ long x = 7;
 int long x;
 signed long int x;
 
-int main() {
+int main(void) {
     extern signed long x;
     return x;
 }

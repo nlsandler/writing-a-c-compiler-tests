@@ -1,6 +1,6 @@
-int callee() { return 1; }
+int callee(void) { return 1; }
 
-int target() {
+int target(void) {
 
   // make sure there's nothing after ret statement/epilogue
   return 2;
@@ -14,4 +14,4 @@ int target() {
   return x + y;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

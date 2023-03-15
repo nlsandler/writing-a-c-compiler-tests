@@ -1,6 +1,6 @@
 double glob = 3.0;
 
-int main() {
+int main(void) {
 
     // this is a regression test for a bug I found in my reference implementaton,
     // instruction fix-up rewrite cvttsd2sil -8(%rbp), -12(%rbp) to

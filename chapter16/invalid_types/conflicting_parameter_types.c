@@ -3,7 +3,7 @@ int foo(unsigned char c)
     return c;
 }
 
-int main()
+int main(void)
 {
     return foo(0);
 }

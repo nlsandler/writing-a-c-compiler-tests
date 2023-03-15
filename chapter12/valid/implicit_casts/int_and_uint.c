@@ -3,7 +3,7 @@
  * to the type of the unsigned value
  */
 
-int main() {
+int main(void) {
     unsigned int ui = 100u;
 
     // this will be converted to 2^32 - 100

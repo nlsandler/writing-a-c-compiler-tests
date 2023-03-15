@@ -3,6 +3,6 @@ struct s {
     int x;
 };
 
-int main() {
+int main(void) {
     return sizeof(struct s);
 }

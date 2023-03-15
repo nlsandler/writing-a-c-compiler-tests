@@ -1,6 +1,6 @@
 int strcmp(char *s1, char *s2);
 
-int main()
+int main(void)
 {
     char multi_string[6] = "yes"
                            "no"; // can concatenate two string literals in an initializer

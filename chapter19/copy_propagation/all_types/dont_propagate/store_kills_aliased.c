@@ -1,9 +1,9 @@
-int flag()
+int flag(void)
 {
     return 0;
 }
 
-int main()
+int main(void)
 {
     int i = 10;
     int j = 20;

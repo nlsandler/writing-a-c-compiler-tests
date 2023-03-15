@@ -1,5 +1,5 @@
 /* Test explicitly casting between pointer types */
-int main()
+int main(void)
 {
     /* You can cast a null pointer to any pointer type and the result is still a null pointer */
     long *long_ptr = 0;

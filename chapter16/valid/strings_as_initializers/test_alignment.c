@@ -10,7 +10,7 @@ static unsigned char nested[3][4][2] = {{"a"}, {"b"}};
 
 static signed char flat[17] = "x";
 
-int main()
+int main(void)
 {
     char nested_auto[10][3];
     char flat_auto[22];

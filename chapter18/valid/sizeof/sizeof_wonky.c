@@ -3,4 +3,4 @@ struct wonky {
   char arr[19];
 };
 
-int main() { return sizeof(struct wonky); }
+int main(void) { return sizeof(struct wonky); }

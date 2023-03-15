@@ -3,7 +3,7 @@ struct s {
   int y;
 };
 
-int main() {
+int main(void) {
   static struct s s1 = {1, 2};
   struct s s2 = {3, 4};
   s1 = s2;  // generate s1 = s2

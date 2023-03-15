@@ -1,7 +1,7 @@
 /* Test that we round constants to infinity
  * if they're too large to represent as finite doubles
  */
-int main() {
+int main(void) {
     /* These two values are larger than the largest finite double,
      * so they should be converted to infinity
      */

@@ -1,5 +1,5 @@
 struct s;
-int main() {
+int main(void) {
   struct s {
     int a;
   };

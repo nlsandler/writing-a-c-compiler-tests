@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int acc = 0;
     int x = 100;
     while (x) {

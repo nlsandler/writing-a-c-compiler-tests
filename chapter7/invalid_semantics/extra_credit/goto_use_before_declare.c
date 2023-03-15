@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int x = 0;
     if (x != 0) {
         return_y:

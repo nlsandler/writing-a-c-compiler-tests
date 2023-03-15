@@ -11,6 +11,6 @@ int switch_statement(int i) {
     }
 }
 
-int main() {
+int main(void) {
     return switch_statement(0);
 }

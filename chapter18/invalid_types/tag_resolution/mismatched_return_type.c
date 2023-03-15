@@ -3,7 +3,7 @@ struct s {
   int b;
 };
 
-struct s return_struct() {
+struct s return_struct(void) {
   // define another struct s that shadows previous one;
   struct s {
     int a;

@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     int a = 0;
     goto mid_case;
     switch(4) {

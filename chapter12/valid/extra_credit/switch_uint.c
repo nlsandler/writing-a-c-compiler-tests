@@ -15,7 +15,7 @@ int switch_on_uint(unsigned int ui)
     }
 }
 
-int main()
+int main(void)
 {
     if (switch_on_uint(5) != 0)
         return 0;

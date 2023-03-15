@@ -8,7 +8,7 @@ double target(int flag) {
   return result; // can't propagate because 0.0 and -0.0 are different!
 }
 
-int main() {
+int main(void) {
   double pos_inf = 1 / target(0);
   double neg_inf = 1 / target(1);
   return pos_inf > neg_inf;

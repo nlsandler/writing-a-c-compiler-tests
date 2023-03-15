@@ -9,7 +9,7 @@ int glob4 = 4;
 int glob5 = 5;
 
 // use this to force pseudoregs to be callee-saved
-int reset_globals()
+int reset_globals(void)
 {
     glob0 = 0;
     glob1 = 0;

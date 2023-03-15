@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
 
   // make sure the result of sizeof is unsigned
   // (if it's not, usual arithmetic conversions will convert

@@ -2,7 +2,7 @@
    as well as definitions */
 int foo(int a, int a);
 
-int main() {
+int main(void) {
     return foo(1, 2);
 }
 

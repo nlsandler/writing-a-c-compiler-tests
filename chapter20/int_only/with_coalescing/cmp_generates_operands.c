@@ -3,7 +3,7 @@ int flag;
 int glob = 10;
 int glob2 = 20;
 
-int main() {
+int main(void) {
     int a = glob + 5; // 15
     int b = glob2 - 5; // 15
 

@@ -9,4 +9,4 @@ int target(int x, int y) {
   return 1;
 }
 
-int main() { return target(1, 1) == 1 && target(0, 0) == 1; }
+int main(void) { return target(1, 1) == 1 && target(0, 0) == 1; }

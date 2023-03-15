@@ -3,7 +3,7 @@ long *pass_and_return(long *ptr)
     return ptr;
 }
 
-int main()
+int main(void)
 {
     long l;
     long *ptr = &l;

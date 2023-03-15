@@ -24,7 +24,7 @@ int glob9 = 0;
 
 int flag = 0;
 int result = 0;
-int increase_globals() {
+int increase_globals(void) {
   glob0 = glob0 + 1;
   glob1 = glob1 + 1;
   glob2 = glob2 + 1;
@@ -33,7 +33,7 @@ int increase_globals() {
   return 0;
 }
 
-int reset_globals() {
+int reset_globals(void) {
   glob0 = 0;
   glob1 = 1;
   glob2 = 2;
@@ -47,7 +47,7 @@ int reset_globals() {
   return 0;
 }
 
-int get() {
+int get(void) {
   static int i = 100;
   i = i + 3;
   return i;
@@ -76,7 +76,7 @@ int validate_globs(int one, int two, int three, int four, int five) {
     return 0;
 }
 
-int five_spills() {
+int five_spills(void) {
   // k - o conflict with everything, have higher spill metric than a-e but lower
   // than f-j
   int k = get();
@@ -125,7 +125,7 @@ int five_spills() {
   return result;
 }
 
-int target() {
+int target(void) {
   reset_globals();
   flag = 0;
   int retval = five_spills();

@@ -2,7 +2,7 @@
  * This is why &*null_ptr is valid, even though dereferencing a null pointer
  * would normally produce a runtime error
  */
-int main() {
+int main(void) {
     int *null_ptr = 0;
     if (&*null_ptr != 0) // &*null_ptr is equivalent to null_ptr
         return 0;

@@ -1,5 +1,5 @@
 /* Test conversions from double to unsigned long */
-int main() {
+int main(void) {
 
     // test case where the double is smaller than LONG_MAX,
     // so result of cvttsd2siq is already correct

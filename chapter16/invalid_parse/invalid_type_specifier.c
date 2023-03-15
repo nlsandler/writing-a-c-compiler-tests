@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     // cannot combine char with any other type specifier
     // except signed and unsigned

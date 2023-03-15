@@ -1,5 +1,5 @@
 /* Test conversions from double to unsigned int */
-int main() {
+int main(void) {
     double small = 10.9;
     unsigned int small_uint = (unsigned int) small;
 

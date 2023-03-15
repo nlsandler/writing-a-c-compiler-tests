@@ -1,4 +1,4 @@
-int callee() { return 100; }
+int callee(void) { return 100; }
 
 int target(int a) {
   if (a) {
@@ -9,4 +9,4 @@ int target(int a) {
 
   return callee();
 }
-int main() { return (target(1) == 1 && target(0) == 2); }
+int main(void) { return (target(1) == 1 && target(0) == 2); }

@@ -12,7 +12,7 @@ int odd_arguments(int a, int b, int c, int d, int e, int f, int g, int h, int i)
             && f == 6 && g == 7 && h == 8 && i == 9);
 }
 
-int main() {
+int main(void) {
     /* Allocate an argument on the stack, to check that
      * we properly account for already-allocated stack space
      * when deciding how much padding to add

@@ -67,6 +67,6 @@ int target(double one, double two, double three, double four, double five, doubl
     return should_spill + result2;
 }
 
-int main() {
+int main(void) {
     return target(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
 }

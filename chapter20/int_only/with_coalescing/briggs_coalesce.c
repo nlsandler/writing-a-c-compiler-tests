@@ -2,7 +2,7 @@ int flag = 1;
 int glob = 4;
 
 
-int target() {
+int target(void) {
     int x = glob - 10;
     int y;
     if (flag)

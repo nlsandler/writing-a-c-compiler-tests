@@ -1,6 +1,6 @@
 /* Test conversions from unsigned long to double */
 
-int main() {
+int main(void) {
     // convert a value that's already in the range of signed long
     unsigned long small = 138512825844ul;
     double small_double = (double) small;

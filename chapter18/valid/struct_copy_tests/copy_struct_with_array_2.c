@@ -5,7 +5,7 @@ struct s {
     char arr3[5];
 };
 
-int main() {
+int main(void) {
     struct s first = { { 1, 2, 3 },
                         12.0, {4, 5},
                         { 6, 7, 8, 9, 10} };

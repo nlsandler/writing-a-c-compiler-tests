@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
 
     /* Test && with different combinations
      * of zero and non-zero floating-point operands

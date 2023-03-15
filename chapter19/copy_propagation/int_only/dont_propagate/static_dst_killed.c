@@ -1,12 +1,12 @@
 int x;
 
-int update_x()
+int update_x(void)
 {
     x = 4;
     return 0;
 }
 
-int main()
+int main(void)
 {
     x = 3;
     update_x();

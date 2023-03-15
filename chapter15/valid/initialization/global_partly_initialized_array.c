@@ -15,7 +15,7 @@ unsigned long ulong_arr[4][6][2] = {
      {12u}},
     {{2}}};
 
-int main()
+int main(void)
 {
     double dbl_sum = double_arr[0][0] + double_arr[0][1] + double_arr[1][0] + double_arr[1][1];
     if (dbl_sum != 10.0)

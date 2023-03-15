@@ -24,7 +24,7 @@ int get(int a, int b, int c, int d, int e, int f) {
     return 0; // doesn't matter what we return here
 }
 
-int target() {
+int target(void) {
     int z;
     int a;
     int tmp1 = 1;

@@ -2,7 +2,7 @@
  * which implicitly compares them to zero
  */
 
-int main()
+int main(void)
 {
     long x;
     long *ptr = &x;

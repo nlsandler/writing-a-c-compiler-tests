@@ -1,5 +1,5 @@
-int main() {
-    int foo();
+int main(void) {
+    int foo(void);
 
     int x = foo();
     if (x > 0) {
@@ -9,6 +9,6 @@ int main() {
     return x;
 }
 
-int foo() {
+int foo(void) {
     return 4;
 }

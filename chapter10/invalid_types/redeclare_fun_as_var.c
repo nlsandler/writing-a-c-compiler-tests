@@ -1,8 +1,8 @@
-int foo() {
+int foo(void) {
     return 0;
 }
 
-int main() {
+int main(void) {
     /* Since this declaration has external linkage,
      * it refers to the same entity as the declaration
      * of foo above. But the earlier declaration declares

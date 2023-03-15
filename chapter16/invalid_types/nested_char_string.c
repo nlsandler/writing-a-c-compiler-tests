@@ -2,7 +2,7 @@
 // a char array, not a char[3] array
 char arr[3][3] = "hello";
 
-int main()
+int main(void)
 {
     return arr[0][2];
 }

@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     {
         /* This declares a variable 'a'
          * with external linkage

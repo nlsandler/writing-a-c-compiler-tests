@@ -10,7 +10,7 @@ struct outer {
 
 struct outer o;
 
-int main() {
+int main(void) {
     struct inner i = {7, 8};
     o.c = 1;
     o.i = i;

@@ -1,3 +1,3 @@
-long target() { return ~100l; }
+long target(void) { return ~100l; }
 
-int main() { return target() == -101l; }
+int main(void) { return target() == -101l; }

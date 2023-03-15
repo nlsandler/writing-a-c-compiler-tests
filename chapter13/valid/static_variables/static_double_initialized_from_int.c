@@ -19,7 +19,7 @@ double d = 9223372036854775810ul;
  */
 double e = 9223372036854776832ul;
 
-int main()
+int main(void)
 {
     // we use round-to-nearest, ties-to-even rounding
     // to convert from int to double at compile time

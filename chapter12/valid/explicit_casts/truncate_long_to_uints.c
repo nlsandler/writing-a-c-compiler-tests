@@ -1,6 +1,6 @@
 /* Truncate from signed long to unsigned int */
 
-int main() {
+int main(void) {
 
     /* 100 is in the range of unsigned int,
      * so truncating it to an unsigned int

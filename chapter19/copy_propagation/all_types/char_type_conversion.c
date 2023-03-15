@@ -1,4 +1,4 @@
-int target() {
+int target(void) {
   char i = 200;
   signed char j = i;
   // w/ constant folding, should be able to reduce this to 1
@@ -7,4 +7,4 @@ int target() {
   return i == j;
 }
 
-int main() { return target(); }
+int main(void) { return target(); }

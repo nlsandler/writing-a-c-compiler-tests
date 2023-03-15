@@ -3,7 +3,7 @@ struct s {
     int y;
 };
 
-int main() {
+int main(void) {
     struct s foo = {1, 2};
     return foo.blah;
 }

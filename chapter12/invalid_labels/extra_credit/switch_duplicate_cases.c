@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     unsigned int ui = 10u;
 
     switch(ui) {

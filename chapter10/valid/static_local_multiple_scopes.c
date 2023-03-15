@@ -4,7 +4,7 @@
 
 int putchar (int ch);
 
-int print_letters() {
+int print_letters(void) {
     /* declare a static variable, initialize to ASCII 'A' */
     static int i = 65;
     /* print the ASCII character for its current value */
@@ -25,7 +25,7 @@ int print_letters() {
     return 0;
 }
 
-int main() {
+int main(void) {
     //print uppercase and lowercase version of each letter in the alphabet
     for (int i = 0; i < 26; i = i + 1)
         print_letters();

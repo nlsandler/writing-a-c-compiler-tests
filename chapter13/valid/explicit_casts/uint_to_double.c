@@ -1,6 +1,6 @@
 /* Test conversions from unsigned int to double */
 
-int main() {
+int main(void) {
     unsigned int small = 1000u;
     double small_double = (double) small;
 

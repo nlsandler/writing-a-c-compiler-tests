@@ -1,3 +1,3 @@
-char target() { return 1144; }
+char target(void) { return 1144; }
 
-int main() { return target() == 120; }
+int main(void) { return target() == 120; }

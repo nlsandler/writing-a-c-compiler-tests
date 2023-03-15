@@ -3,7 +3,7 @@
  * the range of int; this tests our assembly rewrite rules.
  */
 
-int main() {
+int main(void) {
     long x = 5l;
 
     /* Add a large constant to a variable */

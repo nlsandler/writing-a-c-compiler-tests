@@ -1,4 +1,4 @@
-int target()
+int target(void)
 {
     // if we enable DSE and dead code elim, x should go away
     int x = 10;
@@ -7,6 +7,6 @@ int target()
     return 10;
 }
 
-int main() {
+int main(void) {
     return target();
 }

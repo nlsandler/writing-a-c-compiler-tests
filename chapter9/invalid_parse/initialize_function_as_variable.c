@@ -3,8 +3,8 @@
    Because the C grammar permits this declaration,
    some compilers may reject it during type checking.
 */
-int foo() = 3;
+int foo(void) = 3;
 
-int main() {
+int main(void) {
     return 0;
 }

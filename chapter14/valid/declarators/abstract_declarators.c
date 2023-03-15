@@ -1,5 +1,5 @@
 /* Test out parsing a range of abstract declarators */
-int main() {
+int main(void) {
 
     long int unsigned *x = 0;
 

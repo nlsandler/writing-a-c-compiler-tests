@@ -15,7 +15,7 @@ struct outermost {
   int i;
 };
 
-int main() {
+int main(void) {
   static struct outer big_struct = {{0, 0, 0}, 0, 0};
   struct inner small_struct = {-1, -2, -3};
   big_struct.substruct = small_struct;

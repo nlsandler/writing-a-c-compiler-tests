@@ -5,7 +5,7 @@ int callee(int i) {
   return i == 4;
 }
 
-int target() {
+int target(void) {
   int y = 3;
   int x;
   do {
@@ -15,7 +15,7 @@ int target() {
   return y; // should become return 4
 }
 
-int main() {
+int main(void) {
   int result = target();
   return result == 4 && is_called;
 }

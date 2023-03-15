@@ -1,6 +1,6 @@
 #include "nested_pointer_access.h"
 
-int main() {
+int main(void) {
   struct outer *o = malloc(sizeof(struct outer));
   o->middle_ptr = malloc(sizeof(struct middle));
   o->middle_ptr->c = 99;

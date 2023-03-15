@@ -1,5 +1,5 @@
 /* Test that we handle infinity correctly */
-int main() {
+int main(void) {
     double const_inf = 2E308; // this constant will overflow to infinity
 
     /* make sure that 1/0 is infinity */

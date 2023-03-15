@@ -34,7 +34,7 @@ int i2 = 9223372039002259606ul;
 // to uint 2**31 + 150 (which is 2147483798)
 unsigned ui2 = 9223372039002259606ul;
 
-int main()
+int main(void)
 {
     if (u != 2147483660u)
         return 0;

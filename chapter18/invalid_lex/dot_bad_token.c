@@ -2,7 +2,7 @@ struct s {
   int a;
 };
 
-int main() {
+int main(void) {
   struct s x;
   // we should reject .1l as an invalid preprocessing number,
   // as opposed to accepting it as a dot followed by a valid constant

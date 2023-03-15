@@ -1,3 +1,3 @@
-long target() { return 4294967295u; }
+long target(void) { return 4294967295u; }
 
-int main() { return target() == 4294967295l; }
+int main(void) { return target() == 4294967295l; }

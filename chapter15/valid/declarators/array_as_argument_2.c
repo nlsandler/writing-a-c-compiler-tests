@@ -8,7 +8,7 @@ int foo(int a[5])
 
 int foo(int a[2]);
 
-int main()
+int main(void)
 {
     int arr[8] = {8, 7, 6, 5, 4, 3, 2, 1};
     foo(arr);

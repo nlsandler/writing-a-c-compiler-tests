@@ -2,9 +2,9 @@
  * that is declared in this file and tentatively defined
  * in another file.
  */
-int read_x();
+int read_x(void);
 
-int main() {
+int main(void) {
     // This brings x into scope
     extern int x;
     if (x != 0)

@@ -1,5 +1,5 @@
 int foo(int a, int b, int c);
-int main()
+int main(void)
 {
     int arr[3] = {
         1,

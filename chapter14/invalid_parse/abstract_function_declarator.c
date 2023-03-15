@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* The abstract declarator (int ()) is malformed:
      * we can't parse abstract function declarators.
      * In a fully C standard-compliant implementation,
@@ -7,6 +7,6 @@ int main() {
      * with no parameters that returns an int,
      * but you can't cast an expression to a function type.
      */
-    (int ()) 0;
+    (int (void)) 0;
     return 0;
 }

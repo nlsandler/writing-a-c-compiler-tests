@@ -3,6 +3,6 @@
  */
 int i = 8589934592l; // 2^33, truncated to 0
 
-int main() {
+int main(void) {
     return (i == 0);
 }

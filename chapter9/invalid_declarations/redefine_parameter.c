@@ -5,6 +5,6 @@ int foo(int a) {
     return a;
 }
 
-int main() {
+int main(void) {
     return foo(3);
 }

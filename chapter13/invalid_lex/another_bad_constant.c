@@ -1,4 +1,4 @@
-int main()
+int main(void)
 {
     // this shouldn't match our floating-point
     // regex because "1." is followed by word character

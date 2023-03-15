@@ -8,4 +8,4 @@ int target(int flag) {
   return x; // look for movl $3, %eax
 }
 
-int main() { return target(1) + target(0); }
+int main(void) { return target(1) + target(0); }

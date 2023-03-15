@@ -1,4 +1,4 @@
-int main() {
+int main(void) {
     /* when performing an arithmetic operation or comparison
      * on an unsigned int and an unsigned long, promote
      * the unsigned int to an unsigned long first

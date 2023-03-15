@@ -3,4 +3,4 @@
 // to the valid type void *
 int arr(void foo[3]) { return 3; }
 
-int main() { return 0; }
+int main(void) { return 0; }

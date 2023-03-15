@@ -17,7 +17,7 @@ struct node *array_to_list(int *array, int count) {
     return head;
 }
 
-int main() {
+int main(void) {
     int arr[4] = {9, 8, 7, 6};
     struct node *elem = array_to_list(arr,4);
     int sum = 0;

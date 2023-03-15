@@ -1,2 +1,2 @@
-void x();
-int main() { return x() == (void)10; }
+void x(void);
+int main(void) { return x() == (void)10; }

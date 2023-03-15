@@ -5,7 +5,7 @@ int update_value(int *ptr) {
     return old_val;
 }
 
-int main() {
+int main(void) {
     int x = 20;
     int result = update_value(&x);
     return (x == 10 && result == 20);
