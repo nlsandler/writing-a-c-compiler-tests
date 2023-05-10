@@ -14,6 +14,7 @@ import unittest
 from pathlib import Path
 from typing import Union
 
+from ..regalloc import REGALLOC_TESTS
 
 ROOT_DIR = Path(__file__).parent.parent.parent
 TEST_PATTERN = re.compile("^Ran ([0-9]+) tests", flags=re.MULTILINE)
@@ -51,6 +52,7 @@ def get_failure_count(failure: subprocess.CalledProcessError) -> int:
 
 class TopLevelTest(unittest.TestCase):
     def test_one_chapter(self) -> None:
+        """We can run tests for a single chapter with --latest-only"""
         expected_test_count = len(list((ROOT_DIR / "chapter2").rglob("*.c")))
         try:
             testrun = run_test_script("./test_compiler $NQCC --chapter 2 --latest-only")
@@ -61,6 +63,7 @@ class TopLevelTest(unittest.TestCase):
         self.assertEqual(expected_test_count, actual_test_count)
 
     def test_multiple_chapters_intermediate(self) -> None:
+        """We can test through an intermediate stage through multiple chapters"""
         expected_test_count = len(list((ROOT_DIR / "chapter1").rglob("*.c"))) + len(
             list((ROOT_DIR / "chapter2").rglob("*.c"))
         )
@@ -73,7 +76,7 @@ class TopLevelTest(unittest.TestCase):
         self.assertEqual(expected_test_count, actual_test_count)
 
     def test_optimization_failure(self) -> None:
-        """Partially-completed $NQCC fails some optimization tests"""
+        """Partially-completed NQCC fails some optimization tests"""
         expected_test_count = len(
             list((ROOT_DIR / "chapter19/dead_store_elimination").rglob("*.c"))
         )
@@ -96,10 +99,22 @@ class TopLevelTest(unittest.TestCase):
         self.assertEqual(expected_failure_count, failure_count)
         self.assertEqual(expected_test_count, test_count)
 
+    def test_regalloc_failure(self) -> None:
+        """Partially-completed NQCC fails register allocation tests"""
+        expected_test_count = len(
+            list((ROOT_DIR / "chapter20/int_only").rglob("*.c"))
+        ) + len(list((ROOT_DIR / "chapter20/all_types").rglob("*.c")))
+        expected_failure_count = len(REGALLOC_TESTS.keys())
+        with self.assertRaises(subprocess.CalledProcessError) as err:
+            run_test_script("./test_compiler $NQCC_PARTIAL --chapter 20 --latest-only")
+        failure_count = get_failure_count(err.exception)
+        test_count = get_test_count(err.exception)
+        self.assertEqual(expected_failure_count, failure_count)
+        self.assertEqual(expected_test_count, test_count)
+
     def test_optimization_success(self) -> None:
-        """With optimizations, GCC passes the chapter 19 tests"""
+        """With optimizations, NQCC passes the chapter 19 tests"""
         expected_test_count = len(list((ROOT_DIR / "chapter19").rglob("*.c")))
-        # the -O option will be passed through to GCC
         try:
             testrun = run_test_script(
                 "./test_compiler $NQCC --chapter 19 --latest-only"
@@ -115,11 +130,16 @@ class BadSourceTest(unittest.TestCase):
     def setUp(self) -> None:
         ret2 = ROOT_DIR / "chapter1/valid/return_2.c"
         ret0 = ROOT_DIR / "chapter1/valid/return_0.c"
+        hello_world = ROOT_DIR / "chapter9/valid/arguments_in_registers/hello_world.c"
         shutil.copy(ret2, ret0)
+        shutil.copy(ret0, hello_world)
 
     def tearDown(self) -> None:
         subprocess.run(
-            "git checkout chapter1", shell=True, check=True, capture_output=True
+            "git checkout chapter1 chapter9",
+            shell=True,
+            check=True,
+            capture_output=True,
         )
 
     def test_bad_retval(self) -> None:
@@ -128,6 +148,19 @@ class BadSourceTest(unittest.TestCase):
         expected_test_count = len(list((ROOT_DIR / "chapter1").rglob("*.c")))
         with self.assertRaises(subprocess.CalledProcessError) as cpe:
             run_test_script("./test_compiler $NQCC --chapter 1")
+        actual_test_count = get_test_count(cpe.exception)
+        failure_count = get_failure_count(cpe.exception)
+        self.assertEqual(actual_test_count, expected_test_count)
+        self.assertEqual(1, failure_count)
+
+    def test_bad_stdout(self) -> None:
+        """Make sure test fails if stdout is different than expected"""
+
+        expected_test_count = len(list((ROOT_DIR / "chapter9").rglob("*.c"))) - len(
+            list((ROOT_DIR / "chapter9").rglob("**/extra_credit/*.c"))
+        )
+        with self.assertRaises(subprocess.CalledProcessError) as cpe:
+            run_test_script("./test_compiler $NQCC --chapter 9 --latest-only")
         actual_test_count = get_test_count(cpe.exception)
         failure_count = get_failure_count(cpe.exception)
         self.assertEqual(actual_test_count, expected_test_count)
