@@ -135,6 +135,7 @@ class BadSourceTest(unittest.TestCase):
         shutil.copy(ret0, hello_world)
 
     def tearDown(self) -> None:
+        # TODO: save ret0 and hello-world to tmp files and restore them instead of using checkout here
         subprocess.run(
             "git checkout chapter1 chapter9",
             shell=True,

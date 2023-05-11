@@ -365,5 +365,5 @@
             "increment"
         ]
     },
-    "requires_mathlib": ["chapter13/valid/function_calls/standard_library_call.c"]
+    "requires_mathlib": ["chapter13/valid/function_calls/standard_library_call.c", "chapter13/valid/special_values/copysign.c"]
 }

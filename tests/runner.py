@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import argparse
+import platform
+import subprocess
 import unittest
 import warnings
 from functools import reduce
 from operator import ior
 from pathlib import Path
-from typing import Iterable, Optional, Type
+from typing import Iterable, Optional, List, Type
 
 import tests
 import tests.regalloc
@@ -73,13 +75,19 @@ def get_optimization_flags(
 def parse_arguments() -> argparse.Namespace:
     """Parse command-line arguments"""
     parser = argparse.ArgumentParser()
-    # required arguments
-    parser.add_argument("cc", type=str, help="Path to your compiler")
+    # --check-setup checks your system setup rather than testing the compiler itself
+    parser.add_argument(
+        "--check-setup", action="store_true", help="Test your system configuration"
+    )
+
+    # required arguments (if not use --check-setup)
+    parser.add_argument(
+        "cc", type=str, nargs="?", default=None, help="Path to your compiler"
+    )
     parser.add_argument(
         "--chapter",
         type=int,
         choices=range(0, REGALLOC_CHAPTER + 1),
-        required=True,
         help=(
             "Specify which chapter to test. "
             "(By default, this will run the tests from earlier chapters as well.)"
@@ -134,9 +142,9 @@ def parse_arguments() -> argparse.Namespace:
     )
     parser.add_argument(
         "--nan",
-        action="store_const",
+        action="append_const",
         const=ExtraCredit.NAN,
-        dest="append_const",
+        dest="extra_credit",
         help="Include tests for floating-point NaN",
     )
     parser.add_argument(
@@ -208,6 +216,19 @@ def parse_arguments() -> argparse.Namespace:
             "--extra-credit enables all extra-credit tests; ignoring other extra-credit options."
         )
 
+    # if --check-setup is present, shouldn't have any other options
+    if args.check_setup:
+        ignored_args = [
+            k for k, v in vars(args).items() if bool(v) and (k != "check_setup")
+        ]
+        if ignored_args:
+            warnings.warn(
+                f"These options have no effect when combined with --check-setup: {', '.join(ignored_args)}."
+            )
+    # if it's absent, need to specify compiler and chapter
+    elif not (args.cc and args.chapter):
+        parser.error("cc and --chapter are required")
+
     if args.int_only and (Optimizations.UNREACHABLE_CODE_ELIM == args.optimization):
         warnings.warn("--int-only has no effect on unreachable code elimination tests")
 
@@ -220,9 +241,132 @@ def parse_arguments() -> argparse.Namespace:
     return args
 
 
+def check_setup() -> bool:
+    """Make sure system requirements are met
+
+    Print a message and return True on success, False on failure
+    """
+
+    # Don't need to check Python version, we do this at very start of script
+
+    # use this to track issues that we should report on but continue with validation
+    issues: List[str] = []
+
+    # Check OS and architecture
+    machine = platform.machine().lower()
+    system = platform.system()
+
+    VALID_ARCHS: List[str] = ["x86_64", "amd64"]  # two names for the same arch
+
+    # macOS: make sure they're running on x86-64; if they're on ARM, prompt to use Rosetta
+    if system == "Darwin":
+        if machine in VALID_ARCHS:
+            # we're on an x86-64 machine (or running an x86-64 Python binary), so far so good
+            pass
+
+        elif machine == "arm64":
+            # we're on an ARM64 machine
+            # if Python reports that machine is arm64 but processor is i386,
+            # that means we're running under Rosetta2
+            # (see https://github.com/python/cpython/issues/96993)
+            if platform.processor().lower() != "i386":
+                issues.append(
+                    """You're running macOS on ARM. You need to use Rosetta to emulate x86-64.
+Use this command to open an x86-64 shell:
+ arch -x86_64 zsh
+Then try running this script again from that shell.
+"""
+                )
+
+        else:
+            # We're running some other (very old) architecture, we can't run x86-64 binar
+            print(
+                f"This architecture isn't supported. (Machine name is {machine}, we need x86_64/AMD64.)"
+            )
+            return False
+
+    # on non-macOS systems, arch MUST be x86-64, otherwise this will not work
+    elif machine not in VALID_ARCHS:
+        print(
+            f"This architecture isn't supported. (Machine name is {machine}, we need x86_64/AMD64.)"
+        )
+        return False
+
+    elif system == "Windows":
+        # the architecture is right but they need to use WSL
+        print(
+            """You're running Windows. You need to use WSL to emulate Linux.
+Follow these instructions to install WSL and set up a Linux distribution on your machine: https://learn.microsoft.com/en-us/windows/wsl/install.
+Then clone the test suite in your Linux distribution and try this command again from there.
+            """
+        )
+        return False
+
+    elif system not in ["Linux", "FreeBSD"]:
+        # This is probably some other Unix-like system; it'll probably work but I haven't tested it
+        issues.append(
+            "This OS isn't officially supported. You might be able to complete the project on this system, but no guarantees."
+        )
+
+    # Check that GCC command is present
+    try:
+        subprocess.run(["gcc", "-v"], check=True, capture_output=True)
+    except FileNotFoundError:
+        msg = "Can't find the 'gcc' command. "
+        if system == "Darwin":
+            msg = (
+                msg
+                + """This command is included in the Xcode command-line developer tools. To install them, run:
+ clang -v
+Then try this command again.
+"""
+            )
+        else:
+            msg = (
+                msg
+                + "Use your system's package manager to install GCC, then try this command again."
+            )
+        issues.append(msg)
+
+    # Check that GDB or LLDB is present
+    try:
+        subprocess.run(["gdb", "-v"], check=True, capture_output=True)
+    except FileNotFoundError:
+        try:
+            # gdb isn't installed, try lldb
+            subprocess.run(["lldb", "-v"], check=True, capture_output=True)
+        except FileNotFoundError:
+            # neither is installed
+            msg = "No debugger found. The test script doesn't require a debugger but you probably want one for, ya know, debugging. "
+            # TODO refactor
+            if system == "Darwin":
+                msg = (
+                    msg
+                    + """LLDB is included in the Xcode command-line developer tools. To install them, run:
+                    clang -v
+                Then try this command again."""
+                )
+            else:
+                msg = (
+                    msg
+                    + "\nUse your system's package manager to install GDB, then try this command again."
+                )
+            issues.append(msg)
+
+    if issues:
+        print("\n\n".join(issues))
+        return False
+
+    print("All system requirements met!")
+    return True
+
+
 def main() -> int:
     """Main entry point for test runner"""
     args = parse_arguments()
+    if args.check_setup:
+        return check_setup()
+
     compiler = Path(args.cc).resolve()
 
     # merge list of extra-credit features into bitvector
