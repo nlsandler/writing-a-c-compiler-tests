@@ -1,7 +1,7 @@
-int x(void);
+long x(void);
 
 int main(void) {
-    int x = 0;
+    long x = 0;
     /* x isn't a function, so you can't call it */
     return x();
 }

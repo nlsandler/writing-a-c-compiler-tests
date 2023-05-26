@@ -2,8 +2,8 @@
  * but split across multiple files.
  */
 
-int test_sum(long a, long b, int c, int d, int e, int f, int g, int h, long i);
+int test_sum(int a, int b, int c, long d, int e, long f, int g, int h, long i);
 
 int main(void) {
-    return test_sum(34359738368l, 34359738368l, 0, 0, 0, 0, 0, 0, 34359738368l);
+    return test_sum(0, 0, 0, 34359738368l, 0, 34359738368l, 0, 0, 34359738368l);
 }

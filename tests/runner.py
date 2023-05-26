@@ -201,6 +201,20 @@ def parse_arguments() -> argparse.Namespace:
     args = parser.parse_intermixed_args()
 
     # extra validation of parsed args
+
+    # if --check-setup is present, shouldn't have any other options
+    if args.check_setup:
+        ignored_args = [
+            k for k, v in vars(args).items() if bool(v) and (k != "check_setup")
+        ]
+        if ignored_args:
+            warnings.warn(
+                f"These options have no effect when combined with --check-setup: {', '.join(ignored_args)}."
+            )
+    # if it's absent, need to specify compiler and chapter
+    elif not (args.cc and args.chapter):
+        parser.error("cc and --chapter are required")
+
     if args.stage and args.chapter >= TACKY_OPT_CHAPTER:
         # TODO better error message here
         parser.error(
@@ -215,19 +229,6 @@ def parse_arguments() -> argparse.Namespace:
         warnings.warn(
             "--extra-credit enables all extra-credit tests; ignoring other extra-credit options."
         )
-
-    # if --check-setup is present, shouldn't have any other options
-    if args.check_setup:
-        ignored_args = [
-            k for k, v in vars(args).items() if bool(v) and (k != "check_setup")
-        ]
-        if ignored_args:
-            warnings.warn(
-                f"These options have no effect when combined with --check-setup: {', '.join(ignored_args)}."
-            )
-    # if it's absent, need to specify compiler and chapter
-    elif not (args.cc and args.chapter):
-        parser.error("cc and --chapter are required")
 
     if args.int_only and (Optimizations.UNREACHABLE_CODE_ELIM == args.optimization):
         warnings.warn("--int-only has no effect on unreachable code elimination tests")

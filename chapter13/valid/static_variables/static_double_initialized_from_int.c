@@ -12,6 +12,7 @@ double c2 = 4611686018427389955l;
 
 /* Using round-to-nearest, this rounds to 9223372036854775808 */
 double d = 9223372036854775810ul;
+double d2 = 4611686018427389955ul; // same as c2 but an unsigned long constant
 
 /* This is exactly halfway between 9223372036854775808.0 and
  * 9223372036854777856.0 We round ties to even, so this
@@ -23,5 +24,5 @@ int main(void)
 {
     // we use round-to-nearest, ties-to-even rounding
     // to convert from int to double at compile time
-    return a == 2147483647. && b == 4294967295. && c == 4611686018427389952. && d == 9223372036854775808. && c == c2 && e == d;
+    return a == 2147483647. && b == 4294967295. && c == 4611686018427389952. && d == 9223372036854775808. && c == c2 && c2 == d2 && e == d;
 }

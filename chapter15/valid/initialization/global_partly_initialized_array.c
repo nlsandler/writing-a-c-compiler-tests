@@ -1,3 +1,5 @@
+// NOTE: amonther other things, this tests that we implicitly convert scalar values
+// in compound initializers to the correct type
 /* first element should be 10.0, other three elements should be 0 */
 double double_arr[2][2] = {{10.0}};
 

@@ -1,12 +1,15 @@
-/* If a static array isn't explicitly initialized, eveyr lement should be initialized to zero */
-int arr[5][2][4];
+double double_arr[8];
 
-int main(void)
-{
-    for (int i = 0; i < 5; i = i + 1)
-        for (int j = 0; j < 2; j = j + 1)
-            for (int k = 0; k < 4; k = k + 1)
-                if (arr[i][j][k] != 0)
-                    return 0;
-    return 1;
+int foo(void) {
+    for (int i = 0; i < 8; i = i + 1) {
+        double_arr[i] = double_arr[i] * 2.0;
+    }
+    return 0;
+}
+
+int main(void) {
+    double c = 3.1;
+    double_arr[5] = c;
+    foo();
+    return (double_arr[5] == c * 2.0);
 }
