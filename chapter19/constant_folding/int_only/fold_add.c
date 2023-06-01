@@ -4,4 +4,4 @@ int target(void) {
   return 100 + 200;
 }
 
-int main(void) { return target(); }
+int main(void) { return target() == 300; }

@@ -1,9 +1,5 @@
-/* You cannot declare a function that returns a function.
-   Our implementation will reject this during parsing.
-   Because the C grammar permits this declaration,
-   some compilers may reject it during type checking.
-   TODO update comment this is copy/pasted from chapter9 function_returning_function.c
-*/
+/* This is a variation on chapter 9's function_returning_function.c,
+ * with a parenthesized declarator. */
 int (foo(void))(void);
 
 int main(void) {
