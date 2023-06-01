@@ -3,8 +3,10 @@
 
 from __future__ import annotations
 
+import argparse
 import itertools
 import json
+import subprocess
 from pathlib import Path
 from typing import Any, List
 
@@ -34,6 +36,19 @@ def lookup_libs(prog: Path) -> List[Path]:
 
 def main() -> None:
     """Run all valid test programs and record results as JSON"""
+
+    # --since-commit SHA tells us to only compile tests
+    # that have changed since that commit
+    # --all tells us to regenerate all expected results
+    # by default just do the ones that have changed since last commit
+
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--since_commit", default=None)
+    group.add_argument("--all", action="store_true")
+
+    args = parser.parse_args()
+
     all_valid_progs = itertools.chain(
         ROOT_DIR.glob("chapter*/valid/**/*.c"),
         ROOT_DIR.glob("chapter19/**/*.c"),
@@ -41,8 +56,54 @@ def main() -> None:
         ROOT_DIR.glob("chapter20/int_only/**/*.c"),
     )
 
+    if args.all:
+        progs = all_valid_progs
+    else:
+        baseline = args.since_commit or "HEAD"
+        list_changed_files = subprocess.run(
+            f"git diff {baseline} --name-only -- chapter*",
+            shell=True,
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+        changed_files = list_changed_files.stdout.split()
+        # include each file from all_valid progs if:
+        # - it changed
+        # - it's a client and the library changed, or vice versa
+        # - it uses a library/wrapper that changed
+        # - a .h file in the same directory changed (use this as hacky shorthand for whether header for this particular file changed)
+        progs = []
+        for p in all_valid_progs:
+            rel_path = p.relative_to(ROOT_DIR)
+            if (
+                str(rel_path) in changed_files
+                or str(rel_path).replace(".c", "_client.c") in changed_files
+                or str(rel_path).replace("_client.c", ".c") in changed_files
+                or any(lib in changed_files for lib in lookup_libs(p))
+                or any(
+                    h
+                    for h in changed_files
+                    if Path(h).suffix == ".h" and Path(h).parent == rel_path.parent
+                )
+            ):
+                print(p)
+                progs.append(p)
+
+        # load the json file from that commit ot use as baseline
+        subprocess.run(
+            f"git show {baseline}:expected_results.json > expected_results_orig.json",
+            shell=True,
+            text=True,
+            check=True,
+        )
+        with open("expected_results_orig.json", "r", encoding="utf-8") as f:
+            results.update(json.load(f))
+        (ROOT_DIR / "expected_results_orig.json").unlink()
+
     # iterate over all valid programs
-    for prog in all_valid_progs:
+    for prog in progs:
+        print(prog)
         source_files = [prog]
         if "libraries" in prog.parts:
             if prog.name.endswith("_client.c"):
@@ -81,4 +142,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except subprocess.CalledProcessError as err:
+        print(err.cmd)
+        print(err.stderr)
+        print(err.stdout)
