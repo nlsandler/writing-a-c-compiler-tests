@@ -76,18 +76,3 @@ int struct_in_mem(double a, double b, double c, struct xmm_and_int first_struct,
 int pass_borderline_struct_in_memory(struct two_ints t_i, char c,
                                      struct int_and_xmm i_x, void *ptr,
                                      struct two_ints_nested t_i_n, double d);
-
-// returning structures
-
-struct one_int return_int_struct(void);
-struct twelve_bytes return_two_int_struct(void);
-struct one_xmm return_double_struct(void);
-struct two_xmm return_two_double_struct(void);
-struct xmm_and_int return_mixed(void);
-struct int_and_xmm return_mixed2(void);
-struct memory return_on_stack(void);
-
-// return on stack + pass other int params
-struct memory pass_and_return_regs(int i, double d, struct int_and_xmm strct,
-                                   char c, struct two_ints t_i, long l,
-                                   struct one_int_exactly o_i_e, char c2);

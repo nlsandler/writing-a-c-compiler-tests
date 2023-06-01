@@ -1,4 +1,4 @@
-void* calloc( unsigned long num, unsigned long size );
+void* calloc( unsigned long nmemb, unsigned long size );
 
 int foo(int flag, double *d, int **arr) {
     void *buff = flag ? d : (void *) arr;
