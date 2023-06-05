@@ -4,7 +4,12 @@ int main(void) {
      * each number (or cast them to ints), 255 would be larger
      */
     if (8589934593l < 255l) {
-        return 0;
+        return 1;
     }
-    return 1;
+
+    // include this to test rewrite rule
+    if (255l > 8589934593l) {
+        return 2;
+    }
+    return 0;
 }
