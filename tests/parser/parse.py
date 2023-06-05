@@ -552,10 +552,18 @@ def parse_statement(
     return asm.Instruction(opcode, operands)
 
 
-def parse_file(filename: Path) -> list[asm.AssemblyFunction]:
+def parse_file(filename: Path) -> dict[str, asm.AssemblyFunction]:
     """Parse an assembly file"""
 
-    asm_functions: list[asm.AssemblyFunction] = []
+    asm_functions: dict[str, asm.AssemblyFunction] = {}
+
+    def add_fun(f: asm.AssemblyFunction):
+        if sys.platform == "darwin":
+            key = f.name.removeprefix("_")
+        else:
+            key = f.name
+        asm_functions[key] = f
+
     with open(filename, "r", encoding="utf-8") as f:
         tokens = tokenize.tokenize(f)
 
@@ -574,8 +582,7 @@ def parse_file(filename: Path) -> list[asm.AssemblyFunction]:
                         if isinstance(asm_item, LeaveTextSection):
                             # leaving the text section finishes the current function
                             if current_function:
-                                asm_functions.append(current_function)
-                                current_function = None
+                                add_fun(current_function)
 
                             in_text_section = False
                         # skip to next statement
@@ -589,7 +596,7 @@ def parse_file(filename: Path) -> list[asm.AssemblyFunction]:
                         # that could be C function names (which we shouldn't be doing,
                         # since it's a potential naming conflict)
                         if current_function:
-                            asm_functions.append(current_function)
+                            add_fun(current_function)
                         current_function = asm.AssemblyFunction(
                             name=asm_item, instructions=[]
                         )
@@ -616,15 +623,6 @@ def parse_file(filename: Path) -> list[asm.AssemblyFunction]:
 
     # we're done, append last function
     if current_function:
-        asm_functions.append(current_function)
+        add_fun(current_function)
 
     return asm_functions
-
-
-def parse_target_function(asm_file: Path, *, target_fun: str) -> asm.AssemblyFunction:
-    """Parse assembly file and return assembly code for target_fun"""
-    if sys.platform == "darwin":
-        target_fun = "_" + target_fun
-    asm_program = parse_file(asm_file)
-    target_asm = next(f for f in asm_program if f.name == target_fun)
-    return target_asm

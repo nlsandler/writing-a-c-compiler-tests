@@ -32,16 +32,15 @@ class TackyOptimizationTest(basic.TestChapter):
     * There are no invalid test programs for this chapter
     """
 
-    def run_and_parse(self, source_file: Path) -> asm.AssemblyFunction:
+    def run_and_parse_all(self, source_file: Path) -> dict[str, asm.AssemblyFunction]:
         """Compile and run a program, validate result, then return parsed assembly.
 
         The caller can then perform additional validation on the parsed assembly.
-        NOTE: The name of the relevant function must be "target"
 
         Args:
             program_path: Absolute path to test program
 
-        Returns: parsed assembly code for "target"
+        Returns: parsed assembly code for whole program
         """
 
         # first compile to assembly
@@ -57,8 +56,20 @@ class TackyOptimizationTest(basic.TestChapter):
         actual_result = basic.gcc_compile_and_run(asm_file)
         self.validate_runs(source_file, actual_result)
 
-        # now parse the assembly file and extra the function named "target"
-        return parse.parse_target_function(asm_file, target_fun="target")
+        # now parse the assembly file and extract the function named "target"
+        return parse.parse_file(asm_file)
+
+    def run_and_parse(self, source_file: Path) -> asm.AssemblyFunction:
+        """Compile and run a program, validate result, then return parsed assembly for 'target' function.
+
+        The caller can then perform additional validation on the parsed assembly.
+
+        Args:
+            program_path: Absolute path to test program
+
+        Returns: parsed assembly code for whole program
+        """
+        return self.run_and_parse_all(source_file)["target"]
 
     # methods used by dead store elimination and whole pipeline tests
     def store_eliminated_test(

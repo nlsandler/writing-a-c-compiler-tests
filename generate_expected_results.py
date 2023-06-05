@@ -8,7 +8,7 @@ import itertools
 import json
 import subprocess
 from pathlib import Path
-from typing import Any, List
+from typing import Any, Iterable, List
 
 # NOTE: basic loads EXPECTED_RESULTS from a file so this whole script will fail
 # if expected_results.json doesn't already exist
@@ -57,7 +57,7 @@ def main() -> None:
     )
 
     if args.all:
-        progs = all_valid_progs
+        progs: Iterable[Path] = all_valid_progs
     else:
         baseline = args.since_commit or "HEAD"
         list_changed_files = subprocess.run(
@@ -67,7 +67,17 @@ def main() -> None:
             check=True,
             capture_output=True,
         )
-        changed_files = list_changed_files.stdout.split()
+        # also get untracked files
+        list_new_files = subprocess.run(
+            "git ls-files -o -- chapter*",
+            shell=True,
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+        changed_files = (
+            list_changed_files.stdout.split() + list_new_files.stdout.split()
+        )
         # include each file from all_valid progs if:
         # - it changed
         # - it's a client and the library changed, or vice versa
@@ -87,7 +97,6 @@ def main() -> None:
                     if Path(h).suffix == ".h" and Path(h).parent == rel_path.parent
                 )
             ):
-                print(p)
                 progs.append(p)
 
         # load the json file from that commit ot use as baseline

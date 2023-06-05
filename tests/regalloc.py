@@ -135,7 +135,7 @@ class TestRegAlloc(basic.TestChapter):
         self.basic_test(asm_file, extra_lib=extra_lib)
 
         # make sure we actually performed the optimization
-        parsed_asm = parse.parse_target_function(asm_file, target_fun=target_fun)
+        parsed_asm = parse.parse_file(asm_file)[target_fun]
 
         return parsed_asm
 

@@ -1,6 +1,7 @@
 /* Test that we handle negative zero correctly */
 int main(void) {
-    double negative_zero = -0.0;
+    double zero = 0.0;
+    double negative_zero = -zero;
 
     // 0.0 and -0.0 should compare equal
     if (negative_zero != 0)

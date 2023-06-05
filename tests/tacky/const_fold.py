@@ -21,7 +21,7 @@ class TestConstantFolding(common.TackyOptimizationTest):
         """Constant folding should eliminate all computations from our test programs
 
         Won't eliminate prologue, epilogue mov, label, and unconditional jumps"""
-        parsed_asm = self.run_and_parse(program)
+        parsed_asm = self.run_and_parse_all(program)
 
         def ok(i: AsmItem) -> bool:
             return (
@@ -32,16 +32,18 @@ class TestConstantFolding(common.TackyOptimizationTest):
                 or common.is_zero_instr(i)
             )
 
-        bad_instructions = [i for i in parsed_asm.instructions if not ok(i)]
-        self.assertFalse(
-            bad_instructions,
-            msg=common.build_msg(
-                "Found instructions that should have been constant folded",
-                bad_instructions=bad_instructions,
-                full_prog=parsed_asm,
-                program_path=program,
-            ),
-        )
+        for fn_name, fn_body in parsed_asm.items():
+            if fn_name.startswith("target"):
+                bad_instructions = [i for i in fn_body.instructions if not ok(i)]
+                self.assertFalse(
+                    bad_instructions,
+                    msg=common.build_msg(
+                        "Found instructions that should have been constant folded",
+                        bad_instructions=bad_instructions,
+                        full_prog=fn_body,
+                        program_path=program,
+                    ),
+                )
 
 
 def make_constant_fold_test(program: Path) -> Callable[[TestConstantFolding], None]:

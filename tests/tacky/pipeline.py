@@ -14,15 +14,16 @@ class TestWholePipeline(common.TackyOptimizationTest):
     test_dir = common.TEST_DIR / "whole_pipeline"
 
 
-RETVAL_TESTS = ["dead_condition.c", "elim_and_copy_prop.c"]
+RETVAL_TESTS = {"dead_condition.c": 10, "elim_and_copy_prop.c": 10, "remainder_test": 1}
 STORE_ELIMINATED = {"alias_analysis_change.c": [5, 10]}
 
 
 def make_whole_pipeline_test(program: Path) -> Callable[[TestWholePipeline], None]:
     if program.name in RETVAL_TESTS:
+        expected_retval = RETVAL_TESTS[program.name]
 
         def test(self: TestWholePipeline) -> None:
-            self.return_const_test(source_file=program, returned_const=10)
+            self.return_const_test(source_file=program, returned_const=expected_retval)
 
     elif program.name in STORE_ELIMINATED:
         consts = STORE_ELIMINATED[program.name]
