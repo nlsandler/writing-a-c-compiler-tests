@@ -346,7 +346,7 @@ RETVAL_TESTS = {
     "char_type_conversion.c": 1,
     "const_fold_sign_extend.c": -1000,
     "const_fold_sign_extend_2.c": -1000,
-    "const_fold_type_conversions.c": 83333,
+    "const_fold_type_conversions.c": 83338,
     "not_char.c": 1,
     "propagate_doubles.c": 3000,
     "propagate_null_pointer.c": 0,

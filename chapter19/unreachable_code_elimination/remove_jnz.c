@@ -1,3 +1,4 @@
-int target(void) { return 0 || 0; }
+/* Test that we eliminate useless JumpIfNotZero */
+int target(int a) { return a || 5; }
 
-int main(void) { return target(); }
+int main(void) { return target(10); }

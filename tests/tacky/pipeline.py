@@ -14,7 +14,11 @@ class TestWholePipeline(common.TackyOptimizationTest):
     test_dir = common.TEST_DIR / "whole_pipeline"
 
 
-RETVAL_TESTS = {"dead_condition.c": 10, "elim_and_copy_prop.c": 10, "remainder_test": 1}
+RETVAL_TESTS = {
+    "dead_condition.c": 10,
+    "elim_and_copy_prop.c": 10,
+    "remainder_test.c": 1,
+}
 STORE_ELIMINATED = {"alias_analysis_change.c": [5, 10]}
 
 
