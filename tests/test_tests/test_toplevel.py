@@ -9,6 +9,7 @@ from __future__ import annotations
 import re
 import shutil
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 from typing import Union
@@ -108,18 +109,30 @@ class TopLevelTest(unittest.TestCase):
 
 
 class BadSourceTest(unittest.TestCase):
+    # paths that we'll refer to in setup/teardown
+    ret2 = ROOT_DIR / "chapter1/valid/return_2.c"
+    ret0 = ROOT_DIR / "chapter1/valid/return_0.c"
+    hello_world = ROOT_DIR / "chapter9/valid/arguments_in_registers/hello_world.c"
+    dse_relative = Path("chapter19/dead_store_elimination/int_only/simple.c")
+    dse = ROOT_DIR / dse_relative
+
     def setUp(self) -> None:
-        ret2 = ROOT_DIR / "chapter1/valid/return_2.c"
-        ret0 = ROOT_DIR / "chapter1/valid/return_0.c"
-        hello_world = ROOT_DIR / "chapter9/valid/arguments_in_registers/hello_world.c"
-        shutil.copy(ret2, ret0)
-        shutil.copy(ret0, hello_world)
+        # save these to a temporary directory before overwriting them
+        self.tmpdir = tempfile.TemporaryDirectory()
+        shutil.copy(self.hello_world, self.tmpdir.name)
+        shutil.copy(self.ret0, self.tmpdir.name)
+        shutil.copy(self.dse, self.tmpdir.name)
+
+        # overwrite hello_world with another file that has same retcode but different stdout
+        shutil.copy(self.ret0, self.hello_world)
+
+        # overwrite ret0 with another file with different retcode
+        shutil.copy(self.ret2, self.ret0)
 
         # replace a dead store elimination test w/ a different program that has the same
         # result, but where the dead store can't be eliminated
-        TEST_TO_BREAK = Path("chapter19/dead_store_elimination/int_only/simple.c")
-        expected_retval = EXPECTED_RESULTS[str(TEST_TO_BREAK)]["return_code"]
-        store_to_elim = STORE_ELIMINATED[TEST_TO_BREAK.name]
+        expected_retval = EXPECTED_RESULTS[str(self.dse_relative)]["return_code"]
+        store_to_elim = STORE_ELIMINATED[self.dse.name]
         with open(
             ROOT_DIR / "chapter19/dead_store_elimination/int_only/simple.c",
             "w",
@@ -140,13 +153,16 @@ class BadSourceTest(unittest.TestCase):
             )
 
     def tearDown(self) -> None:
-        # TODO: save ret0 and hello-world to tmp files and restore them instead of using checkout here
-        subprocess.run(
-            "git checkout chapter1 chapter9 chapter19",
-            shell=True,
-            check=True,
-            capture_output=True,
-        )
+        """Restore files we overwrote from temporary directory"""
+        tmp_path = Path(self.tmpdir.name)
+        tmp_ret0 = tmp_path / self.ret0.name
+        tmp_helloworld = tmp_path / self.hello_world.name
+        tmp_dse = tmp_path / self.dse.name
+
+        shutil.copy(tmp_ret0, self.ret0)
+        shutil.copy(tmp_helloworld, self.hello_world)
+        shutil.copy(tmp_dse, self.dse)
+        self.tmpdir.cleanup()
 
     def test_bad_retval(self) -> None:
         """Make sure the test fails if retval is different than expected"""
