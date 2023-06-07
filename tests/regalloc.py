@@ -128,7 +128,7 @@ class TestRegAlloc(basic.TestChapter):
         try:
             self.invoke_compiler(program_path, cc_opt="-s").check_returncode()
         except subprocess.CalledProcessError as e:
-            raise RuntimeError(e.stderr) from e
+            self.fail(f"Compilation failed:\n{e.stderr}")
         asm_file = program_path.with_suffix(".s")
 
         # make sure behavior is the same

@@ -2,8 +2,7 @@
 These assume we have access to two copies of the reference implementation:
 - $$NQCC is the path to the fully implemented compiler
 - $$NQCC_PARTIAL is a path to version of the compiler that is implemented
-  through the unreachable code elimination stage in chapter 19,
-  but doesn't include dead code elimination or register allocation
+  through chapter 19 but doesn't include register allocation
 """
 from __future__ import annotations
 
@@ -15,6 +14,8 @@ from pathlib import Path
 from typing import Union
 
 from ..regalloc import REGALLOC_TESTS
+from ..basic import EXPECTED_RESULTS
+from ..tacky.dead_store_elim import STORE_ELIMINATED
 
 ROOT_DIR = Path(__file__).parent.parent.parent
 TEST_PATTERN = re.compile("^Ran ([0-9]+) tests", flags=re.MULTILINE)
@@ -75,30 +76,6 @@ class TopLevelTest(unittest.TestCase):
         actual_test_count = get_test_count(testrun)
         self.assertEqual(expected_test_count, actual_test_count)
 
-    def test_optimization_failure(self) -> None:
-        """Partially-completed NQCC fails some optimization tests"""
-        expected_test_count = len(
-            list((ROOT_DIR / "chapter19/dead_store_elimination").rglob("*.c"))
-        )
-
-        # the tests in dont_elim just validate behavior without inspecting assembly
-        expected_success_count = len(
-            list(
-                (ROOT_DIR / "chapter19/dead_store_elimination").rglob(
-                    "dont_elim/**/*.c"
-                )
-            )
-        )
-        expected_failure_count = expected_test_count - expected_success_count
-        with self.assertRaises(subprocess.CalledProcessError) as err:
-            run_test_script(
-                "./test_compiler $NQCC_PARTIAL --chapter 19 --eliminate-dead-stores --latest-only"
-            )
-        failure_count = get_failure_count(err.exception)
-        test_count = get_test_count(err.exception)
-        self.assertEqual(expected_failure_count, failure_count)
-        self.assertEqual(expected_test_count, test_count)
-
     def test_regalloc_failure(self) -> None:
         """Partially-completed NQCC fails register allocation tests"""
         expected_test_count = len(
@@ -109,7 +86,11 @@ class TopLevelTest(unittest.TestCase):
             run_test_script("./test_compiler $NQCC_PARTIAL --chapter 20 --latest-only")
         failure_count = get_failure_count(err.exception)
         test_count = get_test_count(err.exception)
-        self.assertEqual(expected_failure_count, failure_count)
+        self.assertEqual(
+            expected_failure_count,
+            failure_count,
+            msg=f"Expected {expected_failure_count} failures but got {failure_count}",
+        )
         self.assertEqual(expected_test_count, test_count)
 
     def test_optimization_success(self) -> None:
@@ -134,10 +115,34 @@ class BadSourceTest(unittest.TestCase):
         shutil.copy(ret2, ret0)
         shutil.copy(ret0, hello_world)
 
+        # replace a dead store elimination test w/ a different program that has the same
+        # result, but where the dead store can't be eliminated
+        TEST_TO_BREAK = Path("chapter19/dead_store_elimination/int_only/simple.c")
+        expected_retval = EXPECTED_RESULTS[str(TEST_TO_BREAK)]["return_code"]
+        store_to_elim = STORE_ELIMINATED[TEST_TO_BREAK.name]
+        with open(
+            ROOT_DIR / "chapter19/dead_store_elimination/int_only/simple.c",
+            "w",
+            encoding="utf-8",
+        ) as f:
+            f.write(
+                f"""
+            int f(int arg) {{
+                return arg;
+            }}
+            int target(void) {{
+                int x = {store_to_elim};
+                f(x);
+                return {expected_retval};
+            }}
+            int main(void) {{ return target(); }}
+            """
+            )
+
     def tearDown(self) -> None:
         # TODO: save ret0 and hello-world to tmp files and restore them instead of using checkout here
         subprocess.run(
-            "git checkout chapter1 chapter9",
+            "git checkout chapter1 chapter9 chapter19",
             shell=True,
             check=True,
             capture_output=True,
@@ -166,6 +171,25 @@ class BadSourceTest(unittest.TestCase):
         failure_count = get_failure_count(cpe.exception)
         self.assertEqual(actual_test_count, expected_test_count)
         self.assertEqual(1, failure_count)
+
+    def test_optimization_failure(self) -> None:
+        """Test fails if code hasn't been optimized as expected"""
+        expected_test_count = len(
+            list((ROOT_DIR / "chapter19/dead_store_elimination").rglob("*.c"))
+        )
+
+        with self.assertRaises(subprocess.CalledProcessError) as err:
+            run_test_script(
+                "./test_compiler $NQCC --chapter 19 --eliminate-dead-stores --latest-only"
+            )
+        failure_count = get_failure_count(err.exception)
+        test_count = get_test_count(err.exception)
+        self.assertEqual(
+            1,
+            failure_count,
+            msg=f"Expected 1 failure but got {failure_count}",
+        )
+        self.assertEqual(expected_test_count, test_count)
 
     def test_intermediate(self) -> None:
         """Changed code shouldn't impact intermediate stages"""
