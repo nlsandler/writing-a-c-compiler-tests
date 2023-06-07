@@ -108,7 +108,7 @@ def main() -> None:
         )
         with open("expected_results_orig.json", "r", encoding="utf-8") as f:
             results.update(json.load(f))
-        (TEST_DIR / "expected_results_orig.json").unlink()
+        Path("expected_results_orig.json").unlink()
 
     # iterate over all valid programs
     for prog in progs:
