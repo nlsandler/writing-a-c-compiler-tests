@@ -9,7 +9,7 @@ from typing import Callable, Iterable, List, Type, TypeVar
 from .. import basic
 from . import common, const_fold, copy_prop, dead_store_elim, pipeline, unreachable
 
-TEST_DIR = Path(__file__).parent.parent.joinpath("chapter19").resolve()
+TEST_DIR = Path(__file__).parent.parent.joinpath("chapter_19").resolve()
 
 
 @unique

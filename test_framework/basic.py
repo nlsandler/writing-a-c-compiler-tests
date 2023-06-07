@@ -13,7 +13,8 @@ from typing import Any, Callable, Optional, Sequence, Type
 # Constants + per-test info from configuration files
 # TODO should this be in a separate module maybe?
 
-ROOT_DIR = Path(__file__).parent.parent
+ROOT_DIR = Path(__file__).parent.parent  # ROOT of test repo
+TEST_DIR = ROOT_DIR / "tests"  # directory containing all test programs
 IS_OSX = platform.system().lower() == "darwin"
 EXPECTED_RESULTS: dict[str, Any]
 
@@ -205,7 +206,7 @@ class TestChapter(unittest.TestCase):
             source_file: Absolute path of the source file for a test program
             actual: result of compiling this source file with self.cc and running it
         """
-        key = str(source_file.relative_to(ROOT_DIR))
+        key = str(source_file.relative_to(TEST_DIR))
         expected = EXPECTED_RESULTS[key]
         expected_retcode = expected["return_code"]
         expected_stdout = expected.get("stdout", "")
@@ -264,7 +265,7 @@ class TestChapter(unittest.TestCase):
         """Compile a valid test program, run it, and validate the results"""
 
         # include -lm for standard library test on linux
-        key = str(source_file.relative_to(ROOT_DIR))
+        key = str(source_file.relative_to(TEST_DIR))
         if key in REQUIRES_MATHLIB and not IS_OSX:
             cc_opt = "-lm"
         else:
@@ -432,7 +433,7 @@ def excluded_extra_credit(source_prog: Path, extra_credit_flags: ExtraCredit) ->
 
     # convert list of strings representing required extra credit features for this program
     # to list of ExtraCredit flags
-    key = str(source_prog.relative_to(ROOT_DIR))
+    key = str(source_prog.relative_to(TEST_DIR))
 
     features_required = (
         ExtraCredit[str.upper(feature)] for feature in EXTRA_CREDIT_PROGRAMS[key]
@@ -500,7 +501,7 @@ def make_invalid_tests(
 
     Args:
         test_dir: Absolute path to the test directory for a specific chapter
-                  (e.g. /path/to/write-a-c-compiler-tests/chapter1/)
+                  (e.g. /path/to/write-a-c-compiler-tests/chapter_1/)
         stage: only compile programs through this stage. this dictates which programs
                are considered invalid (e.g. if stage is "parse" programs with type errors
                are valid, because we stop before typechecking)
@@ -540,7 +541,7 @@ def make_valid_tests(
 
     Args:
         test_dir: Absolute path to the test directory for a specific chapter
-                  (e.g. /path/to/write-a-c-compiler-tests/chapter1/)
+                  (e.g. /path/to/write-a-c-compiler-tests/chapter_1/)
         stage: only compile programs through this stage. this dictates which programs
                are considered valid (e.g. if stage is "parse" programs with type errors
                are valid, because we stop before typechecking)
@@ -605,7 +606,7 @@ def build_test_class(
     """
 
     # base directory with all of this chapter's test programs
-    test_dir = ROOT_DIR.joinpath(f"chapter{chapter}").resolve()
+    test_dir = TEST_DIR.joinpath(f"chapter_{chapter}").resolve()
 
     testclass_name = f"TestChapter{chapter}"
 

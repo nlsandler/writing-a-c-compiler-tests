@@ -12,7 +12,7 @@ from . import common
 class TestConstantFolding(common.TackyOptimizationTest):
     """Test class for constant folding.
 
-    We'll generate a test method for each C program in the chapter19/constant_folding/ directory.
+    We'll generate a test method for each C program in the chapter_19/constant_folding/ directory.
     Each dynamically generated test calls const_fold_test."""
 
     test_dir = common.TEST_DIR / "constant_folding"

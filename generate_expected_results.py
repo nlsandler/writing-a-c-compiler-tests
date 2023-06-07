@@ -12,8 +12,8 @@ from typing import Any, Iterable, List
 
 # NOTE: basic loads EXPECTED_RESULTS from a file so this whole script will fail
 # if expected_results.json doesn't already exist
-from tests import basic, regalloc
-from tests.basic import ROOT_DIR
+from test_framework import basic, regalloc
+from test_framework.basic import TEST_DIR
 
 results: dict[str, dict[str, Any]] = {}
 
@@ -30,7 +30,7 @@ def lookup_libs(prog: Path) -> List[Path]:
     # uses wrapper script and other library
     return [
         regalloc.WRAPPER_SCRIPT,
-        ROOT_DIR / "chapter20/libraries" / test_info.extra_lib,
+        TEST_DIR / "chapter_20/libraries" / test_info.extra_lib,
     ]
 
 
@@ -50,10 +50,10 @@ def main() -> None:
     args = parser.parse_args()
 
     all_valid_progs = itertools.chain(
-        ROOT_DIR.glob("chapter*/valid/**/*.c"),
-        ROOT_DIR.glob("chapter19/**/*.c"),
-        ROOT_DIR.glob("chapter20/all_types/**/*.c"),
-        ROOT_DIR.glob("chapter20/int_only/**/*.c"),
+        TEST_DIR.glob("chapter_*/valid/**/*.c"),
+        TEST_DIR.glob("chapter_19/**/*.c"),
+        TEST_DIR.glob("chapter_20/all_types/**/*.c"),
+        TEST_DIR.glob("chapter_20/int_only/**/*.c"),
     )
 
     if args.all:
@@ -61,7 +61,7 @@ def main() -> None:
     else:
         baseline = args.since_commit or "HEAD"
         list_changed_files = subprocess.run(
-            f"git diff {baseline} --name-only -- chapter*",
+            f"git diff {baseline} --name-only -- chapter_*",
             shell=True,
             text=True,
             check=True,
@@ -69,7 +69,7 @@ def main() -> None:
         )
         # also get untracked files
         list_new_files = subprocess.run(
-            "git ls-files -o -- chapter*",
+            "git ls-files -o -- chapter_*",
             shell=True,
             text=True,
             check=True,
@@ -85,7 +85,7 @@ def main() -> None:
         # - a .h file in the same directory changed (use this as hacky shorthand for whether header for this particular file changed)
         progs = []
         for p in all_valid_progs:
-            rel_path = p.relative_to(ROOT_DIR)
+            rel_path = p.relative_to(TEST_DIR)
             if (
                 str(rel_path) in changed_files
                 or str(rel_path).replace(".c", "_client.c") in changed_files
@@ -108,7 +108,7 @@ def main() -> None:
         )
         with open("expected_results_orig.json", "r", encoding="utf-8") as f:
             results.update(json.load(f))
-        (ROOT_DIR / "expected_results_orig.json").unlink()
+        (TEST_DIR / "expected_results_orig.json").unlink()
 
     # iterate over all valid programs
     for prog in progs:
@@ -124,7 +124,7 @@ def main() -> None:
             client = prog.parent.joinpath(prog.name.replace(".c", "_client.c"))
             source_files.append(client)
 
-        if "chapter20" in prog.parts:
+        if "chapter_20" in prog.parts:
             # we may need to include wrapper script and other library files
             extra_libs = lookup_libs(prog)
             source_files.extend(extra_libs)
@@ -139,7 +139,7 @@ def main() -> None:
             if result.stdout:
                 result_dict["stdout"] = result.stdout
 
-            key = str(prog.relative_to(ROOT_DIR))
+            key = str(prog.relative_to(TEST_DIR))
             results[key] = result_dict
         finally:
             # delete executable

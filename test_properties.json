@@ -1,369 +1,369 @@
 {
     "extra_credit_tests": {
-        "chapter3/invalid_parse/extra_credit/bitwise_double_operator.c": [
+        "chapter_3/invalid_parse/extra_credit/bitwise_double_operator.c": [
             "bitwise"
         ],
-        "chapter3/valid/extra_credit/bitwise_and.c": [
+        "chapter_3/valid/extra_credit/bitwise_and.c": [
             "bitwise"
         ],
-        "chapter3/valid/extra_credit/bitwise_or.c": [
+        "chapter_3/valid/extra_credit/bitwise_or.c": [
             "bitwise"
         ],
-        "chapter3/valid/extra_credit/bitwise_precedence.c": [
+        "chapter_3/valid/extra_credit/bitwise_precedence.c": [
             "bitwise"
         ],
-        "chapter3/valid/extra_credit/bitwise_shift_associativity.c": [
+        "chapter_3/valid/extra_credit/bitwise_shift_associativity.c": [
             "bitwise"
         ],
-        "chapter3/valid/extra_credit/bitwise_shift_associativity_2.c": [
+        "chapter_3/valid/extra_credit/bitwise_shift_associativity_2.c": [
             "bitwise"
         ],
-        "chapter3/valid/extra_credit/bitwise_shift_precedence.c": [
+        "chapter_3/valid/extra_credit/bitwise_shift_precedence.c": [
             "bitwise"
         ],
-        "chapter3/valid/extra_credit/bitwise_shiftl.c": [
+        "chapter_3/valid/extra_credit/bitwise_shiftl.c": [
             "bitwise"
         ],
-        "chapter3/valid/extra_credit/bitwise_shiftr.c": [
+        "chapter_3/valid/extra_credit/bitwise_shiftr.c": [
             "bitwise"
         ],
-        "chapter3/valid/extra_credit/bitwise_xor.c": [
+        "chapter_3/valid/extra_credit/bitwise_xor.c": [
             "bitwise"
         ],
-        "chapter4/valid/extra_credit/bitwise_precedence.c": [
+        "chapter_4/valid/extra_credit/bitwise_precedence.c": [
             "bitwise"
         ],
-        "chapter5/invalid_parse/extra_credit/compound_initializer.c": [
+        "chapter_5/invalid_parse/extra_credit/compound_initializer.c": [
             "compound"
         ],
-        "chapter5/invalid_parse/extra_credit/compound_invalid_operator.c": [
+        "chapter_5/invalid_parse/extra_credit/compound_invalid_operator.c": [
             "compound"
         ],
-        "chapter5/invalid_semantics/extra_credit/compound_initializer.c": [
+        "chapter_5/invalid_semantics/extra_credit/compound_initializer.c": [
             "compound"
         ],
-        "chapter5/invalid_semantics/extra_credit/compound_invalid_lvalue.c": [
+        "chapter_5/invalid_semantics/extra_credit/compound_invalid_lvalue.c": [
             "compound"
         ],
-        "chapter5/valid/extra_credit/bitwise_and_vars.c": [
+        "chapter_5/valid/extra_credit/bitwise_and_vars.c": [
             "bitwise"
         ],
-        "chapter5/valid/extra_credit/bitwise_shiftl_variable.c": [
+        "chapter_5/valid/extra_credit/bitwise_shiftl_variable.c": [
             "bitwise"
         ],
-        "chapter5/valid/extra_credit/bitwise_shiftr_assign.c": [
+        "chapter_5/valid/extra_credit/bitwise_shiftr_assign.c": [
             "bitwise"
         ],
-        "chapter5/valid/extra_credit/compound_assignment_chained.c": [
+        "chapter_5/valid/extra_credit/compound_assignment_chained.c": [
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_assignment_use_result.c": [
+        "chapter_5/valid/extra_credit/compound_assignment_use_result.c": [
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_bitwise_and.c": [
+        "chapter_5/valid/extra_credit/compound_bitwise_and.c": [
             "bitwise",
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_bitwise_or.c": [
+        "chapter_5/valid/extra_credit/compound_bitwise_or.c": [
             "bitwise",
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_bitwise_shiftl.c": [
+        "chapter_5/valid/extra_credit/compound_bitwise_shiftl.c": [
             "bitwise",
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_bitwise_shiftr.c": [
+        "chapter_5/valid/extra_credit/compound_bitwise_shiftr.c": [
             "bitwise",
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_bitwise_xor.c": [
+        "chapter_5/valid/extra_credit/compound_bitwise_xor.c": [
             "bitwise",
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_divide.c": [
+        "chapter_5/valid/extra_credit/compound_divide.c": [
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_minus.c": [
+        "chapter_5/valid/extra_credit/compound_minus.c": [
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_mod.c": [
+        "chapter_5/valid/extra_credit/compound_mod.c": [
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_multiply.c": [
+        "chapter_5/valid/extra_credit/compound_multiply.c": [
             "compound"
         ],
-        "chapter5/valid/extra_credit/compound_plus.c": [
+        "chapter_5/valid/extra_credit/compound_plus.c": [
             "compound"
         ],
-        "chapter6/invalid_lex/extra_credit/goto_bad_label.c": [
+        "chapter_6/invalid_lex/extra_credit/goto_bad_label.c": [
             "goto"
         ],
-        "chapter6/invalid_parse/extra_credit/goto_label_without_statement.c": [
+        "chapter_6/invalid_parse/extra_credit/goto_label_without_statement.c": [
             "goto"
         ],
-        "chapter6/invalid_semantics/extra_credit/goto_missing_label.c": [
+        "chapter_6/invalid_semantics/extra_credit/goto_missing_label.c": [
             "goto"
         ],
-        "chapter6/valid/extra_credit/bitwise_ternary.c": [
+        "chapter_6/valid/extra_credit/bitwise_ternary.c": [
             "bitwise"
         ],
-        "chapter6/valid/extra_credit/compound_if_expression.c": [
+        "chapter_6/valid/extra_credit/compound_if_expression.c": [
             "compound"
         ],
-        "chapter6/valid/extra_credit/goto_after_declaration.c": [
+        "chapter_6/valid/extra_credit/goto_after_declaration.c": [
             "goto"
         ],
-        "chapter6/valid/extra_credit/goto_backwards.c": [
+        "chapter_6/valid/extra_credit/goto_backwards.c": [
             "goto"
         ],
-        "chapter6/valid/extra_credit/goto_label.c": [
+        "chapter_6/valid/extra_credit/goto_label.c": [
             "goto"
         ],
-        "chapter6/valid/extra_credit/goto_label_and_var.c": [
+        "chapter_6/valid/extra_credit/goto_label_and_var.c": [
             "goto"
         ],
-        "chapter6/valid/extra_credit/goto_label_main.c": [
+        "chapter_6/valid/extra_credit/goto_label_main.c": [
             "goto"
         ],
-        "chapter6/valid/extra_credit/goto_label_main_2.c": [
+        "chapter_6/valid/extra_credit/goto_label_main_2.c": [
             "goto"
         ],
-        "chapter6/valid/extra_credit/goto_nested_label.c": [
+        "chapter_6/valid/extra_credit/goto_nested_label.c": [
             "goto"
         ],
-        "chapter7/invalid_semantics/extra_credit/goto_use_before_declare.c": [
+        "chapter_7/invalid_semantics/extra_credit/goto_use_before_declare.c": [
             "goto"
         ],
-        "chapter7/valid/extra_credit/compound_subtract_in_block.c": [
+        "chapter_7/valid/extra_credit/compound_subtract_in_block.c": [
             "compound"
         ],
-        "chapter7/valid/extra_credit/goto_before_declaration.c": [
+        "chapter_7/valid/extra_credit/goto_before_declaration.c": [
             "goto"
         ],
-        "chapter7/valid/extra_credit/goto_inner_scope.c": [
+        "chapter_7/valid/extra_credit/goto_inner_scope.c": [
             "goto"
         ],
-        "chapter8/invalid_parse/extra_credit/compound_assignment_invalid_decl.c": [
+        "chapter_8/invalid_parse/extra_credit/compound_assignment_invalid_decl.c": [
             "compound"
         ],
-        "chapter8/invalid_parse/extra_credit/switch_case_declaration.c": [
+        "chapter_8/invalid_parse/extra_credit/switch_case_declaration.c": [
             "switch"
         ],
-        "chapter8/invalid_parse/extra_credit/switch_goto_case.c": [
+        "chapter_8/invalid_parse/extra_credit/switch_goto_case.c": [
             "switch",
             "goto"
         ],
-        "chapter8/invalid_parse/extra_credit/switch_missing_case_value.c": [
+        "chapter_8/invalid_parse/extra_credit/switch_missing_case_value.c": [
             "switch"
         ],
-        "chapter8/invalid_parse/extra_credit/switch_missing_paren.c": [
+        "chapter_8/invalid_parse/extra_credit/switch_missing_paren.c": [
             "switch"
         ],
-        "chapter8/invalid_parse/extra_credit/switch_no_condition.c": [
+        "chapter_8/invalid_parse/extra_credit/switch_no_condition.c": [
             "switch"
         ],
-        "chapter8/invalid_semantics/extra_credit/switch_continue.c": [
+        "chapter_8/invalid_semantics/extra_credit/switch_continue.c": [
             "switch"
         ],
-        "chapter8/invalid_semantics/extra_credit/switch_duplicate_case.c": [
+        "chapter_8/invalid_semantics/extra_credit/switch_duplicate_case.c": [
             "switch"
         ],
-        "chapter8/invalid_semantics/extra_credit/switch_duplicate_default.c": [
+        "chapter_8/invalid_semantics/extra_credit/switch_duplicate_default.c": [
             "switch"
         ],
-        "chapter8/invalid_semantics/extra_credit/switch_invalid_case.c": [
+        "chapter_8/invalid_semantics/extra_credit/switch_invalid_case.c": [
             "switch"
         ],
-        "chapter8/invalid_semantics/extra_credit/switch_invalid_default.c": [
+        "chapter_8/invalid_semantics/extra_credit/switch_invalid_default.c": [
             "switch"
         ],
-        "chapter8/invalid_semantics/extra_credit/switch_non_constant_case.c": [
+        "chapter_8/invalid_semantics/extra_credit/switch_non_constant_case.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/compound_assignment_for_loop.c": [
+        "chapter_8/valid/extra_credit/compound_assignment_for_loop.c": [
             "compound"
         ],
-        "chapter8/valid/extra_credit/goto_bypass_condition.c": [
+        "chapter_8/valid/extra_credit/goto_bypass_condition.c": [
             "goto"
         ],
-        "chapter8/valid/extra_credit/goto_loop_body.c": [
+        "chapter_8/valid/extra_credit/goto_loop_body.c": [
             "goto"
         ],
-        "chapter8/valid/extra_credit/switch.c": [
+        "chapter_8/valid/extra_credit/switch.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_assign_in_body.c": [
+        "chapter_8/valid/extra_credit/switch_assign_in_body.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_assign_in_condition.c": [
+        "chapter_8/valid/extra_credit/switch_assign_in_condition.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_block.c": [
+        "chapter_8/valid/extra_credit/switch_block.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_break.c": [
+        "chapter_8/valid/extra_credit/switch_break.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_decl.c": [
+        "chapter_8/valid/extra_credit/switch_decl.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_default.c": [
+        "chapter_8/valid/extra_credit/switch_default.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_default_fallthrough.c": [
+        "chapter_8/valid/extra_credit/switch_default_fallthrough.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_default_not_last.c": [
+        "chapter_8/valid/extra_credit/switch_default_not_last.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_empty.c": [
+        "chapter_8/valid/extra_credit/switch_empty.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_fallthrough.c": [
+        "chapter_8/valid/extra_credit/switch_fallthrough.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_goto_mid_case.c": [
+        "chapter_8/valid/extra_credit/switch_goto_mid_case.c": [
             "switch",
             "goto"
         ],
-        "chapter8/valid/extra_credit/switch_in_loop.c": [
+        "chapter_8/valid/extra_credit/switch_in_loop.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_nested_case.c": [
+        "chapter_8/valid/extra_credit/switch_nested_case.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_nested_not_taken.c": [
+        "chapter_8/valid/extra_credit/switch_nested_not_taken.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_nested_switch.c": [
+        "chapter_8/valid/extra_credit/switch_nested_switch.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_no_case.c": [
+        "chapter_8/valid/extra_credit/switch_no_case.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_with_continue.c": [
+        "chapter_8/valid/extra_credit/switch_with_continue.c": [
             "switch"
         ],
-        "chapter8/valid/extra_credit/switch_with_loop.c": [
+        "chapter_8/valid/extra_credit/switch_with_loop.c": [
             "switch"
         ],
-        "chapter9/invalid_labels/extra_credit/goto_cross_function.c": [
+        "chapter_9/invalid_labels/extra_credit/goto_cross_function.c": [
             "goto"
         ],
-        "chapter9/invalid_labels/extra_credit/goto_function.c": [
+        "chapter_9/invalid_labels/extra_credit/goto_function.c": [
             "goto"
         ],
-        "chapter9/invalid_types/extra_credit/compound_assignment_function_call.c": [
+        "chapter_9/invalid_types/extra_credit/compound_assignment_function_call.c": [
             "compound"
         ],
-        "chapter9/invalid_types/extra_credit/switch_on_function.c": [
+        "chapter_9/invalid_types/extra_credit/switch_on_function.c": [
             "switch"
         ],
-        "chapter9/valid/extra_credit/compound_assign_function_result.c": [
+        "chapter_9/valid/extra_credit/compound_assign_function_result.c": [
             "compound"
         ],
-        "chapter9/valid/extra_credit/goto_label_multiple_functions.c": [
+        "chapter_9/valid/extra_credit/goto_label_multiple_functions.c": [
             "goto"
         ],
-        "chapter9/valid/extra_credit/goto_shared_name.c": [
+        "chapter_9/valid/extra_credit/goto_shared_name.c": [
             "goto"
         ],
-        "chapter10/invalid_parse/extra_credit/goto_file_scope_label.c": [
+        "chapter_10/invalid_parse/extra_credit/goto_file_scope_label.c": [
             "goto"
         ],
-        "chapter10/invalid_labels/extra_credit/goto_global_var.c": [
+        "chapter_10/invalid_labels/extra_credit/goto_global_var.c": [
             "goto"
         ],
-        "chapter10/valid/extra_credit/goto_skip_static_initializer.c": [
+        "chapter_10/valid/extra_credit/goto_skip_static_initializer.c": [
             "goto"
         ],
-        "chapter11/invalid_labels/extra_credit/switch_duplicate_cases.c": [
+        "chapter_11/invalid_labels/extra_credit/switch_duplicate_cases.c": [
             "switch"
         ],
-        "chapter11/valid/extra_credit/bitwise_long_op.c": [
+        "chapter_11/valid/extra_credit/bitwise_long_op.c": [
             "bitwise"
         ],
-        "chapter11/valid/extra_credit/compound_assign_to_int.c": [
+        "chapter_11/valid/extra_credit/compound_assign_to_int.c": [
             "compound"
         ],
-        "chapter11/valid/extra_credit/compound_assign_to_long.c": [
+        "chapter_11/valid/extra_credit/compound_assign_to_long.c": [
             "compound"
         ],
-        "chapter11/valid/extra_credit/switch_int.c": [
+        "chapter_11/valid/extra_credit/switch_int.c": [
             "switch"
         ],
-        "chapter11/valid/extra_credit/switch_long.c": [
+        "chapter_11/valid/extra_credit/switch_long.c": [
             "switch"
         ],
-        "chapter12/invalid_labels/extra_credit/switch_duplicate_case.c": [
+        "chapter_12/invalid_labels/extra_credit/switch_duplicate_case.c": [
             "switch"
         ],
-        "chapter12/valid/extra_credit/bitwise_unsigned_ops.c": [
+        "chapter_12/valid/extra_credit/bitwise_unsigned_ops.c": [
             "bitwise"
         ],
-        "chapter12/valid/extra_credit/bitwise_unsigned_shift.c": [
+        "chapter_12/valid/extra_credit/bitwise_unsigned_shift.c": [
             "bitwise"
         ],
-        "chapter12/valid/extra_credit/compound_assign_uint.c": [
+        "chapter_12/valid/extra_credit/compound_assign_uint.c": [
             "compound"
         ],
-        "chapter12/valid/extra_credit/switch_uint.c": [
+        "chapter_12/valid/extra_credit/switch_uint.c": [
             "switch"
         ],
-        "chapter13/invalid_types/extra_credit/bitwise_and.c": [
+        "chapter_13/invalid_types/extra_credit/bitwise_and.c": [
             "bitwise"
         ],
-        "chapter13/invalid_types/extra_credit/bitwise_or.c": [
+        "chapter_13/invalid_types/extra_credit/bitwise_or.c": [
             "bitwise"
         ],
-        "chapter13/invalid_types/extra_credit/bitwise_shift_double.c": [
+        "chapter_13/invalid_types/extra_credit/bitwise_shift_double.c": [
             "bitwise"
         ],
-        "chapter13/invalid_types/extra_credit/bitwise_xor.c": [
+        "chapter_13/invalid_types/extra_credit/bitwise_xor.c": [
             "bitwise"
         ],
-        "chapter13/invalid_types/extra_credit/switch_double_case.c": [
+        "chapter_13/invalid_types/extra_credit/switch_double_case.c": [
             "switch"
         ],
-        "chapter13/invalid_types/extra_credit/switch_on_double.c": [
+        "chapter_13/invalid_types/extra_credit/switch_on_double.c": [
             "switch"
         ],        
-        "chapter13/invalid_types/extra_credit/switch_goto_case.c": [
+        "chapter_13/invalid_types/extra_credit/switch_goto_case.c": [
             "switch"
         ],
-        "chapter13/valid/extra_credit/compound_assign_implicit_cast.c": [
+        "chapter_13/valid/extra_credit/compound_assign_implicit_cast.c": [
             "compound"
         ],
-        "chapter13/valid/extra_credit/compound_assign.c": [
+        "chapter_13/valid/extra_credit/compound_assign.c": [
             "compound"
         ],
-        "chapter13/valid/extra_credit/nan.c": [
+        "chapter_13/valid/extra_credit/nan.c": [
             "nan"
         ],
-        "chapter14/invalid_types/extra_credit/bitwise_or_pointer.c": [
+        "chapter_14/invalid_types/extra_credit/bitwise_or_pointer.c": [
             "bitwise"
         ],
-        "chapter14/invalid_types/extra_credit/bitwise_shift_pointer.c": [
+        "chapter_14/invalid_types/extra_credit/bitwise_shift_pointer.c": [
             "bitwise"
         ],
-        "chapter14/invalid_types/extra_credit/compound_divide_pointer.c": [
+        "chapter_14/invalid_types/extra_credit/compound_divide_pointer.c": [
             "compound"
         ],
-        "chapter14/invalid_types/extra_credit/compound_multiply_pointer.c": [
+        "chapter_14/invalid_types/extra_credit/compound_multiply_pointer.c": [
             "compound"
         ],
-        "chapter14/invalid_types/extra_credit/switch_on_pointer.c": [
+        "chapter_14/invalid_types/extra_credit/switch_on_pointer.c": [
             "switch"
         ],
-        "chapter14/valid/extra_credit/compound_assign_through_pointer.c": [
+        "chapter_14/valid/extra_credit/compound_assign_through_pointer.c": [
             "compound"
         ],
-        "chapter14/valid/extra_credit/incr_through_pointer.c": [
+        "chapter_14/valid/extra_credit/incr_through_pointer.c": [
             "increment"
         ],
-        "chapter15/valid/extra_credit/incr_ptr.c":[
+        "chapter_15/valid/extra_credit/incr_ptr.c":[
             "increment"
         ]
     },
-    "requires_mathlib": ["chapter13/valid/function_calls/standard_library_call.c", "chapter13/valid/special_values/copysign.c"]
+    "requires_mathlib": ["chapter_13/valid/function_calls/standard_library_call.c", "chapter_13/valid/special_values/copysign.c"]
 }

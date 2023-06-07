@@ -14,7 +14,7 @@ class TestDeadStoreElimination(common.TackyOptimizationTest):
     """Test cases for dead store elimination.
 
 
-    We'll generate a test method for each C program in the chapter19/dead_store_elimination/ directory.
+    We'll generate a test method for each C program in the chapter_19/dead_store_elimination/ directory.
     Each dynamically generated test calls one of the following main test methods:
 
     * compile_and_run, defined in TestChapter: validate behavior but don't inspect assembly

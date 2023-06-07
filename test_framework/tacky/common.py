@@ -10,7 +10,7 @@ from ..parser import asm, parse
 from ..parser.asm import Opcode, Register
 
 CHAPTER = 19
-TEST_DIR = basic.ROOT_DIR / f"chapter{CHAPTER}"
+TEST_DIR = basic.TEST_DIR / f"chapter_{CHAPTER}"
 
 
 class TackyOptimizationTest(basic.TestChapter):

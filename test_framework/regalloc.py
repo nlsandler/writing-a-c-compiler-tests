@@ -11,7 +11,7 @@ from .parser.asm import Opcode, Register
 from .tacky import common
 
 CHAPTER = 20
-TEST_DIR = basic.ROOT_DIR.joinpath(f"chapter{CHAPTER}").resolve()
+TEST_DIR = basic.TEST_DIR.joinpath(f"chapter_{CHAPTER}").resolve()
 # The wappre script includes a handwritten assembly main function
 # which validates that callee-saved registers are preserved
 WRAPPER_SCRIPT: Path
@@ -37,7 +37,7 @@ def uses_stack(i: asm.AsmItem) -> bool:
 class TestRegAlloc(basic.TestChapter):
     """Test class for register allocation.
 
-    We'll generate a test method for each C program in the chapter20/ directory.
+    We'll generate a test method for each C program in the chapter_20/ directory.
     Each dynamically generated test calls one of the main test methods defined below:
 
     * basic_test: make sure the program behaves correctly but don't inspect the assembly code
@@ -495,8 +495,8 @@ def configure_tests(
     # can't test intermediate stages for reg allocation
     setattr(TestRegAlloc, "exit_stage", None)
 
-    # include all test programs in chapter20/int_only/
-    # if the reader completed part II, also include all the test programs in chapter20/all_types/
+    # include all test programs in chapter_20/int_only/
+    # if the reader completed part II, also include all the test programs in chapter_20/all_types/
     if int_only:
         subdirs = ["int_only"]
     else:

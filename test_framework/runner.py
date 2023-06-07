@@ -12,17 +12,18 @@ from operator import ior
 from pathlib import Path
 from typing import Iterable, Optional, List, Type
 
-import tests
-import tests.regalloc
-import tests.tacky.suite
-from tests.basic import ExtraCredit
-from tests.regalloc import CHAPTER as REGALLOC_CHAPTER
-from tests.tacky.common import CHAPTER as TACKY_OPT_CHAPTER
-from tests.tacky.suite import Optimizations
+import test_framework
+import test_framework.regalloc
+import test_framework.tacky.suite
+from test_framework.basic import ExtraCredit
+from test_framework.regalloc import CHAPTER as REGALLOC_CHAPTER
+from test_framework.tacky.common import CHAPTER as TACKY_OPT_CHAPTER
+from test_framework.tacky.suite import Optimizations
 
 
 def get_optimization_flags(
-    latest_chapter: int, optimization_opt: Optional[tests.tacky.suite.Optimizations]
+    latest_chapter: int,
+    optimization_opt: Optional[test_framework.tacky.suite.Optimizations],
 ) -> list[str]:
     """Return list of command-line optimization options to pass to the compiler under test"""
 
@@ -399,7 +400,7 @@ def main() -> int:
         test_class: Type[unittest.TestCase]
         if chapter < TACKY_OPT_CHAPTER:
             # Part I & II tests of new language features
-            test_class = tests.basic.build_test_class(
+            test_class = test_framework.basic.build_test_class(
                 compiler,
                 chapter,
                 options=cc_options,
@@ -411,7 +412,7 @@ def main() -> int:
             test_suite.addTest(test_instance)
         elif chapter == TACKY_OPT_CHAPTER:
             # for TACKY optimizations we build one test class per optimization
-            test_classes = tests.tacky.suite.build_tacky_test_suite(
+            test_classes = test_framework.tacky.suite.build_tacky_test_suite(
                 compiler,
                 args.optimization,
                 options=cc_options,
@@ -423,11 +424,11 @@ def main() -> int:
                 test_suite.addTest(test_instance)
         elif chapter == REGALLOC_CHAPTER:
             # register allocation tests
-            tests.regalloc.configure_tests(
+            test_framework.regalloc.configure_tests(
                 compiler, cc_options, extra_credit, args.int_only, args.no_coalescing
             )
             test_instance = unittest.defaultTestLoader.loadTestsFromTestCase(
-                tests.regalloc.TestRegAlloc
+                test_framework.regalloc.TestRegAlloc
             )
             test_suite.addTest(test_instance)
         else:

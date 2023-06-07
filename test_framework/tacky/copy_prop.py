@@ -163,7 +163,7 @@ def find_args(
 class TestCopyProp(common.TackyOptimizationTest):
     """Test class for copy propagation.
 
-    We'll generate a test method for each C program in the chapter19/copy_propagation/ directory.
+    We'll generate a test method for each C program in the chapter_19/copy_propagation/ directory.
     Each dynamically generated test calls one of the following main test methods:
 
     * compile_and_run, defined in TestChapter: Validate behavior but don't inspect assembly.

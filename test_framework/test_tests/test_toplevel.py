@@ -15,10 +15,9 @@ from pathlib import Path
 from typing import Union
 
 from ..regalloc import REGALLOC_TESTS
-from ..basic import EXPECTED_RESULTS
+from ..basic import EXPECTED_RESULTS, ROOT_DIR, TEST_DIR
 from ..tacky.dead_store_elim import STORE_ELIMINATED
 
-ROOT_DIR = Path(__file__).parent.parent.parent
 TEST_PATTERN = re.compile("^Ran ([0-9]+) tests", flags=re.MULTILINE)
 FAILURE_PATTERN = re.compile("failures=([0-9]+)")
 
@@ -55,7 +54,7 @@ def get_failure_count(failure: subprocess.CalledProcessError) -> int:
 class TopLevelTest(unittest.TestCase):
     def test_one_chapter(self) -> None:
         """We can run tests for a single chapter with --latest-only"""
-        expected_test_count = len(list((ROOT_DIR / "chapter2").rglob("*.c")))
+        expected_test_count = len(list((TEST_DIR / "chapter_2").rglob("*.c")))
         try:
             testrun = run_test_script("./test_compiler $NQCC --chapter 2 --latest-only")
         except subprocess.CalledProcessError as err:
@@ -66,8 +65,8 @@ class TopLevelTest(unittest.TestCase):
 
     def test_multiple_chapters_intermediate(self) -> None:
         """We can test through an intermediate stage through multiple chapters"""
-        expected_test_count = len(list((ROOT_DIR / "chapter1").rglob("*.c"))) + len(
-            list((ROOT_DIR / "chapter2").rglob("*.c"))
+        expected_test_count = len(list((TEST_DIR / "chapter_1").rglob("*.c"))) + len(
+            list((TEST_DIR / "chapter_2").rglob("*.c"))
         )
         try:
             testrun = run_test_script("./test_compiler $NQCC --chapter 2 --stage parse")
@@ -80,8 +79,8 @@ class TopLevelTest(unittest.TestCase):
     def test_regalloc_failure(self) -> None:
         """Partially-completed NQCC fails register allocation tests"""
         expected_test_count = len(
-            list((ROOT_DIR / "chapter20/int_only").rglob("*.c"))
-        ) + len(list((ROOT_DIR / "chapter20/all_types").rglob("*.c")))
+            list((TEST_DIR / "chapter_20/int_only").rglob("*.c"))
+        ) + len(list((TEST_DIR / "chapter_20/all_types").rglob("*.c")))
         expected_failure_count = len(REGALLOC_TESTS.keys())
         with self.assertRaises(subprocess.CalledProcessError) as err:
             run_test_script("./test_compiler $NQCC_PARTIAL --chapter 20 --latest-only")
@@ -96,7 +95,7 @@ class TopLevelTest(unittest.TestCase):
 
     def test_optimization_success(self) -> None:
         """With optimizations, NQCC passes the chapter 19 tests"""
-        expected_test_count = len(list((ROOT_DIR / "chapter19").rglob("*.c")))
+        expected_test_count = len(list((TEST_DIR / "chapter_19").rglob("*.c")))
         try:
             testrun = run_test_script(
                 "./test_compiler $NQCC --chapter 19 --latest-only"
@@ -110,31 +109,35 @@ class TopLevelTest(unittest.TestCase):
 
 class BadSourceTest(unittest.TestCase):
     # paths that we'll refer to in setup/teardown
-    ret2 = ROOT_DIR / "chapter1/valid/return_2.c"
-    ret0 = ROOT_DIR / "chapter1/valid/return_0.c"
-    hello_world = ROOT_DIR / "chapter9/valid/arguments_in_registers/hello_world.c"
-    dse_relative = Path("chapter19/dead_store_elimination/int_only/simple.c")
-    dse = ROOT_DIR / dse_relative
+    ret2 = TEST_DIR / "chapter_1/valid/return_2.c"
+    ret0 = TEST_DIR / "chapter_1/valid/return_0.c"
+    hello_world = TEST_DIR / "chapter_9/valid/arguments_in_registers/hello_world.c"
+    dse_relative = Path("chapter_19/dead_store_elimination/int_only/simple.c")
+    dse = TEST_DIR / dse_relative
 
-    def setUp(self) -> None:
+    # temporary directory - created in setup and removed in teardown
+    tmpdir: tempfile.TemporaryDirectory[str]
+
+    @classmethod
+    def setUpClass(cls) -> None:
         # save these to a temporary directory before overwriting them
-        self.tmpdir = tempfile.TemporaryDirectory()
-        shutil.copy(self.hello_world, self.tmpdir.name)
-        shutil.copy(self.ret0, self.tmpdir.name)
-        shutil.copy(self.dse, self.tmpdir.name)
+        cls.tmpdir = tempfile.TemporaryDirectory()
+        shutil.copy(cls.hello_world, cls.tmpdir.name)
+        shutil.copy(cls.ret0, cls.tmpdir.name)
+        shutil.copy(cls.dse, cls.tmpdir.name)
 
         # overwrite hello_world with another file that has same retcode but different stdout
-        shutil.copy(self.ret0, self.hello_world)
+        shutil.copy(cls.ret0, cls.hello_world)
 
         # overwrite ret0 with another file with different retcode
-        shutil.copy(self.ret2, self.ret0)
+        shutil.copy(cls.ret2, cls.ret0)
 
         # replace a dead store elimination test w/ a different program that has the same
         # result, but where the dead store can't be eliminated
-        expected_retval = EXPECTED_RESULTS[str(self.dse_relative)]["return_code"]
-        store_to_elim = STORE_ELIMINATED[self.dse.name]
+        expected_retval = EXPECTED_RESULTS[str(cls.dse_relative)]["return_code"]
+        store_to_elim = STORE_ELIMINATED[cls.dse.name]
         with open(
-            ROOT_DIR / "chapter19/dead_store_elimination/int_only/simple.c",
+            TEST_DIR / "chapter_19/dead_store_elimination/int_only/simple.c",
             "w",
             encoding="utf-8",
         ) as f:
@@ -152,22 +155,23 @@ class BadSourceTest(unittest.TestCase):
             """
             )
 
-    def tearDown(self) -> None:
+    @classmethod
+    def tearDownClass(cls) -> None:
         """Restore files we overwrote from temporary directory"""
-        tmp_path = Path(self.tmpdir.name)
-        tmp_ret0 = tmp_path / self.ret0.name
-        tmp_helloworld = tmp_path / self.hello_world.name
-        tmp_dse = tmp_path / self.dse.name
+        tmp_path = Path(cls.tmpdir.name)
+        tmp_ret0 = tmp_path / cls.ret0.name
+        tmp_helloworld = tmp_path / cls.hello_world.name
+        tmp_dse = tmp_path / cls.dse.name
 
-        shutil.copy(tmp_ret0, self.ret0)
-        shutil.copy(tmp_helloworld, self.hello_world)
-        shutil.copy(tmp_dse, self.dse)
-        self.tmpdir.cleanup()
+        shutil.copy(tmp_ret0, cls.ret0)
+        shutil.copy(tmp_helloworld, cls.hello_world)
+        shutil.copy(tmp_dse, cls.dse)
+        cls.tmpdir.cleanup()
 
     def test_bad_retval(self) -> None:
         """Make sure the test fails if retval is different than expected"""
 
-        expected_test_count = len(list((ROOT_DIR / "chapter1").rglob("*.c")))
+        expected_test_count = len(list((TEST_DIR / "chapter_1").rglob("*.c")))
         with self.assertRaises(subprocess.CalledProcessError) as cpe:
             run_test_script("./test_compiler $NQCC --chapter 1")
         actual_test_count = get_test_count(cpe.exception)
@@ -178,8 +182,8 @@ class BadSourceTest(unittest.TestCase):
     def test_bad_stdout(self) -> None:
         """Make sure test fails if stdout is different than expected"""
 
-        expected_test_count = len(list((ROOT_DIR / "chapter9").rglob("*.c"))) - len(
-            list((ROOT_DIR / "chapter9").rglob("**/extra_credit/*.c"))
+        expected_test_count = len(list((TEST_DIR / "chapter_9").rglob("*.c"))) - len(
+            list((TEST_DIR / "chapter_9").rglob("**/extra_credit/*.c"))
         )
         with self.assertRaises(subprocess.CalledProcessError) as cpe:
             run_test_script("./test_compiler $NQCC --chapter 9 --latest-only")
@@ -191,7 +195,7 @@ class BadSourceTest(unittest.TestCase):
     def test_optimization_failure(self) -> None:
         """Test fails if code hasn't been optimized as expected"""
         expected_test_count = len(
-            list((ROOT_DIR / "chapter19/dead_store_elimination").rglob("*.c"))
+            list((TEST_DIR / "chapter_19/dead_store_elimination").rglob("*.c"))
         )
 
         with self.assertRaises(subprocess.CalledProcessError) as err:
@@ -209,7 +213,7 @@ class BadSourceTest(unittest.TestCase):
 
     def test_intermediate(self) -> None:
         """Changed code shouldn't impact intermediate stages"""
-        expected_test_count = len(list((ROOT_DIR / "chapter1").rglob("*.c")))
+        expected_test_count = len(list((TEST_DIR / "chapter_1").rglob("*.c")))
         try:
             testrun = run_test_script("./test_compiler $NQCC --chapter 1 --stage parse")
         except subprocess.CalledProcessError as err:
