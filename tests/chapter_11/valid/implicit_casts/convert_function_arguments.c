@@ -3,30 +3,30 @@
 
 int foo(long a, int b, long c, int d, long e, int f, long g, int h) {
     if (a != -1l)
-        return 0;
+        return 1;
 
     if (b != 2)
-        return 0;
+        return 2;
 
-    if (c != -4294967296)
-        return 0;
+    if (c != -4294967296l)
+        return 3;
 
     if (d != -5)
-        return 0;
+        return 4;
 
-    if (e != -101)
-        return 0;
+    if (e != -101l)
+        return 5;
 
     if (f != -123)
-        return 0;
+        return 6;
 
-    if (g != -10)
-        return 0;
+    if (g != -10l)
+        return 7;
 
     if (h != 1234)
-        return 0;
+        return 8;
 
-    return 1;
+    return 0;
 }
 
 int main(void) {

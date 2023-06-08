@@ -1,6 +1,5 @@
-int main(void) {
-
-    long a = 4294967290l;
+int target(long a) {
+    // a = 4294967290l
 
     /* This expression produces an intermediate result that cannot
      * fit in an int, in order to test that we track the sizes
@@ -12,4 +11,8 @@ int main(void) {
         return 1;
     }
     return 0;
+}
+
+int main(void) {
+    return target(4294967290l);
 }

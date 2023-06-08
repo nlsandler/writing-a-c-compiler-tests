@@ -13,7 +13,7 @@ from typing import Any, Iterable, List
 # NOTE: basic loads EXPECTED_RESULTS from a file so this whole script will fail
 # if expected_results.json doesn't already exist
 from test_framework import basic, regalloc
-from test_framework.basic import TEST_DIR
+from test_framework.basic import ROOT_DIR, TEST_DIR
 
 results: dict[str, dict[str, Any]] = {}
 
@@ -61,23 +61,24 @@ def main() -> None:
     else:
         baseline = args.since_commit or "HEAD"
         list_changed_files = subprocess.run(
-            f"git diff {baseline} --name-only -- chapter_*",
+            f"git diff {baseline} --name-only -- tests/chapter_*",
             shell=True,
             text=True,
             check=True,
-            capture_output=True,
+            capture_output=True
         )
         # also get untracked files
         list_new_files = subprocess.run(
-            "git ls-files -o -- chapter_*",
+            "git ls-files -o -- tests/chapter_*",
             shell=True,
             text=True,
             check=True,
-            capture_output=True,
+            capture_output=True
         )
         changed_files = (
             list_changed_files.stdout.split() + list_new_files.stdout.split()
         )
+
         # include each file from all_valid progs if:
         # - it changed
         # - it's a client and the library changed, or vice versa
@@ -85,7 +86,7 @@ def main() -> None:
         # - a .h file in the same directory changed (use this as hacky shorthand for whether header for this particular file changed)
         progs = []
         for p in all_valid_progs:
-            rel_path = p.relative_to(TEST_DIR)
+            rel_path = p.relative_to(ROOT_DIR)
             if (
                 str(rel_path) in changed_files
                 or str(rel_path).replace(".c", "_client.c") in changed_files

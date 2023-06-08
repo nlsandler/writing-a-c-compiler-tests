@@ -9,8 +9,18 @@ int main(void) {
     int d = 10;
 
     /* Make sure every variable has the right value */
-    if (a != 8589934592l || b != -1 || c != -8589934592l || d != 10)
-        return 0;
+    if (a != 8589934592l) {
+        return 1;
+    }
+    if (b != -1){
+        return 2;
+    }
+    if (c != -8589934592l) {
+        return 3;
+    } 
+    if (d != 10) {
+        return 4;
+    }
 
     /* update every variable */
     a = -a;
@@ -19,8 +29,18 @@ int main(void) {
     d = d + 10;
 
     /* Make sure the updated values are correct */
-    if (a != -8589934592l || b != -2 || c != 2 || d != 20)
-        return 0;
+    if (a != -8589934592l) {
+        return 5;
+    }
+    if (b != -2) {
+        return 6;
+    }
+    if (c != 2) {
+        return 7;
+    }
+    if (d != 20) {
+        return 8;
+    }
 
-    return 1;
+    return 0;
 }
