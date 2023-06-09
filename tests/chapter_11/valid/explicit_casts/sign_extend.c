@@ -1,21 +1,23 @@
-long sign_extend(int i) {
-    return (long) i;
+long sign_extend(int i, long expected) {
+    long extended = (long) i;
+    return (extended == expected);
 }
 
 
 int main(void) {
     /* Converting a positive or negative int to a long preserves its value */ 
-
-    int pos = 10;
-    long pos_long = sign_extend(pos);
-    int neg = -10;
-    long neg_long = sign_extend(neg);
-
-    if (pos_long != 10l)
+    if (!sign_extend(10, 10l)) {
         return 1;
+    }
 
-    if (pos_long + neg_long != 0l)
+    if (!sign_extend(-10, -10l)) {
         return 2;
+    }
 
+    /* sign-extend a constant to make sure we've implemented rewrite rule for movsx correctly */
+    long l = (long) 100;
+    if (l != 100l) {
+        return 3;
+    }
     return 0;
 }

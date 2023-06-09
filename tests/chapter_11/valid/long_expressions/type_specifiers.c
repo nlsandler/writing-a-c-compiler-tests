@@ -25,8 +25,33 @@ int main(void) {
     extern long a;
     a = 4;
 
+    /* make sure we can use long type specifier in for loop initializer
+     * i is 2^40 so this loop should have 41 iterations
+    */
+   int sum = 0;
+    for (long i = 1099511627776l; i > 0; i = i / 2) {
+        sum = sum + 1;
+    }
+
     /* Make sure everything has the expected value */
-    return (x == 1 && y == 2 && z == 3
-            && a == 4
-            && my_function(x, y, z) == 6);
+    if (x != 1) {
+        return 1;
+    }
+
+    if (y != 2) {
+        return 2;
+    }
+
+    if (a != 4) {
+        return 3;
+    }
+
+    if (my_function(x,  y, z) != 6) {
+        return 4;
+    }
+
+    if (sum != 41) {
+        return 5;
+    }
+    return 0;
 }

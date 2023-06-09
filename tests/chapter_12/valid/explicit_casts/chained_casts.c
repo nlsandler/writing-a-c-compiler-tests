@@ -1,8 +1,10 @@
 /* The order in which multiple casts are applied matters */
 
+// start with a global variable so we can't optimize away casts in Part III
+unsigned int ui = 4294967200u; // 2^32 - 96
+
 int main(void) {
 
-    unsigned int ui = 4294967200u;
 
     /* In this case we
      * 1. convert ui to a signed int by computing 2^32 - ui, producing -96
@@ -10,7 +12,7 @@ int main(void) {
      * Note that if we cast ui directly to a signed long, its value wouldn't change
      */
     if ((long) (signed) ui != -96l)
-        return 0;
+        return 1;
 
     /* In this case we
      * 1. convert ui to a signed int by computing 2^32 - ui, producing -96
@@ -19,7 +21,7 @@ int main(void) {
      * wouldn't change
      */
     if ((unsigned long) (signed) ui != 18446744073709551520ul)
-        return 0;
+        return 2;
 
-    return 1;
+    return 0;
 }

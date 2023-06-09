@@ -37,20 +37,20 @@ unsigned ui2 = 9223372039002259606ul;
 int main(void)
 {
     if (u != 2147483660u)
-        return 0;
+        return 1;
     if (i != -2147483646)
-        return 0;
+        return 2;
     if (l != -9223372036854775716l)
-        return 0;
+        return 3;
     if (l2 != 2147483650l)
-        return 0;
+        return 4;
     if (ul != 4294967294ul)
-        return 0;
+        return 5;
     if (i2 != -2147483498)
-        return 0;
+        return 6;
     if (ul2 != 9223372036854775798ul)
-        return 0;
+        return 7;
     if (ui2 != 2147483798u)
-        return 0;
-    return 1;
+        return 8;
+    return 0;
 }

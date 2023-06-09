@@ -36,9 +36,9 @@ int uint_max_leq_l(void) {
     return (4294967295l <= l);
 }
 
-int l_gt_l2(void) {
+int l_eq_l2(void) {
     /* Exercise rewrite rule for cmp where both operands are in memory */
-    return (l > l2);
+    return (l == l2);
 }
 
 int main(void) {
@@ -65,8 +65,8 @@ int main(void) {
     if (!uint_max_leq_l()) {
         return 6;
     }
-    l2 = -9223372036854775807l;
-    if (!l_gt_l2()) {
+    l2 = l;
+    if (!l_eq_l2()) {
         return 7;
     }
     return 0;

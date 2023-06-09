@@ -5,31 +5,39 @@
  * Implicit conversions of function arguments are in a separate test case, convert_function_arguments.c
  */
 
-int return_truncated_long(void) {
-    long l = 4294967298; // 2^32 + 2
-    return l; // this truncates l to an int with value 2
+int return_truncated_long(long l) {
+    return l;
 }
 
-long return_extended_int(void) {
-    int i = -10;
-    return i; // this sign-extends i to a long, preserving its value
+long return_extended_int(int i) {
+    return i;
 }
+
+int truncate_on_assignment(long l, int expected) {
+    int result = l; // implicit conversion truncates l
+    return result == expected;
+}
+
 int main(void) {
     
-    /* return_truncated_long() returns 2,
-     * the assignment statement converts this to a long
+    // return statements
+
+    /* return_truncated_long will truncate 2^32 + 2 to 2
+     * assigning it to result converts this to a long
      * but preserves its value.
      */
-    long result = return_truncated_long();
+    long result = return_truncated_long(4294967298l);
     if (result != 2l) {
         return 1;
     }
 
-    /* return_extended_int returns -10 */
-    result = return_extended_int();
+    /* return_extended_int sign-extends its argument, preserving its value */
+    result = return_extended_int(-10);
     if (result != -10) {
         return 2;
     }
+
+    // initializer
 
     /* This is 2^32 + 2,
      * it will be truncated to 2 by assignment
@@ -39,10 +47,10 @@ int main(void) {
         return 3;
     }
 
-    long l = 17179869184l; // 2**34
-    /* l will be truncated to 0 on assignment */
-    i = l;
-    if (i != 0) {
+    // assignment expression
+
+    // 2^34 will be truncated to 0 when assigned to an int
+    if (!truncate_on_assignment(17179869184l, 0)) {
         return 4;
     }
 
