@@ -1,8 +1,5 @@
 /* Test that we correctly find the common type in binary expressions */
 
-/* Use global variables for our operands so this test doesn't rely on
- * correct argument passing for longs but  won't get optimized away in part III
- */
 long l;
 int i;
 

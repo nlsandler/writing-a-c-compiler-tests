@@ -1,14 +1,28 @@
 /* Test conversions from double to the signed integer types */
+
+int double_to_int(double d) {
+    return (int) d;
+}
+
+long double_to_long(double d) {
+    return (long) d;
+}
+
 int main(void) {
 
     // when truncated, d will fit in a long
     // but not an int
-    double d = 2148429099.3;
-    long l = (long) d;
+    long l = double_to_long(2148429099.3);
+    // should be truncated towards 0
+    if (l != 2148429099l) {
+        return 1;
+    }
 
-    double e = -200000.9999;
-    int i = (int) e;
+    int i = double_to_int(-200000.9999);
+    // negative value should be truncated towards 0
+    if (i != -200000) {
+        return 2;
+    }
 
-    // both values should be truncated towards zero
-    return l == 2148429099l && i == -200000;
+    return 0;
 }

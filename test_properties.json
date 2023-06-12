@@ -327,7 +327,7 @@
         ],
         "chapter_13/invalid_types/extra_credit/switch_on_double.c": [
             "switch"
-        ],        
+        ],
         "chapter_13/invalid_types/extra_credit/switch_goto_case.c": [
             "switch"
         ],
@@ -361,9 +361,13 @@
         "chapter_14/valid/extra_credit/incr_through_pointer.c": [
             "increment"
         ],
-        "chapter_15/valid/extra_credit/incr_ptr.c":[
+        "chapter_15/valid/extra_credit/incr_ptr.c": [
             "increment"
         ]
     },
-    "requires_mathlib": ["chapter_13/valid/function_calls/standard_library_call.c", "chapter_13/valid/special_values/copysign.c"]
+    "requires_mathlib": [
+        "chapter_13/valid/function_calls/standard_library_call.c",
+        "chapter_13/valid/special_values/copysign.c",
+        "chapter_13/valid/libraries/double_params_and_result.c"
+    ]
 }

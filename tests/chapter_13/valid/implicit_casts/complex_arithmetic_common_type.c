@@ -3,8 +3,9 @@
  * for each sub-expression
  */
 
+unsigned long ul = 10000ul;
 int main(void) {
-    unsigned long ul = 10000ul;
+
     int i = -50;
     /* When we calculate ul + i, we first promote
      * i to an unsigned long with value 2^64 - 50,

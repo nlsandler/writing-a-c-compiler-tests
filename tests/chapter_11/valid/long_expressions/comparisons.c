@@ -1,8 +1,5 @@
 /* Test comparisons between longs, making sure to exercise all rewrite rules for cmp */
 
-/* Use global variables for our operands so this test doesn't rely on
- * correct argument passing for longs but  won't get optimized away in part III
- */
 long l;
 long l2;
 

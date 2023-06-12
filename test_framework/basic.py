@@ -30,6 +30,9 @@ with open(ROOT_DIR / "test_properties.json", "r", encoding="utf-8") as f:
 
 # main TestChapter class + related utilities
 
+def needs_mathlib(prog: Path) -> bool:
+    key = str(prog.relative_to(TEST_DIR))
+    return key in REQUIRES_MATHLIB and not IS_OSX
 
 def gcc_build_obj(prog: Path) -> None:
     """Use the 'gcc' command to compile source file to an object file.
@@ -265,8 +268,7 @@ class TestChapter(unittest.TestCase):
         """Compile a valid test program, run it, and validate the results"""
 
         # include -lm for standard library test on linux
-        key = str(source_file.relative_to(TEST_DIR))
-        if key in REQUIRES_MATHLIB and not IS_OSX:
+        if needs_mathlib(source_file):
             cc_opt = "-lm"
         else:
             cc_opt = None
@@ -314,9 +316,12 @@ class TestChapter(unittest.TestCase):
         gcc_build_obj(other_file)
 
         # link both object files and run resulting executable
-        result = gcc_compile_and_run(
+        gcc_args = [
             file_under_test.with_suffix(".o"), other_file.with_suffix(".o")
-        )
+        ]
+        if needs_mathlib(file_under_test) or needs_mathlib(other_file):
+            gcc_args.append("-lm")
+        result = gcc_compile_and_run(*gcc_args)
 
         # validate results; we pass lib_source as first arg here
         # b/c it's the key for library tests in EXPECTED_RESULTS

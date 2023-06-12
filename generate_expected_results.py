@@ -114,7 +114,7 @@ def main() -> None:
     # iterate over all valid programs
     for prog in progs:
         print(prog)
-        source_files = [prog]
+        source_files_and_opts = [prog]
         if "libraries" in prog.parts:
             if prog.name.endswith("_client.c"):
                 # if this is the client, don't compile here,
@@ -123,16 +123,19 @@ def main() -> None:
 
             # compile client and library together
             client = prog.parent.joinpath(prog.name.replace(".c", "_client.c"))
-            source_files.append(client)
+            source_files_and_opts.append(client)
 
         if "chapter_20" in prog.parts:
             # we may need to include wrapper script and other library files
             extra_libs = lookup_libs(prog)
-            source_files.extend(extra_libs)
+            source_files_and_opts.extend(extra_libs)
+
+        if any(basic.needs_mathlib(p) for p in source_files_and_opts):
+            source_files_and_opts.append("-lm")
 
         # compile and run the program
         try:
-            result = basic.gcc_compile_and_run(*source_files)
+            result = basic.gcc_compile_and_run(*source_files_and_opts)
 
             # record the result
 
@@ -144,7 +147,7 @@ def main() -> None:
             results[key] = result_dict
         finally:
             # delete executable
-            exe = source_files[0].with_suffix("")
+            exe = source_files_and_opts[0].with_suffix("")
             Path.unlink(exe)
 
     with open("expected_results.json", "w", encoding="utf-8") as f:

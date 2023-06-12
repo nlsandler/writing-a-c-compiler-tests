@@ -1,6 +1,6 @@
-// Test an explicitly initialized static double
+// Test reading and writing a local static double
 
-// Return old value increment by one
+// Return old value, then increment by one
 double return_static_variable(void) {
     static double d = 0.5;
     double ret = d;

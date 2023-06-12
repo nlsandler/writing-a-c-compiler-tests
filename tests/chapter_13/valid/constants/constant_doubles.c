@@ -13,9 +13,9 @@ int main(void) {
 
     /* Make sure they all have the correct value */
     if (! (a == b && a == c && a == d) )
-        return 0;
+        return 1;
     if (a + b + c + d != 4.0)
-        return 0;
+        return 2;
 
     /* Several ways to define .125 */
     double e = .125;
@@ -25,10 +25,10 @@ int main(void) {
 
     /* Make sure they all have the correct value */
     if (! (e == f && e == g && e == h) )
-        return 0;
+        return 3;
     if (e + f + g + h != 0.5)
-        return 0;
+        return 4;
 
-    return 1;
+    return 0;
 
 }

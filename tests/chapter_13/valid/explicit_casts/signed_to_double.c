@@ -1,15 +1,26 @@
 /* Test conversions from signed integer types to double */
+double int_to_double(int i) {
+    return (double) i;
+}
 
+double long_to_double(long l) {
+    return (double) l;
+}
 int main(void) {
-    int i = -100000;
-    double d = (double) i;
 
-    // Cast a long to the closest representable double,
-    // which is -9007199254751228.
-    // NOTE: most of our type conversion tests cast variables to double.
-    // Here we include a test to cast a constant to double,
-    // to make sure we rewrite cvtsi2sd if its operand is a constant
-    double d2 = (double) -9007199254751227l;
+    if (int_to_double(-100000) != -100000.0) {
+        return 1;
+    }
 
-    return (d == -100000.0 && d2 == -9007199254751228.0);
+    if (long_to_double(-9007199254751227l) != -9007199254751228.0) {
+        return 2;
+    }
+
+    // cast a constant to double to exercise rewrite rule for cvtsi2sd $const, dst
+    double d = (double) 1152921504606846977l; // 2^60 + 1; nearest double is 2^60
+    if (d != 1152921504606846976.0) {
+        return 3;
+    }
+
+    return 0;
 }

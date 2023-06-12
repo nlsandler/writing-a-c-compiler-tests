@@ -1,12 +1,5 @@
 /* Test that we correctly find the common type of different integers */
 
-
-// uint, int
-// uint, long
-// uint, ulong
-// int, ulong
-// ulong, long
-
 int int_gt_uint(int i, unsigned int u) {
     // common type is unsigned int
     return i > u;

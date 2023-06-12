@@ -1,9 +1,6 @@
 /* Test basic arithmetic operations on long integers
  * when one or both operands and the result are outside the range of int */
 
-/* Use global variables for our operands so this test doesn't rely on
- * correct argument passing for longs but  won't get optimized away in part III
- */
 long a;
 long b;
 

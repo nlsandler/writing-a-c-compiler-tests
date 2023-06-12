@@ -1,9 +1,5 @@
 /* Test comparisons of unsigned integers */
 
-/* Use global variables for our operands so this test doesn't rely on
- * correct argument passing for longs but  won't get optimized away in part III
- */
-
 unsigned int one_hundred = 100u;
 unsigned int large_uint = 4294967294u; // interpreted as a signed int, this would be -2
 
