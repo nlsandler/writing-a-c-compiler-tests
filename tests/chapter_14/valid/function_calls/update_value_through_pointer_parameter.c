@@ -8,5 +8,11 @@ int update_value(int *ptr) {
 int main(void) {
     int x = 20;
     int result = update_value(&x);
-    return (x == 10 && result == 20);
+    if (result != 20) {
+        return 1;
+    }
+    if (x != 10) {
+        return 2;
+    }
+    return 0;
 }

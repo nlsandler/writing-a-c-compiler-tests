@@ -13,10 +13,18 @@ int main(void) {
 
     // assign to dereferenced pointers
     *i_ptr = 10;
-    *l_ptr = 20;
-    *d_ptr = 30.0;
+    *l_ptr = -20;
+    *d_ptr = 30.1;
 
     // check that pointed-to objects have updated values
-    return (i == 10 && l == 20 && d == 30.0);
-
+    if (i != 10) {
+        return 1;
+    }
+    if (l != -20) {
+        return 2;
+    }
+    if (d != 30.1) {
+        return 3;
+    }
+    return 0;
 }

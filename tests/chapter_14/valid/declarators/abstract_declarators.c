@@ -7,10 +7,10 @@ int main(void) {
      * to cast 0 to a pointer to unsigned long
      */
     if (x != (unsigned long (*)) 0)
-        return 0;
+        return 1;
 
     if (x != (long unsigned int ((((*))))) 0)
-        return 0;
+        return 2;
 
     double ***y = 0;
 
@@ -18,13 +18,13 @@ int main(void) {
      * to cast 0 to (double ***)
      */
     if (y != (double *(**)) 0)
-        return 0;
+        return 3;
 
     if (y != (double (***)) 0)
-        return 0;
+        return 4;
 
     if ((double (*(*(*)))) 0 != y)
-        return 0;
+        return 5;
 
-    return 1;
+    return 0;
 }

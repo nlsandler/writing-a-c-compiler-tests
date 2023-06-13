@@ -8,14 +8,14 @@ int main(void) {
     int *x_ptr = return_pointer(&x);
 
     if (*x_ptr != 10)
-        return 0;
+        return 1;
 
     x = 100;
     if (*x_ptr != 100)
-        return 0;
+        return 2;
 
     if (x_ptr != &x)
-        return 0;
+        return 3;
 
-    return 1;
+    return 0;
 }

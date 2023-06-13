@@ -8,7 +8,7 @@ int *i2 = 0u;
 int expect_null_param(int *val)
 {
     // validate that this is a null pointer
-    return (val == 0u);
+    return (val == 0ul);
 }
 
 long *return_null_ptr(void)

@@ -1,8 +1,6 @@
 /* Test that we can parse a variety of function and variable declarators */
 
-/* Multiple declarations of the function 'return_3'
- * These declarations all have the same type so they don't conflict.
- */
+/* Multiple equivalent declarations of the function 'return_3' */
 int return_3(void);
 int(return_3(void));
 int(return_3)(void);
@@ -11,10 +9,9 @@ int((return_3))(void)
     return 3;
 }
 
-/* Multiple declarations of the function 'two_pointers'
- * These declarations all have the same type so they don't conflict
- */
-long l = 100;
+
+long l = 100; // used below
+/* Multiple equivalent declarations of the function 'two_pointers' */
 long *two_pointers(double val, double *ptr)
 {
     *ptr = val;
@@ -24,9 +21,7 @@ long(*two_pointers(double val, double(*d)));
 long *(two_pointers)(double val, double *(d));
 long *(two_pointers)(double val, double(*(d)));
 
-/* Multiple declarations of the function 'pointers_to_pointers'
- * These declarations all have the same type so they don't conflict
- */
+/* Multiple equivalent declarations of the function 'pointers_to_pointers' */
 unsigned **pointers_to_pointers(int **p)
 {
     static unsigned u;
@@ -57,16 +52,41 @@ int main(void)
 
     /* Use functions and variables we just declared */
     i = return_3(); // assign 3 to i
-    if (i != 3)
-        return 0;
+    if (i != 3) // this also updates ptr_to_iptr
+        return 1;
+
+    if (*i_ptr != 3) {
+        return 2;
+    }
 
     // call two_pointers and validate the results
     l_ptr = two_pointers(d2, d_ptr);
-    if (*l_ptr != 100 || *d_ptr != 10.0)
-        return 0;
+    // l_ptr is a pointer to static variable l declared above
+    if (l_ptr != &l) {
+        return 3;
+    }
+
+    if (*l_ptr != 100) {
+        return 4;
+    }
+
+    // two_pointers also assigned value of d2 (10.0) to
+    // object referenced by d_ptr, which is d1
+    if (*d_ptr != 10.0) {
+        return 5;
+    }
+
+    if (d1 != 10.0) {
+        return 6;
+    }
+
 
     // call pointers_to_pointers and validate the results
     ptr_to_uptr = pointers_to_pointers(ptr_to_iptr);
 
-    return **ptr_to_uptr == 3;
+    if (**ptr_to_uptr != 3) {
+        return 7;
+    }
+
+    return 0;
 }

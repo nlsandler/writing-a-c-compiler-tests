@@ -12,5 +12,14 @@ int main(void) {
     double d1 = return_static_variable();
     double d2 = return_static_variable();
     double d3 = return_static_variable();
-    return (d1 == 0.5 && d2 == 1.5 && d3 == 2.5);
+    if (d1 != 0.5) {
+        return 1;
+    }
+    if (d2 != 1.5) {
+        return 2;
+    }
+    if (d3 != 2.5) {
+        return 3;
+    }
+    return 0;
 }

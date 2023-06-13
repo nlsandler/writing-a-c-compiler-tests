@@ -1,15 +1,30 @@
 /* Test comparisons to several null pointer constants */
+
+double *get_null_pointer(void) {
+    return 0;
+}
+
 int main(void)
 {
     double x;
-    double *null = 0;
+    double *null = get_null_pointer();
     double *non_null = &x;
 
-    int eq_zero_true = null == 0;
-    int eq_zero_false = non_null == 0l;
+    if (non_null == 0) {
+        return 1;
+    }
 
-    int neq_zero_true = 0u != non_null;
-    int neq_zero_false = null != 0ul;
+    if (!(null == 0l)) {
+        return 2;
+    }
 
-    return eq_zero_true && !eq_zero_false && neq_zero_true && !neq_zero_false;
+    if (!(non_null != 0u)) {
+        return 3;
+    }
+
+    if (null != 0ul) {
+        return 4;
+    }
+
+    return 0;
 }

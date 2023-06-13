@@ -1,7 +1,8 @@
 int main(void)
 {
-    // can't assign an unsigned long to a pointer even though
-    // it could conceivably be a valid memory address
+    /* It's illegal to assign an unsigned long to a pointer,
+     * even if it might be a valid memory address
+     */
     int *ptr = 140732898195768ul;
     return 0;
 }
