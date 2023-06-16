@@ -1,7 +1,9 @@
 int main(void)
 {
-    // can't initialize a scalar expression w/ a compound initializer
-    // NOTE: this is undefined but technically not a constraint violation so maybe don't test it?
+    // It's legal to initialize a scalar with a single value wrapped in braces, e.g.
+    // int x = {1};
+    // although our implementation doesn't support this form.
+    // However, it's illegal to initialize a scalar with a compound initializer containing multiple values.
     int x = {1, 2, 3};
     return x;
 }

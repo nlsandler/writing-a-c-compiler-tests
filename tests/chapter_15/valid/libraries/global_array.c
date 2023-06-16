@@ -1,7 +1,9 @@
-long x = 1000;
-long *arr[4] = {0, 0, 0, 0};
+long arr[4] = {1, 2, 3, 4};
 
-long *set_pointer(void) {
-    arr[2] = &x;
-    return arr[1];
+int double_each_element(void) {
+    for (int i = 0; i < 4; i = i + 1) {
+        arr[i] = arr[i] * 2;
+    }
+
+    return 0;
 }

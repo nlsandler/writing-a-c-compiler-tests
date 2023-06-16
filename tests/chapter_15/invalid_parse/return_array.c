@@ -1,6 +1,2 @@
-/* could conceivably be type error in some implementations? */
+/* In our implementation this is a parse error; in others it could be a type error. */
 int foo(void)[3];
-int main(void)
-{
-    return foo()[2];
-}

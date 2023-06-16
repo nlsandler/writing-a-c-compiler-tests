@@ -1,7 +1,6 @@
 int main(void)
 {
     long arr[10];
-    // cast to array of pointers  to int
-    // casting to arrays in invalid
+    // casts to array type are illegal
     return (int *[10])arr;
 }
