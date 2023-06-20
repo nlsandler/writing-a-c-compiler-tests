@@ -1,7 +1,20 @@
+/* Make sure we can handle control characters that are in the source character set */
+
 int main(void)
 {
-    char tab = '	';
-    char vertical_tab = '';
-    char form_feed = '';
-    return (tab == '\t' && vertical_tab == '\v' && form_feed == '\f');
+    int tab = '	';
+    int vertical_tab = '';
+    int form_feed = '';
+    if (tab != '\t') {
+        return 1;
+    }
+    if (vertical_tab != '\v') {
+        return 2;
+    }
+
+    if (form_feed != '\f') {
+        return 3;
+    }
+
+    return 0;
 }

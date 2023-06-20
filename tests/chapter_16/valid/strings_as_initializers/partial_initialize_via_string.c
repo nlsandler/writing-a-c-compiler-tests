@@ -1,97 +1,89 @@
-// make sure that when we initialize an array from a string literal,
-// we zero out elements that aren't explicitly initialized
-// include static/automatic/nested arrays w/ all three character types
+/* Test that when we initialize an array from a string literal,
+ * we zero out elements that aren't explicitly initialized.
+ * */
 
-static char stat[5] = "hi";
-static signed char nested_stat[3][4] = {"", "bc"}; // empty string just initializes to null byte
+static char static_arr[5] = "hi";
+int test_static(void) {
+    return (static_arr[0] == 'h' && static_arr[1] == 'i' &&
+            !(static_arr[2] || static_arr[3] || static_arr[4]));
+}
 
-int main(void)
-{
-
-    // validate stat
-    if (stat[0] != 'h' || stat[1] != 'i' || stat[2] || stat[3] || stat[4])
-        return 1;
-
-    // validate nested_stat
+static signed char nested_static_arr[3][4] = {
+    "", "bc"};  // empty string just initializes to null byte
+int test_static_nested(void) {
     for (int i = 0; i < 3; i = i + 1)
-        for (int j = 0; j < 4; j = j + 1)
-        {
+        for (int j = 0; j < 4; j = j + 1) {
+            signed char c = nested_static_arr[i][j];
 
-            signed char c = nested_stat[i][j];
-            if (i == 0)
-            {
-                if (j == 0)
-                {
-                    if (c)
-                        return 2;
-                }
+            // nested_static_arr[1][0] and nested_static_arr[1][1]
+            // have values from initializer; all other elements are 0
+            signed char expected = 0;
+            if (i == 1 && j == 0) {
+                expected = 'b';
+            } else if (i == 1 && j == 1) {
+                expected = 'c';
             }
-            else if (i == 1)
-            {
-                if (j == 0 && c != 'b')
-                {
-                    return 4;
-                }
-                else if (j == 1 && c != 'c')
-                {
-                    return 5;
-                }
-                else if (j > 1 && c)
-                {
-                    return 6;
-                }
-            }
-            else if (i > 1 && c)
-            {
-                return 7;
+
+            if (c != expected) {
+                return 0;  // failure
             }
         }
 
+    return 1;  // success
+}
+
+int test_automatic(void) {
     unsigned char aut[4] = "ab";
-    // validate aut
-    if (aut[0] != 'a' || aut[1] != 'b' || aut[2] || aut[3])
-        return 8;
+    // first two elements have values from initializer, last two are 0
+    return (aut[0] == 'a' && aut[1] == 'b' && !(aut[2] || aut[3]));
+}
 
+int test_automatic_nested(void) {
     signed char nested_auto[2][2][4] = {{"foo"}, {"x", "yz"}};
-    // validate nested auto
-    signed char *foo = nested_auto[0][0];
-    if (foo[0] != 'f' || foo[1] != 'o' || foo[2] != 'o' || foo[3])
-        return 9;
-    for (int i = 0; i < 2; i = i + 1)
-        for (int j = 0; j < 2; j = j + 1)
-        {
-            if (i == 0 && j == 0)
-            {
-                // this is "foo", which we already validated
-                continue;
-            }
-            for (int k = 0; k < 4; k = k + 1)
-            {
+    for (int i = 0; i < 2; i = i + 1) {
+        for (int j = 0; j < 2; j = j + 1) {
+            for (int k = 0; k < 4; k = k + 1) {
                 signed char c = nested_auto[i][j][k];
-                if (i == 1 && j == 0 && k == 0)
-                {
-                    if (c != 'x')
-                        return 10;
+                signed char expected = 0;
+                if (i == 0 && j == 0) {
+                    if (k == 0) {
+                        expected = 'f';
+                    } else if (k == 1 || k == 2) {
+                        expected = 'o';
+                    }
+                } else if (i == 1 && j == 0 && k == 0) {
+                    expected = 'x';
+                } else if (i == 1 && j == 1 && k == 0) {
+                    expected = 'y';
+                } else if (i == 1 && j == 1 && k == 1) {
+                    expected = 'z';
                 }
-                else if (i == 1 && j == 1)
-                {
-                    if (k == 0 && c != 'y')
-                    {
-                        return 11;
-                    }
-                    else if (k == 1 && c != 'z')
-                    {
-                        return 12;
-                    }
-                    else if (k > 1 && c)
-                    {
-                        return 13;
-                    }
+
+                if (c != expected) {
+                    return 0;  // failure
                 }
-                else if (c)
-                    return 14;
             }
         }
+    }
+    return 1;  // success
+}
+
+int main(void) {
+    if (!test_static()) {
+        return 1;
+    }
+
+    if (!test_static_nested()) {
+        return 2;
+    }
+
+    if (!test_automatic()) {
+        return 3;
+    }
+
+    if (!test_automatic_nested()) {
+        return 4;
+    }
 
     return 0;
 }

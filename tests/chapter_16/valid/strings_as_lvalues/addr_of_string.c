@@ -1,4 +1,16 @@
+/* Test that we can take the address of a string literal and annotate it with the correct type */
+
+int puts(char *s);
+
 int main(void) {
-    char (*string_literal)[12] = &"hello world";
-    return string_literal[0][3];
+    char(*str)[16] = &"Sample\tstring!\n";
+    puts(*str);
+
+    // get pointer to one-past-the-end of this string
+    char (*one_past_the_end)[16] = str + 1;
+    char *last_byte_pointer = (char *)one_past_the_end - 1; // now get pointer to the last byte
+    if (*last_byte_pointer != 0) {
+        return 1;
+    }
+    return 0;
 }

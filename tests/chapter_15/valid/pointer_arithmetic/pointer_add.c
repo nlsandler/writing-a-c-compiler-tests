@@ -1,271 +1,199 @@
 /* Test pointer addition and subtraction to specify array indices
- * (but not subtracting two pointers to get the distance between them)*/
+ * (but not subtracting two pointers to get the distance between them)
+ * */
 
 /* Addition */
 
-// basic pointer addition test case
-int add_constant_to_pointer(long *ptr, long expected) {
-    ptr = ptr + 10;
-    if ((*ptr) != expected) {
-        return 1;
-    }
-    return 0;
+/* basic pointer addition */
+int test_add_constant_to_pointer(void) {
+    long long_arr[12] = {0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 13};
+    long *ptr = long_arr + 10;
+    return *ptr == 13;
 }
 
-// add negative index to pointer
-int add_negative_index(unsigned *ptr, unsigned expected) {
-    ptr = ptr + -10;
-    if ((*ptr) != expected) {
-        return 2;
-    }
-    return 0;    
+/* add negative index to pointer */
+int test_add_negative_index(void) {
+    unsigned unsigned_arr[12] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 42};
+    unsigned *end_ptr = unsigned_arr + 12;
+
+    unsigned *ptr = end_ptr + -10;
+    return *ptr == 2;
 }
 
-// it doesn't matter whether we add pointer to int or vice versa
-int add_pointer_to_int(int *ptr, int index, int expected) {
-    int *ptr1 = ptr + index;
-    int *ptr2 = index + ptr;
-    if (ptr1 != ptr2) {
-        return 3;
-    }
+/* it doesn't matter whether we add pointer to int or vice versa */
+int test_add_pointer_to_int(void) {
+    int int_arr[5] = {0, 98, 99};
+    int *ptr1 = int_arr + 2;
+    int *ptr2 = 2 + int_arr;
 
-    if (*ptr2 != expected) {
-        return 4;
-    }
-
-    return 0;
+    return (ptr1 == ptr2 && *ptr2 == 99);
 }
 
-// array index can be any integer type, not just int
-int add_different_index_types(double *ptr, double expected) {
-    double *ptr1 = ptr + 5;
-    double *ptr2 = ptr + 5l;
-    double *ptr3 = ptr + 5u;
-    double *ptr4 = ptr + 5ul;
+/* array index can be any integer type, not just int */
+int test_add_different_index_types(void) {
+    double double_arr[11] = {0, 0, 0, 0, 0, 6.0};
 
-    if (ptr1 != ptr2) {
-        return 5;
-    }
+    // four equivalent expresssions that should produce the same pointer
+    double *ptr1 = double_arr + 5;
+    double *ptr2 = double_arr + 5l;
+    double *ptr3 = double_arr + 5u;
+    double *ptr4 = double_arr + 5ul;
 
-    if (ptr1 != ptr3) {
-        return 6;
-    }
-
-    if (ptr1 != ptr4) {
-        return 7;
-    }
-    if (*ptr4 != expected) {
-        return 8;
-    }
-
-    return 0;
+    return (ptr1 == ptr2 && ptr1 == ptr3 && ptr1 == ptr4 && *ptr4 == 6.0);
 }
 
-// some helpers for following test case
-int get_index(void) {
-    static int index = 0;
-    int result = index;
-    index = index + 1;
-    return result;
+/* pointer addition where pointer and index are both complex expressions */
+int test_add_complex_expressions(void) {
+    // use some static variables and function calls so operands
+    // won't be constant-folded away in Part III
+    static int flag;  // 0
+    int i = -2;
+    int *small_int_ptr = &i;
+    extern int return_one(void);
+    extern int *get_elem1_ptr(int *arr);
+    extern int *get_elem2_ptr(int *arr);
+    static int arr[4] = {1, 2, 3, 4};
+    // ptr = 1 + -2 + (0 ? (arr + 1) : (arr + 2))
+    //  => -1 + (arr + 2)
+    //  => arr + 1
+    int *ptr = return_one() + (*small_int_ptr) +
+               (flag ? get_elem1_ptr(arr) : get_elem2_ptr(arr));
+    return (ptr == arr + 1 && *ptr == 2);
 }
 
-int *small_int_ptr; // in main, we'll make this point to 2, then -1
-
-static int static_arr[4] = {5, 4, 3, 2};
-
-int *get_ptr1(void) {
-    return static_arr + 1;
+// define our helper functions for the test case above
+int return_one(void) {
+    return 1;
 }
 
-int *get_ptr2(void) {
-    return static_arr + 2;
+int *get_elem1_ptr(int *arr) {
+    return arr + 1;
 }
 
-// index and pointer can both be arbitrary expressions, not just constants and variables
-int add_complex_expressions(int flag, int expected) {
-    int *ptr = get_index() + (*small_int_ptr) + (flag ? get_ptr1() : get_ptr2());
-    if (*ptr != expected)  {
-        return 9;
-    }
-    return 0;
+int *get_elem2_ptr(int *arr) {
+    return arr + 2;
 }
 
-// add pointers to rows in a multi-dimensional array
-int add_multi_dimensional(int (*nested)[3], int index, int expected) {
-    int (*row_pointer)[3] = nested + index;
-    if (**row_pointer != expected) {
-        return 10;
-    }
-    return 0;
+/* add pointers to rows in a multi-dimensional array */
+int test_add_multi_dimensional(void) {
+    static int index = 2;
+    int nested_arr[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    int(*row_pointer)[3] = nested_arr + index;
+    return **row_pointer == 7;
 }
 
-// add pointers to scalar elements in a multi-dimensional array
-int add_multidimensional_sub(int (*nested)[3], int index, int expected) {
-    int *row1 = *(nested + 1);
+/* add pointers to scalar elements in a multi-dimensional array */
+int test_add_to_subarray_pointer(void) {
+    static int index = 2;
+    int nested_arr[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    // pointer to nested_arr[1]
+    int *row1 = *(nested_arr + 1);
+
+    // pointer to nested_arr[1][2]
     int *elem_ptr = row1 + index;
-    if (*elem_ptr != expected) {
-        return 11;
-    }
-
-    return 0;
+    return *elem_ptr == 6;
 }
 
 /* Subtraction */
-int subtract_from_pointer(long *ptr, int index, int expected) {
-    ptr = ptr - index;
-    if (*ptr != expected) {
-        return 12;
-    }
-    return 0;
+
+/* Subtract a variable from a pointer */
+int test_subtract_from_pointer(void) {
+    long long_arr[5] = {10, 9, 8, 7, 6};
+    long *one_past_the_end = long_arr + 5;
+    static int index = 3;
+    long *subtraction_result = one_past_the_end - index;
+    return *subtraction_result == 8;
 }
 
-// Subtract negative index from pointer
-int subtract_negative_index(unsigned *ptr, unsigned expected) {
-    ptr = ptr - -10;
-    if ((*ptr) != expected) {
-        return 13;
-    }
-    return 0;    
+/* Subtract negative index from pointer */
+int test_subtract_negative_index(void) {
+    unsigned arr[5] = {100, 101, 102, 103, 104};
+    unsigned *ptr = arr - (-3);
+    return *ptr == 103;
 }
 
-// array index can be any integer type, not just int
-int subtract_different_index_types(double *ptr, double expected) {
-    double *ptr1 = ptr - 5;
-    double *ptr2 = ptr - 5l;
-    double *ptr3 = ptr - 5u;
-    double *ptr4 = ptr - 5ul;
+/* array index can be any integer type, not just int */
+int test_subtract_different_index_types(void) {
+    double double_arr[11] = {0, 0, 0, 0, 0, 0, 6.0};
+    double *end_ptr = double_arr + 11;
 
-    if (ptr1 != ptr2) {
-        return 14;
-    }
-
-    if (ptr1 != ptr3) {
-        return 15;
-    }
-
-    if (ptr1 != ptr4) {
-        return 16;
-    }
-    if (*ptr4 != expected) {
-        return 17;
-    }
-
-    return 0;
+    // four equivalent expresssions that should produce the same pointer
+    double *ptr1 = end_ptr - 5;
+    double *ptr2 = end_ptr - 5l;
+    double *ptr3 = end_ptr - 5u;
+    double *ptr4 = end_ptr - 5ul;
+    return (ptr1 == ptr2 && ptr1 == ptr3 && ptr1 == ptr4 && *ptr4 == 6.0);
 }
 
-// index and pointer can both be arbitrary expressions, not just constants and variables
-int subtract_complex_expressions(int flag, int expected) {
-    int *ptr = (flag ? get_ptr1() : get_ptr2()) - (get_index() / 2);
-    if (*ptr != expected)  {
-        return 18;
-    }
-    return 0;
+/* index and pointer can both be arbitrary expressions, not just constants and
+ * variables */
+int test_subtract_complex_expressions(void) {
+    static int flag = 1;
+    static int four = 4;
+    static int arr[4] = {1, 2, 3, 4};
+    // reuse get_elem1_ptr and get_elem2_ptr funcionts we defined earlier
+    // ptr = (1 ? (arr + 1) : (arr + 2)) - (4/-2)
+    //  => (arr + 1) - -2
+    //  => arr + 3
+    int *ptr = (flag ? get_elem1_ptr(arr) : get_elem2_ptr(arr)) - (four / -2);
+    return (*ptr == 4);
 }
 
-
-// subtract pointers to rows in a multi-dimensional array
-int subtract_multi_dimensional(int (*nested)[3], int index, int expected) {
-    int (*row_pointer)[3] = nested - index;
-    if (**row_pointer != expected) {
-        return 19;
-    }
-
-    return 0;
+/* subtract pointers to rows in a multi-dimensional array */
+int test_subtract_multi_dimensional(void) {
+    static int index = 1;
+    int nested_arr[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    int(*last_row_pointer)[3] = nested_arr + 2;
+    int(*row_pointer)[3] = last_row_pointer - index;
+    return (**row_pointer == 4);
 }
 
 int main(void) {
-
-    /* Addition test cases */
-
-    long long_arr[12] = {0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 13};
-    // long_arr[10] == 13
-    int check = add_constant_to_pointer(long_arr, 13);
-    if (check) {
-        return check;
+    /* Addition */
+    if (!test_add_constant_to_pointer()) {
+        return 1;
     }
 
-    unsigned unsigned_arr[12] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 42};
-    unsigned *ptr_to_end = unsigned_arr + 12;
-    // unsigned_arr[12 - 10] == 2
-    check = add_negative_index(ptr_to_end, 2);
-    if (check) {
-        return check;
+    if (!test_add_negative_index()) {
+        return 2;
     }
 
-    int int_arr[5] = {0, 98, 99};
-    // int_arr[2] == 99
-    check = add_pointer_to_int(int_arr, 2, 99);
-    if (check) {
-        return check;
+    if (!test_add_pointer_to_int()) {
+        return 3;
     }
 
-    double double_arr[11] = {0, 0, 0, 0, 0, 6.0};
-    // double_arr[5] == 6.0
-    check = add_different_index_types(double_arr, 6.0);
-    if (check) {
-        return check;
+    if (!test_add_different_index_types()) {
+        return 4;
     }
 
-    int x = 2;
-    small_int_ptr = &x;
-    // ptr = (1 ? get_ptr1() : get_ptr2())
-    //    ==> &static_arr[1]
-    // index = get_index() + (*small_int_ptr)
-    //     ==> 0 + 2
-    // static_arr[1 + 2] == 2
-    check = add_complex_expressions(1, 2);
-    if (check) {
-        return check;
+    if (!test_add_complex_expressions()) {
+        return 5;
     }
 
-    int nested_arr[3][3] = {{1, 2, 3}, {4, 5, 6}, {7,8,9}};
-    // nested_arr[2][0] == 7
-    check = add_multi_dimensional(nested_arr, 2, 7);
-    if (check) {
-        return check;
+    if (!test_add_multi_dimensional()) {
+        return 6;
     }
 
-    // nested_arr[1][2] == 6
-    check = add_multidimensional_sub(nested_arr, 2, 6);
-    if (check) {
-        return check;
+    if (!test_add_to_subarray_pointer()) {
+        return 7;
     }
 
-    /* Subtraction test cases */
-    // long_arr[4 - 2] == 3
-    check = subtract_from_pointer(long_arr + 4, 2, 3);
-    if (check) {
-        return check;
+    /* Subtraction */
+    if (!test_subtract_from_pointer()) {
+        return 8;
     }
 
-    // unsigned_arr[-(-10)] = 42
-    check = subtract_negative_index(unsigned_arr, 42);
-    if (check) {
-        return check;
+    if (!test_subtract_negative_index()) {
+        return 9;
     }
 
-    // double_arr[10 - 5] == 6.0
-    check = subtract_different_index_types(double_arr + 10, 6.0);
-    if (check) {
-        return check;
+    if (!test_subtract_different_index_types()) {
+        return 10;
     }
 
-    x = -1;
-    // pointer = (0 ? get_ptr1() : get_ptr2())
-    //      ==> &static_arr[2]
-    // index = get_index() + (*small_int_ptr)
-    //     ==> 1 + -1
-    // static_arr[2] == 3    
-    check = subtract_complex_expressions(0, 3);
-    if (check) {
-        return check;
+    if (!test_subtract_complex_expressions()) {
+        return 11;
     }
 
-    // nested_arr[2 - 1][0] == 4
-    check = subtract_multi_dimensional(nested_arr + 2, 1, 4);
-    if (check) {
-        return check;
-    }
-    
     return 0;
 }

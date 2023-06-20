@@ -1,13 +1,13 @@
 /* Test that we correctly find the common type in expressions involving doubles */
 
-int lt(double d, double l) {
+int lt(double d, long l) {
     // l is implicitly converted to a double
     return d < l;
 }
 
 double tern_double_flag(double flag) {
     /* Ternary expression where controlling condition is a double
-     * You do not have to convert second and third operadns to double;
+     * You do not have to convert second and third operands to double;
      * instead, we convert them to their common type, which is unsigned long,
      * THEN convert that to a double.
      * Converting -30 to unsigned long gives us 2^64 - 30, or 18446744073709551586.

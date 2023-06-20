@@ -1,5 +1,5 @@
-// make sure elements that aren't explicitly initialized are zeroed out
-// include both static and non-static arrays of all three character types
+/* Test that in arrays of character type, elements that aren't explicitly
+ * initialized are zeroed out */
 
 char static1[4] = {1, 2};
 signed char static2[4] = {3, 4};

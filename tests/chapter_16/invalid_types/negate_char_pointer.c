@@ -1,5 +1,5 @@
-int main(void)
-{
+/* You can't negate pointers, including pointers to char */
+int main(void) {
     char *x = "foo";
-    return -x; // can't negate pointer types
+    return -x;
 }

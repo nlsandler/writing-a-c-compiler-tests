@@ -1,10 +1,23 @@
-// basic test of writing to a char array
+// Test writing to a char array
 
-int main(void)
-{
-    char literal[4] = "abc";
-    char b = literal[2];
-    literal[2] = 'x';
-    char x = literal[2];
-    return (b == 'b' && x == 'x');
+int puts(char *c);
+
+int main(void) {
+    // start with a flat array
+    char flat_arr[4] = "abc";
+    puts(flat_arr);
+
+    // update it
+    flat_arr[2] = 'x';
+    puts(flat_arr);
+
+    // similar test with nested array
+    char nested_array[2][6] = {"Hello", "World"};
+    puts(nested_array[0]);
+    puts(nested_array[1]);
+
+    nested_array[0][0] = 'J';
+    puts(nested_array[0]);
+
+    return 0;
 }

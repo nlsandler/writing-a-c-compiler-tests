@@ -4,6 +4,9 @@
  * https://gcc.gnu.org/onlinedocs/gcc/Arrays-and-pointers-implementation.html
  */
 
+// NOTE: converting an integer to a pointer is undefined behavior
+// if the resulting pointer is misaligned. These integers' values
+// are divisible by 8, so it's safe to cast them to any pointer type.
 int i = 128;
 long l = 128l;
 

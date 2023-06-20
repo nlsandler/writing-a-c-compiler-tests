@@ -81,7 +81,7 @@ int check_ulong_arr(unsigned long *arr) {
     return 0;
 }
 
-int validate_global(void) {
+int test_global(void) {
     int check = check_double_arr(double_arr);
     if (check) {
         return check;
@@ -103,7 +103,7 @@ int validate_global(void) {
 }
 
 // equivalent static local arrays
-int validate_local(void) {
+int test_local(void) {
 
     // fully initialized
     double local_double_arr[3] = {1.0, 2.0, 3.0};
@@ -144,9 +144,9 @@ int validate_local(void) {
 }
 
 int main(void) {
-    int check = validate_global();
+    int check = test_global();
     if (check) {
         return check;
     }
-    return validate_local();
+    return test_local();
 }

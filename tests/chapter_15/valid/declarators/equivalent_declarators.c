@@ -13,31 +13,32 @@ int((*(ptr_to_arr))[3l])[6u] = 0;
 // an array of pointers
 int *array_of_pointers[3] = {0, 0, 0};
 
-int validate_arr(void) {
+// helper function to make sure arr has the values we just initialized
+int test_arr(void) {
     for (int i = 0; i < 4; i = i + 1) {
         if (arr[i] != i + 1) {
-            return i + 1;
+            return 1;
         }
     }
-    return 0;
+    return 0; // success
 }
 
-int validate_ptr_to_arr(void) {
+int test_ptr_to_arr(void) {
     // at first ptr_to_arr should be null
     if (ptr_to_arr) {
-        return 5;
+        return 2;
     }
 
     static int nested_arr[3][6];
     ptr_to_arr = &nested_arr;
     ptr_to_arr[0][2][4] = 100;
     if (nested_arr[2][4] != 100) {
-        return 6;
+        return 3;
     }
-    return 0;
+    return 0; // success
 }
 
-int validate_array_of_pointers(int *ptr) {
+int test_array_of_pointers(int *ptr) {
 
     extern int *((array_of_pointers)[3]); // make sure we can redeclare this locally
 
@@ -45,7 +46,7 @@ int validate_array_of_pointers(int *ptr) {
     // then assign ptr to each of them
     for (int i = 0; i < 3; i = i + 1) {
         if (array_of_pointers[i])
-            return 7;
+            return 4;
         array_of_pointers[i] = ptr;
     }
 
@@ -53,12 +54,12 @@ int validate_array_of_pointers(int *ptr) {
     array_of_pointers[2][0] = 11;
 
     if (*ptr != 11) {
-        return 8;
+        return 5;
     }
 
     for (int i = 0; i < 3; i = i + 1) {
         if (array_of_pointers[i][0] != 11) {
-            return 9;
+            return 6;
         }
     }
     return 0;
@@ -68,20 +69,20 @@ int validate_array_of_pointers(int *ptr) {
 int main(void)
 {
     // make sure arr has the right type/initial values;
-    int check = validate_arr();
+    int check = test_arr();
     if (check) {
         return check;
     }
 
     // make sure ptr_to_arr has right type
-    check = validate_ptr_to_arr();
+    check = test_ptr_to_arr();
     if (check) {
         return check;
     }
 
     // make sure array_of_pointers has the right type
     int x = 0;
-    check = validate_array_of_pointers(&x);
+    check = test_array_of_pointers(&x);
     if (check) {
         return check;
     }
