@@ -1,1 +1,1 @@
-"""Tests for the test suite itself (particularly the assembly parser)"""
+"""Tests for the test suite itself (assembly parser, command-line interface, etc.)"""

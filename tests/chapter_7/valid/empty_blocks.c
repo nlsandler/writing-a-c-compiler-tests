@@ -3,5 +3,5 @@ int main(void) {
     {}
     int twenty = 10 * 2;
     {{}}
-    return twenty;
+    return ten + twenty;
 }

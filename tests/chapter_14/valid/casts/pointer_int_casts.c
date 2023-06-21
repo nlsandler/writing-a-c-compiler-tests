@@ -1,3 +1,7 @@
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
+#endif
 /* Test casting between pointers and ints.
  * The behavior we test here is implementation-defined.
  * We follow GCC's behavior, defined here:

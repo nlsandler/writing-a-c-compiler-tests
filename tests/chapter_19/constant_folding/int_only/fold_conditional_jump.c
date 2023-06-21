@@ -1,3 +1,7 @@
+#if defined SUPPRESS_WARNINGS && defined __clang__
+#pragma clang diagnostic ignored "-Wconstant-logical-operand"
+#endif
+
 // test constant folding of JumpIfZero and JumpIfNotZero
 // optimized target functions should have no conditional jump or set instructions,
 // just jumps and moves

@@ -1,5 +1,11 @@
 // make sure we can parse different ways to specify signed & unsigned char
 
+#ifdef SUPPRESS_WARNINGS
+#ifndef __clang__
+#pragma GCC diagnostic ignored "-Wold-style-declaration"
+#endif
+#endif
+
 char signed static a = 10;
 unsigned static char b = 20;
 char c = 30;

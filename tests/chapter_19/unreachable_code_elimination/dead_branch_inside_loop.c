@@ -1,3 +1,7 @@
+#if defined SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wdiv-by-zero"
+#endif
+
 int callee(void) { return 1 / 0; }
 
 int target(void) {

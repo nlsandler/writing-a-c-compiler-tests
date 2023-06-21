@@ -1,3 +1,11 @@
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#endif
+#endif
+
 void *malloc(unsigned long size);
 void free(void *ptr);
 int memcmp(void *s1, void *s2, unsigned long n);

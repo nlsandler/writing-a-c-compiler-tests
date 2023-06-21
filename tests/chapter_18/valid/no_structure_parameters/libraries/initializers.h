@@ -1,6 +1,15 @@
 // test out various forms of iniitalization;
 // make sure results are at correct offset
 
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#endif
+#endif
+
 int strcmp(char *s1, char *s2);
 
 struct inner {

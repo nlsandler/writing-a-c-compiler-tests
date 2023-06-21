@@ -30,9 +30,16 @@ with open(ROOT_DIR / "test_properties.json", "r", encoding="utf-8") as f:
 
 # main TestChapter class + related utilities
 
+
+def get_props_key(source_file: Path) -> str:
+    """key to use in EXPECTED_RESULTS, REQUIRES_MATHLIB, EXTRA_CREDIT_PROGRAMS"""
+    return str(source_file.relative_to(TEST_DIR))
+
+
 def needs_mathlib(prog: Path) -> bool:
-    key = str(prog.relative_to(TEST_DIR))
+    key = get_props_key(prog)
     return key in REQUIRES_MATHLIB and not IS_OSX
+
 
 def gcc_build_obj(prog: Path) -> None:
     """Use the 'gcc' command to compile source file to an object file.
@@ -53,7 +60,8 @@ def gcc_build_obj(prog: Path) -> None:
                 prog,
                 "-c",
                 "-fstack-protector-all",
-                "-Wno-incompatible-library-redeclaration",
+                "-D",
+                "SUPPRESS_WARNINGS",
                 "-o",
                 objfile,
             ],
@@ -79,9 +87,7 @@ def gcc_compile_and_run(*args: Path) -> subprocess.CompletedProcess[str]:
     # compile it
     try:
         subprocess.run(
-            ["gcc", "-Wno-incompatible-library-redeclaration"]
-            + list(args)
-            + ["-o", exe],
+            ["gcc", "-D", "SUPPRESS_WARNINGS"] + list(args) + ["-o", exe],
             check=True,
             text=True,
             capture_output=True,  # capture output so we don't see warnings
@@ -209,7 +215,7 @@ class TestChapter(unittest.TestCase):
             source_file: Absolute path of the source file for a test program
             actual: result of compiling this source file with self.cc and running it
         """
-        key = str(source_file.relative_to(TEST_DIR))
+        key = get_props_key(source_file)
         expected = EXPECTED_RESULTS[key]
         expected_retcode = expected["return_code"]
         expected_stdout = expected.get("stdout", "")
@@ -316,9 +322,7 @@ class TestChapter(unittest.TestCase):
         gcc_build_obj(other_file)
 
         # link both object files and run resulting executable
-        gcc_args = [
-            file_under_test.with_suffix(".o"), other_file.with_suffix(".o")
-        ]
+        gcc_args = [file_under_test.with_suffix(".o"), other_file.with_suffix(".o")]
         if needs_mathlib(file_under_test) or needs_mathlib(other_file):
             gcc_args.append("-lm")
         result = gcc_compile_and_run(*gcc_args)
@@ -438,7 +442,7 @@ def excluded_extra_credit(source_prog: Path, extra_credit_flags: ExtraCredit) ->
 
     # convert list of strings representing required extra credit features for this program
     # to list of ExtraCredit flags
-    key = str(source_prog.relative_to(TEST_DIR))
+    key = get_props_key(source_prog)
 
     features_required = (
         ExtraCredit[str.upper(feature)] for feature in EXTRA_CREDIT_PROGRAMS[key]

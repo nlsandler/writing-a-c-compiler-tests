@@ -1,3 +1,10 @@
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#endif
+#endif
 /* Test that when we initialize an array whose size isn't divisible by 4 or 8,
  * we don't overrun neighboring memory
  */

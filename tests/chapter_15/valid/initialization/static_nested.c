@@ -1,5 +1,9 @@
 /* Test initializing multi-dimensional arrays with static storage duration */
 
+#if defined SUPPRESS_WARNINGS && defined __clang__
+#pragma GCC diagnostic ignored "-Wliteral-conversion"
+#endif
+
 // fully initialized
 double double_arr[2][2] = {{1.1, 2.2}, {3.3, 4.4}};
 

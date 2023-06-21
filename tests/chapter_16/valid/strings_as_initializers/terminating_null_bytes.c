@@ -3,6 +3,14 @@
  * and exclude it otherwise
  * */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#endif
+#endif
+
 int strcmp(char *s1, char *s2);  // standard library
 
 // test cases where we include null byte

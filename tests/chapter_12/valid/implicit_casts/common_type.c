@@ -1,3 +1,6 @@
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
 /* Test that we correctly find the common type of different integers */
 
 int int_gt_uint(int i, unsigned int u) {

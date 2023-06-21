@@ -1,6 +1,15 @@
 /* Test that initializers for static objects with character type are correctly
  * converted to the correct type */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wliteral-conversion"
+#pragma clang diagnostic ignored "-Wconstant-conversion"
+#else
+#pragma GCC diagnostic ignored "-Woverflow"
+#endif
+#endif
+
 char from_long = 17592186044416l;
 
 char from_double = 15.6;

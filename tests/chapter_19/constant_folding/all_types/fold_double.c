@@ -1,6 +1,15 @@
 /* Test constant folding of all operations on doubles and make sure they're
  * correctly rounded.
  */
+
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wliteral-range"
+#pragma clang diagnostic ignored "-Wliteral-conversion"
+#else
+#pragma GCC diagnostic ignored "-Woverflow"
+#endif
+#endif
 // TODO in copy prop section, also include test cases for constant folding w/
 // special values? negative zero, infinity...
 double target_add(void) {

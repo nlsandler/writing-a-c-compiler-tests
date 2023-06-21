@@ -1,3 +1,8 @@
+#if defined SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
+
+
 int putchar(int c);
 
 int main(void)

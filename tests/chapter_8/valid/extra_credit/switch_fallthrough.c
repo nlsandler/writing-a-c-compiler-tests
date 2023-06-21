@@ -1,3 +1,9 @@
+#ifdef SUPPRESS_WARNINGS
+#ifndef __clang__
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
+#endif
+
 int main(void) {
     int a = 4;
     int b = 9;

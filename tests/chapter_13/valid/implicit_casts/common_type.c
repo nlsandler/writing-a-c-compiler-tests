@@ -1,5 +1,13 @@
 /* Test that we correctly find the common type in expressions involving doubles */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wimplicit-const-int-float-conversion"
+#else
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
+#endif
+
 int lt(double d, long l) {
     // l is implicitly converted to a double
     return d < l;

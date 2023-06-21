@@ -1,5 +1,12 @@
 /* Test initializing static doubles with integer constants and vice versa */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wimplicit-const-int-float-conversion"
+#pragma GCC diagnostic ignored "-Wliteral-conversion"
+#endif
+#endif
+
 // double variables
 
 // can convert from int/uint without rounding

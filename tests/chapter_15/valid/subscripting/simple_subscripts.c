@@ -1,4 +1,9 @@
 /* Test out simple cases involving constant indices and one-dimensional arrays */
+
+#if defined SUPPRESS_WARNINGS && !defined __clang__
+#pragma GCC diagnostic ignored "-Wtautological-compare"
+#endif
+
 int integer_types(unsigned *arr, unsigned expected) {
     // make sure our index can be any integer type
     unsigned val1 = arr[5];
@@ -71,7 +76,7 @@ int update_element(int *arr, int expected) {
 
 // update an array element with static storage duration using subscripting
 int *increment_static_element(void) {
-    static int arr[3];
+    static int arr[4];
     arr[3] = arr[3] + 1;
     return arr;
 }
@@ -80,7 +85,7 @@ int check_increment_static_element(void) {
     // increment static arr and get a pointer to it
     int *arr1 = increment_static_element();
 
-    // last element should be 1, all others shoudl be 0
+    // last element should be 1, all others should be 0
     if (arr1[3] != 1) {
         return 12;
     }

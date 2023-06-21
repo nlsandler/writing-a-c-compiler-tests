@@ -1,5 +1,9 @@
 /* Test that array types in parameters are converted to pointer types */
 
+#if defined SUPPRESS_WARNINGS && !defined __clang__
+#pragma GCC diagnostic ignored "-Warray-parameter"
+#endif
+
 /* The type of 'a' will be adjusted to (int *) */
 int array_param(int a[5]) {
     a[4] = 0;

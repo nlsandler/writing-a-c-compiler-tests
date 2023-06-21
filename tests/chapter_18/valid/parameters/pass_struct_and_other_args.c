@@ -1,3 +1,7 @@
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 struct pair {
     int x;
     double y;

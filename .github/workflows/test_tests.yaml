@@ -4,8 +4,8 @@
 name: Compiler Test Suite CI 
 
 on:
-  #pull_request:
-  #  branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
   workflow_dispatch:
 
@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest] #, macos-latest]
     uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
     with:
       chapter: 20
@@ -31,10 +31,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest] #, macos-latest]
     uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
     with:
-      chapter: 19b
+      chapter: 19
       os: ${{ matrix.os }}
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}  
@@ -44,8 +44,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
-        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.8"] #, "3.9", "3.10", "3.11"]
+        os: [ubuntu-latest] #, macos-latest]
     runs-on: ${{ matrix.os }}
     needs: [build-final-nqcc, build-partial-nqcc]
     steps:

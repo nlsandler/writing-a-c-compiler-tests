@@ -1,7 +1,7 @@
 int glob = 3;
 
 int client(unsigned int a, unsigned int b, unsigned int c, unsigned int d, unsigned int e, unsigned int f, unsigned int g) {
-    return (a == 12 && b == 12 && c == -3 && d == 10 && e == -30 && f== 52 && g == 48);
+    return (a == 12 && b == 12 && c == (unsigned) -3 && d == 10 && e == (unsigned) -30 && f== 52 && g == 48);
 }
 int target(void) {
 

@@ -1,5 +1,14 @@
 /* Test doubles in &&, ||, ! and controlling expressions */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wliteral-conversion"
+#pragma clang diagnostic ignored "-Wliteral-range"
+#else
+#pragma GCC diagnostic ignored "-Woverflow"
+#endif
+#endif
+
 double zero = 0.0;
 double non_zero = 1E-20;
 double one = 1.0;

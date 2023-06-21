@@ -1,3 +1,7 @@
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
 int foo(void) {
     /* It's legal for a non-void function to not return a value.
      * If the caller tries to use the value of the function, the result is undefined.

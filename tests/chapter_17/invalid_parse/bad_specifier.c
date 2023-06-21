@@ -1,4 +1,4 @@
 int main(void) {
-  unsigned void *v;
+  unsigned void *v; // you can't combine void with other type specifiers
   return 0;
 }

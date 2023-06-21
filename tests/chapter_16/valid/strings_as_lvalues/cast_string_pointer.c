@@ -2,13 +2,12 @@
 
 int main(void) {
     char *c = "This is a string!";
-    c[3] = -1;
     unsigned char *uc = (unsigned char *)c;
-    if (uc[3] != 255) {
+    if (uc[3] != 's') {
         return 1;
     }
     signed char *sc = (signed char *)c;
-    if (sc[3] != -128){
+    if (sc[3] != 's'){
             return 2;
         }
     return 0;

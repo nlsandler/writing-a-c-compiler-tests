@@ -1,3 +1,7 @@
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
+#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+#endif
 /* Test explicit conversions to and from character types */
 
 // conversions between character types

@@ -1,5 +1,14 @@
 // test explicit casts between void * and other pointer types,
 // and between void * and integer types
+
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#endif
+#endif
+
 void *malloc(unsigned long size);
 void free(void *ptr);
 void *memcpy(void *s1, void *s2, unsigned long n);

@@ -1,5 +1,13 @@
 /* Test that we can take the address of a string literal and annotate it with the correct type */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#endif
+#endif
+
 int puts(char *s);
 
 int main(void) {

@@ -1,5 +1,13 @@
 /* Test comparisons to several null pointer constants */
 
+#ifdef SUPPRESS_WARNINGS
+#ifndef __clang__
+// we have to suppress warning for non_null != 0u
+// this warning is bogus: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110238
+#pragma GCC diagnostic ignored "-Wpointer-compare"
+#endif
+#endif
+
 double *get_null_pointer(void) {
     return 0;
 }

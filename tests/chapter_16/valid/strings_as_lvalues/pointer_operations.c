@@ -1,6 +1,11 @@
-/* Test standard pointer operations  on string literals
+/* Test standard pointer operations on string literals
  * including pointer arithmetic and subscripting.
  */
+
+#if defined SUPPRESS_WARNINGS && defined __clang__
+#pragma clang diagnostic ignored "-Wstring-plus-int"
+#endif
+
 
 int main(void) {
     // subscript a string literal

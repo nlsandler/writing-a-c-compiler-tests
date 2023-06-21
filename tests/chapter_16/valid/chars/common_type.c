@@ -2,6 +2,10 @@
  * types (it's always the other type - or, if both are character types, it's
  * int) */
 
+#if defined SUPPRESS_WARNINGS && !defined __clang__
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
+
 long ternary(int flag, char c) {
     // first we'll convert c to an unsigned int (2^32 - c), then to a long
     return flag ? c : 1u;

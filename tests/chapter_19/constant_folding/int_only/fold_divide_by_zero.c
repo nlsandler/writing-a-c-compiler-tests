@@ -1,3 +1,7 @@
+#if defined SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wdiv-by-zero"
+#endif
+
 int target(void) {
   return 0; // dummy so that test case doesn't inspect main, which isn't fully
             // constant folded

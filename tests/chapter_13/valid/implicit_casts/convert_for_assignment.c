@@ -1,3 +1,9 @@
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wimplicit-const-int-float-conversion"
+#pragma GCC diagnostic ignored "-Wliteral-conversion"
+#endif
+#endif
 /* Test that we correctly perform conversion as if by assignment */
 
 int check_args(long l, double d) {

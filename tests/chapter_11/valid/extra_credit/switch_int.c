@@ -2,6 +2,15 @@
  * the constant in each case statement should be converted to an int.
  */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wswitch"
+#pragma clang diagnostic ignored "-Wconstant-conversion"
+#else
+#pragma GCC diagnostic ignored "-Woverflow"
+#endif
+#endif
+
 int switch_on_int(int i) {
     switch(i) {
         case 5:

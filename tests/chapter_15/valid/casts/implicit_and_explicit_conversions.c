@@ -1,6 +1,11 @@
 /* Test that we correctly track both implicit type conversions via array decay
  * and explicit casts 
  */
+
+#if defined SUPPRESS_WARNINGS && !defined __clang__
+#pragma GCC diagnostic ignored "-Wtautological-compare"
+#endif
+
 int main(void) {
     long arr[4] = {-1,-2,-3,-4};
 

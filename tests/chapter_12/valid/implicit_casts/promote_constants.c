@@ -1,3 +1,6 @@
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
 /* Make sure we implicitly promote constants from unsigned int to unsigned long
  * as needed, but don't promote int to unsigned int */
 

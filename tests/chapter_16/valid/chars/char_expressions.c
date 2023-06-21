@@ -1,3 +1,6 @@
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wchar-subscripts"
+#endif
 /* Test that we can use chars in the same expressions as other integers,
  * including arithmetic, pointer arithmetic, comparisons, and logical
  * operations

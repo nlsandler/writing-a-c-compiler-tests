@@ -1,3 +1,7 @@
+#if defined SUPPRESS_WARNINGS && !defined __clang__
+#pragma GCC diagnostic ignored "-Wold-style-declaration"
+#endif
+
 struct pair {
     int x;
     int y;

@@ -1,3 +1,6 @@
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 int putchar(int c);
 
 /* Make sure we can correctly manage calling conventions from the callee side

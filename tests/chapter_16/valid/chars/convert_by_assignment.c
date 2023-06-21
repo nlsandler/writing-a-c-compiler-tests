@@ -4,6 +4,16 @@
  * explicitly focused on them.
  * */
 
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wliteral-conversion"
+#pragma clang diagnostic ignored "-Wconstant-conversion"
+#else
+#pragma GCC diagnostic ignored "-Woverflow"
+#endif
+#endif
+
 // helper functions
 int check_int(int converted, int expected) {
     return (converted == expected);

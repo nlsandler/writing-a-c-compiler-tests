@@ -5,6 +5,14 @@
  * Implicit conversions of function arguments are in a separate test case, convert_function_arguments.c
  */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wconstant-conversion"
+#else
+#pragma GCC diagnostic ignored "-Woverflow"
+#endif
+#endif
+
 int return_truncated_long(long l) {
     return l;
 }

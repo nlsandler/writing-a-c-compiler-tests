@@ -1,4 +1,12 @@
 /* Test declaring and operating on an array of pointers to strings */
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#endif
+#endif
+
 int strcmp(char *s1, char *s2);
 
 int main(void) {

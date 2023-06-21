@@ -1,57 +1,65 @@
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#endif
+#endif
+
 int strcmp(char *s1, char *s2);
 int strncmp(char *s1, char *s2, unsigned long n);
 
 struct one_int {
-  int i;
-  char c;
+    int i;
+    char c;
 };
 
 struct one_int_exactly {
-  unsigned long l;
+    unsigned long l;
 };
 
 struct two_ints {
-  char c;
-  int arr[3];
+    char c;
+    int arr[3];
 };
 
 struct two_ints_nested {
-  struct one_int a;
-  struct one_int b;
+    struct one_int a;
+    struct one_int b;
 };
 
 struct twelve_bytes {
-  int i;
-  char arr[8];
+    int i;
+    char arr[8];
 };
 
 struct one_xmm {
-  double d;
+    double d;
 };
 
 struct two_xmm {
-  double d[2];
+    double d[2];
 };
 
 struct int_and_xmm {
-  char c;
-  double d;
+    char c;
+    double d;
 };
 
 struct xmm_and_int {
-  struct one_xmm dbl;
-  char c[3];
+    struct one_xmm dbl;
+    char c[3];
 };
 
 struct odd_size {
-  char arr[5];
+    char arr[5];
 };
 
 struct memory {
-  double d;
-  char c[3];
-  long l;
-  int i;
+    double d;
+    char c[3];
+    long l;
+    int i;
 };
 
 // passing structures as parameters

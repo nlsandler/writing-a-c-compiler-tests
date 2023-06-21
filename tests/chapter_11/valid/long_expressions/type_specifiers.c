@@ -1,3 +1,11 @@
+/* Test out different, equivalent ways to declare the same identifier  */
+
+#ifdef SUPPRESS_WARNINGS
+#ifndef __clang__
+#pragma GCC diagnostic ignored "-Wold-style-declaration"
+#endif
+#endif
+
 /* These declarations all look slightly different,
  * but they all declare 'a' as a static long, so they don't conflict.
  */

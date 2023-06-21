@@ -1,4 +1,11 @@
 /* Test that we handle negative zero correctly */
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wliteral-range"
+#else
+#pragma GCC diagnostic ignored "-Woverflow"
+#endif
+#endif
 
 // copysign is defined in the C standard library (<math.h>)
 double copysign(double x, double y);

@@ -1,7 +1,7 @@
 /* Test comparing pointers with == and != */
 
 int main(void) {
-    int a;
+    int a = 0;
     int b;
 
     int *a_ptr = &a;

@@ -1,3 +1,12 @@
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#pragma GCC diagnostic ignored "-Wtype-limits"
+#endif
+#endif
+
 int puts(char *c); // for error messages
 
 int main(void) {

@@ -5,6 +5,14 @@
  * - initializers for automatic variables
  */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wconstant-conversion"
+#else
+#pragma GCC diagnostic ignored "-Woverflow"
+#endif
+#endif
+
 int check_int(int converted, int expected) {
     return (converted == expected);
 }

@@ -1,4 +1,11 @@
 /* Test out different ways to declare a signed int or long */
+
+#ifdef SUPPRESS_WARNINGS
+#ifndef __clang__
+#pragma GCC diagnostic ignored "-Wold-style-declaration"
+#endif
+#endif
+
 static int i;
 signed extern i;
 int static signed i = 5;

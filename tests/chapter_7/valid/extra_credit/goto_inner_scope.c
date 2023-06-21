@@ -1,3 +1,6 @@
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
 int main(void) {
     int x = 5;
     goto inner;
