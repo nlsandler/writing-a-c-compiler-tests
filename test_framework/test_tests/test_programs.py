@@ -9,7 +9,7 @@ from typing import Callable, List
 from .. import basic, regalloc
 
 
-def lookup_libs(prog: Path) -> list[Path]:
+def lookup_libs(prog: Path) -> List[Path]:
     """Look up extra library we need to link against for regalloc tests"""
     test_info = regalloc.REGALLOC_TESTS.get(prog.name)
     if test_info is None:

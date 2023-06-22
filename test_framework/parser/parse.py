@@ -557,9 +557,17 @@ def parse_file(filename: Path) -> dict[str, asm.AssemblyFunction]:
 
     asm_functions: dict[str, asm.AssemblyFunction] = {}
 
-    def add_fun(f: asm.AssemblyFunction):
+    def remove_prefix(s: str, prefix: str) -> str:
+        """Backcompat-proof version of str.removeprefix"""
+        if sys.version_info >= (3, 9):
+            s.removeprefix(prefix)
+        if s.startswith(prefix):
+            return s[len(prefix) :]
+        return s
+
+    def add_fun(f: asm.AssemblyFunction) -> None:
         if sys.platform == "darwin":
-            key = f.name.removeprefix("_")
+            key = remove_prefix(f.name, "_")
         else:
             key = f.name
         asm_functions[key] = f

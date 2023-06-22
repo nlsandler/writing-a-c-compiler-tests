@@ -20,10 +20,11 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest] #, macos-latest]
-    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
+    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@fix-history
     with:
       chapter: 20
       os: ${{ matrix.os }}
+      branch: fix-history
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}
     
@@ -32,10 +33,11 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest] #, macos-latest]
-    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
+    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@fix-history # TODO this should be main eventually
     with:
       chapter: 19
       os: ${{ matrix.os }}
+      branch: fix-history
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}  
 
@@ -44,7 +46,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.8"] #, "3.9", "3.10", "3.11"]
+        python-version: ["3.8", "3.11"] #, "3.9", "3.10", "3.11"]
         os: [ubuntu-latest] #, macos-latest]
     runs-on: ${{ matrix.os }}
     needs: [build-final-nqcc, build-partial-nqcc]
@@ -71,7 +73,7 @@ jobs:
     - name: Get partial NQCC
       uses: actions/download-artifact@v3
       with:
-        name: nqcc-${{ matrix.os }}-19b
+        name: nqcc-${{ matrix.os }}-19
         path: nqcc-partial
 
     # run the test suite
@@ -94,6 +96,6 @@ jobs:
     - name: Lint with mypy and pylint
       run: |
         # stop the build if there are errors
-        pylint -E tests/tests
+        pylint -E tests/test_framework
         # stop the build if there are type errors
-        mypy tests/tests
+        mypy tests/test_framework
