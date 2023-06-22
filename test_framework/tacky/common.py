@@ -53,7 +53,7 @@ class TackyOptimizationTest(basic.TestChapter):
         asm_file = source_file.with_suffix(".s")
 
         # assemble/link asm_file, run it, and make sure it gives expected result
-        actual_result = basic.gcc_compile_and_run(asm_file)
+        actual_result = basic.gcc_compile_and_run([asm_file], [])
         self.validate_runs(source_file, actual_result)
 
         # now parse the assembly file and extract the function named "target"

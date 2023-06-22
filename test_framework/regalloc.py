@@ -82,7 +82,7 @@ class TestRegAlloc(basic.TestChapter):
 
         if program_path.suffix == ".s":
             # caller already compiled it to assembly
-            gcc_inputs = [program_path, WRAPPER_SCRIPT]
+            input_files = [program_path, WRAPPER_SCRIPT]
         else:
             compilation_result = self.invoke_compiler(program_path, cc_opt="-c")
             self.assertEqual(
@@ -91,12 +91,12 @@ class TestRegAlloc(basic.TestChapter):
                 msg=f"compilation of {program_path} failed with error:\n\
                     {compilation_result.stderr}",
             )
-            gcc_inputs = [program_path.with_suffix(".o"), WRAPPER_SCRIPT]
+            input_files = [program_path.with_suffix(".o"), WRAPPER_SCRIPT]
 
         if extra_lib:
-            gcc_inputs.append(self.lib_path / extra_lib)
+            input_files.append(self.lib_path / extra_lib)
 
-        actual_result = basic.gcc_compile_and_run(*gcc_inputs)
+        actual_result = basic.gcc_compile_and_run(input_files, [])
         # make sure behavior is the same
         # NOTE: if program_path is assembly file (because we were called from another test method
         # that's going to parse this file and perform more validation on it),

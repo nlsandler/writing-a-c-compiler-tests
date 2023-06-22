@@ -8,7 +8,7 @@ import sys
 import unittest
 from enum import Flag, auto, unique
 from pathlib import Path
-from typing import Any, Callable, Optional, Sequence, Type
+from typing import Any, Callable, List, Optional, Sequence, Type
 
 # Constants + per-test info from configuration files
 # TODO should this be in a separate module maybe?
@@ -71,23 +71,26 @@ def gcc_build_obj(prog: Path) -> None:
         raise RuntimeError(err.stderr) from err
 
 
-def gcc_compile_and_run(*args: Path) -> subprocess.CompletedProcess[str]:
+def gcc_compile_and_run(
+    source_files: List[Path], options: List[str]
+) -> subprocess.CompletedProcess[str]:
     """Compile input files using 'gcc' command and run the resulting executable
 
     Args:
-        args: list of input files - could be C, assembly, or object files
+        source_files: list of input files - could be C, assembly, or object files
+        options: command-line options
 
     Returns:
         a CompletedProecess object that captures the executable's return code and output
     """
 
     # output file is same as first input without suffix
-    exe = args[0].with_suffix("")
+    exe = source_files[0].with_suffix("")
 
     # compile it
     try:
         subprocess.run(
-            ["gcc", "-D", "SUPPRESS_WARNINGS"] + list(args) + ["-o", exe],
+            ["gcc", "-D", "SUPPRESS_WARNINGS"] + source_files + options + ["-o", exe],
             check=True,
             text=True,
             capture_output=True,  # capture output so we don't see warnings
@@ -322,10 +325,11 @@ class TestChapter(unittest.TestCase):
         gcc_build_obj(other_file)
 
         # link both object files and run resulting executable
-        gcc_args = [file_under_test.with_suffix(".o"), other_file.with_suffix(".o")]
+        source_files = [file_under_test.with_suffix(".o"), other_file.with_suffix(".o")]
+        options = []
         if needs_mathlib(file_under_test) or needs_mathlib(other_file):
-            gcc_args.append("-lm")
-        result = gcc_compile_and_run(*gcc_args)
+            options.append("-lm")
+        result = gcc_compile_and_run(source_files, options)
 
         # validate results; we pass lib_source as first arg here
         # b/c it's the key for library tests in EXPECTED_RESULTS
