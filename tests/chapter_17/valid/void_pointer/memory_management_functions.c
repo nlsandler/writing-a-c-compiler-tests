@@ -1,3 +1,4 @@
+/* Test that we can call all the memory management functions */
 #ifdef SUPPRESS_WARNINGS
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
@@ -12,8 +13,6 @@ void *calloc(unsigned long nmemb, unsigned long size);
 void *aligned_alloc(unsigned long alignment, unsigned long size);
 void free(void *ptr);
 
-int puts(char *c); // for error messages
-
 int main(void) {
     // allocate a buffer with malloc and populate it
     char *char_buffer = malloc(50);
@@ -26,36 +25,35 @@ int main(void) {
     // we made it bigger, so update a value beyond the bounds of the old buffer
     // (whose value is undefined to start)
     char_buffer2[75] = 11;
-    // make sure the contents are the same
+
+    // make sure the contents from the original buffer are the same
     for (int i = 0; i < 50; i = i + 1) {
         if ( char_buffer2[i] != i) {
-            puts("Bad contents in realloc'd buffer");
-            return i + 1;
+            return 1;
         }
     }
+
+    // make sure the value beyond the bounds of the old buffer hast he value we assigned it
     if (char_buffer2[75] != 11) {
-        puts("Bad value in byte 75 of realloc'd buffer");
-        return 51;
+        return 2;
     }
 
     free(char_buffer2);
 
-    // allocate a new buffer with calloc
+    // allocate a new buffer with calloc, make sure its contents are all zeros
     double *double_buffer = calloc(10, sizeof(double));
     for (int i = 0; i < 10; i = i + 1) {
         if (double_buffer[i]) {
-            puts("Non-zero value in calloc'd buffer");
-            return 100 + i;
+            return 3;
         }
     }
     free(double_buffer);
 
-    // try out aligned alloc
+    // allocate a buffer with aligned_alloc, make sure it has the correct alignemnt
     char_buffer = aligned_alloc(256, 256);
     // make sure it's 256 byte-aligned
     if ((unsigned long) char_buffer % 256) {
-        puts("Got misaligned buffer from aligned_alloc.");
-        return 201;
+        return 4;
     }
     free(char_buffer);
     return 0;

@@ -1,2 +1,5 @@
 void x(void);
-int main(void) { return x() == (void)10; }
+int main(void) {
+    // you can't compare void expressions
+    return x() == (void)10;
+}

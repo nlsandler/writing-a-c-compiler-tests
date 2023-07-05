@@ -1,5 +1,4 @@
 void *x(void) {
-  // can't convert void expression to another type via
-  //  conversion by assignment, including in return statement
+  // you can't implicitly convert a void expression to another type
   return (void)0;
 }

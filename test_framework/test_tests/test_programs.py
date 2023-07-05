@@ -70,7 +70,8 @@ class SanitizerTest(unittest.TestCase):
             # macro to include warning suppression pragmas in individual source files
             "-D",
             "SUPPRESS_WARNINGS",
-            # enable ubsan
+            # enable ubsan, and enable optimizations so UBSan can catch more errors
+            "-O3",
             "-fsanitize=undefined",
         ]
         subproc_args.extend(build_compiler_args(source_file))
