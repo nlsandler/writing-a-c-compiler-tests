@@ -37,5 +37,8 @@ int target(int arg) {
     g = a;
     h = 1;
    }
+   // total of 11 mov instructions:
+   // move EDI into each param-passing reg,
+   // then into EAX so we can push it onto stack (as g)
    return use(a,b,c,d,e,f, g,h);
 }

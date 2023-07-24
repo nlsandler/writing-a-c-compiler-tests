@@ -1,4 +1,4 @@
-/* Make sure stack arguments are deallocated correctly after returning from a function call */
+/* Make sure stack arguments are deallocated correctly after returning from a function call; also test passing variables as stack arguments */
 
 #ifdef SUPPRESS_WARNINGS
 #pragma GCC diagnostic ignored "-Wunused-parameter"

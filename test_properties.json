@@ -369,5 +369,19 @@
         "chapter_13/valid/function_calls/standard_library_call.c",
         "chapter_13/valid/special_values/copysign.c",
         "chapter_13/valid/libraries/double_params_and_result.c"
-    ]
+    ],
+    "assembly_libs": {
+        "chapter_10/valid/push_arg_on_page_boundary.c": {
+            "linux": "data_on_page_boundary_linux.s",
+            "os_x": "data_on_page_boundary_osx.s"
+        },
+        "chapter_16/valid/chars/push_arg_on_page_boundary.c": {
+            "linux": "data_on_page_boundary_linux.s",
+            "os_x": "data_on_page_boundary_osx.s"
+        },
+        "chapter_18/valid/parameters/pass_args_on_page_boundary.c": {
+            "linux": "data_on_page_boundary_linux.s",
+            "os_x": "data_on_page_boundary_osx.s"
+        }
+    }
 }

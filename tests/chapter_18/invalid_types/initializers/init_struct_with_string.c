@@ -1,14 +1,14 @@
-// can't initialize structure members with a string,
+// you can't initialize structure members with a string,
 // even if they're all chars
 
 struct chars {
-  char a;
-  char b;
-  char c;
-  char null;
+    char a;
+    char b;
+    char c;
+    char null;
 };
 
 int main(void) {
-  struct chars my_chars = "abc";
-  return 0;
+    struct chars my_chars = "abc";
+    return 0;
 }

@@ -82,3 +82,39 @@ int pass_borderline_struct_in_memory(struct two_ints t_i, char c,
     return 25;
   return 0;
 }
+
+int pass_uneven_struct_in_mem(struct twelve_bytes struct1, long a, long b, struct twelve_bytes struct2, struct odd_size os, struct memory m) {
+  if (struct1.i != -1) {
+    return 26;
+  }
+  if (struct1.arr[0] != 127 || struct1.arr[1] != 126|| struct1.arr[2] != 125) {
+    return 27;
+  }
+  if (a != 9223372036854775805l || b != 9223372036854775800l) {
+    return 28;
+  }
+  if (struct2.i != -5) {
+    return 29;
+  }
+  if (struct2.arr[0] != 100 || struct2.arr[1] != 101|| struct2.arr[2] != 102) {
+    return 30;
+  }
+  for (int i = 0; i < 5; i = i + 1) {
+    if (os.arr[i] != 100-i) {
+      return 31;
+    }
+  }
+  if (m.d != 5.345) {
+    return 32;
+  }
+  if (m.c[0] != -1 || m.c[1] != -2 || m.c[2] != -3) {
+    return 33;
+  }
+  if (m.l != 4294967300l) {
+    return 34;
+  }
+  if (m.i != 10000) {
+    return 35;
+  }
+  return 0;
+}

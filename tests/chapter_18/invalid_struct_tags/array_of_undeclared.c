@@ -1,5 +1,5 @@
 int main(void) {
-  // can't declare array of undeclared/incomplete struct type
-  struct s arr[2];
-  return 0;
+    // can't declare array of undeclared/incomplete struct type
+    struct s arr[2];
+    return 0;
 }

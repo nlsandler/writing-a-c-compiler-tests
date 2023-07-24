@@ -40,6 +40,16 @@ int main(void) {
   if (retval)
     return retval;
 
+
+  struct twelve_bytes struct1 = {-1, {127, 126, 125}};
+  struct twelve_bytes struct2 = {-5, {100, 101, 102}};
+  struct odd_size os = {{100, 99, 98, 97, 96}};
+  struct memory m = {5.345, {-1, -2, -3}, 4294967300l, 10000};
+  retval = pass_uneven_struct_in_mem(struct1, 9223372036854775805l, 9223372036854775800l, struct2, os, m);
+
+  if (retval)
+    return retval;
+
   // success!
   return 0;
 }

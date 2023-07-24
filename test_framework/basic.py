@@ -23,12 +23,25 @@ with open(ROOT_DIR / "expected_results.json", "r", encoding="utf-8") as f:
 
 EXTRA_CREDIT_PROGRAMS: dict[str, list[str]]
 REQUIRES_MATHLIB: list[str]
+# TODO need macOS-friendly versions of these dependencies
+ASSEMBLY_DEPENDENCIES: dict[str, dict[str, str]]
 with open(ROOT_DIR / "test_properties.json", "r", encoding="utf-8") as f:
     test_info = json.load(f)
     EXTRA_CREDIT_PROGRAMS = test_info["extra_credit_tests"]
     REQUIRES_MATHLIB = test_info["requires_mathlib"]
+    ASSEMBLY_DEPENDENCIES = test_info["assembly_libs"]
+ASSEMBLY_LIBS = set(
+    lib for libs in ASSEMBLY_DEPENDENCIES.values() for lib in libs.values()
+)
 
 # main TestChapter class + related utilities
+
+
+def get_platform() -> str:
+    if IS_OSX:
+        return "os_x"
+    else:
+        return "linux"
 
 
 def get_props_key(source_file: Path) -> str:
@@ -129,6 +142,8 @@ class TestChapter(unittest.TestCase):
     * compile_lib_and_run:
         like compile_client_and_run, but compile the *library* withour compiler
         and *client* with the system compiler
+    * compile_with_asm_lib_and_run:
+        like compile_client_and_run except the library is an assembly file defined in test_properties.json, not a C file
 
     The other methods in TestChapter are all utilties called by the compile_* methods.
     """
@@ -155,7 +170,9 @@ class TestChapter(unittest.TestCase):
         garbage_files = (
             f
             for f in self.test_dir.rglob("*")
-            if not f.is_dir() and f.suffix not in [".c", ".h"]
+            if not f.is_dir()
+            and f.suffix not in [".c", ".h"]
+            and f.name not in ASSEMBLY_LIBS
         )
 
         for junk in garbage_files:
@@ -342,6 +359,16 @@ class TestChapter(unittest.TestCase):
         lib_path = replace_stem(client_path, client_path.stem[: -len("_client")])
         self.library_test_helper(client_path, lib_path, lib_path)
 
+    def compile_with_asm_lib_and_run(self, path: Path) -> None:
+        key = get_props_key(path)
+        platfrm: str
+        platfrm = get_platform()
+        asm_filename = ASSEMBLY_DEPENDENCIES[key][platfrm]
+        asm_path = path.with_name(
+            asm_filename
+        )  # assembly file is in the same directory as program under test
+        self.library_test_helper(path, asm_path, path)
+
     def compile_lib_and_run(self, lib_path: Path) -> None:
         """Multi-file program test where our compiler compiles the library"""
 
@@ -481,8 +508,15 @@ def make_test_valid(program: Path) -> Callable[[TestChapter], None]:
 def make_test_run(program: Path) -> Callable[[TestChapter], None]:
     """Generate one test method to compile and run a valid single-file program"""
 
-    def test_run(self: TestChapter) -> None:
-        self.compile_and_run(program)
+    if get_props_key(program) in ASSEMBLY_DEPENDENCIES:
+
+        def test_run(self: TestChapter) -> None:
+            self.compile_with_asm_lib_and_run(program)
+
+    else:
+
+        def test_run(self: TestChapter) -> None:
+            self.compile_and_run(program)
 
     return test_run
 

@@ -1,3 +1,3 @@
 int main(void) {
-    return .a;
+    return .a; // a dot operator can only appear after an expression
 }

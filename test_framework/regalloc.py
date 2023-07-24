@@ -12,7 +12,7 @@ from .tacky import common
 
 CHAPTER = 20
 TEST_DIR = basic.TEST_DIR.joinpath(f"chapter_{CHAPTER}").resolve()
-# The wappre script includes a handwritten assembly main function
+# The wrapper script includes a handwritten assembly main function
 # which validates that callee-saved registers are preserved
 WRAPPER_SCRIPT: Path
 if basic.IS_OSX:
@@ -408,7 +408,7 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
     "briggs_coalesce_tmps.c": CoalesceTest(target_fun="briggs"),
     "george_coalesce.c": CoalesceTest(extra_lib=Path("george_lib.c")),
     "coalesce_prevents_spill.c": CoalesceTest(
-        extra_lib=Path("coalesce_prevents_spill_lib.c"), max_moves=10
+        extra_lib=Path("coalesce_prevents_spill_lib.c"), max_moves=11
     ),
 }
 

@@ -1,3 +1,3 @@
 struct s {
-  int;
+    int;  // every structure member needs a declarator
 };

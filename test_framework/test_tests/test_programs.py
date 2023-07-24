@@ -25,6 +25,18 @@ def lookup_libs(prog: Path) -> List[Path]:
     ]
 
 
+def lookup_assembly_libs(prog: Path) -> List[Path]:
+    """Look up extra assembly library we need to link against"""
+    k = basic.get_props_key(prog)
+    if k in basic.ASSEMBLY_DEPENDENCIES:
+        platfrm = basic.get_platform()
+        dep = basic.ASSEMBLY_DEPENDENCIES[k][platfrm]
+
+        return [prog.with_name(dep)]
+
+    return []
+
+
 def build_compiler_args(source_file: Path) -> List[str]:
     """Given a source file, build the list of files/extra options we need for standalone compilation"""
     args = [str(source_file)]
@@ -41,6 +53,9 @@ def build_compiler_args(source_file: Path) -> List[str]:
     if "chapter_20" in source_file.parts:
         # we may need to include wrapper script and other library files
         args.extend(str(lib) for lib in lookup_libs(source_file))
+
+    # some test programs have extra libraries too
+    args.extend(str(lib) for lib in lookup_assembly_libs(source_file))
 
     # add mathlib option if needed
     if needs_mathlib:

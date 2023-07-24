@@ -84,3 +84,6 @@ int struct_in_mem(double a, double b, double c, struct xmm_and_int first_struct,
 int pass_borderline_struct_in_memory(struct two_ints t_i, char c,
                                      struct int_and_xmm i_x, void *ptr,
                                      struct two_ints_nested t_i_n, double d);
+
+// pass a struct in memory that isn't neatly divisible by 8
+int pass_uneven_struct_in_mem(struct twelve_bytes struct1, long a, long b, struct twelve_bytes struct2, struct odd_size os, struct memory m);

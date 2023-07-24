@@ -18,8 +18,9 @@ from test_framework.basic import ROOT_DIR, TEST_DIR
 results: dict[str, dict[str, Any]] = {}
 
 
-def lookup_libs(prog: Path) -> List[Path]:
+def lookup_regalloc_libs(prog: Path) -> List[Path]:
     """Look up extra library we need to link against for regalloc tests"""
+    # TODO fix copypasta b/t here and test_programs.py (ditto for lookup_assembly libs)
     test_info = regalloc.REGALLOC_TESTS.get(prog.name)
     if test_info is None:
         return []
@@ -32,6 +33,18 @@ def lookup_libs(prog: Path) -> List[Path]:
         regalloc.WRAPPER_SCRIPT,
         TEST_DIR / "chapter_20/libraries" / test_info.extra_lib,
     ]
+
+
+def lookup_assembly_libs(prog: Path) -> List[Path]:
+    """Look up extra assembly library we need to link against"""
+    k = basic.get_props_key(prog)
+    if k in basic.ASSEMBLY_DEPENDENCIES:
+        platfrm = basic.get_platform()
+        dep = basic.ASSEMBLY_DEPENDENCIES[k][platfrm]
+
+        return [prog.with_name(dep)]
+
+    return []
 
 
 def main() -> None:
@@ -91,7 +104,8 @@ def main() -> None:
                 str(rel_path) in changed_files
                 or str(rel_path).replace(".c", "_client.c") in changed_files
                 or str(rel_path).replace("_client.c", ".c") in changed_files
-                or any(lib in changed_files for lib in lookup_libs(p))
+                or any(lib in changed_files for lib in lookup_regalloc_libs(p))
+                or any(lib in changed_files for lib in lookup_assembly_libs(p))
                 or any(
                     h
                     for h in changed_files
@@ -125,9 +139,16 @@ def main() -> None:
             client = prog.parent.joinpath(prog.name.replace(".c", "_client.c"))
             source_files.append(client)
 
+        if basic.get_props_key(prog) in basic.ASSEMBLY_DEPENDENCIES:
+            asm_lib = basic.ASSEMBLY_DEPENDENCIES[basic.get_props_key(prog)][
+                basic.get_platform()
+            ]
+            asm_path = prog.with_name(asm_lib)
+            source_files.append(asm_path)
+
         if "chapter_20" in prog.parts:
             # we may need to include wrapper script and other library files
-            extra_libs = lookup_libs(prog)
+            extra_libs = lookup_regalloc_libs(prog)
             source_files.extend(extra_libs)
 
         opts = []
