@@ -20,11 +20,11 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest] #, macos-latest]
-    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@fix-history
+    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@fix-page-fault
     with:
       chapter: 20
       os: ${{ matrix.os }}
-      branch: fix-history
+      branch: fix-page-fault
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}
     
@@ -33,11 +33,11 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest] #, macos-latest]
-    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@fix-history # TODO this should be main eventually
+    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@fix-page-fault # TODO this should be main eventually
     with:
       chapter: 19
       os: ${{ matrix.os }}
-      branch: fix-history
+      branch: fix-page-fault
     secrets:
       NQCC_PAT: ${{ secrets.NQCC_PAT }}  
 
