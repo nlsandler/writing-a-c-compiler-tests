@@ -382,6 +382,10 @@
         "chapter_18/valid/parameters/pass_args_on_page_boundary.c": {
             "linux": "data_on_page_boundary_linux.s",
             "os_x": "data_on_page_boundary_osx.s"
+        },
+        "chapter_18/valid/params_and_returns/return_struct_on_page_boundary.c": {
+            "linux": "data_on_page_boundary_linux.s",
+            "os_x": "data_on_page_boundary_osx.s"
         }
     }
 }
