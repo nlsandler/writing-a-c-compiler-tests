@@ -4,6 +4,14 @@ TODO:
 2. make equivalent retval tests (returning various struct sizes)
 */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#endif
+#endif
+
 #include "struct_sizes.h"
 int memcmp(void *s1, void *s2, unsigned long n);
 
