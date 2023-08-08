@@ -5,4 +5,4 @@ int foo(int x, int y) {
     return x + y;
 }
 
-int main(void) { return foo(1, 2];}
+int main(void) { return foo(1, 2};}
