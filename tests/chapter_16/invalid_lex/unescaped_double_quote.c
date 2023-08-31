@@ -1,5 +1,5 @@
 int main(void)
 {
-    char *ptr = "foo"bar";÷
+    char *ptr = "foo"bar";
         return 0;
 }

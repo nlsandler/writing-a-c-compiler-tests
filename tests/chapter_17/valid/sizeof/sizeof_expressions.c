@@ -32,6 +32,9 @@ int main(void) {
     free(buffer);
 
     // more complex expressions
+
+    // sizeof (int) d is a syntax error,
+    // but applying sizeof to a parenthesized cast expression is ok
     if (sizeof ((int)d) != 4) {
         return 5;
     }

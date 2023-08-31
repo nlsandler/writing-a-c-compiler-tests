@@ -35,6 +35,9 @@ int main(void) {
   if (s7.d != 1.25 || strcmp(s7.c, "xy") || s7.l != 100l || s7.i != 44)
     return 32;
 
+  // call return_on_stack again and ignore the value; make sure we still allocate space for it
+  return_on_stack();
+
   s7 = pass_and_return_regs(6, 4.0, int_and_xmm, 5, two_ints, 77, one_long, 99);
   // something was clobbered or set incorrectly in retval
   if (s7.d || s7.c[0] || s7.c[1] || s7.c[2])
