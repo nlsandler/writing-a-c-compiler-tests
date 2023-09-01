@@ -23,7 +23,7 @@ with open(ROOT_DIR / "expected_results.json", "r", encoding="utf-8") as f:
 
 EXTRA_CREDIT_PROGRAMS: dict[str, list[str]]
 REQUIRES_MATHLIB: list[str]
-# TODO need macOS-friendly versions of these dependencies
+
 ASSEMBLY_DEPENDENCIES: dict[str, dict[str, str]]
 with open(ROOT_DIR / "test_properties.json", "r", encoding="utf-8") as f:
     test_info = json.load(f)

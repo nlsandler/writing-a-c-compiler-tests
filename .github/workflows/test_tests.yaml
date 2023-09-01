@@ -17,24 +17,20 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest] #, macos-latest]
-    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
+    uses: nlsandler/nqcc2/.github/workflows/build.yaml@main
     with:
       chapter: 20
       os: ${{ matrix.os }}
-    secrets:
-      NQCC_PAT: ${{ secrets.NQCC_PAT }}
     
   build-partial-nqcc:
     strategy:
       fail-fast: true
       matrix:
         os: [ubuntu-latest] #, macos-latest]
-    uses: nlsandler/nqcc-ref-impl/.github/workflows/build.yaml@main
+    uses: nlsandler/nqcc2/.github/workflows/build.yaml@main
     with:
       chapter: 19
       os: ${{ matrix.os }}
-    secrets:
-      NQCC_PAT: ${{ secrets.NQCC_PAT }}  
 
   test:
 
