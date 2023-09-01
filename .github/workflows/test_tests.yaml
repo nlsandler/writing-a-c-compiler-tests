@@ -11,9 +11,6 @@ on:
 
 jobs:
 
-  # QUESTION: would it be simpler to make these composite actions instead of jobs? no, then can't do them in parallel!
-  # then we could just call them if there's a cache miss
-  # also maybe separate out the cache key from that thing we want to copy it to?
   build-final-nqcc:
 
     strategy:
@@ -77,8 +74,8 @@ jobs:
     # run the test suite
     - name: Test the test suite
       run: |
-        chmod u+x $NQCC
-        chmod u+x $NQCC_PARTIAL
+        chmod u+x "$NQCC"
+        chmod u+x "$NQCC_PARTIAL"
         python -m unittest
       working-directory: tests
       env:
