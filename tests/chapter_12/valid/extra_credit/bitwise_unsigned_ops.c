@@ -6,16 +6,16 @@ int main(void) {
     unsigned long ul = 9223372036854775808ul; // 2^63, only uppermost bit set
 
     /* this expression will:
-     * 1. zero-extend ui. the result will have all 32 lower bits set to 1 
-     *    and all upper bits set to 0 
+     * 1. zero-extend ui. the result will have all 32 lower bits set to 1
+     *    and all upper bits set to 0
      * 2. calculate the bitwise and of this zero-extended value and ul. the result is 0
      */
     if ((ui & ul) != 0)
         return 0;
 
     /* this expression will:
-     * 1. zero-extend ui. the result will have all 32 lower bits set to 1 
-     *    and all upper bits set to 0 
+     * 1. zero-extend ui. the result will have all 32 lower bits set to 1
+     *    and all upper bits set to 0
      * 2. calculate the bitwise or of this zero-extended value and ul.
      *    the result is 2^63 + 2^32 - 1
      */
@@ -27,7 +27,7 @@ int main(void) {
      * 1. sign-extend i. the result will have every bit set to 1.
      * 2. calculate the bitwise and of this zero-extended value and ul.
      *    the result is equal to ul.
-     */    
+     */
     if ((i & ul) != ul)
         return 0;
 
@@ -36,7 +36,7 @@ int main(void) {
      * 1. sign-extend i. the result will have every bit set to 1.
      * 2. calculate the bitwise or of this zero-extended value and ul.
      *    the result will have every bit set
-     */    
+     */
     if ((i | ul) != i)
         return 0;
 

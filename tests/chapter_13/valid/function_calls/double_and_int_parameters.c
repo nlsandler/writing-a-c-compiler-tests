@@ -3,7 +3,7 @@
  */
 int check_arguments(double d1, double d2, int i1, double d3, double d4, int i2, int i3,
                     int i4, double d5, double d6, double d7, int i5, double d8) {
-                        
+
     if (d1 != 1.0) {
         return 1;
     }
@@ -12,14 +12,14 @@ int check_arguments(double d1, double d2, int i1, double d3, double d4, int i2, 
     }
     if (d3 != 3.0) {
         return 3;
-    } 
+    }
     if (d4 != 4.0 ){
         return 4;
     }
     if (d5 != 5.0){
         return 5;
     }
-        
+
     if (d6 != 6.0 ){
         return 6;
     }

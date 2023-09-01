@@ -1,4 +1,4 @@
-int 
+int
 main
 (
 void

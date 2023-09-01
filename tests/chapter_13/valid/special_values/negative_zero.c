@@ -33,7 +33,7 @@ int main(void) {
     negative_zero && (fail = 1);
     if (fail)
         return 4;
-    
+
     // negative zero is false in controlling expressions
     if (negative_zero) {
         return 5;

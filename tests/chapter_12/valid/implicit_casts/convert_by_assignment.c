@@ -90,7 +90,7 @@ int main(void) {
     if (i != -100) {
         return 8;
     }
-    
+
 
     return 0;
 }

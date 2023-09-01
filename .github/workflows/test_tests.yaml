@@ -1,7 +1,7 @@
 # This workflow will test out our test suite; yes, it is a test for our tests
 # It runs the unit tests in tests/test_tests, and runs the whole test script to validate its results
 
-name: Compiler Test Suite CI 
+name: Compiler Test Suite CI
 
 on:
   pull_request:
@@ -21,7 +21,7 @@ jobs:
     with:
       chapter: 20
       os: ${{ matrix.os }}
-    
+
   build-partial-nqcc:
     strategy:
       fail-fast: true
@@ -60,7 +60,7 @@ jobs:
       with:
         name: nqcc-${{ matrix.os }}-20
         path: nqcc
-    
+
     - name: Get partial NQCC
       uses: actions/download-artifact@v3
       with:

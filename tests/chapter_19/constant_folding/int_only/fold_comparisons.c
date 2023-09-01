@@ -30,7 +30,7 @@ int main(void) {
     if (target_gt())
         return 3;
     if (!target_ge())
-        return 4;        
+        return 4;
     if (target_lt())
         return 5;
     if (!target_le())

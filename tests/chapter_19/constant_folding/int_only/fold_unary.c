@@ -22,7 +22,7 @@ int main(void) {
     int three = 3;
     if (target_negate() != -three)
         return 1;
-    
+
     if (target_negate_zero() != 0) {
         return 2;
     }
@@ -40,5 +40,5 @@ int main(void) {
     }
 
     return 0;
-    
+
 }

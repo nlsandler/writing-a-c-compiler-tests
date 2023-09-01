@@ -10,7 +10,7 @@ int switch_on_uint(unsigned int ui) {
     switch (ui) {
         case 5u:
             return 0;
-        // this will be converted to an unsigned int, preserving its value            
+        // this will be converted to an unsigned int, preserving its value
         case 4294967286l:
             return 1;
         // 2^35 + 10, will be converted to 10

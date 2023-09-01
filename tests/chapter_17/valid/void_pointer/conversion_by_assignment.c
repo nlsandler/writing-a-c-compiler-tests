@@ -71,7 +71,7 @@ int main(void) {
         return 2;
     }
 
-    /* Assignment: we can implicitly convert void * 
+    /* Assignment: we can implicitly convert void *
      * to other pointer types by assignment
      * and have it round trip */
     double *dbl_ptr = four_bytes;
@@ -100,7 +100,7 @@ int main(void) {
     /* Return value: if we call a function to convert dbl_array to void *,
      * result should equal void_array */
     if (return_dbl_ptr_as_void_ptr(dbl_array) != void_array) {
-        return 5; 
+        return 5;
     }
 
     /* Assignment: assign some other pointer types to a void * object */

@@ -5,7 +5,7 @@ int client(int a, int b, int c, int d, int e, int f, int g) {
 }
 int target(void) {
 
-    int tmp1 = glob * 16; 
+    int tmp1 = glob * 16;
     int a = tmp1 / 4; // idiv creates conflict b/t tmp1 and ax since tmp1 is still live
     int b = glob * 4;
     int c = glob - 6;

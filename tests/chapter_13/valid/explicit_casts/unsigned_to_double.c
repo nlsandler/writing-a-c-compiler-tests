@@ -37,7 +37,7 @@ int main(void) {
     /* This value is exactly between 9223372036854775808.0 and 9223372036854777856.0
      * Using ties-to-even rounding, we'll round it down to
      * 9223372036854775808.0, which has an even significand
-     */ 
+     */
     if (ulong_to_double(9223372036854776832ul) != 9223372036854775808.0) {
         return 5;
     }
@@ -59,7 +59,7 @@ int main(void) {
      * so round down */
     if (ulong_to_double(9223372036854776830ul) != 9223372036854775808.0) {
         return 8;
-    }    
+    }
 
     return 0;
 }

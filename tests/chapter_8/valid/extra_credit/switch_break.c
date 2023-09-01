@@ -6,7 +6,7 @@ int main(void) {
             break;
         case 6:
             a = 0;
-            break; 
+            break;
     }
     return a;
 }

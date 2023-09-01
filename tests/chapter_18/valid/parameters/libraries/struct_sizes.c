@@ -114,7 +114,7 @@ int fun0 (struct bytesize1 a, struct bytesize2 b, struct bytesize3 c, struct byt
     }
 
     return 0;
-}                   
+}
 int fun1 (struct bytesize7 a, struct bytesize8 b, struct bytesize9 c, struct bytesize10 d, struct bytesize1 e, struct bytesize2 f, struct bytesize3 g, struct bytesize4 h, struct bytesize5 i, struct bytesize6 j, unsigned char *a_expected, unsigned char *b_expected, unsigned char *c_expected, unsigned char *d_expected, unsigned char *e_expected, unsigned char *f_expected, unsigned char *g_expected, unsigned char *h_expected, unsigned char *i_expected, unsigned char *j_expected) {
 
     if (!memcmp(&a, a_expected, sizeof a)) {
@@ -158,7 +158,7 @@ int fun1 (struct bytesize7 a, struct bytesize8 b, struct bytesize9 c, struct byt
     }
 
     return 0;
-}                   
+}
 int fun2 (struct bytesize11 a, struct bytesize12 b, struct bytesize13 c, struct bytesize1 d, unsigned char *a_expected, unsigned char *b_expected, unsigned char *c_expected, unsigned char *d_expected) {
 
     if (!memcmp(&a, a_expected, sizeof a)) {
@@ -178,7 +178,7 @@ int fun2 (struct bytesize11 a, struct bytesize12 b, struct bytesize13 c, struct 
     }
 
     return 0;
-}                   
+}
 int fun3 (struct bytesize14 a, struct bytesize15 b, struct bytesize16 c, struct bytesize2 d, unsigned char *a_expected, unsigned char *b_expected, unsigned char *c_expected, unsigned char *d_expected) {
 
     if (!memcmp(&a, a_expected, sizeof a)) {
@@ -198,7 +198,7 @@ int fun3 (struct bytesize14 a, struct bytesize15 b, struct bytesize16 c, struct 
     }
 
     return 0;
-}                   
+}
 int fun4 (struct bytesize17 a, struct bytesize18 b, struct bytesize3 c, unsigned char *a_expected, unsigned char *b_expected, unsigned char *c_expected) {
 
     if (!memcmp(&a, a_expected, sizeof a)) {
@@ -214,7 +214,7 @@ int fun4 (struct bytesize17 a, struct bytesize18 b, struct bytesize3 c, unsigned
     }
 
     return 0;
-}                   
+}
 int fun5 (struct bytesize19 a, struct bytesize20 b, struct bytesize4 c, unsigned char *a_expected, unsigned char *b_expected, unsigned char *c_expected) {
 
     if (!memcmp(&a, a_expected, sizeof a)) {
@@ -230,7 +230,7 @@ int fun5 (struct bytesize19 a, struct bytesize20 b, struct bytesize4 c, unsigned
     }
 
     return 0;
-}                   
+}
 int fun6 (struct bytesize21 a, struct bytesize22 b, struct bytesize5 c, unsigned char *a_expected, unsigned char *b_expected, unsigned char *c_expected) {
 
     if (!memcmp(&a, a_expected, sizeof a)) {
@@ -246,7 +246,7 @@ int fun6 (struct bytesize21 a, struct bytesize22 b, struct bytesize5 c, unsigned
     }
 
     return 0;
-}                   
+}
 int fun7 (struct bytesize23 a, struct bytesize24 b, struct bytesize4 c, unsigned char *a_expected, unsigned char *b_expected, unsigned char *c_expected) {
 
     if (!memcmp(&a, a_expected, sizeof a)) {
@@ -262,4 +262,4 @@ int fun7 (struct bytesize23 a, struct bytesize24 b, struct bytesize4 c, unsigned
     }
 
     return 0;
-}                   
+}

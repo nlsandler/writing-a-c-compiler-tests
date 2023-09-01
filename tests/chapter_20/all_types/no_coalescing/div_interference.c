@@ -5,7 +5,7 @@ int client(unsigned int a, unsigned int b, unsigned int c, unsigned int d, unsig
 }
 int target(void) {
 
-    unsigned int tmp1 = glob * 16; 
+    unsigned int tmp1 = glob * 16;
     unsigned int a = tmp1 / 4; // div creates conflict b/t tmp1 and ax since tmp1 is still live
     unsigned int b = glob * 4;
     unsigned int c = glob - 6;

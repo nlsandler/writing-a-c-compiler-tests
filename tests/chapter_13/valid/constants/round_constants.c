@@ -19,11 +19,11 @@ int main(void) {
      * it will be rounded to 9223372036854777856.0,
      * so this function will return 1
      *
-     * if your compiler uses 80-bit precision internally, 
+     * if your compiler uses 80-bit precision internally,
      * it will be rounded to 9223372036854776832,
      * which would later be rounded down to the 64-bit value
      * 9223372036854775808.0, so this function will return 0.
-     * 
+     *
      * This incorrect double rounding would be equivalent to:
      *     return ( (double) 9223372036854776832.5l == 9223372036854777856.0);
      * You can try this out and see that it returns 0.

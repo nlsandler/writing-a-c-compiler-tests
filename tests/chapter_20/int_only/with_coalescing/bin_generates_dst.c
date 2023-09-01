@@ -7,7 +7,7 @@ int flag = 1;
 int f(void);
 
 int target(void) {
-    
+
     int a = 100;
     while (a) {
         // this addition becomes:

@@ -79,7 +79,7 @@ int check_ulong_arr(unsigned long (*arr)[6][2]) {
             }
         }
     }
-    
+
     return 0;
 }
 

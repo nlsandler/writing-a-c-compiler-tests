@@ -5,7 +5,7 @@ long sign_extend(int i, long expected) {
 
 
 int main(void) {
-    /* Converting a positive or negative int to a long preserves its value */ 
+    /* Converting a positive or negative int to a long preserves its value */
     if (!sign_extend(10, 10l)) {
         return 1;
     }

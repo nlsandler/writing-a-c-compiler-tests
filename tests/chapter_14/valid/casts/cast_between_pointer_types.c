@@ -19,7 +19,7 @@ int check_null_ptr_cast(void) {
     if (ptr_ptr) {
         return 4;
     }
-    return 0;    
+    return 0;
 }
 
 int check_round_trip(void) {

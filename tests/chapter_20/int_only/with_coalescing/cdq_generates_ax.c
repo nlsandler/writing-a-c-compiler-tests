@@ -10,6 +10,6 @@ int main(void) {
     int j = coalesce_into_eax % 10; // coalesce_into_eax should be coalsced into eax, j should be coalesced into edx
     if (j)
         return -2;
-    
+
     return 0;
 }

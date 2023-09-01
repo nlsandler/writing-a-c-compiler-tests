@@ -66,11 +66,11 @@ int validate_globs(int one, int two, int three, int four, int five) {
     if (glob5 != one)
         return 10;
     if (glob6 != two)
-        return 12; 
+        return 12;
     if (glob7 != three)
-        return 13; 
+        return 13;
     if (glob8 != four)
-        return 14; 
+        return 14;
     if (glob9 != five)
         return 15;
     return 0;

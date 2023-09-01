@@ -1,5 +1,5 @@
 /* Test that we correctly track both implicit type conversions via array decay
- * and explicit casts 
+ * and explicit casts
  */
 
 #if defined SUPPRESS_WARNINGS && !defined __clang__

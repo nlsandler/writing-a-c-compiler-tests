@@ -15,7 +15,7 @@ void do_nothing(void) {
 }
 
 int main(void) {
-    set_foo_to_positive_num(-2); 
+    set_foo_to_positive_num(-2);
     if (foo) { // value of foo should still be 0
         return 1;
     }

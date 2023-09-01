@@ -13,7 +13,7 @@ Lfive:
 Lsix:
 	.double 6.0
 Lseven:
-	.double 7.0					
+	.double 7.0
 	.text
 	.globl	main
 main:

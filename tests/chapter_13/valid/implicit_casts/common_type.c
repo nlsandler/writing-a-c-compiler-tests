@@ -20,7 +20,7 @@ double tern_double_flag(double flag) {
      * THEN convert that to a double.
      * Converting -30 to unsigned long gives us 2^64 - 30, or 18446744073709551586.
      * The nearest double to this result is 18446744073709551616.0
-     */ 
+     */
     return (double) (flag ? -30 : 10ul);
 }
 
@@ -41,14 +41,14 @@ int multiply(void) {
      */
     int i = 10.75 * ten;
 
-    return i == 107;    
+    return i == 107;
 }
 
 int main(void) {
 
     /* Comparison:
      * we'll implicitly convert the long argument the nearest double,
-     * which is -9007199254751228.0, so these values compare equal    
+     * which is -9007199254751228.0, so these values compare equal
      */
     if (lt(-9007199254751228.0, -9007199254751227l)) {
         return 1;

@@ -55,7 +55,7 @@ int main(void) {
     b = 90l;
     if (!subtraction()) {
         return 2;
-    }    
+    }
 
     /* Multiplication */
     a = 4294967290l;

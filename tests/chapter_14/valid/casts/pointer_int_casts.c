@@ -17,7 +17,7 @@ long l = 128l;
 int int_to_pointer(void) {
     int *a = (int *) i;
     int *b = (int *) l;
-    return a == b;   
+    return a == b;
 }
 
 int pointer_to_int(void) {

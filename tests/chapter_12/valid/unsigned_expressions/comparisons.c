@@ -47,6 +47,6 @@ int main(void) {
         return 15;
     if (!(large_ulong >= one_hundred_ulong))
         return 16;
-    
+
     return 0;
 }

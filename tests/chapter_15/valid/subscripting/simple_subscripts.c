@@ -7,7 +7,7 @@
 int integer_types(unsigned *arr, unsigned expected) {
     // make sure our index can be any integer type
     unsigned val1 = arr[5];
-    unsigned val2 = arr[5u];    
+    unsigned val2 = arr[5u];
     unsigned val3 = arr[5l];
     unsigned val4 = arr[5ul];
     if (val1 != expected) {
@@ -52,13 +52,13 @@ static double static_array[3] = {0.1, 0.2, 0.3};
 int subscript_static(void) {
     if (static_array[0] != 0.1) {
         return 8;
-    }    
+    }
     if (static_array[1] != 0.2) {
         return 9;
     }
     if (static_array[2] != 0.3) {
         return 10;
-    }    
+    }
     return 0;
 }
 

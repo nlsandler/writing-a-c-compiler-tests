@@ -11,7 +11,7 @@ int addition(void) {
      * promote i to a long, then perform addition.
      * If we instead converted l to an int, its value would be
      * -2147483643, and the result of i + l would be -2147483633
-     */    
+     */
     long result = i + l;
     return (result == 2147483663l);
 }
@@ -37,7 +37,7 @@ int division(void) {
 int comparison(void) {
     // i = -100
     // l = 4294967296, i.e. 2^32
-    
+
     /* Make sure we convert i to a long instead of converting l to an int.
      * If we convert l to an int its value will be -2147483648,
      * which is smaller than -100.
@@ -51,7 +51,7 @@ int conditional(void) {
 
     /* When a conditional expression includes both int and long branches,
      * make sure the int type is promoted to a long, rather than the long being
-     * converted to an int 
+     * converted to an int
      */
     long result = 1 ? l : i;
     return (result == 8589934592l);

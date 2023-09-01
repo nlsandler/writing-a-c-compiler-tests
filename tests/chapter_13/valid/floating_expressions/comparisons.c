@@ -27,7 +27,7 @@ int main(void) {
     if (tiny == 0.0) {
         return 5;
     }
-    
+
     if (point_one != point_one) {
         return 6;
     }

@@ -12,7 +12,7 @@ int main(void) {
     /* Make sure l has the right value before we update it */
     if (return_l() != 8589934592l)
         return 1;
-    
+
     if (return_l_as_int() != 0)
         return 2;
 

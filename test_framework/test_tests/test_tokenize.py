@@ -27,7 +27,7 @@ class TokenizeTestCase(unittest.TestCase):
     .globl main
 main:
     movl $2, %eax
-    ret            
+    ret
 """
         )
         actual_tokens = list(tokenize.tokenize(asm))
@@ -175,12 +175,12 @@ main:
         asm = io.StringIO(
             r"""
     .globl main # this is a comment
-# here's another comment    
+# here's another comment
 main:
     movl $2, %eax
     # movl $1, %eax
     ret
-    # comment! 2309!! # #            
+    # comment! 2309!! # #
 """
         )
         actual_tokens = list(tokenize.tokenize(asm))

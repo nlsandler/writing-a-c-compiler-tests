@@ -25,7 +25,7 @@ int main(void)
     if (d) {
         return 1;
     }
-    
+
     if (i) {
         return 2;
     }

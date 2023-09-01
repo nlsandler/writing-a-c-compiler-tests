@@ -1,4 +1,4 @@
-struct inner { 
+struct inner {
     double a;
     char b;
 };

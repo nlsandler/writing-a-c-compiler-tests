@@ -37,7 +37,7 @@ int main(void) {
     if (!subtract_large()) {
         return 2;
     }
-    
+
     if (!multiply_by_large()) {
         return 3;
     }

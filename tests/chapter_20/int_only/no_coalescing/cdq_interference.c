@@ -165,16 +165,16 @@ int main(void) {
 
     if (target(3) != 4)
         return 2;
-    
+
     if (target(6) != 5)
         return 3;
-    
+
     if (target(11) != 8)
         return 4;
-    
+
     if (target(17) != 9)
         return 5;
-    
+
     if (target(23) != 12)
         return 6;
 
@@ -185,16 +185,16 @@ int main(void) {
 
     if (target(3) != 3)
         return 8;
-    
+
     if (target(6) != 6)
         return 9;
-    
+
     if (target(11) != 7)
         return 10;
-    
+
     if (target(17) != 10)
         return 11;
-    
+
     if (target(23) != 11)
         return 12;
 

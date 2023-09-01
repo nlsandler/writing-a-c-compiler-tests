@@ -13,7 +13,7 @@ long zero = 0l;
 int main(void) {
 
     negative_one = -negative_one;
-    /* 2^36 can't be represented as an unsigned int, 
+    /* 2^36 can't be represented as an unsigned int,
      * so it will be promoted to an unsigned long;
      * when we compare this to -1l, we'll convert -1l to
      * an unsigned long with value ULONG_MAX
@@ -27,7 +27,7 @@ int main(void) {
      * so negating it gives us a negative signed value.
      * If it were promoted to an unsigned int, comparing it to 0l
      * would require us to zero-extend it and we'd get a positive value.
-     */ 
+     */
     if (-2147483658 >= zero) {
         return 2;
     }

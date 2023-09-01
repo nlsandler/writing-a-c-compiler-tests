@@ -17,7 +17,7 @@ int main(void) {
     }
     if (c != -8589934592l) {
         return 3;
-    } 
+    }
     if (d != 10) {
         return 4;
     }

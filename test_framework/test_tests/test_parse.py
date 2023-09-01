@@ -461,7 +461,7 @@ main:
 foo:
     ret
     .data
-.Lsomeconst:    
+.Lsomeconst:
     .string "Hello world"
     .section .rodata
     .section .text
@@ -472,7 +472,7 @@ bar:
     .zero 4
     .text
 baz:
-    ret    
+    ret
 """
         expected_foo = AssemblyFunction(Label("foo"), [Instruction(Opcode.RET, [])])
         expected_bar = AssemblyFunction(Label("bar"), [Instruction(Opcode.RET, [])])

@@ -7,7 +7,7 @@ int addr_of_arg(int a) {
     return a;
 }
 
-int main(void) {    
+int main(void) {
     // the parameter a is an lvalue with an address,
     // but the corresponding argument doesn't have to be
     int result = addr_of_arg(-20);

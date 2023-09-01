@@ -27,7 +27,7 @@ int truncate_on_assignment(long l, int expected) {
 }
 
 int main(void) {
-    
+
     // return statements
 
     /* return_truncated_long will truncate 2^32 + 2 to 2

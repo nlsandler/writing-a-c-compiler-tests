@@ -24,7 +24,7 @@ int main(void) {
             return 2;
         }
     }
-    
+
     // free it
     free_bytes(mem);
 

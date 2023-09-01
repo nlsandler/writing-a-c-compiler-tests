@@ -1,6 +1,6 @@
 /* Test that we correctly handle pointers to pointers */
 int main(void) {
-    
+
     // set up chain of indirection:
     // d_ptr_ptr_ptr > d_ptr_ptr > d_ptr > d = 10.0
 

@@ -23,7 +23,7 @@ int main(void) {
     }
     if (arr[4] != 8)
         return 3;
-    
+
     // now try a 2D array
     int nested_arr[3][2] = {{-10, -9}, {-8, -7}, {-6, -5}};
 

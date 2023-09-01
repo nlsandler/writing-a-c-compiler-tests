@@ -9,7 +9,7 @@ extern int glob5;
 int callee(int a, int b, int c, int d, int e) {
     if (a == 2 && b == 0 && c == 9 && d == 1 && e == 0)
         return 1;
-    
+
     return -100;
 }
 
