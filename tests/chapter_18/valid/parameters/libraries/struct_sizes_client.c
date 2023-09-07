@@ -3,35 +3,35 @@
 
 int main(void) {
 
-    if (!fun0(globvar_1, globvar_2, globvar_3, globvar_4, globvar_5, globvar_6, globvar_7, globvar_8, globvar_9, globvar_10, globvar_11, globvar_12, globvar_13, globvar_14, globvar_15, globvar_16, globvar_17, globvar_18, globvar_19, globvar_20, globvar_21, globvar_22, globvar_23, globvar_24, globvar_1.arr, globvar_2.arr, globvar_3.arr, globvar_4.arr, globvar_5.arr, globvar_6.arr, globvar_7.arr, globvar_8.arr, globvar_9.arr, globvar_10.arr, globvar_11.arr, globvar_12.arr, globvar_13.arr, globvar_14.arr, globvar_15.arr, globvar_16.arr, globvar_17.arr, globvar_18.arr, globvar_19.arr, globvar_20.arr, globvar_21.arr, globvar_22.arr, globvar_23.arr, globvar_24.arr)) {
+    if (fun0(globvar_1, globvar_2, globvar_3, globvar_4, globvar_5, globvar_6, globvar_7, globvar_8, globvar_9, globvar_10, globvar_11, globvar_12, globvar_13, globvar_14, globvar_15, globvar_16, globvar_17, globvar_18, globvar_19, globvar_20, globvar_21, globvar_22, globvar_23, globvar_24, globvar_1.arr, globvar_2.arr, globvar_3.arr, globvar_4.arr, globvar_5.arr, globvar_6.arr, globvar_7.arr, globvar_8.arr, globvar_9.arr, globvar_10.arr, globvar_11.arr, globvar_12.arr, globvar_13.arr, globvar_14.arr, globvar_15.arr, globvar_16.arr, globvar_17.arr, globvar_18.arr, globvar_19.arr, globvar_20.arr, globvar_21.arr, globvar_22.arr, globvar_23.arr, globvar_24.arr)) {
         return 1;
     }
 
-    if (!fun1(globvar_7, globvar_8, globvar_9, globvar_10, globvar_1, globvar_2, globvar_3, globvar_4, globvar_5, globvar_6, globvar_7.arr, globvar_8.arr, globvar_9.arr, globvar_10.arr, globvar_1.arr, globvar_2.arr, globvar_3.arr, globvar_4.arr, globvar_5.arr, globvar_6.arr)) {
+    if (fun1(globvar_7, globvar_8, globvar_9, globvar_10, globvar_1, globvar_2, globvar_3, globvar_4, globvar_5, globvar_6, globvar_7.arr, globvar_8.arr, globvar_9.arr, globvar_10.arr, globvar_1.arr, globvar_2.arr, globvar_3.arr, globvar_4.arr, globvar_5.arr, globvar_6.arr)) {
         return 2;
     }
 
-    if (!fun2(globvar_11, globvar_12, globvar_13, globvar_1, globvar_11.arr, globvar_12.arr, globvar_13.arr, globvar_1.arr)) {
+    if (fun2(globvar_11, globvar_12, globvar_13, globvar_1, globvar_11.arr, globvar_12.arr, globvar_13.arr, globvar_1.arr)) {
         return 3;
     }
 
-    if (!fun3(globvar_14, globvar_15, globvar_16, globvar_2, globvar_14.arr, globvar_15.arr, globvar_16.arr, globvar_2.arr)) {
+    if (fun3(globvar_14, globvar_15, globvar_16, globvar_2, globvar_14.arr, globvar_15.arr, globvar_16.arr, globvar_2.arr)) {
         return 4;
     }
 
-    if (!fun4(globvar_17, globvar_18, globvar_3, globvar_17.arr, globvar_18.arr, globvar_3.arr)) {
+    if (fun4(globvar_17, globvar_18, globvar_3, globvar_17.arr, globvar_18.arr, globvar_3.arr)) {
         return 5;
     }
 
-    if (!fun5(globvar_19, globvar_20, globvar_4, globvar_19.arr, globvar_20.arr, globvar_4.arr)) {
+    if (fun5(globvar_19, globvar_20, globvar_4, globvar_19.arr, globvar_20.arr, globvar_4.arr)) {
         return 6;
     }
 
-    if (!fun6(globvar_21, globvar_22, globvar_5, globvar_21.arr, globvar_22.arr, globvar_5.arr)) {
+    if (fun6(globvar_21, globvar_22, globvar_5, globvar_21.arr, globvar_22.arr, globvar_5.arr)) {
         return 7;
     }
 
-    if (!fun7(globvar_23, globvar_24, globvar_4, globvar_23.arr, globvar_24.arr, globvar_4.arr)) {
+    if (fun7(globvar_23, globvar_24, globvar_4, globvar_23.arr, globvar_24.arr, globvar_4.arr)) {
         return 8;
     }
 
@@ -83,35 +83,35 @@ int main(void) {
 
 	struct bytesize24 locvar_24 = { { 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43 } };
 
-    if (!fun0(locvar_1, locvar_2, locvar_3, locvar_4, locvar_5, locvar_6, locvar_7, locvar_8, locvar_9, locvar_10, locvar_11, locvar_12, locvar_13, locvar_14, locvar_15, locvar_16, locvar_17, locvar_18, locvar_19, locvar_20, locvar_21, locvar_22, locvar_23, locvar_24, locvar_1.arr, locvar_2.arr, locvar_3.arr, locvar_4.arr, locvar_5.arr, locvar_6.arr, locvar_7.arr, locvar_8.arr, locvar_9.arr, locvar_10.arr, locvar_11.arr, locvar_12.arr, locvar_13.arr, locvar_14.arr, locvar_15.arr, locvar_16.arr, locvar_17.arr, locvar_18.arr, locvar_19.arr, locvar_20.arr, locvar_21.arr, locvar_22.arr, locvar_23.arr, locvar_24.arr)) {
+    if (fun0(locvar_1, locvar_2, locvar_3, locvar_4, locvar_5, locvar_6, locvar_7, locvar_8, locvar_9, locvar_10, locvar_11, locvar_12, locvar_13, locvar_14, locvar_15, locvar_16, locvar_17, locvar_18, locvar_19, locvar_20, locvar_21, locvar_22, locvar_23, locvar_24, locvar_1.arr, locvar_2.arr, locvar_3.arr, locvar_4.arr, locvar_5.arr, locvar_6.arr, locvar_7.arr, locvar_8.arr, locvar_9.arr, locvar_10.arr, locvar_11.arr, locvar_12.arr, locvar_13.arr, locvar_14.arr, locvar_15.arr, locvar_16.arr, locvar_17.arr, locvar_18.arr, locvar_19.arr, locvar_20.arr, locvar_21.arr, locvar_22.arr, locvar_23.arr, locvar_24.arr)) {
         return 1;
     }
 
-    if (!fun1(locvar_7, locvar_8, locvar_9, locvar_10, locvar_1, locvar_2, locvar_3, locvar_4, locvar_5, locvar_6, locvar_7.arr, locvar_8.arr, locvar_9.arr, locvar_10.arr, locvar_1.arr, locvar_2.arr, locvar_3.arr, locvar_4.arr, locvar_5.arr, locvar_6.arr)) {
+    if (fun1(locvar_7, locvar_8, locvar_9, locvar_10, locvar_1, locvar_2, locvar_3, locvar_4, locvar_5, locvar_6, locvar_7.arr, locvar_8.arr, locvar_9.arr, locvar_10.arr, locvar_1.arr, locvar_2.arr, locvar_3.arr, locvar_4.arr, locvar_5.arr, locvar_6.arr)) {
         return 2;
     }
 
-    if (!fun2(locvar_11, locvar_12, locvar_13, locvar_1, locvar_11.arr, locvar_12.arr, locvar_13.arr, locvar_1.arr)) {
+    if (fun2(locvar_11, locvar_12, locvar_13, locvar_1, locvar_11.arr, locvar_12.arr, locvar_13.arr, locvar_1.arr)) {
         return 3;
     }
 
-    if (!fun3(locvar_14, locvar_15, locvar_16, locvar_2, locvar_14.arr, locvar_15.arr, locvar_16.arr, locvar_2.arr)) {
+    if (fun3(locvar_14, locvar_15, locvar_16, locvar_2, locvar_14.arr, locvar_15.arr, locvar_16.arr, locvar_2.arr)) {
         return 4;
     }
 
-    if (!fun4(locvar_17, locvar_18, locvar_3, locvar_17.arr, locvar_18.arr, locvar_3.arr)) {
+    if (fun4(locvar_17, locvar_18, locvar_3, locvar_17.arr, locvar_18.arr, locvar_3.arr)) {
         return 5;
     }
 
-    if (!fun5(locvar_19, locvar_20, locvar_4, locvar_19.arr, locvar_20.arr, locvar_4.arr)) {
+    if (fun5(locvar_19, locvar_20, locvar_4, locvar_19.arr, locvar_20.arr, locvar_4.arr)) {
         return 6;
     }
 
-    if (!fun6(locvar_21, locvar_22, locvar_5, locvar_21.arr, locvar_22.arr, locvar_5.arr)) {
+    if (fun6(locvar_21, locvar_22, locvar_5, locvar_21.arr, locvar_22.arr, locvar_5.arr)) {
         return 7;
     }
 
-    if (!fun7(locvar_23, locvar_24, locvar_4, locvar_23.arr, locvar_24.arr, locvar_4.arr)) {
+    if (fun7(locvar_23, locvar_24, locvar_4, locvar_23.arr, locvar_24.arr, locvar_4.arr)) {
         return 8;
     }
 

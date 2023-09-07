@@ -19,7 +19,5 @@ int main(void) {
     on_page_boundary.arr[3] = 5;
     on_page_boundary.arr[8] = 6;
     // pass this struct in register and on stack
-    // TODO this accidentally succeeds even though we don't pass second quadword of last arg
-    // how is it possible that NONE of our tests catch this???
     return f(on_page_boundary, 0, 0, 0, 0, 0, on_page_boundary);
 }
