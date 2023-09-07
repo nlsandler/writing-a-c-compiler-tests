@@ -5,9 +5,9 @@
 #pragma GCC diagnostic ignored "-Wsizeof-array-argument"
 #endif
 
-unsigned long test_sizeof_adjusted_param(int arr[3]) {
+unsigned long sizeof_adjusted_param(int arr[3]) {
     // this should return the size of arr's _adjusted_ type,
-    // so it will return 8 (the size of a pointer) instead of 4
+    // so it should return 8 (the size of a pointer) instead of 12
     return sizeof arr;
 }
 
@@ -32,7 +32,7 @@ int main(void) {
 
     // parameters declared with array type are adjusted to pointers,
     // and sizeof reflects this
-    if (!test_sizeof_adjusted_param(arr)) {
+    if (sizeof_adjusted_param(arr) != 8) {
         return 4;
     }
 
