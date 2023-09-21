@@ -1,4 +1,5 @@
 // can't define a structure with an incomplete return type
+struct s;
 struct s return_struct(void) {
 
   struct s result = {1, 2};

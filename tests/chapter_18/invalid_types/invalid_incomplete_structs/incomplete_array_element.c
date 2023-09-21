@@ -1,3 +1,5 @@
+struct s;
+
 struct s arr[3];
 
 struct s {

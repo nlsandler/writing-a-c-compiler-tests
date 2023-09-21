@@ -10,6 +10,7 @@ int foo(void) {
 int main(void) {
   // previously define struct s is not visible here,
   // so this is trying to define a variable with incomplete type
+  struct s;
   struct s blah = {foo(), foo()};
   return blah.a;
 }
