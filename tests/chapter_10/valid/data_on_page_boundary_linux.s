@@ -4,3 +4,4 @@
     .globl zed
 zed:
     .zero 4
+    .section	".note.GNU-stack","",@progbits
