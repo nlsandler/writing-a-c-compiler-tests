@@ -53,6 +53,10 @@ def needs_mathlib(prog: Path) -> bool:
     key = get_props_key(prog)
     return key in REQUIRES_MATHLIB and not IS_OSX
 
+def print_stderr(proc: subprocess.CompletedProcess[str]) -> None:
+    """Print out stderr of CompletedProcess if it's not empty. Intended to print assembler/linker warnings"""
+    if proc.stderr:
+        print(proc.stderr)
 
 def gcc_build_obj(prog: Path) -> None:
     """Use the 'gcc' command to compile source file to an object file.
@@ -102,16 +106,19 @@ def gcc_compile_and_run(
 
     # compile it
     try:
-        subprocess.run(
+        result = subprocess.run(
             ["gcc", "-D", "SUPPRESS_WARNINGS"] + source_files + options + ["-o", exe],
             check=True,
             text=True,
-            capture_output=True,  # capture output so we don't see warnings
+            capture_output=False,
         )
+        # print any warnings even if it succeeded
+        print_stderr(result)
     except subprocess.CalledProcessError as err:
         # This is an internal error in the test suite
         # TODO better handling of internal problems with test suite
         raise RuntimeError(err.stderr) from err
+
 
     # run it
     return subprocess.run([exe], check=False, text=True, capture_output=True)
@@ -205,6 +212,7 @@ class TestChapter(unittest.TestCase):
 
         # run the command: '{self.cc} {options} {source_file}'
         proc = subprocess.run(args, capture_output=True, check=False, text=True)
+
         return proc
 
     def validate_no_output(self, source_file: Path) -> None:
@@ -307,6 +315,10 @@ class TestChapter(unittest.TestCase):
             msg=f"compilation of {source_file} failed with error:\n{compile_result.stderr}",
         )
 
+        # print stderr (might have warnings we care about even if compilation succeeded)
+        # TODO make this controlled by verbosity maybe?
+        print_stderr(compile_result)
+
         # run the executable
         # TODO cleaner handling if executable doesn't exist? or check that it exists above?
         exe = source_file.with_suffix("")
@@ -337,6 +349,10 @@ class TestChapter(unittest.TestCase):
             0,
             msg=f"compilation of {file_under_test} failed with error:\n{compilation_result.stderr}",
         )
+
+        # print stderr (might have warnings we care about even if compilation succeeded)
+        # TODO make this controlled by verbosity maybe?
+        print_stderr(compilation_result)
 
         # compile other_file
         gcc_build_obj(other_file)

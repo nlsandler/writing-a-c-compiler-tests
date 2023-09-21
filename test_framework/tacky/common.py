@@ -50,6 +50,9 @@ class TackyOptimizationTest(basic.TestChapter):
             0,
             msg=f"compilation of {source_file} failed with error:\n{compile_result.stderr}",
         )
+        basic.print_stderr(
+            compile_result
+        )  # print compiler warnings even if it succeeded
         asm_file = source_file.with_suffix(".s")
 
         # assemble/link asm_file, run it, and make sure it gives expected result
