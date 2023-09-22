@@ -1,6 +1,6 @@
 /* Test that array types in parameters are converted to pointer types */
 
-#if defined SUPPRESS_WARNINGS && !defined __clang__
+#if defined SUPPRESS_WARNINGS
 #pragma GCC diagnostic ignored "-Warray-parameter"
 #endif
 
