@@ -85,6 +85,8 @@ class SanitizerTest(unittest.TestCase):
             # macro to include warning suppression pragmas in individual source files
             "-D",
             "SUPPRESS_WARNINGS",
+            # don't complain if there's an unknown warning option - it might have been added in a later version of clang
+            "-Wno-unknown-warning-option",
             # enable ubsan, and enable optimizations so UBSan can catch more errors
             "-O3",
             "-fsanitize=undefined",
