@@ -1,4 +1,4 @@
 struct s {
-  // can't have void member
+  // can't declare structure members with incomplete type, including void
   void x;
 };

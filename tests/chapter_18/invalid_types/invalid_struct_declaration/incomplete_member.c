@@ -1,6 +1,6 @@
 struct s; // declare incomplete structure type
 
 struct a {
-  // can't use incomplete struct type as member
+  // can't declare a struct member with incomplete type
   struct s g;
 };

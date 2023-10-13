@@ -1,12 +1,11 @@
-// can't define a structure with an incomplete return type
-struct s;
-struct s return_struct(void) {
+void exit(int status);
 
-  struct s result = {1, 2};
-  return result;
+struct s;
+
+// you can't define a function with an incomplete return type,
+// even if it doesn't actually return a value
+struct s return_struct_def(void) {
+  exit(0);
 }
-struct s {
-  int a;
-  int b;
-};
+
 int main(void) { return 0; }

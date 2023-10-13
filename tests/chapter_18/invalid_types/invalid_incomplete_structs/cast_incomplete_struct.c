@@ -3,7 +3,7 @@ struct s;
 extern struct s v;
 
 int main(void) {
-  // incomplete structures can't appear in cast expressions
+  // you can't perform a cast on a struct with incomplete type
   (void)v;
   return 0;
 }

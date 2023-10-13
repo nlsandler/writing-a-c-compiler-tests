@@ -1,7 +1,7 @@
 struct s;
 
 int main(void) {
-  // can't declare a local variable with incomplete struct type
+  // can't define a local variable (or any variable) with incomplete type
   struct s v;
   return 0;
 }

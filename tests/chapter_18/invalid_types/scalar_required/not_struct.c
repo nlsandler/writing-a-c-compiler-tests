@@ -1,8 +1,8 @@
 struct s {
-  int a;
+    int a;
 };
 
 int main(void) {
-  struct s x = {1};
-  return !x; // can't apply boolean operators to structs
+    struct s x = {1};
+    return !x;  // can only apply boolean operators to scalars, not structs
 }

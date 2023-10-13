@@ -1,16 +1,17 @@
 int foo(void) {
-  struct s {
-    int a;
-    int b;
-  };
-  struct s result = {1, 2};
-  return result.a + result.b;
+    struct s {
+        int a;
+        int b;
+    };
+    struct s result = {1, 2};
+    return result.a + result.b;
 }
 
 int main(void) {
-  // previously define struct s is not visible here,
-  // so this is trying to define a variable with incomplete type
-  struct s;
-  struct s blah = {foo(), foo()};
-  return blah.a;
+    // previously defined struct s is not in scope here,
+    // so this is declares a new incomplete type
+    struct s;
+    // this is illegal because it defines a variable with an incomplete type
+    struct s blah = {foo(), foo()};
+    return blah.a;
 }
