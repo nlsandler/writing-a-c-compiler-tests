@@ -2,6 +2,7 @@
 // has temporary lifetime;
 // you can get the array's address implicitly (but not explicitly)
 // NB modifying an array w/ temporary lifetime is undefined
+// TODO make this explicitly based on Listing 18-27?
 
 struct inner {
   int a;

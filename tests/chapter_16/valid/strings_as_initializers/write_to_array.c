@@ -8,7 +8,7 @@
 #endif
 #endif
 
-int puts(char *c);
+int puts(char *s);
 
 int main(void) {
     // start with a flat array

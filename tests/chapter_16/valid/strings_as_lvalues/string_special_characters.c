@@ -10,7 +10,7 @@
 #endif
 #endif
 
-int puts(char *c);
+int puts(char *s);
 int strcmp(char *s1, char *s2);
 
 int main(void) {
