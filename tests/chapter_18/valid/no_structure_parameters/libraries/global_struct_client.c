@@ -15,7 +15,7 @@ int main(void) {
     if (global.arr[1] != 4) {
         return 1;
     }
-    if (global.d != 4.0) {
+    if (global.d != 5.0) {
         return 2;
     }
 

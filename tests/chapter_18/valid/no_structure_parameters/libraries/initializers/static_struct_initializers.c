@@ -12,7 +12,6 @@
 // case 1: struct with no explicit initializer should be all zeros
 // struct s uninitialized;
 int test_uninitialized(void) {
-
     // make sure all elements are zero
     if (uninitialized.one_d || uninitialized.two_msg ||
         uninitialized.three_arr[0] || uninitialized.three_arr[1] ||
@@ -42,10 +41,11 @@ int test_partially_initialized(void) {
 // case 3: partially initialized array w/in struct
 // struct s partial with_array = {3.0, "!", {1}, 2};
 int test_partial_inner_init(void) {
-
     // validate explicitly initialzed elements
-    if (partial_with_array.one_d != 3.0 || strcmp(partial_with_array.two_msg, "!") ||
-        partial_with_array.three_arr[0] != 1 || partial_with_array.four_i != 2) {
+    if (partial_with_array.one_d != 3.0 ||
+        strcmp(partial_with_array.two_msg, "!") ||
+        partial_with_array.three_arr[0] != 1 ||
+        partial_with_array.four_i != 2) {
         return 0;
     }
 
@@ -67,8 +67,6 @@ int test_partial_inner_init(void) {
     };
 */
 int test_implicit_conversion(void) {
-
-
     // validate elements
     if (converted.one_d != 1152921504606846976.0 || converted.two_msg ||
         converted.three_arr[0] != 'a' || converted.three_arr[1] != 'b' ||

@@ -6,6 +6,18 @@
 
 #include "nested_static_struct_initializers.h"
 
+
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wconstant-conversion"
+#pragma clang diagnostic ignored "-Wimplicit-const-int-float-conversion"
+#pragma clang diagnostic ignored "-Wliteral-conversion"
+#else
+#pragma GCC diagnostic ignored "-Woverflow"
+#endif
+#endif
+
 // structs defined here
 // validation functions defined in library
 

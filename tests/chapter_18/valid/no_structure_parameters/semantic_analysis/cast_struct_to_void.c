@@ -9,6 +9,6 @@ struct s {
 
 int main(void) {
     struct s x = {1, 2};
-    (void) x; // just make sure this doesn't cause a type error
+    (void)x;  // just make sure this doesn't cause a type error
     return 0;
 }

@@ -2,14 +2,24 @@
  * the client; this is a common idiom for hiding a library's implementation
  * details */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#else
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
+#endif
+#endif
+
+// library functoins
+int strcmp(char *s1, char *s2);
 int puts(char *s);
+void *malloc(unsigned long size);
 
 struct s {
     int member1;
     double member2;
     char *member3;
 };
-
 
 // make a struct
 struct s *create_struct(int i, double d, char *s) {
@@ -20,14 +30,12 @@ struct s *create_struct(int i, double d, char *s) {
     return ptr;
 }
 
-
 // modify a struct
 void increment_struct(struct s *ptr) {
     ptr->member1 = ptr->member1 + 1;
     ptr->member2 = ptr->member2 + 1;
     ptr->member3 = ptr->member3;
 }
-
 
 // read struct members
 int check_struct(struct s *ptr, int expected_i, double expected_d,

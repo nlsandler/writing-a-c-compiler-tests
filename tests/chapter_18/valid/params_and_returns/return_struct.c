@@ -4,7 +4,7 @@ struct pair {
 };
 
 struct pair return_pair(void) {
-    struct pair ret = { 1, 11l };
+    struct pair ret = {1, 11l};
     return ret;
 }
 

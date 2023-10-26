@@ -8,7 +8,7 @@ struct s {
 };
 
 int main(void) {
-    struct s arg = { 1, 2};
+    struct s arg = {1, 2};
     return foo(arg);
 }
 

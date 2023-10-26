@@ -12,6 +12,6 @@ int main(void) {
 }
 
 struct s return_struct(void) {
-    struct s result = { 1, 2 };
+    struct s result = {1, 2};
     return result;
 }

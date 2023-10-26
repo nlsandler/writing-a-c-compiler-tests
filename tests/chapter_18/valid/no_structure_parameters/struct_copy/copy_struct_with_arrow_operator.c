@@ -153,15 +153,16 @@ int test_mixed_nested_access(void) {
 int test_member_from_cast(void) {
     struct inner small = {20.0, 10};
 
-    void *outer_ptr = calloc(1, sizeof (struct outer));
+    void *outer_ptr = calloc(1, sizeof(struct outer));
     ((struct outer *)outer_ptr)->substruct = small;
 
     // validate
-    if (((struct outer *)outer_ptr)->substruct.d != 20.0 || ((struct outer *)outer_ptr)->substruct.i != 10) {
+    if (((struct outer *)outer_ptr)->substruct.d != 20.0 ||
+        ((struct outer *)outer_ptr)->substruct.i != 10) {
         return 0;
     }
 
-    return 1; // success
+    return 1;  // success
 }
 
 int main(void) {

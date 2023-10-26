@@ -8,6 +8,6 @@ double foo(struct pair p) {
 }
 
 int main(void) {
-    struct pair x = { 1, 2.0 };
+    struct pair x = {1, 2.0};
     return foo(x) == 2.0;
 }

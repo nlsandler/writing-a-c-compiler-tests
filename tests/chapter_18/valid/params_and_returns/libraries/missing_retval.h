@@ -1,5 +1,5 @@
 struct big {
-  char arr[25];
+    char arr[25];
 };
 
 // make sure we correctly handle calls to functions with return values

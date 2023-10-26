@@ -5,5 +5,5 @@
 #endif
 
 struct big missing_return_value(int *i) {
-  *i = 10;
+    *i = 10;
 }

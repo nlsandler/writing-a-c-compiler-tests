@@ -20,7 +20,6 @@ int strcmp(char *s1, char *s2);
 void *malloc(unsigned long size);
 void *calloc(unsigned long nmemb, unsigned long size);
 
-
 // struct type def
 struct s {
     char *one_msg;
@@ -29,7 +28,6 @@ struct s {
     double four_d;
     double *five_d_ptr;
 };
-
 
 // validation functions defined in library
 int validate_full_initialization(struct s *ptr);

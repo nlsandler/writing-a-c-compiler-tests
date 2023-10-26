@@ -1,5 +1,6 @@
-// make sure structs w/ automatic storage duration are reinitialized whenver they come into scope
-// and structs w/ static storage duration are initialized only once
+// make sure structs w/ automatic storage duration are reinitialized whenver
+// they come into scope and structs w/ static storage duration are initialized
+// only once
 
 struct s {
     int a;
@@ -17,19 +18,20 @@ int main(void) {
         stat.a = stat.a + 1;
         stat.b = stat.b + 1;
 
-
         // on last iteration, validate both structs
         if (i == 9) {
-            // stat should be {10, 11} b/c both members were incremented on each iteration
+            // stat should be {10, 11} b/c both members were incremented on each
+            // iteration
             if (stat.a != 11 || stat.b != 12) {
                 return 1;
             }
-            // autom should be {2, 3} b/c it was reinitialized on every iteration
+            // autom should be {2, 3} b/c it was reinitialized on every
+            // iteration
             if (autom.a != 2 || autom.b != 3) {
                 return 2;
             }
         }
     }
 
-    return 0; // success
+    return 0;  // success
 }

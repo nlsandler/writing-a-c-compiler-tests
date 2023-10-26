@@ -6,6 +6,16 @@
 
 #include "static_struct_initializers.h"
 
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wconstant-conversion"
+#pragma clang diagnostic ignored "-Wimplicit-const-int-float-conversion"
+#else
+#pragma GCC diagnostic ignored "-Woverflow"
+#endif
+#endif
+
 // case 1: struct with no explicit initializer should be all zeros
 struct s uninitialized;
 

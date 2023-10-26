@@ -1,7 +1,8 @@
 /* Verify that sizeof produces correct results for various expressions of
  * structure type. This is almost identical of sizeof_type except we're applying
  * sizeof to expressions and not just type specifiers.
- * This also tests that we correctly infer the types of expressions w/ structure type
+ * This also tests that we correctly infer the types of expressions w/ structure
+ * type
  * */
 
 #include "struct_sizes.h"
@@ -15,7 +16,8 @@ int main(void) {
 
     struct contains_struct_array arr_struct;
 
-    if (sizeof arr_struct.struct_array[2] != 8) { // elements of struct_array have type struct eight_bytes
+    if (sizeof arr_struct.struct_array[2] !=
+        8) {  // elements of struct_array have type struct eight_bytes
         return 1;
     }
 
@@ -66,5 +68,5 @@ int main(void) {
         return 12;
     }
 
-    return 0; // success
+    return 0;  // success
 }

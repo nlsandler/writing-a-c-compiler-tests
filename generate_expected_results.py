@@ -57,7 +57,7 @@ def main() -> None:
 
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--since_commit", default=None)
+    group.add_argument("--since-commit", default=None)
     group.add_argument("--all", action="store_true")
 
     args = parser.parse_args()
@@ -160,7 +160,6 @@ def main() -> None:
             result = basic.gcc_compile_and_run(source_files, opts)
 
             # record the result
-
             result_dict: dict[str, Any] = {"return_code": result.returncode}
             if result.stdout:
                 result_dict["stdout"] = result.stdout

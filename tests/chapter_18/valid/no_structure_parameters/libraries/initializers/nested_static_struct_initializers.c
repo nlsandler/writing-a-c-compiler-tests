@@ -18,9 +18,9 @@ int test_uninitialized(void) {
     }
 
     // validate elements in struct inner
-    if (all_zeros.two_struct.one_i ||
-        all_zeros.two_struct.two_arr[0] | all_zeros.two_struct.two_arr[1] ||
-        all_zeros.two_struct.two_arr[2] || all_zeros.two_struct.three_u) {
+    if (all_zeros.two_struct.one_i || all_zeros.two_struct.two_arr[0] ||
+        all_zeros.two_struct.two_arr[1] || all_zeros.two_struct.two_arr[2] ||
+        all_zeros.two_struct.three_u) {
         return 0;
     }
 
@@ -35,8 +35,6 @@ int test_uninitialized(void) {
         "Hello!"};   // leave d uninitialized
 */
 int test_partially_initialized(void) {
-
-
     // validate elements in struct outer
     if (partial.one_l != 100l || strcmp(partial.three_msg, "Hello!")) {
         return 0;
@@ -104,7 +102,6 @@ int test_fully_intialized(void) {
     };
 */
 int test_implicit_conversions(void) {
-
     // validate elements in struct outer
     if (converted.one_l != 10l || converted.three_msg != 0 ||
         converted.four_d != 9223372036854777856.0) {
@@ -129,7 +126,6 @@ int test_implicit_conversions(void) {
                                         {6, {7, "cd", 8}, "Message", 9}};
 */
 int test_array_of_structs(void) {
-
     // leave last element uninitialized
 
     // validate outer members of array element 0

@@ -79,7 +79,8 @@ int test_static(void) {
     // test reading, writing, and getting address of members
     // in struct with static storage duration
     static struct four_members stat;
-    static struct four_members *stat_ptr = &stat;
+    static struct four_members *stat_ptr;
+    stat_ptr = &stat;
     static char chr = 100;
 
     // same test as test_auto above

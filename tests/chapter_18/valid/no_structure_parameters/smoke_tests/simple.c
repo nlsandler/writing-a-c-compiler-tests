@@ -1,4 +1,5 @@
-/* basic test of struct type declarations, compound initializers, and member access */
+/* basic test of struct type declarations, compound initializers, and member
+ * access */
 
 // declare a structure type
 struct pair {

@@ -14,5 +14,5 @@ int main(void) {
         return 2;
     }
 
-    return 0; // success
+    return 0;  // success
 }

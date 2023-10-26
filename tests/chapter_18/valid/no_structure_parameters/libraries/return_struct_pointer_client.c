@@ -59,7 +59,6 @@ int test_update_member_thru_retval(void) {
     return 1;  // success
 }
 
-
 // case 4: update whole structure member through pointer returned by funcall
 int test_update_nested_struct_thru_retval(void) {
     struct inner small = {12.0, 13};
@@ -72,7 +71,7 @@ int test_update_nested_struct_thru_retval(void) {
         return 0;
     }
 
-    return 1; // success
+    return 1;  // success
 }
 
 int main(void) {

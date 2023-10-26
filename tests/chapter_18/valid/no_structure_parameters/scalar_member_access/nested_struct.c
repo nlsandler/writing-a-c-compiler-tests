@@ -158,8 +158,9 @@ int test_static_arrow(void) {
     static struct inner in;
     static struct outer s;
 
-    // shouldn't really matter if this pointer is static,
-    static struct outer *s_ptr = &s;
+    // shouldn't really matter if this pointer is static
+    static struct outer *s_ptr;
+    s_ptr = &s;
 
     s_ptr->in_ptr = &in;
 

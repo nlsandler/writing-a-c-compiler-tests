@@ -6,6 +6,6 @@ struct pair {
 int foo(struct pair p);
 
 int main(void) {
-    struct pair arg = { 1, 2};
+    struct pair arg = {1, 2};
     return foo(arg);
 }

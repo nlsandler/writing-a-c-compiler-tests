@@ -7,6 +7,13 @@
 
 #include "nested_auto_struct_initializers.h"
 
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wliteral-conversion"
+#endif
+#endif
+
 // case 1: fully initialized struct (include some implicit conversions while
 // we're at it)
 int test_full_initialization(void) {
@@ -27,7 +34,6 @@ int test_partial_initialization(void) {
                                 // leave two_arr and three_u ininitialized
                             },
                             "Partial"};  // leave four_d uninitialized
-
 
     return validate_partial_initialization(&partial);
 }

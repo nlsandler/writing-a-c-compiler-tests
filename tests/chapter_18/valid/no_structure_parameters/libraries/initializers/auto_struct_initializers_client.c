@@ -8,7 +8,11 @@
 
 #include "auto_struct_initializers.h"
 
-double get_double() {
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
+
+double get_double(void) {
     return 2e12;
 }
 
@@ -17,9 +21,10 @@ int test_full_initialization(void) {
     struct s full = {
         // use string literals to initialize both pointers and arrays
         "I'm a struct!", "sup",
-        &full,         // initialize member with pointer to self
-        get_double(),  // initialize member with result of function call
-        &(full.four_d) // initialize member with pointer to other member in self
+        &full,          // initialize member with pointer to self
+        get_double(),   // initialize member with result of function call
+        &(full.four_d)  // initialize member with pointer to other member in
+                        // self
     };
 
     return validate_full_initialization(&full);
@@ -57,7 +62,8 @@ int test_implicit_type_conversions(void) {
 
 // case 4: initialize with single expression instead of compound initiailizer
 int test_single_exp_initializer(void) {
-    struct s s1 = {"Yet another string", "xy", &s1, 150.0};
+    double d = 123.4;
+    struct s s1 = {"Yet another string", "xy", &s1, 150.0, &d};
     struct s s2 = s1;
 
     return validate_two_structs(&s1, &s2);

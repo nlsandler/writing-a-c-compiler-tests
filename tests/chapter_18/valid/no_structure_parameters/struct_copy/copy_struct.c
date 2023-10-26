@@ -5,6 +5,10 @@
 
 #include "structs.h"
 
+#ifdef SUPPRESS_WARNINGS
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
+
 // test 1: copy one struct with auto storage duration to another
 int test_auto(void) {
     struct s x = {"ab", {-1, 2}};
@@ -25,10 +29,10 @@ int test_auto(void) {
 
 // test 2: copy one struct with static storage duration to another
 int test_static(void) {
-    static struct s x = {"ab", {-1, 2}};
+    static struct s x = {"ab", {1, 2}};
     static struct s y;
     y = x;
-    if (strcmp(y.arr, "ab") || y.inner.a != -1 || y.inner.b != 2) {
+    if (strcmp(y.arr, "ab") || y.inner.a != 1 || y.inner.b != 2) {
         return 0;
     }
 
@@ -59,7 +63,6 @@ int test_conditional(void) {
     static struct s x = {"xy", {1234, 5678}};
     struct s y = {"!", {-10}};
     struct s z;
-    static int tru = 1;
     z = true_flag() ? x : y;
     if (strcmp(z.arr, "xy") || z.inner.a != 1234 || z.inner.b != 5678) {
         return 0;
