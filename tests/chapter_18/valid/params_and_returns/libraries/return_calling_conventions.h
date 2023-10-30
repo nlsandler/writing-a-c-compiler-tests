@@ -1,3 +1,4 @@
+/* Test that we return a wide range of struct types according to the ABI */
 #ifdef SUPPRESS_WARNINGS
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"

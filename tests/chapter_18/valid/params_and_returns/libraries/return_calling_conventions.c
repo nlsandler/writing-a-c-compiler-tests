@@ -1,3 +1,4 @@
+/* Test that we return a wide range of struct types according to the ABI */
 #include "return_calling_conventions.h"
 
 struct one_int return_int_struct(void) {
@@ -37,44 +38,50 @@ int f(char c, double d) {
     return 1;
 }
 
+int leaf_call(struct two_ints t_i, char c, double d) {
+    // validate t_i
+    if (t_i.c != '_' || t_i.arr[0] != 5 || t_i.arr[1] != 6 || t_i.arr[2] != 7) {
+        return 0;
+    }
+
+    // validate c1 and d1 (originally passed in a struct int_and_xmm)
+    if (c != 'p' || d != 4.56) {
+        return 0;
+    }
+    return 1;  // success
+}
+
 struct memory pass_and_return_regs(int i, double d, struct int_and_xmm strct,
                                    char c, struct two_ints t_i, long l,
                                    struct one_int_exactly o_i_e, char c2) {
-    // include stack variables to make sure they don't overwrite return value
+    // include a stack variable to make sure it doen't overwrite return value
     // pointer or vice versa
-    int local1 = i * 2;
-    double local2 = d * 2;
+    char stackbytes[8] = "zyxwvut";
     struct memory retval = {0, {0, 0, 0}, 0, 0};
 
-    if (local1 != 12 || local2 != 8.0) {
+    // make another function call to ensure that passing parameters
+    // doesn't overwrite return address in RDI or other struct eightybtes
+    // passed in registers; validate t_i and strct while we're at it
+    if (!leaf_call(t_i, strct.c, strct.d)) {
         retval.i = 1;
         return retval;
     }
-    int local3 = f(strct.c, strct.d);
-    if (local3) {
+    // validate scalar params
+    if (i != 6 || d != 4.0 || c != 5 || l != 77 || c2 != 99) {
         retval.i = 2;
         return retval;
     }
-    if (c != 5) {
+    // validate remainign struct
+    if (o_i_e.l != 567890) {
         retval.i = 3;
         return retval;
     }
-    if (t_i.c != '_' || t_i.arr[0] != 5 || t_i.arr[1] != 6 || t_i.arr[2] != 7) {
+
+    // validate stackbytes
+    if (strcmp(stackbytes, "zyxwvut")) {
         retval.i = 4;
         return retval;
     }
-    if (l != 77) {
-        retval.i = 5;
-        return retval;
-    }
-    if (o_i_e.l != 567890) {
-        retval.i = 6;
-        return retval;
-    }
-    if (c2 != 99) {
-        retval.i = 7;
-        return retval;
-    }
     retval.l = 100;
-    return retval;
+    return retval;  // success
 }

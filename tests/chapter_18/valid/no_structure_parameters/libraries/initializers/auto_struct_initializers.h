@@ -14,7 +14,7 @@
 #endif
 #endif
 
-// library functoins
+// library functions
 int strcmp(char *s1, char *s2);
 
 void *malloc(unsigned long size);

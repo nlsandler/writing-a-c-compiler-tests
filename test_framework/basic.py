@@ -53,10 +53,12 @@ def needs_mathlib(prog: Path) -> bool:
     key = get_props_key(prog)
     return key in REQUIRES_MATHLIB and not IS_OSX
 
+
 def print_stderr(proc: subprocess.CompletedProcess[str]) -> None:
     """Print out stderr of CompletedProcess if it's not empty. Intended to print assembler/linker warnings"""
     if proc.stderr:
         print(proc.stderr)
+
 
 def gcc_build_obj(prog: Path) -> None:
     """Use the 'gcc' command to compile source file to an object file.
@@ -119,7 +121,6 @@ def gcc_compile_and_run(
         # TODO better handling of internal problems with test suite
         raise RuntimeError(err.stderr) from err
 
-
     # run it
     return subprocess.run([exe], check=False, text=True, capture_output=True)
 
@@ -178,7 +179,7 @@ class TestChapter(unittest.TestCase):
             f
             for f in self.test_dir.rglob("*")
             if not f.is_dir()
-            and f.suffix not in [".c", ".h"]
+            and f.suffix not in [".c", ".h", ".md"]
             and f.name not in ASSEMBLY_LIBS
         )
 

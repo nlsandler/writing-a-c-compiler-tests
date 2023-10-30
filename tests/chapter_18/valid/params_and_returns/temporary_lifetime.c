@@ -1,26 +1,33 @@
-// a non-lvalue structure that contains an array
-// has temporary lifetime;
-// you can get the array's address implicitly (but not explicitly)
-// NB modifying an array w/ temporary lifetime is undefined
-// TODO make this explicitly based on Listing 18-27?
+/* A non-lvalue structure that contains anarray has temporary lifetime;
+ * test that you can get this array's address implicitly (even though
+ * you can't load it explicitly)
+ * Adapted from Listing 18-27
+ * */
 
-struct inner {
-    int a;
-    int b;
+struct s {
+    int arr[3];
 };
 
-struct contains_array {
-    struct inner array[4];
-};
-
-struct contains_array get_struct(void) {
-    struct inner obj = {1, 2};
-    struct inner obj2 = {3, 4};
-    struct contains_array result = {{obj, obj2, obj}};
-    return result;
+struct s f(void) {
+    struct s retval = {{1, 2, 3}};
+    return retval;
 }
 
 int main(void) {
-    int i = get_struct().array[2].a;
-    return i;
+    int i = f().arr[0];
+    int j = f().arr[1];
+    int k = f().arr[2];
+
+    if (i != 1) {
+        return 1;
+    }
+
+    if (j != 2) {
+        return 2;
+    }
+
+    if (k != 3) {
+        return 3;
+    }
+    return 0;  // success
 }

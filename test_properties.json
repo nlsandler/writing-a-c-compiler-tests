@@ -386,6 +386,14 @@
         "chapter_18/valid/params_and_returns/return_struct_on_page_boundary.c": {
             "linux": "data_on_page_boundary_linux.s",
             "os_x": "data_on_page_boundary_osx.s"
+        },
+        "chapter_18/valid/params_and_returns/return_big_struct_on_page_boundary.c": {
+            "linux": "big_data_on_page_boundary_linux.s",
+            "os_x": "big_data_on_page_boundary_osx.s"
+        },
+        "chapter_18/valid/params_and_returns/return_space_overlap.c": {
+            "linux": "return_space_address_overlap_linux.s",
+            "os_x": "return_space_address_overlap_osx.s"
         }
     }
 }

@@ -121,7 +121,7 @@ class SanitizerTest(unittest.TestCase):
         garbage_files = (
             f
             for f in basic.TEST_DIR.rglob("*")
-            if not f.is_dir() and f.suffix not in [".c", ".h", ".s"]
+            if not f.is_dir() and f.suffix not in [".c", ".h", ".s", ".md"]
         )
 
         for junk in garbage_files:

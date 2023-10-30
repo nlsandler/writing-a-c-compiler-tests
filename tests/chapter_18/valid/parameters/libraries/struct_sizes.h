@@ -1,3 +1,6 @@
+/* Test that we can pass static and automatic structs of every size between 1 and 24 bytes.
+ * Pass each size both in a register (when possible) and on the stack. */
+
 #ifdef SUPPRESS_WARNINGS
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
@@ -149,6 +152,8 @@ struct bytesize24 {
 };
 
 extern struct bytesize24 globvar_24;
+
+// Pass sizes 1 - 6 in registers, remainders on the stack
 int fun0(struct bytesize1 a, struct bytesize2 b, struct bytesize3 c,
          struct bytesize4 d, struct bytesize5 e, struct bytesize6 f,
          struct bytesize7 g, struct bytesize8 h, struct bytesize9 i,
@@ -169,6 +174,8 @@ int fun0(struct bytesize1 a, struct bytesize2 b, struct bytesize3 c,
          unsigned char *s_expected, unsigned char *t_expected,
          unsigned char *u_expected, unsigned char *v_expected,
          unsigned char *w_expected, unsigned char *x_expected);
+
+// Pass sizes 7-10 bytes in regs, 1-6 on the stack
 int fun1(struct bytesize7 a, struct bytesize8 b, struct bytesize9 c,
          struct bytesize10 d, struct bytesize1 e, struct bytesize2 f,
          struct bytesize3 g, struct bytesize4 h, struct bytesize5 i,
@@ -178,23 +185,15 @@ int fun1(struct bytesize7 a, struct bytesize8 b, struct bytesize9 c,
          unsigned char *f_expected, unsigned char *g_expected,
          unsigned char *h_expected, unsigned char *i_expected,
          unsigned char *j_expected);
+
+// Pass sizes 11-13 in regs, 1 on the stack
 int fun2(struct bytesize11 a, struct bytesize12 b, struct bytesize13 c,
          struct bytesize1 d, unsigned char *a_expected,
          unsigned char *b_expected, unsigned char *c_expected,
          unsigned char *d_expected);
+
+// pass sizes 14-16 in regs, 2 on the stack
 int fun3(struct bytesize14 a, struct bytesize15 b, struct bytesize16 c,
          struct bytesize2 d, unsigned char *a_expected,
          unsigned char *b_expected, unsigned char *c_expected,
          unsigned char *d_expected);
-int fun4(struct bytesize17 a, struct bytesize18 b, struct bytesize3 c,
-         unsigned char *a_expected, unsigned char *b_expected,
-         unsigned char *c_expected);
-int fun5(struct bytesize19 a, struct bytesize20 b, struct bytesize4 c,
-         unsigned char *a_expected, unsigned char *b_expected,
-         unsigned char *c_expected);
-int fun6(struct bytesize21 a, struct bytesize22 b, struct bytesize5 c,
-         unsigned char *a_expected, unsigned char *b_expected,
-         unsigned char *c_expected);
-int fun7(struct bytesize23 a, struct bytesize24 b, struct bytesize4 c,
-         unsigned char *a_expected, unsigned char *b_expected,
-         unsigned char *c_expected);

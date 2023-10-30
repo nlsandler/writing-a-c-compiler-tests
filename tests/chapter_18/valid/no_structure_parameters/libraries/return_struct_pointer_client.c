@@ -87,5 +87,9 @@ int main(void) {
         return 3;
     }
 
+    if (!test_update_nested_struct_thru_retval()) {
+        return 4;
+    }
+
     return 0;
 }

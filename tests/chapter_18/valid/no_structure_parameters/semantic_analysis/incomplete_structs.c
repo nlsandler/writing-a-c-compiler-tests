@@ -18,8 +18,6 @@ int strcmp(char *s1, char *s2);
 // test 1: you can declare a function that accepts/returns incomplete struct
 // types we don't define or use this function, we just need to validate that
 // this declaration doesn't cause a compiler error
-// TODO include test in appropriate folder where we define/call this after
-// completing the type
 struct never_used;
 struct never_used incomplete_fun(struct never_used x);
 
@@ -162,6 +160,7 @@ int test_use_incomplete_struct_pointers(void) {
         return 0;
     }
 
+    // can pass them as parameters
     if (use_struct_pointers(ptr3)) {
         return 0;
     }

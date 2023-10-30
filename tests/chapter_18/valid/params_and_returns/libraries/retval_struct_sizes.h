@@ -1,3 +1,4 @@
+/* Test that we can return structs of every size between 1 and 24 bytes. */
 #ifdef SUPPRESS_WARNINGS
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"

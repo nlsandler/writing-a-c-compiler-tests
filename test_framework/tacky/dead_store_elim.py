@@ -18,7 +18,7 @@ class TestDeadStoreElimination(common.TackyOptimizationTest):
     Each dynamically generated test calls one of the following main test methods:
 
     * compile_and_run, defined in TestChapter: validate behavior but don't inspect assembly
-    * store_eliminated_test: make sure a particular mov instrucion was eliminated
+    * store_eliminated_test: make sure a particular mov instruction was eliminated
     * return_const_test: make sure entire funcion is reduce to a return instruction
     """
 
