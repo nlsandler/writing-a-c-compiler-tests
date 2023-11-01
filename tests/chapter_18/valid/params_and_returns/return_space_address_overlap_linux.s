@@ -19,7 +19,7 @@ overlap_with_globvar:
 	# (absolute value implementation from https://stackoverflow.com/a/11927940)
 	movq	%rsi, %rcx	# copy RSI into RCX
 	negq	%rsi	# negate RSI
-	# if RSI is now negative, its restore original (positive) value
+	## if RSI is now negative, its restore original (positive) value
 	cmovl	%rcx, %rsi
 	# compare diference to 24
 	cmpq	$24, %rsi
@@ -48,7 +48,7 @@ overlap_with_pointer:
 	# (absolute value implementation from https://stackoverflow.com/a/11927940)
 	movq	%rdx, %rcx	# copy RDX into RCX
 	negq	%rdx			# negate RDX
-	# if rdx is now negative, its restore original (positive) value
+	## if rdx is now negative, its restore original (positive) value
 	cmovl	%rcx, %rdx
 	# compare diference to 24
 	cmpq	$24, %rdx
