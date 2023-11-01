@@ -1,13 +1,12 @@
-/* Test that passing structures as parameters doesn't clobber the stack
+/* Test that passing structures as parameters doesn't clobber the stack.
  * To test this, we store some bytes to the stack, pass the struct, then
- * validate that those bytes haven't changed. In the functions whose stacks we
- * validate, we don't store _any_ temporary values on the stack; the only values
- * on the stack should be the bytes we explicitly validate. This means these
- * tests don't call functions that return values, evaluate any expressions that
- * undergo array decay (because the result of GetAddr would be stored on the
- * stack) or perform any other computations that produce intermediate
- * expressions. This ensures that if any value on the stack is clobbered, we'll
- * detect it.
+ * validate that those bytes haven't changed.
+ * Our test functions don't store any values on the stack except the ones we
+ * explicitly validate; e.g. they don't call functions that return values,
+ * evaluate any expressions that undergo array decay (because the result of
+ * GetAddr would be stored on the stack) or perform any other computations that
+ * produce intermediate expressions. This ensures that if any value on the stack
+ * is clobbered, we'll detect it.
  */
 
 #ifdef SUPPRESS_WARNINGS

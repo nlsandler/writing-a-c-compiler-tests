@@ -5,8 +5,12 @@
  * the struct, then validate that those bytes haven't changed. In the functions
  * whose stacks we validate, we don't store any values on the stack except the
  * bytes to validate and the return value. This ensures that if the return
- * value clobbers any other bytes on the stack, we'll detect it.
- * (This is a similar technique to chapter_18/valid/parameters/stack_clobber.c)
+ * value clobbers any other bytes on the stack, we'll detect it. This is a
+ * similar technique to
+ * chapter_18/valid/no_structure_parameters/struct_copy/stack_clobber.c
+ * This test assumes structures are allocated on the stack in the same order
+ * they're declared/initialized (otherwise clobbers may overwrite stack padding
+ * instead of data that we validate, and go undetected).
  */
 
 #ifdef SUPPRESS_WARNINGS
@@ -60,7 +64,7 @@ int test_int_struct(void) {
 
     // call a function that returns a one-int struct
     // copy it to a static variable so we can validate it later
-    // without putting more temproary variables on the satck
+    // without putting more temporary variables on the satck
     one_int_struct = return_int_struct();
 
     // assigning a variable doesn't produce any temporary values
