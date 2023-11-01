@@ -32,12 +32,6 @@ struct memory return_on_stack(void) {
     return retval;
 }
 
-int f(char c, double d) {
-    if (c == 'p' && d == 4.56)
-        return 0;
-    return 1;
-}
-
 int leaf_call(struct two_ints t_i, char c, double d) {
     // validate t_i
     if (t_i.c != '_' || t_i.arr[0] != 5 || t_i.arr[1] != 6 || t_i.arr[2] != 7) {

@@ -70,7 +70,7 @@ int test_copy_to_array_elem(void) {
     return 1;  // success
 }
 
-// case 5: arr[i] = x
+// case 5: x = arr[i]
 int test_copy_from_array_elem(void) {
     struct s arr[3] = {
         {"ab", {-3000, -4000}}, {"cd", {-5000, -6000}}, {"ef", {-7000, -8000}}};

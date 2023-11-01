@@ -1,6 +1,6 @@
 /* Get the addresses of structure members to validate their offset and alignment
  * (including nested members accessed through chains of . and -> operations)
- * and addresses one-past-the-end of structs to validate trailing padding
+ * and addresses of one-past-the-end of structs to validate trailing padding
  * */
 #include "struct_sizes.h"
 
