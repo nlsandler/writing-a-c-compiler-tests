@@ -16,9 +16,9 @@ struct outer {
 };
 
 // library function declarations
-int access_members_through_pointer(struct outer *ptr, char expected_a,
-                                   char expected_b, double expected_d,
+int access_members_through_pointer(struct outer *ptr, int expected_a,
+                                   int expected_b, double expected_d,
                                    int expected_i);
 
-void update_members_through_pointer(struct outer *ptr, char a, char b,
+void update_members_through_pointer(struct outer *ptr, int a, int b,
                                     struct inner *inner_ptr);

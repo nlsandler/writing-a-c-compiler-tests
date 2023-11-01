@@ -32,7 +32,7 @@ struct memory return_on_stack(void) {
     return retval;
 }
 
-int leaf_call(struct two_ints t_i, char c, double d) {
+int leaf_call(struct two_ints t_i, int c, double d) {
     // validate t_i
     if (t_i.c != '_' || t_i.arr[0] != 5 || t_i.arr[1] != 6 || t_i.arr[2] != 7) {
         return 0;
@@ -46,8 +46,8 @@ int leaf_call(struct two_ints t_i, char c, double d) {
 }
 
 struct memory pass_and_return_regs(int i, double d, struct int_and_xmm strct,
-                                   char c, struct two_ints t_i, long l,
-                                   struct one_int_exactly o_i_e, char c2) {
+                                   int c, struct two_ints t_i, long l,
+                                   struct one_int_exactly o_i_e, int c2) {
     // include a stack variable to make sure it doen't overwrite return value
     // pointer or vice versa
     char stackbytes[8] = "zyxwvut";

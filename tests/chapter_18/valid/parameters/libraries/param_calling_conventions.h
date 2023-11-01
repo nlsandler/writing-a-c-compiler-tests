@@ -96,7 +96,7 @@ int struct_in_mem(double a, double b, double c, struct xmm_and_int first_struct,
 
 // pass two_ints_nested in memory - we have one general-purpose reg left for
 // parameter passing but it requires two
-int pass_borderline_struct_in_memory(struct two_ints t_i, char c,
+int pass_borderline_struct_in_memory(struct two_ints t_i, int c,
                                      struct int_and_xmm i_x, void *ptr,
                                      struct two_ints_nested t_i_n, double d);
 

@@ -12,7 +12,7 @@ struct inner *make_struct_inner(int seed) {
     return ptr;
 }
 
-struct outer *make_struct_outer(char seed) {
+struct outer *make_struct_outer(int seed) {
     struct outer *ptr = malloc(sizeof(struct outer));
     ptr->a = seed;
     ptr->b = seed + 1;
@@ -21,7 +21,7 @@ struct outer *make_struct_outer(char seed) {
     return ptr;
 }
 
-struct outermost *make_struct_outermost(char seed) {
+struct outermost *make_struct_outermost(int seed) {
     struct outermost *ptr = malloc(sizeof(struct outermost));
     ptr->i = seed;
     ptr->nested_ptr = make_struct_outer(seed + 1);

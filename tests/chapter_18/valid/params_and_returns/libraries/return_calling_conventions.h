@@ -75,5 +75,5 @@ struct memory return_on_stack(void);
 
 // return on stack + pass other int params
 struct memory pass_and_return_regs(int i, double d, struct int_and_xmm strct,
-                                   char c, struct two_ints t_i, long l,
-                                   struct one_int_exactly o_i_e, char c2);
+                                   int c, struct two_ints t_i, long l,
+                                   struct one_int_exactly o_i_e, int c2);

@@ -24,7 +24,7 @@ static long l = 34359738378l;
 // validate members (and values derived from members) that are passed as
 // parameters
 int accept_params(int d_divided, int c_doubled, double l_cast,
-                  char dereferenced_ptr, double d, char c, long l, char *ptr) {
+                  int dereferenced_ptr, double d, int c, long l, char *ptr) {
     if (d != -1845381177299.0 || c != 127 || l != 58 || *ptr != 100 ||
         d_divided != -922690588 || c_doubled != 254 || l_cast != 58.0 ||
         dereferenced_ptr != 100) {

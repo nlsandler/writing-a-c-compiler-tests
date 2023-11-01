@@ -2,8 +2,8 @@
 
 #include "param_struct_pointer.h"
 
-int access_members_through_pointer(struct outer *ptr, char expected_a,
-                                   char expected_b, double expected_d,
+int access_members_through_pointer(struct outer *ptr, int expected_a,
+                                   int expected_b, double expected_d,
                                    int expected_i) {
     if (ptr->a != expected_a) {
         return 0;
@@ -24,7 +24,7 @@ int access_members_through_pointer(struct outer *ptr, char expected_a,
     return 1;  // success
 }
 
-void update_members_through_pointer(struct outer *ptr, char a, char b,
+void update_members_through_pointer(struct outer *ptr, int a, int b,
                                     struct inner *inner_ptr) {
     ptr->a = a;
     ptr->b = b;
