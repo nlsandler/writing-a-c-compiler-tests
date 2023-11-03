@@ -1,5 +1,7 @@
-int target(void) { return 0; }
+/* Test that an empty function doesn't crash this optimization pass.
+ * We don't inspect the assembly for this program, so there's no 'target'
+ * function
+ * */
 
 int main(void) {
-  // make sure optimization pass doesn't choke on an empty function
 }

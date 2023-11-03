@@ -1,6 +1,6 @@
 /* Test constant folding of all operations on unsigned ints;
  * make sure they wrap around correctly
- * and that we evaluate them with unsigned division/comparison functions
+ * and that we evaluate them with unsigned division/comparison functions.
  */
 unsigned int target_add(void) {
     // result exceeds UINT_MAX and wraps around past 0
@@ -17,19 +17,31 @@ unsigned int target_mult(void) {
     return 2147483648u * 3u;
 }
 
-unsigned int target_div(void) { return 4294967286u / 10u; }
-
-unsigned int target_rem(void) { return 4294967286u % 10u; }
-
-unsigned int target_complement(void) { return ~1u; }
-
-unsigned int target_neg(void) { return -10u; }
-
-int target_not(void) {
-    return !65536u; // 2^16
+unsigned int target_div(void) {
+    // result would be different if we interpreted values as signed
+    return 4294967286u / 10u;
 }
 
-int target_eq(void) { return 100u == 100u; }
+unsigned int target_rem(void) {
+    // result would be different if we interpreted values as signed
+    return 4294967286u % 10u;
+}
+
+unsigned int target_complement(void) {
+    return ~1u;
+}
+
+unsigned int target_neg(void) {
+    return -10u;
+}
+
+int target_not(void) {
+    return !65536u;  // 2^16
+}
+
+int target_eq(void) {
+    return 100u == 100u;
+}
 
 int target_neq(void) {
     // these have identical binary representations except for the most
@@ -44,7 +56,9 @@ int target_gt(void) {
     return 2147483649u > 1000u;
 }
 
-int target_ge(void) { return 4000000000u >= 3999999999u; }
+int target_ge(void) {
+    return 4000000000u >= 3999999999u;
+}
 
 int target_lt(void) {
     // as with target_gt, make sure we don't interpret 2147483649u
@@ -52,10 +66,11 @@ int target_lt(void) {
     return 2147483649u < 1000u;
 }
 
-int target_le(void) { return 4000000000u <= 3999999999u; }
+int target_le(void) {
+    return 4000000000u <= 3999999999u;
+}
 
 int main(void) {
-
     // binary arithmetic
     if (target_add() != 9u) {
         return 1;

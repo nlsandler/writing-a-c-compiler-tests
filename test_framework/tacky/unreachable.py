@@ -63,13 +63,18 @@ class TestUnreachableCodeElim(common.TackyOptimizationTest):
         )
 
 
+# unreachable cdoe elimination removes function calls but not other
+# control flow instructions for these programs
 NO_FUNCALLS_TESTS = ["dead_branch_inside_loop.c", "dead_after_if_else.c"]
+
+# don't inspect assembly for this program, just validate its behavior
+BASIC_TESTS = ["keep_final_jump.c", "empty.c", "remove_jump_keep_label.c"]
 
 
 def make_unreachable_code_test(
     program: Path,
 ) -> Callable[[TestUnreachableCodeElim], None]:
-    if "dont_elim" in program.parts:
+    if program.name in BASIC_TESTS:
         return basic.make_test_run(program)
 
     if program.name in NO_FUNCALLS_TESTS:

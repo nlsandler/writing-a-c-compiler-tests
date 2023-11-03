@@ -9,7 +9,6 @@ long target_add(void) {
 
 long target_sub(void) {
     // we can subtract longs when the result is smaller than INT_MIN
-    // and upper 32 bits aren't all 1s
     return 1000l - 9223372036854773807l;
 }
 
@@ -23,11 +22,13 @@ long target_div(void) {
     return 9223372036854775807l / 3147483647l;
 }
 
-long target_rem(void) { // both operands are larger than INT_MAX
+long target_rem(void) {
+    // both operands are larger than INT_MAX
     return 9223372036854775807l % 3147483647l;
 }
 
-long target_complement(void) { // alternating 1s and 0s
+long target_complement(void) {
+    // alternating 1s and 0s
     return ~6148914691236517206l;
 }
 
@@ -43,7 +44,9 @@ int target_not(void) {
     return !72110370596061184l;
 }
 
-int target_eq(void) { return 9223372036854775716l == 9223372036854775716l; }
+int target_eq(void) {
+    return 9223372036854775716l == 9223372036854775716l;
+}
 
 int target_neq(void) {
     // lower 32 bits of 72110370596061184l are all zeros
@@ -51,8 +54,9 @@ int target_neq(void) {
 }
 
 int target_gt(void) {
-    // compare two values whose lower 32 bits are identical
-    return 17592186044416l > 549755813888l; // 2^44 > 2^39
+    // second operand is greater, but if we only looked at lower
+    // 32 bits we'd think the first was greater
+    return 549755813889l > 17592186044416l ;  // 2^39 + 1 > 2^44
 }
 
 int target_ge(void) {
@@ -61,20 +65,24 @@ int target_ge(void) {
 
 int target_lt(void) {
     // compare two values whose lower 32 bits are identical
-    return 17592186044416l < 549755813888l; // 2^44 < 2^39
+    return 17592186044416l < 549755813888l;  // 2^44 < 2^39
 }
 
 int target_le(void) {
     // if we interpreted this as a signed int it would be negative
-    return 2147483648l <= 0l; }
+    return 2147483648l <= 0l;
+}
+
+long sub_result = 9223372036854772807l;
+long complement_result = 6148914691236517207l;
+long neg_result = 9223372036854775716l;
 
 int main(void) {
-
     // binary arithmetic
     if (target_add() != 2147484647l) {
         return 1;
     }
-    if (target_sub() != -9223372036854772807) {
+    if (target_sub() != -sub_result) {
         return 2;
     }
     if (target_mult() != 140737488355328l) {
@@ -88,11 +96,11 @@ int main(void) {
     }
 
     // unary operators
-    if (target_complement() != -6148914691236517207l) {
+    if (target_complement() != -complement_result) {
         return 6;
     }
 
-    if (target_neg() + 9223372036854775716l != 0) {
+    if (target_neg() != -neg_result) {
         return 7;
     }
 
@@ -107,7 +115,7 @@ int main(void) {
     if (!target_neq()) {
         return 10;
     }
-    if (!target_gt()) {
+    if (target_gt()) {
         return 11;
     }
     if (!target_ge()) {

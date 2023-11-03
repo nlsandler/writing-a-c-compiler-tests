@@ -1,12 +1,16 @@
+/* Test that having empty blocks after optimization doesn't break anything;
+ * after removing useless jumps and labels, 'target' will contain several
+ * empty basic blocks.
+ * */
+
 int target(int x, int y) {
-  // make sure that having empty blocks after optimization doesn't break
-  // anything
-  if (x) {
-    // empty statement
-    if (y) {
+    if (x) {
+        if (y) {
+        }
     }
-  }
-  return 1;
+    return 1;
 }
 
-int main(void) { return target(1, 1) == 1 && target(0, 0) == 1; }
+int main(void) {
+    return target(1, 1) == 1 && target(0, 0) == 1;
+}

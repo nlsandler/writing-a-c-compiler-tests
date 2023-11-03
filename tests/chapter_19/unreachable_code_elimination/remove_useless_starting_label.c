@@ -1,10 +1,13 @@
+/* Test that we remove useless labels */
 int target(void) {
-  // make sure we remove useless label at very beginning of function
-  do {
+    // This empty do loop will start with several labels that we don't jump to;
+    // make sure they're removed
+    do {
+    } while (0);
 
-  } while (0);
-
-  return 99;
+    return 99;
 }
 
-int main(void) { return target(); }
+int main(void) {
+    return target();
+}

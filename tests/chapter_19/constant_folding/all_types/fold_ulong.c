@@ -1,7 +1,7 @@
 /* Test constant folding of all operations on unsigned longs;
  * make sure that they wrap around correctly,
  * that we evaluate them with unsigned division/comparison functions,
- * and that we can evaluate expressions requiring all 64 bits
+ * and that we can evaluate expressions requiring all 64 bits.
  */
 unsigned long target_add(void) {
     // result exceeds ULONG_MAX and wraps around past 0
@@ -18,19 +18,29 @@ unsigned long target_mult(void) {
     return 9223372036854775808ul * 3ul;
 }
 
-unsigned long target_div(void) { return 18446744073709551614ul / 10ul; }
-
-unsigned long target_rem(void) { return 18446744073709551614ul % 10ul; }
-
-unsigned long target_complement(void) { return ~1ul; }
-
-unsigned long target_neg(void) { return -(9223372036854775900ul); }
-
-int target_not(void) {
-    return !4294967296UL; // 2^32
+unsigned long target_div(void) {
+    return 18446744073709551614ul / 10ul;
 }
 
-int target_eq(void) { return 18446744073709551615UL == 18446744073709551615UL; }
+unsigned long target_rem(void) {
+    return 18446744073709551614ul % 10ul;
+}
+
+unsigned long target_complement(void) {
+    return ~1ul;
+}
+
+unsigned long target_neg(void) {
+    return -(9223372036854775900ul);
+}
+
+int target_not(void) {
+    return !4294967296UL;  // 2^32
+}
+
+int target_eq(void) {
+    return 18446744073709551615UL == 18446744073709551615UL;
+}
 
 int target_neq(void) {
     // these have identical binary representations except for the most
@@ -56,10 +66,16 @@ int target_lt(void) {
     return 9223372036854775809ul < 1000ul;
 }
 
-int target_le(void) { return 9223372036854775809ul <= 200ul; }
+int target_le(void) {
+    return 9223372036854775809ul <= 200ul;
+}
+
+int target_le2(void) {
+    // make sure we're evaluating <= and not <
+    return 9223372036854775809ul <= 9223372036854775809ul;
+}
 
 int main(void) {
-
     // binary arithmetic
     if (target_add() != 9ul) {
         return 1;
@@ -108,6 +124,10 @@ int main(void) {
     }
     if (target_le()) {
         return 14;
+    }
+
+    if (!target_le2()) {
+        return 15;
     }
 
     return 0;

@@ -1,3 +1,5 @@
+/* Test that we can optimize away a for loop that will never execute;
+ * initial expression still runs but post expression and body don't, */
 #if defined SUPPRESS_WARNINGS
 #pragma GCC diagnostic ignored "-Wdiv-by-zero"
 #endif
@@ -7,11 +9,8 @@ int callee(void) {
 }
 
 int target(void) {
-    // when we enable unreachable code elimination and constant folding,
-    // call to callee() shoudl be optimized away, initialized assignmnet (i = 10
-    // should not)
     int i = 0;
-    for (i = 10; 0; i = i * 100) callee();
+    for (i = 10; 0; i = callee()) callee();
     return i;
 }
 

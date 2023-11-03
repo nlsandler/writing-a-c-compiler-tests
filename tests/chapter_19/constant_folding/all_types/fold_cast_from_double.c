@@ -1,12 +1,22 @@
-// Test constant folding casts from double to integer types
+/* Test constant folding of casts from double to integer types,
+ * making sure the results are correctly rounded.
+ * */
 
-char target_to_char(void) { return (char)126.5; }
+char target_to_char(void) {
+    return (char)126.5;
+}
 
-unsigned char target_to_uchar(void) { return (unsigned char)254.9; }
+unsigned char target_to_uchar(void) {
+    return (unsigned char)254.9;
+}
 
-int target_to_int(void) { return (int)5.9; }
+int target_to_int(void) {
+    return (int)5.9;
+}
 
-unsigned target_to_uint(void) { return (unsigned)2147483750.5; }
+unsigned target_to_uint(void) {
+    return (unsigned)2147483750.5;
+}
 
 long target_to_long(void) {
     // nearest representable double is 9223372036854774784.0,
@@ -16,7 +26,12 @@ long target_to_long(void) {
 
 unsigned long target_to_ulong(void) {
     // same constant from chapter13/valid/explicit_casts/double_to_ulong.c
-    return (unsigned long) 3458764513821589504.0;
+    return (unsigned long)3458764513821589504.0;
+}
+
+unsigned long target_implicit(void) {
+    // same as target_to_ulong but cast is implicit; make sure we still constant fold it
+    return 3458764513821589504.0;
 }
 
 int main(void) {
@@ -37,6 +52,9 @@ int main(void) {
     }
     if (target_to_ulong() != 3458764513821589504ul) {
         return 6;
+    }
+    if (target_implicit() != 3458764513821589504ul) {
+        return 7;
     }
     return 0;
 }
