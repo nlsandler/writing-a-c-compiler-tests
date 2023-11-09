@@ -376,6 +376,9 @@
         "chapter_13/valid/special_values/copysign.c",
         "chapter_13/valid/libraries/double_params_and_result.c"
     ],
+    "libs": {
+        "chapter_19/unreachable_code_elimination/infinite_loop.c": "chapter_19/helper_libs/exit.c"
+    },
     "assembly_libs": {
         "chapter_10/valid/push_arg_on_page_boundary.c": {
             "linux": "data_on_page_boundary_linux.s",

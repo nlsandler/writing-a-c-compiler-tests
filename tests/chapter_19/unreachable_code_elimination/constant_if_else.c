@@ -1,4 +1,8 @@
 /* Test that we eliminate an unreachable 'if' statement body.
+ * This also tests that we won't eliminate a block if some, but not all,
+ * of its precedessors are unreachable. The final 'return' statement's
+ * predecessors include the 'if' branch (which is dead) and the 'else'
+ * statement (which isn't).
  * */
 int callee(void) {
     return 0;

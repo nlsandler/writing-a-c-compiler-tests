@@ -95,7 +95,9 @@ class TopLevelTest(unittest.TestCase):
 
     def test_optimization_success(self) -> None:
         """With optimizations, NQCC passes the chapter 19 tests"""
-        expected_test_count = len(list((TEST_DIR / "chapter_19").rglob("*.c")))
+        expected_test_count = len(list((TEST_DIR / "chapter_19").rglob("*.c"))) - len(
+            list((TEST_DIR / "chapter_19" / "helper_libs").rglob("*.c"))
+        )
         try:
             testrun = run_test_script(
                 "./test_compiler $NQCC --chapter 19 --latest-only"

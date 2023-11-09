@@ -24,12 +24,16 @@ with open(ROOT_DIR / "expected_results.json", "r", encoding="utf-8") as f:
 EXTRA_CREDIT_PROGRAMS: dict[str, list[str]]
 REQUIRES_MATHLIB: list[str]
 
+# TODO Consider handling C and assembly dependencies uniformly
+# (but remember that assembly files have different Linux/OS X variants)
+DEPENDENCIES: dict[str, str]
 ASSEMBLY_DEPENDENCIES: dict[str, dict[str, str]]
 with open(ROOT_DIR / "test_properties.json", "r", encoding="utf-8") as f:
     test_info = json.load(f)
     EXTRA_CREDIT_PROGRAMS = test_info["extra_credit_tests"]
     REQUIRES_MATHLIB = test_info["requires_mathlib"]
     ASSEMBLY_DEPENDENCIES = test_info["assembly_libs"]
+    DEPENDENCIES = test_info["libs"]
 ASSEMBLY_LIBS = set(
     lib for libs in ASSEMBLY_DEPENDENCIES.values() for lib in libs.values()
 )
@@ -58,36 +62,6 @@ def print_stderr(proc: subprocess.CompletedProcess[str]) -> None:
     """Print out stderr of CompletedProcess if it's not empty. Intended to print assembler/linker warnings"""
     if proc.stderr:
         print(proc.stderr)
-
-
-def gcc_build_obj(prog: Path) -> None:
-    """Use the 'gcc' command to compile source file to an object file.
-    This is used to test ABI compatibility between our compiler and the system compiler
-    """
-    objfile = prog.with_suffix(".o")
-
-    # IMPORTANT: if we're building a library, and 'gcc' command actually
-    # points to clang, which it does on macOS, we must _not_ enable optimizations
-    # Clang optimizes out sign-/zero-extension for narrow args
-    # which violates the System V ABI and breaks ABI compatibility
-    # with our implementation
-    # see https://stackoverflow.com/a/36760539
-    try:
-        subprocess.run(
-            [
-                "gcc",
-                prog,
-                "-c",
-                "-fstack-protector-all",
-                "-D",
-                "SUPPRESS_WARNINGS",
-                "-o",
-                objfile,
-            ],
-            check=True,
-        )
-    except subprocess.CalledProcessError as err:
-        raise RuntimeError(err.stderr) from err
 
 
 def gcc_compile_and_run(
@@ -150,6 +124,9 @@ class TestChapter(unittest.TestCase):
     * compile_lib_and_run:
         like compile_client_and_run, but compile the *library* withour compiler
         and *client* with the system compiler
+    * compile_with_helper_lib_and_run:
+        like compile_client_and_run except the library is defined in test_properties.json and is not under test
+        library should be in TEST_DIR/helper_libs/
     * compile_with_asm_lib_and_run:
         like compile_client_and_run except the library is an assembly file defined in test_properties.json, not a C file
 
@@ -355,18 +332,15 @@ class TestChapter(unittest.TestCase):
         # TODO make this controlled by verbosity maybe?
         print_stderr(compilation_result)
 
-        # compile other_file
-        gcc_build_obj(other_file)
-
-        # link both object files and run resulting executable
-        source_files = [file_under_test.with_suffix(".o"), other_file.with_suffix(".o")]
+        # compile other file, link with object file produced by compiler under test,
+        # and run resulting executable
+        source_files = [file_under_test.with_suffix(".o"), other_file]
         options = []
         if needs_mathlib(file_under_test) or needs_mathlib(other_file):
             options.append("-lm")
         result = gcc_compile_and_run(source_files, options)
 
-        # validate results; we pass lib_source as first arg here
-        # b/c it's the key for library tests in EXPECTED_RESULTS
+        # validate results
         self.validate_runs(results_key, result)
 
     def compile_client_and_run(self, client_path: Path) -> None:
@@ -375,6 +349,12 @@ class TestChapter(unittest.TestCase):
         # <FOO>_client.c should have corresponding library <FOO>.c in the same directory
         lib_path = replace_stem(client_path, client_path.stem[: -len("_client")])
         self.library_test_helper(client_path, lib_path, lib_path)
+
+    def compile_with_helper_lib_and_run(self, path: Path) -> None:
+        key = get_props_key(path)
+        lib_filename = DEPENDENCIES[key]
+        lib_path = TEST_DIR / lib_filename
+        self.library_test_helper(path, lib_path, path)
 
     def compile_with_asm_lib_and_run(self, path: Path) -> None:
         key = get_props_key(path)
@@ -529,6 +509,11 @@ def make_test_run(program: Path) -> Callable[[TestChapter], None]:
 
         def test_run(self: TestChapter) -> None:
             self.compile_with_asm_lib_and_run(program)
+
+    elif get_props_key(program) in DEPENDENCIES:
+
+        def test_run(self: TestChapter) -> None:
+            self.compile_with_helper_lib_and_run(program)
 
     else:
 

@@ -322,6 +322,7 @@ class CoalesceTest(NamedTuple):
     max_moves: int = 0
 
 
+# TODO track extra libs in test_properties.json instead of here?
 REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
     "trivially_colorable.c": NoSpillTest(),
     "use_all_hardregs.c": NoSpillTest(),

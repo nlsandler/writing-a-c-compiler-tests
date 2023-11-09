@@ -68,7 +68,12 @@ class TestUnreachableCodeElim(common.TackyOptimizationTest):
 NO_FUNCALLS_TESTS = ["dead_branch_inside_loop.c", "dead_after_if_else.c"]
 
 # don't inspect assembly for this program, just validate its behavior
-BASIC_TESTS = ["keep_final_jump.c", "empty.c", "remove_jump_keep_label.c"]
+BASIC_TESTS = [
+    "keep_final_jump.c",
+    "empty.c",
+    "remove_jump_keep_label.c",
+    "infinite_loop.c",
+]
 
 
 def make_unreachable_code_test(

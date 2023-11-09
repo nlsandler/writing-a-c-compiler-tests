@@ -4,12 +4,12 @@ import itertools
 import subprocess
 import unittest
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable, List, Iterable
 
 from .. import basic, regalloc
 
 
-def lookup_libs(prog: Path) -> List[Path]:
+def lookup_regalloc_libs(prog: Path) -> List[Path]:
     """Look up extra library we need to link against for regalloc tests"""
     test_info = regalloc.REGALLOC_TESTS.get(prog.name)
     if test_info is None:
@@ -25,14 +25,17 @@ def lookup_libs(prog: Path) -> List[Path]:
     ]
 
 
-def lookup_assembly_libs(prog: Path) -> List[Path]:
-    """Look up extra assembly library we need to link against"""
+def lookup_libs(prog: Path) -> List[Path]:
+    """Look up extra libraries we need to link against"""
     k = basic.get_props_key(prog)
     if k in basic.ASSEMBLY_DEPENDENCIES:
         platfrm = basic.get_platform()
         dep = basic.ASSEMBLY_DEPENDENCIES[k][platfrm]
 
         return [prog.with_name(dep)]
+    if k in basic.DEPENDENCIES:
+        dep = basic.DEPENDENCIES[k]
+        return [basic.TEST_DIR / dep]
 
     return []
 
@@ -52,10 +55,10 @@ def build_compiler_args(source_file: Path) -> List[str]:
     # if it's in chapter 20, get extra libs as needed
     if "chapter_20" in source_file.parts:
         # we may need to include wrapper script and other library files
-        args.extend(str(lib) for lib in lookup_libs(source_file))
+        args.extend(str(lib) for lib in lookup_regalloc_libs(source_file))
 
     # some test programs have extra libraries too
-    args.extend(str(lib) for lib in lookup_assembly_libs(source_file))
+    args.extend(str(lib) for lib in lookup_libs(source_file))
 
     # add mathlib option if needed
     if needs_mathlib:
@@ -145,7 +148,7 @@ def configure_tests() -> None:
         basic.TEST_DIR.glob("chapter_20/int_only/**/*.c"),
     )
     for prog in valid_progs:
-        if prog.name.endswith("_client.c"):
+        if prog.name.endswith("_client.c") or "helper_libs" in prog.parts:
             continue
         # TODO refactor getting the key/test name
         test_key = prog.relative_to(basic.TEST_DIR).with_suffix("")
@@ -153,7 +156,11 @@ def configure_tests() -> None:
         setattr(SanitizerTest, test_name, make_sanitize_test(prog))
 
 
-def load_tests(loader, tests, pattern):
+def load_tests(
+    loader: unittest.TestLoader,
+    tests: Iterable[unittest.TestCase | unittest.TestSuite],
+    pattern: str,
+) -> unittest.TestSuite:
     suite = unittest.TestSuite()
     configure_tests()
     tests = loader.loadTestsFromTestCase(SanitizerTest)

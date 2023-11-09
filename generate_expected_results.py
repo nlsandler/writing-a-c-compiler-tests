@@ -64,7 +64,11 @@ def main() -> None:
 
     all_valid_progs = itertools.chain(
         TEST_DIR.glob("chapter_*/valid/**/*.c"),
-        TEST_DIR.glob("chapter_19/**/*.c"),
+        TEST_DIR.glob("chapter_19/constant_folding/**/*.c"),
+        TEST_DIR.glob("chapter_19/unreachable_code_elimination/**/*.c"),
+        TEST_DIR.glob("chapter_19/copy_propagation/**/*.c"),
+        TEST_DIR.glob("chapter_19/dead_store_elimination/**/*.c"),
+        TEST_DIR.glob("chapter_19/whole_pipeline/**/*.c"),
         TEST_DIR.glob("chapter_20/all_types/**/*.c"),
         TEST_DIR.glob("chapter_20/int_only/**/*.c"),
     )
@@ -145,6 +149,11 @@ def main() -> None:
             ]
             asm_path = prog.with_name(asm_lib)
             source_files.append(asm_path)
+
+        if basic.get_props_key(prog) in basic.DEPENDENCIES:
+            lib = basic.DEPENDENCIES[basic.get_props_key(prog)]
+            lib_path = basic.TEST_DIR / lib
+            source_files.append(lib_path)
 
         if "chapter_20" in prog.parts:
             # we may need to include wrapper script and other library files
