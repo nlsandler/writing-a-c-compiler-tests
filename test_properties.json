@@ -104,6 +104,9 @@
         "chapter_6/invalid_semantics/extra_credit/goto_missing_label.c": [
             "goto"
         ],
+        "chapter_6/invalid_semantics/extra_credit/duplicate_labels.c": [
+            "goto"
+        ],        
         "chapter_6/valid/extra_credit/bitwise_ternary.c": [
             "bitwise"
         ],
@@ -134,6 +137,9 @@
         "chapter_7/invalid_semantics/extra_credit/goto_use_before_declare.c": [
             "goto"
         ],
+        "chapter_7/invalid_semantics/extra_credit/duplicate_labels_different_scopes.c": [
+            "goto"
+        ],        
         "chapter_7/valid/extra_credit/compound_subtract_in_block.c": [
             "compound"
         ],
