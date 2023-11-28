@@ -4,7 +4,7 @@ from __future__ import annotations
 import itertools
 import sys
 from pathlib import Path
-from typing import Callable, List, Optional, Sequence, Union
+from typing import Callable, List, Optional, Sequence, Union, Mapping
 
 from .. import basic
 from ..parser import asm
@@ -214,38 +214,46 @@ class TestCopyProp(common.TackyOptimizationTest):
             msg=f"Expected {expected_op} as return value, found {actual_retval} ({program_path})",
         )
 
-    def arg_test(self, expected_args: Sequence[Optional[int]], program: Path) -> None:
+    def arg_test(
+        self, expected_args: Mapping[str, Sequence[Optional[int]]], program: Path
+    ) -> None:
         """Validate that propagate expected values into function arguments.
 
         The copy propagation pass should be able to determine the constant values of
-        some arguments to the "callee" function. Make sure we move these constants into
-        the corresponding parameter passing registers before calling "callee".
+        some arguments to some function calls. Make sure we move these constants into
+        the corresponding parameter passing registers before calling those functions.
 
         Args:
-            * expected_args: expected constant value of each argument
-              None if we don't expect to figure this out at compile time
+            * expected_args: mapping from function names to expected constant
+              value of each argument.
+              An argument's value is None if we don't expect to know it at compile time.
             * program_path: absolute path to source file"""
-        expected_ops: List[Optional[asm.Operand]] = [
-            asm.Immediate(i) if i else None for i in expected_args
-        ]
+
+        # convert constants to assembly operands
+        expected_ops: Mapping[str, List[Optional[asm.Operand]]] = {
+            f: [asm.Immediate(i) if i else None for i in args]
+            for f, args in expected_args.items()
+        }
 
         parsed_asm = self.run_and_parse(program)
 
-        # we assume that we're looking for arguments to function named "callee"
-        actual_args = find_args(
-            "callee",
-            parsed_asm,
-            arg_count=len(expected_args),
-        )
-        for idx, (actual, expected) in enumerate(
-            itertools.zip_longest(actual_args, expected_ops)
-        ):
-            if expected is not None:
-                self.assertEqual(
-                    actual,
-                    expected,
-                    msg=f"Expected argument {idx} to callee to be {expected}, found {actual}",
-                )
+        # validate the args to each function call
+        # assume that each function is called only once in 'target'
+        for f, expected_f_args in expected_ops.items():
+            actual_args = find_args(
+                f,
+                parsed_asm,
+                arg_count=len(expected_f_args),
+            )
+            for idx, (actual, expected) in enumerate(
+                itertools.zip_longest(actual_args, expected_f_args)
+            ):
+                if expected is not None:
+                    self.assertEqual(
+                        actual,
+                        expected,
+                        msg=f"Expected argument {idx} to {f} to be {expected}, found {actual}",
+                    )
 
     def same_arg_test(self, program: Path) -> None:
         """Test that first and second arguments to callee are the same."""
@@ -329,45 +337,50 @@ class TestCopyProp(common.TackyOptimizationTest):
 # programs we'll validate with retval_test, and their expected return values
 RETVAL_TESTS = {
     # int-only
-    "complex_const_fold.c": -1,
-    "copy_prop_const_fold.c": 6,
+    "constant_propagation.c": 6,
+    "propagate_into_complex_expressions.c": 25,
     "fig_19_8.c": 4,
     "init_all_copies.c": 3,
     "killed_then_redefined.c": 2,
-    "loop.c": 10,
-    "multi_path.c": 3,
+    "different_paths_same_copy.c": 3,
     "multi_path_no_kill.c": 3,
-    "prop_static_var.c": 10,
-    "remainder_test.c": 1,
+    "propagate_static.c": 10,
     # other types
     "alias_analysis.c": 24,
-    "char_round_trip.c": 1,
-    "char_round_trip_2.c": -1,
-    "char_type_conversion.c": 1,
-    "const_fold_sign_extend.c": -1000,
-    "const_fold_sign_extend_2.c": -1000,
-    "const_fold_type_conversions.c": 83338,
-    "not_char.c": 1,
-    "propagate_doubles.c": 3000,
+    "propagate_into_type_conversions.c": 83826,
+    "propagate_all_types.c": 3500,
     "propagate_null_pointer.c": 0,
-    "signed_unsigned_conversion.c": -11,
-    "unsigned_compare.c": 1,
-    "unsigned_wraparound.c": 0,
+    "funcall_kills_aliased.c": 10,
 }
 
-# programs we'll validate with arg_test, and their expected arguments
-ARG_TESTS = {"propagate_fun_args.c": [None, 20], "kill_and_add_copies.c": [10, None]}
+# programs we'll validate with arg_test, and mappings to callees with their expected arguments
+ARG_TESTS = {
+    "kill_and_add_copies.c": {"callee": [10, None]},
+    "nested_loops.c": {
+        "inner_loop1": [None, None, None, None, None, 100],
+        "inner_loop2": [None, None, None, None, None, 100],
+        "inner_loop3": [None, None, None, None, None, 100],
+        "validate": [None, None, None, None, None, 100],
+    },
+}
 
 # programs we'll validate with same_arg_test
 SAME_ARG_TESTS = [
     "store_doesnt_kill.c",
     "copy_struct.c",
-    "multi_instance_same_copy.c",
+    "different_source_values_same_copy.c",
+    "propagate_static_var.c",
     "propagate_var.c",
+    "propagate_params.c",
+    "char_type_conversion.c",
 ]
 
 # programs we'll validate with redundant_copies_test
-REDUNDANT_COPIES_TESTS = ["redundant_copies.c", "redundant_copies_2.c"]
+REDUNDANT_COPIES_TESTS = [
+    "redundant_copies.c",
+    "redundant_double_copies.c",
+    "redundant_struct_copies.c",
+]
 
 # programs we'll validate with no_computations_test
 NO_COMPUTATIONS_TESTS = ["pointer_arithmetic.c"]

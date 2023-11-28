@@ -1,61 +1,67 @@
-int aliased_src(int x) {
-    int y = x; // src is aliased
-    static int unused;
-    int *ptr = &unused;
-    if (x) {
-        ptr = &x;
+/* Test that store instruction kills any copy
+ * whose source or destination is aliased
+ */
+
+// Store kills copy w/ aliased src
+int aliased_src(int flag, int x, int *ptr) {
+    int y = x;  // gen y = x
+    if (flag) {
+        ptr = &x;  // x is aliased
     }
-    *ptr = 100;
-    if (y != 12) {
-        return 1;
-    }
-    return 0;
+    *ptr = 100;  // kill y = x
+
+    return y;  // make sure this isn't rewritten as 'return x'
 }
 
-int aliased_dst(int flag)
-{
-    // store instructions kills any copies with aliased destination
-    int i = 10;
-    int j = 20;
-
-    // alias i and j
-    int *ptr1 = &i;
-    int *ptr2 = &j;
-    // kill i = 10 and j = 20
-    int *ptr = flag ? ptr1 : ptr2;
-    *ptr = 100;
-
-
-    // validate results
+// Store kills copy w/ aliased dst
+int aliased_dst(int flag, int x, int *ptr) {
+    int y = x;  // gen y = x
     if (flag) {
-        // i should be 100, j should be unchanged
-        if (i != 100) {
-            return 2;
-        }
-        if (j != 20) {
-            return 3;
-        }
-    } else {
-        // j should be 100, i should be unchanged
-        if (j != 100) {
-            return 4;
-        }
-        if (i != 10) {
-            return 5;
-        }
-
+        ptr = &y;  // y is aliased
     }
-    return 0;
+    *ptr = 100;  // kill y = x
+    return y;    // make sure this isn't rewritten as 'return x'
 }
 
 int main(void) {
-    int status = aliased_src(12);
-    if (status) {
-        return status;
+    int i = 0;
+    // first call aliased_src w/ flag = 0;
+    // Store instruction will update i
+    if (aliased_src(0, 1, &i) != 1) {
+        return 1;  // fail
     }
-    status = aliased_dst(0);
-    if (status) {
-        return status;
+    if (i != 100) {
+        return 2;  // fail
     }
-    return aliased_dst(1);
+
+    // call again w/ flag = 1; won't update i or return value
+    i = 0;
+    if (aliased_src(1, 2, &i) != 2) {
+        return 3;  // fail
+    }
+    if (i != 0) {
+        return 4;  // fail
+    }
+
+    // call aliased_dst with flag = 0;
+    // Store instruction will update i
+    if (aliased_dst(0, 5, &i) != 5) {
+        return 5;  // fail
+    }
+
+    if (i != 100) {
+        return 6;  // fail
+    }
+    // call aliased_dst with flag = 1;
+    // Store won't update i, will update return value
+    i = 0;
+    if (aliased_dst(1, 5, &i) != 100) {
+        return 7;  // fail
+    }
+
+    if (i != 0) {
+        return 8;  // fail
+    }
+
+    return 0;  // success
 }

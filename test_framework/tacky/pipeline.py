@@ -18,6 +18,13 @@ RETVAL_TESTS = {
     "dead_condition.c": 10,
     "elim_and_copy_prop.c": 10,
     "remainder_test.c": 1,
+    "unsigned_compare.c": 1,
+    "unsigned_wraparound.c": 0,
+    "const_fold_sign_extend.c": -1000,
+    "const_fold_sign_extend_2.c": -1000,
+    "char_round_trip.c": 1,
+    "signed_unsigned_conversion.c": -11,
+    "not_char.c": 1,
 }
 STORE_ELIMINATED = {"alias_analysis_change.c": [5, 10]}
 

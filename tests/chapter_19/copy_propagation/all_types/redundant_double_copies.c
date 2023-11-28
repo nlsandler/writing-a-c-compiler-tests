@@ -1,11 +1,12 @@
 /* Test that we eliminate y = x and y = x if we can prove that x and y
  * already have the same values.
  * After copy propagation and cleanup unreachable code elimination,
- * target should contain no control-flow instructions
+ * target should contain no control-flow instructions.
+ * Similar to int_only/redundant_copies.c but with doubles
  * */
 
-int target(int flag, int flag2, int y) {
-    int x = y;
+double target(int flag, int flag2, double y) {
+    double x = y;
 
     if (flag) {
         y = x;  // we can remove this because x and y already have the same
@@ -19,5 +20,5 @@ int target(int flag, int flag2, int y) {
 }
 
 int main(void) {
-    return target(0, 1, 10);  // should return 20
+    return target(0, 1, 10.0) == 20.0;
 }

@@ -1,10 +1,32 @@
-int callee(void) { return 3; }
+/* If two identical copies to x appear on the path to some use of x,
+ * and the first one is killed, make sure we can still propagate the second.
+ * */
 
-int target(void) {
-  int x = 2;
-  x = callee();
-  x = 2;
-  return x; // look for movl $2, %eax
+int x = 0;
+int y = 0;
+
+int callee(void) {
+    y = x * 2;  // make sure x still has the right value at this point
+    return 5;
 }
 
-int main(void) { return target(); }
+int target(void) {
+    x = 2;         // gen x = 2
+    x = callee();  // kill x = 2
+    x = 2;         // gen x = 2 again
+    return x;      // should become "return 2"
+}
+
+int main(void) {
+    int result = target();
+    if (result != 2) {
+        return 1;
+    }
+    if (y != 4) {  // make sure we called callee()
+        return 2;
+    }
+    if (x != 2) {
+        return 3;
+    }
+    return 0;  // success
+}

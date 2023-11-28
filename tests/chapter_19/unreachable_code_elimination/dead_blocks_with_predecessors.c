@@ -20,6 +20,7 @@ int target(void) {
     for (; x < 10; x = x + 1) {
         x = x + callee();
     }
+    return x;
 }
 
 int main(void) {

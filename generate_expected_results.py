@@ -55,6 +55,8 @@ def main() -> None:
     # --all tells us to regenerate all expected results
     # by default just do the ones that have changed since last commit
 
+    # TODO option to remove entries from expected_result.json for files
+    # that no longer exist
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--since-commit", default=None)

@@ -1,26 +1,36 @@
-static int x = 0;
+/* Test that we initialize each basic block with the set of all copies
+ * in the function
+ * */
 
-// test that we initialize each basic block w/ incoming set of all copies
-int callee(void) {
-  x = x + 2;
-  return 0;
+int counter = 0;
+
+int increment_counter(void) {
+    counter = counter + 1;
+    return 0;
 }
-int count_down(void) {
-  static int i = 2;
-  i = i - 1;
-  return i;
-}
+
 int target(void) {
-  int y = 3;
-  do {
-    // when we first process this, one predecessor will having reaching copy y =
-    // 3 other predecessorw on't be processed yet
-    callee();
-  } while (count_down());
-  return y; // should become return 3
+    int y = 3;
+    do {
+        // when we first process this block,
+        // y = 3 will reach it from one predecessor, and we won't have
+        // visited the other yet; make sure we still recognize
+        // that y = 3 reaches this block (and its successor)
+        increment_counter();
+    } while (counter < 5);
+    return y;  // this should become return 3
 }
 
 int main(void) {
-  int result = target();
-  return x == 4 && result == 3;
+    int result = target();
+    if (result != 3) {
+        return 1;
+    }
+
+    // make sure we looped the right number of times
+    if (counter != 5) {
+        return 2;
+    }
+
+    return 0;  // success
 }
