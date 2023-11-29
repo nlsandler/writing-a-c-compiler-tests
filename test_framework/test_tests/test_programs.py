@@ -4,7 +4,7 @@ import itertools
 import subprocess
 import unittest
 from pathlib import Path
-from typing import Callable, List, Iterable
+from typing import Callable, List, Iterable, Union
 
 from .. import basic, regalloc
 
@@ -158,7 +158,7 @@ def configure_tests() -> None:
 
 def load_tests(
     loader: unittest.TestLoader,
-    tests: Iterable[unittest.TestCase | unittest.TestSuite],
+    tests: Iterable[Union[unittest.TestCase, unittest.TestSuite]],
     pattern: str,
 ) -> unittest.TestSuite:
     suite = unittest.TestSuite()
