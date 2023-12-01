@@ -29,10 +29,11 @@ class TestDeadStoreElimination(common.TackyOptimizationTest):
 STORE_ELIMINATED = {
     # int-only
     "dead_store_static_var.c": 5,
-    "elim_second_copy.c": 10,
-    "fig_19_12.c": 10,
+    "elim_second_copy.c": 100,
+    "fig_19_11.c": 10,
     "loop_dead_store.c": 5,
-    "simple.c": 10,
+    "static_not_always_live.c": 30,
+    "initialize_blocks_with_empty_set.c": 10,
     # other types
     "aliased_dead_at_exit.c": 50,
     "copy_to_dead_struct.c": 10,
@@ -41,7 +42,9 @@ STORE_ELIMINATED = {
 
 # programs to validate with return_const_test, with expected return value
 RETURN_CONST = {
-    "use_and_kill.c": 5,
+    "self_copy.c": 5,
+    "delete_arithmetic_ops.c": 5,
+    "simple.c": 3,
 }
 
 

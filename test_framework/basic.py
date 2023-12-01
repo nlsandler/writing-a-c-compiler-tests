@@ -49,13 +49,36 @@ def get_platform() -> str:
 
 
 def get_props_key(source_file: Path) -> str:
-    """key to use in EXPECTED_RESULTS, REQUIRES_MATHLIB, EXTRA_CREDIT_PROGRAMS"""
+    """key to use in EXPECTED_RESULTS, REQUIRES_MATHLIB, EXTRA_CREDIT_PROGRAMS
+    If this ends with _client.c, use corresponding lib as props key
+    """
+    if source_file.stem.endswith("_client"):
+        source_file = replace_stem(source_file, source_file.stem[: -len("_client")])
     return str(source_file.relative_to(TEST_DIR))
 
 
 def needs_mathlib(prog: Path) -> bool:
     key = get_props_key(prog)
     return key in REQUIRES_MATHLIB and not IS_OSX
+
+
+def get_libs(prog: Path) -> List[Path]:
+    """Get extra libraries this test program depends on (aside from lib/client pairs)"""
+    props_key = get_props_key(prog)
+    libs = []
+    if props_key in ASSEMBLY_DEPENDENCIES:
+        platfrm: str
+        platfrm = get_platform()
+        asm_filename = ASSEMBLY_DEPENDENCIES[props_key][platfrm]
+        asm_path = prog.with_name(
+            asm_filename
+        )  # assembly file is in the same directory as program under test
+        libs.append(asm_path)
+    if props_key in DEPENDENCIES:
+        lib_filename = DEPENDENCIES[props_key]
+        lib_path = TEST_DIR / lib_filename
+        libs.append(lib_path)
+    return libs
 
 
 def print_stderr(proc: subprocess.CompletedProcess[str]) -> None:
@@ -279,6 +302,12 @@ class TestChapter(unittest.TestCase):
     def compile_and_run(self, source_file: Path) -> None:
         """Compile a valid test program, run it, and validate the results"""
 
+        # if this depends on extra libraries, call library_test_helper instead
+        extra_libs = get_libs(source_file)
+        if extra_libs:
+            self.library_test_helper(source_file, extra_libs)
+            return
+
         # include -lm for standard library test on linux
         if needs_mathlib(source_file):
             cc_opt = "-lm"
@@ -305,19 +334,17 @@ class TestChapter(unittest.TestCase):
         self.validate_runs(source_file, result)
 
     def library_test_helper(
-        self, file_under_test: Path, other_file: Path, results_key: Path
+        self, file_under_test: Path, other_files: List[Path]
     ) -> None:
         """Compile one file in a multi-file program and validate the results.
 
-        Compile file_under_test with compiler under test and other_file with 'gcc' command.
+        Compile file_under_test with compiler under test and other_files with 'gcc' command.
         Link 'em together, run the resulting executable, make validate the results.
 
         Args:
             file_under_test: Absolute path of one file in a multi-file program
                           (the one we want to compile with self.cc)
-            other_file: Absolute path to the other file in the multi-file program
-            results_key: key to use in EXPECTED_RESULTS; will be either file_under_test
-                         or other_file, whichever one is the library file
+            other_files: Absolute paths to other files in the multi-file program
         """
 
         # compile file_under_test and make sure it succeeds
@@ -334,44 +361,28 @@ class TestChapter(unittest.TestCase):
 
         # compile other file, link with object file produced by compiler under test,
         # and run resulting executable
-        source_files = [file_under_test.with_suffix(".o"), other_file]
+        source_files = [file_under_test.with_suffix(".o")] + other_files
         options = []
-        if needs_mathlib(file_under_test) or needs_mathlib(other_file):
+        if needs_mathlib(file_under_test) or any(needs_mathlib(f) for f in other_files):
             options.append("-lm")
         result = gcc_compile_and_run(source_files, options)
 
         # validate results
-        self.validate_runs(results_key, result)
+        self.validate_runs(file_under_test, result)
 
     def compile_client_and_run(self, client_path: Path) -> None:
         """Multi-file program test where our compiler compiles the client"""
 
         # <FOO>_client.c should have corresponding library <FOO>.c in the same directory
         lib_path = replace_stem(client_path, client_path.stem[: -len("_client")])
-        self.library_test_helper(client_path, lib_path, lib_path)
-
-    def compile_with_helper_lib_and_run(self, path: Path) -> None:
-        key = get_props_key(path)
-        lib_filename = DEPENDENCIES[key]
-        lib_path = TEST_DIR / lib_filename
-        self.library_test_helper(path, lib_path, path)
-
-    def compile_with_asm_lib_and_run(self, path: Path) -> None:
-        key = get_props_key(path)
-        platfrm: str
-        platfrm = get_platform()
-        asm_filename = ASSEMBLY_DEPENDENCIES[key][platfrm]
-        asm_path = path.with_name(
-            asm_filename
-        )  # assembly file is in the same directory as program under test
-        self.library_test_helper(path, asm_path, path)
+        self.library_test_helper(client_path, [lib_path])
 
     def compile_lib_and_run(self, lib_path: Path) -> None:
         """Multi-file program test where our compiler compiles the library"""
 
         # program path <FOO>.c should have corresponding <FOO>_client.c in same directory
         client_path = replace_stem(lib_path, lib_path.stem + "_client")
-        self.library_test_helper(lib_path, client_path, lib_path)
+        self.library_test_helper(lib_path, [client_path])
 
 
 # Automatically generating test classes + methods
@@ -503,22 +514,12 @@ def make_test_valid(program: Path) -> Callable[[TestChapter], None]:
 
 
 def make_test_run(program: Path) -> Callable[[TestChapter], None]:
-    """Generate one test method to compile and run a valid single-file program"""
+    """Generate one test method to compile and run a valid single-file program
+    (the program may depend on additional source or assembly files that are not under test)
+    """
 
-    if get_props_key(program) in ASSEMBLY_DEPENDENCIES:
-
-        def test_run(self: TestChapter) -> None:
-            self.compile_with_asm_lib_and_run(program)
-
-    elif get_props_key(program) in DEPENDENCIES:
-
-        def test_run(self: TestChapter) -> None:
-            self.compile_with_helper_lib_and_run(program)
-
-    else:
-
-        def test_run(self: TestChapter) -> None:
-            self.compile_and_run(program)
+    def test_run(self: TestChapter) -> None:
+        self.compile_and_run(program)
 
     return test_run
 

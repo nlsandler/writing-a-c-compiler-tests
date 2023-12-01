@@ -54,9 +54,9 @@ class TackyOptimizationTest(basic.TestChapter):
             compile_result
         )  # print compiler warnings even if it succeeded
         asm_file = source_file.with_suffix(".s")
-
+        libs = basic.get_libs(source_file)
         # assemble/link asm_file, run it, and make sure it gives expected result
-        actual_result = basic.gcc_compile_and_run([asm_file], [])
+        actual_result = basic.gcc_compile_and_run([asm_file] + libs, [])
         self.validate_runs(source_file, actual_result)
 
         # now parse the assembly file and extract the function named "target"

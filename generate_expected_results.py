@@ -20,7 +20,7 @@ results: dict[str, dict[str, Any]] = {}
 
 def lookup_regalloc_libs(prog: Path) -> List[Path]:
     """Look up extra library we need to link against for regalloc tests"""
-    # TODO fix copypasta b/t here and test_programs.py (ditto for lookup_assembly libs)
+    # TODO fix copypasta b/t here and test_programs.py
     test_info = regalloc.REGALLOC_TESTS.get(prog.name)
     if test_info is None:
         return []
@@ -35,16 +35,17 @@ def lookup_regalloc_libs(prog: Path) -> List[Path]:
     ]
 
 
-def lookup_assembly_libs(prog: Path) -> List[Path]:
-    """Look up extra assembly library we need to link against"""
-    k = basic.get_props_key(prog)
-    if k in basic.ASSEMBLY_DEPENDENCIES:
-        platfrm = basic.get_platform()
-        dep = basic.ASSEMBLY_DEPENDENCIES[k][platfrm]
+def cleanup_keys() -> None:
+    """Remove entries from expected_results.json where the corresponding file doesn't exist."""
 
-        return [prog.with_name(dep)]
-
-    return []
+    # Note: need to construct a list of keys and iterate over that,
+    # rather than iterating over dict directly, b/c dict size can't change during iteration
+    all_keys = list(results.keys())
+    for k in all_keys:
+        full_path = TEST_DIR / k
+        if not full_path.exists():
+            del results[k]
+    return
 
 
 def main() -> None:
@@ -111,7 +112,7 @@ def main() -> None:
                 or str(rel_path).replace(".c", "_client.c") in changed_files
                 or str(rel_path).replace("_client.c", ".c") in changed_files
                 or any(lib in changed_files for lib in lookup_regalloc_libs(p))
-                or any(lib in changed_files for lib in lookup_assembly_libs(p))
+                or any(lib in changed_files for lib in basic.get_libs(p))
                 or any(
                     h
                     for h in changed_files
@@ -120,7 +121,7 @@ def main() -> None:
             ):
                 progs.append(p)
 
-        # load the json file from that commit ot use as baseline
+        # load the json file from that commit to use as baseline
         subprocess.run(
             f"git show {baseline}:expected_results.json > expected_results_orig.json",
             shell=True,
@@ -130,6 +131,7 @@ def main() -> None:
         with open("expected_results_orig.json", "r", encoding="utf-8") as f:
             results.update(json.load(f))
         Path("expected_results_orig.json").unlink()
+        cleanup_keys()
 
     # iterate over all valid programs
     for prog in progs:
@@ -145,17 +147,8 @@ def main() -> None:
             client = prog.parent.joinpath(prog.name.replace(".c", "_client.c"))
             source_files.append(client)
 
-        if basic.get_props_key(prog) in basic.ASSEMBLY_DEPENDENCIES:
-            asm_lib = basic.ASSEMBLY_DEPENDENCIES[basic.get_props_key(prog)][
-                basic.get_platform()
-            ]
-            asm_path = prog.with_name(asm_lib)
-            source_files.append(asm_path)
-
-        if basic.get_props_key(prog) in basic.DEPENDENCIES:
-            lib = basic.DEPENDENCIES[basic.get_props_key(prog)]
-            lib_path = basic.TEST_DIR / lib
-            source_files.append(lib_path)
+        # prog may have some extra dependencies
+        source_files.extend(basic.get_libs(prog))
 
         if "chapter_20" in prog.parts:
             # we may need to include wrapper script and other library files
