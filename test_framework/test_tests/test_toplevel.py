@@ -114,7 +114,7 @@ class BadSourceTest(unittest.TestCase):
     ret2 = TEST_DIR / "chapter_1/valid/return_2.c"
     ret0 = TEST_DIR / "chapter_1/valid/return_0.c"
     hello_world = TEST_DIR / "chapter_9/valid/arguments_in_registers/hello_world.c"
-    dse_relative = Path("chapter_19/dead_store_elimination/int_only/simple.c")
+    dse_relative = Path("chapter_19/dead_store_elimination/int_only/fig_19_11.c")
     dse = TEST_DIR / dse_relative
 
     # temporary directory - created in setup and removed in teardown
@@ -139,7 +139,7 @@ class BadSourceTest(unittest.TestCase):
         expected_retval = EXPECTED_RESULTS[str(cls.dse_relative)]["return_code"]
         store_to_elim = STORE_ELIMINATED[cls.dse.name]
         with open(
-            TEST_DIR / "chapter_19/dead_store_elimination/int_only/simple.c",
+            TEST_DIR / "chapter_19/dead_store_elimination/int_only/fig_19_11.c",
             "w",
             encoding="utf-8",
         ) as f:
