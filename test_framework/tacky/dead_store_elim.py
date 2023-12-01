@@ -45,6 +45,7 @@ RETURN_CONST = {
     "self_copy.c": 5,
     "delete_arithmetic_ops.c": 5,
     "simple.c": 3,
+    "delete_dead_pt_ii_instructions.c": 5,
 }
 
 
