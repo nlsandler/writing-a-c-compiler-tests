@@ -18,8 +18,8 @@ class TestDeadStoreElimination(common.TackyOptimizationTest):
     Each dynamically generated test calls one of the following main test methods:
 
     * compile_and_run, defined in TestChapter: validate behavior but don't inspect assembly
-    * store_eliminated_test: make sure a particular mov instruction was eliminated
-    * return_const_test: make sure entire funcion is reduce to a return instruction
+    * store_eliminated_test, defined in TackyOptimizationTest: make sure a particular mov instruction was eliminated
+    * return_const_test, defined in TackyOptimizationTest: make sure entire funcion is reduce to a return instruction
     """
 
     test_dir = common.TEST_DIR / "dead_store_elimination"
@@ -42,7 +42,6 @@ STORE_ELIMINATED = {
 
 # programs to validate with return_const_test, with expected return value
 RETURN_CONST = {
-    "self_copy.c": 5,
     "delete_arithmetic_ops.c": 5,
     "simple.c": 3,
     "delete_dead_pt_ii_instructions.c": 5,

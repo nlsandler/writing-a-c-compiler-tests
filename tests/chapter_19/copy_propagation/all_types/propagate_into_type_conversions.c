@@ -12,5 +12,8 @@ int target(void) {
 }
 
 int main(void) {
-    return target() == 83826;
+    if (target() != 83826) {
+        return 1; // fail
+    }
+    return 0; // success
 }

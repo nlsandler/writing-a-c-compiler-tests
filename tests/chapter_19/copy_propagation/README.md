@@ -4,9 +4,9 @@ In some test programs, the copy propagation and constant folding passes make it 
 
 In some programs, copy propagation should replace the arguments to certain function calls with constants. In other programs, copy propagation should propagate the same value two different function arguments. The test script validates these programs by checking which values are copied into the parameter-passing registers before the `call` instruction.
 
-Register coalescing, which we implement in Chapter 20, can make it appear that the same value is passed in two different parameter-passing reigsters, even if copy propagation wasn't performed. The tests are designed to prevent register coalescing in those cases, so they'll still test the intended cases after you complete Chapter 20.
+Register coalescing, which we implement in Chapter 20, can make it look like the same value is passed in two different parameter-passing registers, even if that value wasn't propagated to both parameters. The tests are designed to prevent register coalescing in those cases, so they'll still test the intended cases after you complete Chapter 20.
 
-In one program (`redundant_copies.c`), removing a redundant copy makes a whole branch dead, allowing unreachable code elimination to remove that branch. The test script validates that this program contains no control-flow instructions.
+In a few programs, including `redundant_copies.c`, removing a redundant copy makes a whole branch dead, allowing unreachable code elimination to remove that branch. The test script validates that these programs contains no control-flow instructions.
 
 In `pointer_arithmetic.c`, the test script validates that we optimize away all computation instructions (e.g. arithmetic instructions like `imul` and type conversions like `movsx`).
 

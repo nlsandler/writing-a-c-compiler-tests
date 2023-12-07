@@ -217,7 +217,7 @@ class TestCopyProp(common.TackyOptimizationTest):
     def arg_test(
         self, expected_args: Mapping[str, Sequence[Optional[int]]], program: Path
     ) -> None:
-        """Validate that propagate expected values into function arguments.
+        """Validate that we propagate expected values into function arguments.
 
         The copy propagation pass should be able to determine the constant values of
         some arguments to some function calls. Make sure we move these constants into
@@ -227,7 +227,8 @@ class TestCopyProp(common.TackyOptimizationTest):
             * expected_args: mapping from function names to expected constant
               value of each argument.
               An argument's value is None if we don't expect to know it at compile time.
-            * program_path: absolute path to source file"""
+            * program_path: absolute path to source file
+        """
 
         # convert constants to assembly operands
         expected_ops: Mapping[str, List[Optional[asm.Operand]]] = {
@@ -366,18 +367,22 @@ ARG_TESTS = {
 
 # programs we'll validate with same_arg_test
 SAME_ARG_TESTS = [
-    "store_doesnt_kill.c",
-    "copy_struct.c",
+    # int only
     "different_source_values_same_copy.c",
     "propagate_static_var.c",
     "propagate_var.c",
     "propagate_params.c",
+    # other types
+    "store_doesnt_kill.c",
+    "copy_struct.c",
     "char_type_conversion.c",
 ]
 
 # programs we'll validate with redundant_copies_test
 REDUNDANT_COPIES_TESTS = [
+    # int only
     "redundant_copies.c",
+    # other types
     "redundant_double_copies.c",
     "redundant_struct_copies.c",
 ]

@@ -19,5 +19,11 @@ int target(void) {
 
 int main(void) {
     int a = target();
-    return a == 100 && b == 10;
+    if (a != 100) {
+        return 1; // fail
+    }
+    if (b != 10) {
+        return 2; // fail
+    }
+    return 0; // success
 }

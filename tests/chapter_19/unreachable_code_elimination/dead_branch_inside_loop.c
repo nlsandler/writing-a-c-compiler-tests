@@ -23,5 +23,8 @@ int target(void) {
 }
 
 int main(void) {
-    return target();
+    if (target() != -4845) {
+        return 1; // fail
+    }
+    return 0; // success
 }

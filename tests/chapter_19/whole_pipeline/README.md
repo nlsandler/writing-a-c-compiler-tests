@@ -1,0 +1,3 @@
+To validate that all optimization passes were run until the results converge, the test script inspects the assembly for any functions starting with `target`.
+
+In one test program (`alias_analysis_change.c`) we make sure that stores of specific constants were removed, just like we do for some dead store elimination tests. In the remaining test programs, we validate that each target function is optimized down to a single `Return` instruction, much like we do for other dead store elimination tests. Many of the tests in this chapter focus on validating constant-folding logic that we couldn't validate before we'd implemented copy propagation (like constant folding with chararacter types and negative numbers).

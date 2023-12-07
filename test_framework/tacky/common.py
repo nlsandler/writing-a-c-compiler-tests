@@ -23,7 +23,11 @@ class TackyOptimizationTest(basic.TestChapter):
 
     In the second kind of test, we still compile the program, run it, and validate its behavior,
     but we also inspect its assembly code to make sure it's been optimized. These test methods
-    should call run_and_parse, defined below.
+    should call run_and_parse or run_and_parse_all, defined below.
+
+    This class defines two test methods used in dead store elimination and whole pipeline tests:
+    * store_eliminated_test: Test that stores of particular constants were eliminated
+    * return_const_test: Test that the only thing this function does is return a specific consatnt
 
     Notes:
     * This class isn't designed to test intermediate stages
@@ -79,6 +83,8 @@ class TackyOptimizationTest(basic.TestChapter):
         self, *, source_file: Path, redundant_consts: List[int]
     ) -> None:
         """Make sure any stores of the form mov $const, <something> were eliminated.
+
+        The test program should contain a single 'target' function.
         Args:
             source_file: absolute path to program under test
             redundant_consts: any constants that were sources of mov instructions in the
@@ -110,7 +116,10 @@ class TackyOptimizationTest(basic.TestChapter):
         )
 
     def return_const_test(self, *, source_file: Path, returned_const: int) -> None:
-        """Validate that the function doesn't do anything except return a constant."""
+        """Validate that the function doesn't do anything except return a constant.
+
+        The test program should contain a single 'target' function.
+        """
 
         def ok(i: asm.AsmItem) -> bool:
             """We should optimize out everything except prologue, epilogue, and mov into EAX"""

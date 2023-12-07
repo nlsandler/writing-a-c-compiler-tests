@@ -1,4 +1,4 @@
-/* Make sure we the set of reaching copies from ENTRY is empty */
+/* Make sure we track that the set of reaching copies from ENTRY is empty */
 int target(int a, int flag) {
     if (flag) {
         // if we initialized ENTRY with the set of all copies in target,

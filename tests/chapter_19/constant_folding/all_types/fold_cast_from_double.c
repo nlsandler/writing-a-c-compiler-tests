@@ -15,6 +15,7 @@ int target_to_int(void) {
 }
 
 unsigned target_to_uint(void) {
+    // constant in the range of uint but not int
     return (unsigned)2147483750.5;
 }
 
@@ -25,8 +26,8 @@ long target_to_long(void) {
 }
 
 unsigned long target_to_ulong(void) {
-    // same constant from chapter13/valid/explicit_casts/double_to_ulong.c
-    return (unsigned long)3458764513821589504.0;
+    // constant in the range of ulong but not long
+    return (unsigned long)13835058055282163712.5;
 }
 
 unsigned long target_implicit(void) {
@@ -50,7 +51,7 @@ int main(void) {
     if (target_to_long() != 9223372036854774784l) {
         return 5;
     }
-    if (target_to_ulong() != 3458764513821589504ul) {
+    if (target_to_ulong() != 13835058055282163712ul) {
         return 6;
     }
     if (target_implicit() != 3458764513821589504ul) {

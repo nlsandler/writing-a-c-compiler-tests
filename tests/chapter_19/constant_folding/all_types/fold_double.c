@@ -10,8 +10,7 @@
 #pragma GCC diagnostic ignored "-Woverflow"
 #endif
 #endif
-// TODO in copy prop section, also include test cases for constant folding w/
-// special values? negative zero, infinity...
+
 double target_add(void) {
     // Because 1.2345e60 is so large, adding one to it doesn't change its value
     return 1.2345e60 + 1.;
@@ -130,10 +129,10 @@ int main(void) {
         return 11;
     }
     if (target_lt()) {
-        return 11;
+        return 12;
     }
     if (target_le()) {
-        return 12;
+        return 13;
     }
 
     // infinity

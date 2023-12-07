@@ -5,7 +5,19 @@ struct s {
 };
 
 int callee(struct s a, struct s b) {
-    return a.x == 3 && a.y == 4 && b.x == 3 && b.y == 4;
+    if (a.x != 3) {
+        return 1; // fail
+    }
+    if (a.y != 4) {
+        return 2; // fail
+    }
+    if (b.x != 3) {
+        return 3; // fail
+    }
+    if (b.y != 4) {
+        return 4; // fail
+    }
+    return 0; // success
 }
 
 int target(void) {

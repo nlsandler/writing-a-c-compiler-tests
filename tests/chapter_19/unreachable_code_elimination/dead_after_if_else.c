@@ -16,5 +16,11 @@ int target(int a) {
     return callee();  // this should be optimized away
 }
 int main(void) {
-    return (target(1) == 1 && target(0) == 2);
+    if (target(1) != 1) {
+        return 1; // fail
+    }
+    if (target(0) != 2) {
+        return 2; // fail
+    }
+    return 0; // success
 }

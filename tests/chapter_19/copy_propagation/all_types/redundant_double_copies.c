@@ -20,5 +20,8 @@ double target(int flag, int flag2, double y) {
 }
 
 int main(void) {
-    return target(0, 1, 10.0) == 20.0;
+    if (target(0, 1, 10.0) != 20.0) {
+        return 1; // fail
+    }
+    return 0;
 }

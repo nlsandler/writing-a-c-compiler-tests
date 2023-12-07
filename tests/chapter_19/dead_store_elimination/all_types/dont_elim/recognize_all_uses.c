@@ -144,13 +144,13 @@ int main(void) {
         return 9; // fail
     }
     if (test_double_to_uint(1, 1234567.8) != 1844674407370955264u) {
-        return 10;
+        return 10; // fail
     }
     if (test_uint_to_double(0, 4294967000U) != 4294967000.) {
-        return 11;
+        return 11; // fail
     }
     if (test_uint_to_double(1, 4294967000U) != 2147483650u) {
-        return 12;
+        return 12; // fail
     }
     if (test_truncate(0, 500) != -12) {
         return 13;  // fail

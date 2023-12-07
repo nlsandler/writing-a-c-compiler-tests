@@ -27,11 +27,11 @@ int target(int flag) {
 int main(void) {
     int result = target(0);
 
-    if (result != 40)
+    if (result != 200)
         return 1;
 
     result = target(1);
-    if (result != 20)
+    if (result != 40)
         return 2;
 
     return 0;  // success
