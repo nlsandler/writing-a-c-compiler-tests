@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import itertools
 import platform
 import subprocess
 import unittest
@@ -231,9 +232,6 @@ def parse_arguments() -> argparse.Namespace:
             "--extra-credit enables all extra-credit tests; ignoring other extra-credit options."
         )
 
-    if args.int_only and (Optimizations.UNREACHABLE_CODE_ELIM == args.optimization):
-        warnings.warn("--int-only has no effect on unreachable code elimination tests")
-
     if args.int_only and args.chapter < TACKY_OPT_CHAPTER:
         warnings.warn("Option --int-only has no impact on Part I & Part II tests")
 
@@ -380,6 +378,11 @@ def main() -> int:
 
     if args.latest_only:
         chapters: Iterable[int] = [args.chapter]
+    elif args.int_only:
+        # skip Part II chapters (11 - 18)
+        chapters = itertools.chain(
+            range(1, 11), range(TACKY_OPT_CHAPTER, args.chapter + 1)
+        )
     else:
         chapters = range(1, args.chapter + 1)
 

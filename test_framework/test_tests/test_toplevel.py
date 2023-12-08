@@ -12,10 +12,17 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
-from typing import Union
+from typing import Union, Sequence
+
 
 from ..regalloc import REGALLOC_TESTS
-from ..basic import EXPECTED_RESULTS, ROOT_DIR, TEST_DIR
+from ..basic import (
+    EXPECTED_RESULTS,
+    ROOT_DIR,
+    TEST_DIR,
+    excluded_extra_credit,
+    ExtraCredit,
+)
 from ..tacky.dead_store_elim import STORE_ELIMINATED
 
 TEST_PATTERN = re.compile("^Ran ([0-9]+) tests", flags=re.MULTILINE)
@@ -31,6 +38,33 @@ def run_test_script(cmd: str) -> subprocess.CompletedProcess[str]:
         text=True,
         cwd=str(ROOT_DIR),
     )
+
+
+def get_expected_test_count(
+    chapters: Sequence[int], *, excluded_dirs: Sequence[str] = ()
+) -> int:
+    """Calculate the number of test programs in the specified chapters.
+    Include invalid test programs, exclude extra credit tests.
+    Args:
+        * chapters: list of chapters to calculate test count for
+        * excluded_dirs: list of directory names to exclude from count
+            (used to exclude directories containing helper libraries, or all_types
+            directories when running int-only tests)
+    """
+
+    def should_include(f: Path) -> bool:
+        """Include a test file if it's not an extra-credit test or in any of excluded_dirs"""
+        if any(excluded in f.parts for excluded in excluded_dirs):
+            return False
+        return not excluded_extra_credit(f, ExtraCredit.NONE)
+
+    count = 0
+    for i in chapters:
+        chapter_dir = TEST_DIR / f"chapter_{i}"
+        chapter_files = chapter_dir.rglob("*.c")
+        count += sum(1 for f in chapter_files if should_include(f))
+
+    return count
 
 
 def get_test_count(
@@ -54,7 +88,7 @@ def get_failure_count(failure: subprocess.CalledProcessError) -> int:
 class TopLevelTest(unittest.TestCase):
     def test_one_chapter(self) -> None:
         """We can run tests for a single chapter with --latest-only"""
-        expected_test_count = len(list((TEST_DIR / "chapter_2").rglob("*.c")))
+        expected_test_count = get_expected_test_count(chapters=[2])
         try:
             testrun = run_test_script("./test_compiler $NQCC --chapter 2 --latest-only")
         except subprocess.CalledProcessError as err:
@@ -76,11 +110,49 @@ class TopLevelTest(unittest.TestCase):
         actual_test_count = get_test_count(testrun)
         self.assertEqual(expected_test_count, actual_test_count)
 
+    def test_int_only_ch19(self) -> None:
+        """The --int-only option excludes chapter 19 tests that rely on Part II features"""
+
+        # expected tests include all tests in chapters 1 - 10, and all tests in int_only
+        # subdirectories in chapter 19
+        expected_test_count = get_expected_test_count(
+            chapters=list(range(1, 11)) + [19],
+            excluded_dirs=["all_types", "helper_libs"],
+        )
+
+        try:
+            testrun = run_test_script("./test_compiler $NQCC --chapter 19 --int-only")
+        except subprocess.CalledProcessError as err:
+            self.fail(f"Test command failed with message {err.stderr}")
+
+        actual_test_count = get_test_count(testrun)
+        self.assertEqual(expected_test_count, actual_test_count)
+
+    def test_int_only_ch20(self) -> None:
+        """The --int-only option excludes chapter 20 tests that rely on Part II features"""
+        # expected tests include all tests in chapters 1 - 10, and all tests in int_only
+        # subdirectories in chapters 19 and 20
+        expected_test_count = get_expected_test_count(
+            chapters=list(range(1, 11))
+        ) + get_expected_test_count(
+            chapters=[19, 20],
+            excluded_dirs=["all_types", "helper_libs", "libraries"],
+        )
+
+        try:
+            testrun = run_test_script("./test_compiler $NQCC --chapter 20 --int-only")
+        except subprocess.CalledProcessError as err:
+            self.fail(f"Test command failed with message {err.stderr}")
+
+        actual_test_count = get_test_count(testrun)
+        self.assertEqual(expected_test_count, actual_test_count)
+
     def test_regalloc_failure(self) -> None:
         """Partially-completed NQCC fails register allocation tests"""
-        expected_test_count = len(
-            list((TEST_DIR / "chapter_20/int_only").rglob("*.c"))
-        ) + len(list((TEST_DIR / "chapter_20/all_types").rglob("*.c")))
+        expected_test_count = get_expected_test_count(
+            chapters=[20], excluded_dirs=["libraries"]
+        )
+
         expected_failure_count = len(REGALLOC_TESTS.keys())
         with self.assertRaises(subprocess.CalledProcessError) as err:
             run_test_script("./test_compiler $NQCC_PARTIAL --chapter 20 --latest-only")
@@ -95,8 +167,8 @@ class TopLevelTest(unittest.TestCase):
 
     def test_optimization_success(self) -> None:
         """With optimizations, NQCC passes the chapter 19 tests"""
-        expected_test_count = len(list((TEST_DIR / "chapter_19").rglob("*.c"))) - len(
-            list((TEST_DIR / "chapter_19" / "helper_libs").rglob("*.c"))
+        expected_test_count = get_expected_test_count(
+            chapters=[19], excluded_dirs=["helper_libs"]
         )
         try:
             testrun = run_test_script(
@@ -173,7 +245,7 @@ class BadSourceTest(unittest.TestCase):
     def test_bad_retval(self) -> None:
         """Make sure the test fails if retval is different than expected"""
 
-        expected_test_count = len(list((TEST_DIR / "chapter_1").rglob("*.c")))
+        expected_test_count = get_expected_test_count(chapters=[1])
         with self.assertRaises(subprocess.CalledProcessError) as cpe:
             run_test_script("./test_compiler $NQCC --chapter 1")
         actual_test_count = get_test_count(cpe.exception)
@@ -184,9 +256,7 @@ class BadSourceTest(unittest.TestCase):
     def test_bad_stdout(self) -> None:
         """Make sure test fails if stdout is different than expected"""
 
-        expected_test_count = len(list((TEST_DIR / "chapter_9").rglob("*.c"))) - len(
-            list((TEST_DIR / "chapter_9").rglob("**/extra_credit/*.c"))
-        )
+        expected_test_count = get_expected_test_count(chapters=[9])
         with self.assertRaises(subprocess.CalledProcessError) as cpe:
             run_test_script("./test_compiler $NQCC --chapter 9 --latest-only")
         actual_test_count = get_test_count(cpe.exception)
@@ -196,8 +266,10 @@ class BadSourceTest(unittest.TestCase):
 
     def test_optimization_failure(self) -> None:
         """Test fails if code hasn't been optimized as expected"""
-        expected_test_count = len(
-            list((TEST_DIR / "chapter_19/dead_store_elimination").rglob("*.c"))
+        expected_test_count = (
+            len(  # TODO refactor get_expected_test_count so we can use it here too
+                list((TEST_DIR / "chapter_19/dead_store_elimination").rglob("*.c"))
+            )
         )
 
         with self.assertRaises(subprocess.CalledProcessError) as err:
@@ -215,7 +287,8 @@ class BadSourceTest(unittest.TestCase):
 
     def test_intermediate(self) -> None:
         """Changed code shouldn't impact intermediate stages"""
-        expected_test_count = len(list((TEST_DIR / "chapter_1").rglob("*.c")))
+        expected_test_count = get_expected_test_count(chapters=[1])
+
         try:
             testrun = run_test_script("./test_compiler $NQCC --chapter 1 --stage parse")
         except subprocess.CalledProcessError as err:
