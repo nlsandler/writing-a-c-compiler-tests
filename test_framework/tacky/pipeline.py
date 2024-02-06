@@ -1,8 +1,9 @@
 """Tests for whole compiler pipeline"""
 
 from pathlib import Path
-from typing import Callable
+from typing import Callable, List
 
+from ..basic import IS_OSX
 from ..parser.asm import (
     AsmItem,
     Opcode,
@@ -71,6 +72,39 @@ class TestWholePipeline(common.TackyOptimizationTest):
                     ),
                 )
 
+    def global_store_eliminated_test(
+        self, *, source_file: Path, redundant_instructions: List[Instruction]
+    ) -> None:
+        """Make sure any stores of the form mov $const, $var(%rip) were eliminated.
+
+        The test program should contain a single 'target' function.
+        Args:
+            source_file: absolute path to program under test
+            redundant_instructions: instructions that would appear in the original program
+            but shouldn't appear after optimization
+
+        TODO consider refactoring to combine with store_eliminated_test in common.py
+        """
+
+        def is_dead_store(i: AsmItem) -> bool:
+            # returns true if we find _any_ instruction where redundant_const is source operand
+            # this is more general than just looking for mov so we'll also catch any
+            # spurious copy propagation of this constant
+            return isinstance(i, Instruction) and i in redundant_instructions
+
+        parsed_asm = self.run_and_parse(source_file)
+
+        bad_instructions = [i for i in parsed_asm.instructions if is_dead_store(i)]
+        self.assertFalse(
+            bad_instructions,
+            msg=common.build_msg(
+                "Found dead store to global variable that should have been eliminated",
+                bad_instructions=bad_instructions,
+                full_prog=parsed_asm,
+                program_path=source_file,
+            ),
+        )
+
 
 RETVAL_TESTS = {
     # Part I
@@ -84,6 +118,15 @@ RETVAL_TESTS = {
     "integer_promotions.c": 0,
 }
 STORE_ELIMINATED = {"alias_analysis_change.c": [5, 10]}
+
+globvar = "glob"
+if IS_OSX:
+    globvar = "_" + globvar
+GLOBAL_STORE_ELIMINATED = {
+    "propagate_into_copytooffset.c": [
+        Instruction(Opcode.MOV, [Immediate(30), Memory([globvar], Register.IP, None)])
+    ]
+}
 FOLD_CONST_TESTS = {
     "fold_cast_to_double.c",
     "fold_cast_from_double.c",
@@ -108,6 +151,14 @@ def make_whole_pipeline_test(program: Path) -> Callable[[TestWholePipeline], Non
 
         def test(self: TestWholePipeline) -> None:
             self.store_eliminated_test(source_file=program, redundant_consts=consts)
+
+    elif program.name in GLOBAL_STORE_ELIMINATED:
+        instrs = GLOBAL_STORE_ELIMINATED[program.name]
+
+        def test(self: TestWholePipeline) -> None:
+            self.global_store_eliminated_test(
+                source_file=program, redundant_instructions=instrs
+            )
 
     elif program.name in FOLD_CONST_TESTS:
 

@@ -144,7 +144,7 @@ def find_args(
     callee: str, parsed_asm: asm.AssemblyFunction, *, arg_count: int
 ) -> List[Optional[asm.Operand]]:
     """Determine values in integer parameter-passing registers when function is called"""
-    if sys.platform == "darwin":
+    if basic.IS_OSX:
         callee = "_" + callee
     call_instruction = asm.Instruction(Opcode.CALL, [callee])
     arg_regs = [

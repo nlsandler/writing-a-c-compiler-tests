@@ -341,7 +341,7 @@ def parse_memory_operand(toks: List[Token]) -> tuple[Operand, Optional[int]]:
         # if there's a comma, consume it and check for scale
         if toks[0].tok_type == TokType.COMMA:
             toks.pop(0)
-            if toks[0].tok_type == TokType.INT:
+            if toks[0].tok_type == TokType.INT:  # type: ignore[comparison-overlap]
                 scale = int(toks.pop(0).tok_str, base=0)
 
     expect_next(toks=toks, expected=TokType.CLOSE_PAREN)
