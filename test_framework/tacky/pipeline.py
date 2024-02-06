@@ -6,6 +6,7 @@ from typing import Callable, List
 from ..basic import IS_OSX
 from ..parser.asm import (
     AsmItem,
+    Operand,
     Opcode,
     Label,
     Immediate,
@@ -72,12 +73,65 @@ class TestWholePipeline(common.TackyOptimizationTest):
                     ),
                 )
 
-    def global_store_eliminated_test(
-        self, *, source_file: Path, redundant_instructions: List[Instruction]
-    ) -> None:
-        """Make sure any stores of the form mov $const, $var(%rip) were eliminated.
+    def global_var_unused_test(self, *, source_file: Path, unused_var: str) -> None:
+        """
+        Make sure all uses of $var(%rip) are eliminated (because we propagated
+        the value that was copied to it into all its uses). Writes *to* var may still be present.
 
         The test program should contain a single 'target' function.
+
+        Args:
+            source_file: absolute path to program under test
+            unused_var: var that shouldn't be used in target
+        """
+
+        if IS_OSX:
+            objname = "_" + unused_var
+        else:
+            objname = unused_var
+
+        def is_unused_op(o: Operand) -> bool:
+            """x(%rip) and x+4(%rip) both count as operands we shouldn't use"""
+            if (
+                isinstance(o, Memory)
+                and o.base == Register.IP
+                and o.disp is not None  # to make mypy happy
+                and objname in o.disp
+            ):
+                return True
+            return False
+
+        def is_use_of_var(i: AsmItem) -> bool:
+            """Is this an instruction that uses unused_op?"""
+            if isinstance(i, Instruction) and any(is_unused_op(o) for o in i.operands):
+                # okay only if this is move _to_ (not from) op
+                if common.is_mov(i) and not is_unused_op(i.operands[0]):
+                    return False
+                return True
+
+            return False
+
+        parsed_asm = self.run_and_parse(source_file)
+
+        bad_instructions = [i for i in parsed_asm.instructions if is_use_of_var(i)]
+        self.assertFalse(
+            bad_instructions,
+            msg=common.build_msg(
+                "Found use of global variable that should have been eliminated",
+                bad_instructions=bad_instructions,
+                full_prog=parsed_asm,
+                program_path=source_file,
+            ),
+        )
+
+    def instruction_eliminated_test(
+        self, *, source_file: Path, redundant_instructions: List[Instruction]
+    ) -> None:
+        """Make sure specified instructions were eliminated.
+
+        The test program should contain a single 'target' function.
+        We use this to detect instructions with constant and global RIP-relative operands
+        since we can't predict the exact location of operands on the stack
         Args:
             source_file: absolute path to program under test
             redundant_instructions: instructions that would appear in the original program
@@ -86,19 +140,17 @@ class TestWholePipeline(common.TackyOptimizationTest):
         TODO consider refactoring to combine with store_eliminated_test in common.py
         """
 
-        def is_dead_store(i: AsmItem) -> bool:
-            # returns true if we find _any_ instruction where redundant_const is source operand
-            # this is more general than just looking for mov so we'll also catch any
-            # spurious copy propagation of this constant
-            return isinstance(i, Instruction) and i in redundant_instructions
-
         parsed_asm = self.run_and_parse(source_file)
 
-        bad_instructions = [i for i in parsed_asm.instructions if is_dead_store(i)]
+        bad_instructions = [
+            i
+            for i in parsed_asm.instructions
+            if isinstance(i, Instruction) and i in redundant_instructions
+        ]
         self.assertFalse(
             bad_instructions,
             msg=common.build_msg(
-                "Found dead store to global variable that should have been eliminated",
+                "Found instruction that should have been eliminated",
                 bad_instructions=bad_instructions,
                 full_prog=parsed_asm,
                 program_path=source_file,
@@ -119,14 +171,36 @@ RETVAL_TESTS = {
 }
 STORE_ELIMINATED = {"alias_analysis_change.c": [5, 10]}
 
-globvar = "glob"
-if IS_OSX:
-    globvar = "_" + globvar
+
+def mk_globvar(varname: str) -> Memory:
+    """Given a variable name x, construct the operand x(%rip), accounting for name mangling"""
+    if IS_OSX:
+        objname = "_" + varname
+    else:
+        objname = varname
+    return Memory([objname], Register.IP, None)
+
+
+# tests where copy prop should allow us to eliminate a store
+# of a specific constant to a specific global variable;
+# can't use STORE_ELIMINATED because that constant will
+# still be written to other location
 GLOBAL_STORE_ELIMINATED = {
     "propagate_into_copytooffset.c": [
-        Instruction(Opcode.MOV, [Immediate(30), Memory([globvar], Register.IP, None)])
-    ]
+        Instruction(Opcode.MOV, [Immediate(30), mk_globvar("glob")])
+    ],
+    "propagate_into_store.c": [
+        Instruction(Opcode.MOV, [Immediate(30), mk_globvar("glob")])
+    ],
 }
+
+# tests where copy prop lets us eliminate all uses of a particular
+# global variable, but not writes to that variable
+GLOBAL_VAR_USE_ELIMINATED = {
+    "propagate_into_copyfromoffset.c": "glob",
+    "propagate_into_load.c": "glob",
+}
+
 FOLD_CONST_TESTS = {
     "fold_cast_to_double.c",
     "fold_cast_from_double.c",
@@ -156,9 +230,15 @@ def make_whole_pipeline_test(program: Path) -> Callable[[TestWholePipeline], Non
         instrs = GLOBAL_STORE_ELIMINATED[program.name]
 
         def test(self: TestWholePipeline) -> None:
-            self.global_store_eliminated_test(
+            self.instruction_eliminated_test(
                 source_file=program, redundant_instructions=instrs
             )
+
+    elif program.name in GLOBAL_VAR_USE_ELIMINATED:
+        v = GLOBAL_VAR_USE_ELIMINATED[program.name]
+
+        def test(self: TestWholePipeline) -> None:
+            self.global_var_unused_test(source_file=program, unused_var=v)
 
     elif program.name in FOLD_CONST_TESTS:
 
