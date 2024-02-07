@@ -54,9 +54,9 @@ int main(void)
         return 4;
     if (ul != 4294967294ul)
         return 5;
-    if (i2 != -2147483498)
-        return 6;
     if (ul2 != 9223372036854775798ul)
+        return 6;
+    if (i2 != -2147483498)
         return 7;
     if (ui2 != 2147483798u)
         return 8;

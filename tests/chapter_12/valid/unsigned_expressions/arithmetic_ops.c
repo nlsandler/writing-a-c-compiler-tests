@@ -50,7 +50,7 @@ int division_large_dividend(void) {
 
     /* upper bit of ui_a is set, so this tests
      * that we zero-extended dividend into EDX
-     * instead of sign_extending it
+     * instead of sign extending it
      */
 
     return (ui_a / ui_b == 2);

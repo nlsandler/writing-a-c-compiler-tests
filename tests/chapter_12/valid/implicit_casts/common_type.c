@@ -36,7 +36,7 @@ int ternary_int_uint(int flag, int i, unsigned int ui) {
      * (we don't consider the type of cond when we
      * determine the common type).
      * We therefore convert i to an unsigned int, 2^32 - 1,
-     * which we then convert o a signed long.
+     * which we then convert to a signed long.
      * Therefore, result will be positive. If we didn't
      * convert i to an unsigned int, result would be negative.
      */

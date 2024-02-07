@@ -7,7 +7,8 @@ unsigned long a = 8589934580ul; // 2^33 - 12
 
 int main(void) {
 
-    /* casting to unsigned int and back reduces is equivalent to subtracting
+    /* because a is too large to fit in an unsigned int,
+     * casting it to unsigned int and back is equivalent to subtracting
      * 2^32, resulting in 4294967284
      */
     unsigned long b = (unsigned long) (unsigned int) a;
@@ -15,7 +16,8 @@ int main(void) {
     if (b != 4294967284ul)
         return 1;
 
-    /* Casting to a signed int and back results in 2^64 - 12,
+    /* Casting a to signed int results in -12, and
+     * casting it back to unsigned long results in 2^64 - 12,
      * or 18446744073709551604
      */
     b = (unsigned long) (signed int) a;

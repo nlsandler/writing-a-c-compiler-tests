@@ -19,16 +19,16 @@ int main(void) {
         if (i >= 0) {
             /* use bitwise "and" to zero out upper bits */
             if ((l & lower_32_bits_set) != i)
-                return 0;
+                return 1;
         } else {
             /* use bitwise "or" to set upper bits */
             if ((l | upper_32_bits_set) != i)
-                return 0;
+                return 2;
         }
 
         /* every bit is set in -1, so l & -1 == l */
         if ((l & -1) != l)
-            return 0;
+            return 3;
     }
-    return 1;
+    return 0; // success
 }

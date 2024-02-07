@@ -1,4 +1,4 @@
-/* This is identical to the test case in tests/chapter12/valid/long_expressions/long_args.c,
+/* This is essentially the same as the test case in tests/chapter11/valid/long_expressions/long_args.c,
  * but split across multiple files.
  */
 

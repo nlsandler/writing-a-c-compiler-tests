@@ -11,7 +11,7 @@ int main(void) {
      * 2. calculate the bitwise and of this zero-extended value and ul. the result is 0
      */
     if ((ui & ul) != 0)
-        return 0;
+        return 1;
 
     /* this expression will:
      * 1. zero-extend ui. the result will have all 32 lower bits set to 1
@@ -20,7 +20,7 @@ int main(void) {
      *    the result is 2^63 + 2^32 - 1
      */
     if ((ui | ul) != 9223372041149743103ul)
-        return 0;
+        return 2;
 
     signed int i = -1;
     /* this expression will:
@@ -29,7 +29,7 @@ int main(void) {
      *    the result is equal to ul.
      */
     if ((i & ul) != ul)
-        return 0;
+        return 3;
 
 
     /* this expression will:
@@ -38,8 +38,7 @@ int main(void) {
      *    the result will have every bit set
      */
     if ((i | ul) != i)
-        return 0;
+        return 4;
 
-    return 1;
-
+    return 0; // success
 }

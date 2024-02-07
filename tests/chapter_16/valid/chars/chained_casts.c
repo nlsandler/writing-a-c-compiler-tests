@@ -5,7 +5,7 @@ unsigned int ui = 4294967200u;  // 2^32 - 96
 
 int main(void) {
     /* 1. convert  ui to an unsigned char with value 256 - 96
-     * 2. convert it back to an unsig ed int, which preserves its value.
+     * 2. convert it back to an unsigned int, which preserves its value.
      */
     ui = (unsigned int)(unsigned char)ui;
     if (ui != 160) {
