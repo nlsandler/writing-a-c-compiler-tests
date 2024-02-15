@@ -1,21 +1,40 @@
+/* Test that we recognize that idiv updates EAX.
+ * We won't examine the assembly output for this test case, we'll just make sure
+ * it behaves correctly.
+ * NOTE: this is only guaranteed to work as intended after we implement register
+ * coalescing.
+ */
+
+#include "util.h"
+
 int glob = 3;
 
-int client(int a, int b, int c, int d, int e, int f, int g) {
-    return (a == 12 && b == 12 && c == -3 && d == 10 && e == -30 && f== 52 && g == 48);
-}
 int target(void) {
+    int dividend = glob * 16;
 
-    int tmp1 = glob * 16;
-    int a = tmp1 / 4; // idiv creates conflict b/t tmp1 and ax since tmp1 is still live
-    int b = glob * 4;
-    int c = glob - 6;
-    int d = glob + 7;
-    int e = d * c;
-    int f = tmp1 + 4;
-   return client(a, b,c,d,e,f,tmp1);
+    // idiv makes dividend interfere with EAX; we'll coalesce them unless we
+    // recognize that they interfere
 
+    /* mov    %dividend, %eax
+     * cdq
+     * idiv   $4 # update EAX, making it conflict with dividend,
+     *           # which is still live
+     */
+    int quotient = dividend / 4;
+
+    // save dividend so we can validate it later, making it live
+    // note that we do this instead of passing it as an argument
+    // to make sure it doesn't get coalesced into anything other than EAX
+    glob = dividend;
+
+    // validate quotient
+    check_one_int(quotient, 12);
+
+    return 0;
 }
 
 int main(void) {
-    return target();
+    target();
+    check_one_int(glob, 48);
+    return 0;
 }

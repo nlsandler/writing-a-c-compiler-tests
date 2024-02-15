@@ -1,56 +1,51 @@
+/* Test that liveness analysis for registers handles loop correctly */
 
+#include "util.h"
 
-int flag = 1;
-int result = 1;
-int a_initialized = 0;
+int counter = 5;
+int expected_a = 2;
 
-int get(int a, int b, int c, int d, int e, int f) {
-    static int call_count = 0;
-    call_count = call_count + 1;
-    if (call_count == 1) {
-        // first call
-        if (a == 1 && b == 2 && c == 3 && d == 4 && e == 5 && f == 6)
-            return 1;
-        else
-            return -2;
-    } else if (call_count == 2) {
-        if (a == 2 && b == 3 && c == 4 && d == 6 && e == 5 && f == 8)
-            return 2;
-        else
-            return -2;
-    }
-    // if this is call #3, we're done
-    flag = 0;
-    return 0; // doesn't matter what we return here
-}
+int update_expected_a(void);
+int times_two(int x);
 
 int target(void) {
     int z;
     int a;
-    int tmp1 = 1;
-    int tmp2 = 2;
-    int tmp3 = 3;
-    int tmp4 = 4;
-    int tmp5 = 5;
-    int tmp6 = 6;
-    // make sure our liveness analysis can handle loops correctly:
-    // we should recognize that a and z both overlap with tmp1-tmp6 but not each other,
-    // so we can avoid any spills by assigning a and z to the same hardreg
-    while (flag) {
-        if (a_initialized) {
-            z = a + 1;
-        } else {
-            z = 1;
-        }
-        result = z * result;
-        a = get(tmp1, tmp2, tmp3, tmp4, tmp5, tmp6);
-        tmp1 = a + 1;
-        tmp2 = a + 2;
-        tmp3 = a * 4;
-        tmp4 = a + 5;
-        tmp5 = 6 - a;
-        tmp6 = 9 - a;
-        a_initialized = 1;
+
+    // define four callee-saved regs
+    int one = counter - 4;
+    int two = counter / 2;
+    int three = -counter + 8;
+    int four = counter - 1;
+
+    // a and z are both callee-saved but their live ranges don't overlap;
+    // we can avoid spills by placing them in the same hard register
+    while (counter > 0) {
+        if (counter == 5)
+            z = 4; // a not yet initialized
+        else
+            z = times_two(a);
+        // z is live, a is dead below here
+        update_expected_a(); // force z to be callee-saved
+        a = 1 - z; // a is live, z is dead from here to start of loop
+        check_one_int(a, expected_a);
+        counter = counter - 1;
     }
-    return result;
+
+    // validate other callee-saved regs
+    check_one_int(one, 1);
+    check_one_int(two, 2);
+    check_one_int(three, 3);
+    check_one_int(four, 4);
+    return 0;
+}
+
+// independently calculate a's value on each loop iteration so we can validate it
+int update_expected_a(void) {
+    expected_a = 1 - (2 * expected_a);
+    return 0;
+}
+
+int times_two(int x) {
+    return x * 2;
 }

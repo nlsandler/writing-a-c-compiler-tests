@@ -1,42 +1,65 @@
+/* Test that we can handle spilling correctly.
+ * We have to spill one pseudo. The test script will validate that
+ * we spill only one and it's the cheapest one.
+ * Note that this isn't a foolproof test of spill cost calculation;
+ * because of optimistic coloring, we might end up spilling should_spill
+ * even if it's not the first spill candidate we select.
+ * This test program is generated from templates/chapter_20_templates/force_spill.c.jinja
+ * */
 
-int callee(int twelve, int eleven, int ten, int nine, int eight, int seven, int six, int five, int four, int three, int two, int one);
+#include "util.h"
 
-int glob = 3;
-int glob2 = 4;
+int glob_three = 3;
 
-int target(int one, int two, int three, int four, int five, int six)
-{
-    /* force spill by creating lots of conflicting pseudos
-     * validate that we spill the variable should_spill, which is used least
-     * and has highest degree
-     * Note: this isn't a good test of spill metric calculation;
-     * due to optimistic coloring, we could end up spilling just should_spill
-     * even if we end up choosing other nodes as spill candidates first
-     */
-    int should_spill = glob + 3;
-    // all these registers conflict with should_spill and each other
-    int seven = one * one + 6;
+int target(void) {
+    // This is our spill candidate: it has the highest degree and is
+    // used only once.
+    int should_spill = glob_three + 3;
+
+    // create 12 pseudos that all interfere w/ should_spill and each other;
+    // this forces a spill, since only 12 hard registers are available
+    int one = glob_three - 2;
+    int two = one + one;
+    int three = 2 + one;
+    int four = two * two;
+    int five = 6 - one;
+    int six = two * three;
+    int seven = one + 6;
     int eight = two * 4;
-    int nine = three * two * three;
+    int nine = three * three;
     int ten = four + six;
-    int eleven = 16 - five + four;
-    int twelve = six + six - five;
+    int eleven = 16 - five;
+    int twelve = six + six;
 
-    int result = callee(twelve, eleven, ten, nine, eight, seven, six, five, four, three, two, one);
+    // validate one through twelve
+    // (this makes them all live at this point)
+    check_12_ints(one, two, three, four, five, six, seven, eight, nine, ten,
+                  eleven, twelve, 1);
+    // create another clique of twelve pseudos that interfere with each other
+    // and should_spill, so should_spill will have more conflicts than other
+    // pseudoregisters
+    int thirteen = 10 + glob_three;
+    int fourteen = thirteen + 1;
+    int fifteen = 28 - thirteen;
+    int sixteen = fourteen + 2;
+    int seventeen = 4 + thirteen;
+    int eighteen = 32 - fourteen;
+    int nineteen = 35 - sixteen;
+    int twenty = fifteen + 5;
+    int twenty_one = thirteen * 2 - 5;
+    int twenty_two = fifteen + 7;
+    int twenty_three = 6 + seventeen;
+    int twenty_four = thirteen + 11;
 
-    // make another twelve pseudoes that conflict w/ should_spill and each other
-    int thirteen = glob + glob;
-    int fourteen = thirteen + 10;
-    int fifteen = 12 - glob;
-    int sixteen = fourteen * 3;
-    int seventeen = sixteen - glob2;
-    int eighteen = fifteen + seventeen;
-    int nineteen = glob2 * fourteen + glob2 * thirteen;
-    int twenty = result * fourteen;
-    int twenty_one = result + sixteen;
-    int twenty_two = fifteen - result;
-    int twenty_three = eighteen - nineteen;
-    int twenty_four = twenty_one + twenty_two + twenty_three;
-    int result2 = callee(thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty, twenty_one, twenty_two, twenty_three, twenty_four);
-    return should_spill + result2;
+    // validate thirteen through twenty-four
+    // (this makes them all live at this point)
+    check_12_ints(thirteen, fourteen, fifteen, sixteen, seventeen, eighteen,
+                  nineteen, twenty, twenty_one, twenty_two, twenty_three,
+                  twenty_four, 13);
+
+    if (should_spill != 6) {
+        return -1;  // fail
+    }
+
+    return 0;  // success
 }

@@ -1,54 +1,37 @@
-/* test that addl x, y does NOT create conflict b/t x and y if x is dead
- * afterward look for: no spills - there are eight callee-saved regs but they
- * don't all conflict */
+/* Test that addl x, y and similar do NOT make x and y interfere if x is dead
+ * afterward. The test script validates that there are no spills; if we think
+ * addl x, y always makes x and y interfere, we'll be forced to spill some
+ * callee-saved pseudos, but if the interference graph is accurate, we'll
+ * allocate every register without spilling.
+ */
 
-int glob0 = 0;
-int glob1 = 1;
-int glob2 = 2;
-int glob3 = 3;
-int glob4 = 4;
-int glob5 = 5;
-
-// use this to force pseudoregs to be callee-saved
-int reset_globals(void) {
-  glob0 = 0;
-  glob1 = 0;
-  glob2 = 0;
-  glob3 = 0;
-  glob4 = 0;
-  glob5 = 0;
-  return 0;
-}
+#include "util.h" // declares check_* and id functions
 
 int target(void) {
-  /* define some values - must be in calle-saved regs */
-  int a = glob4;
-  int b = glob3;
-  int c = glob2;
-  int d = glob1;
-  int e = glob0;
-  reset_globals();
-  int f = a * a; // now f interferes w/ b, c, d, e but not a
-  int g = b * b; // now g interferes w/ d, c, e, f but not a or b
-  int h = c * c; // h interferes with d, e, f, g but not a, b, or c
-  int i = d * d; // i interferes with e, f, g, h but not a, b, c, d
-  int j = e * e; // j interferes with f, g, h, i, but not a, b, c, d
-  reset_globals();
-  int result = 0;
-  if (f != 4) {
-    result = 1;
-  }
-  else if (g != 3) {
-    result = 2;
-  }
-  else if (h != 2) {
-    result = 3;
-  }
-  else if (i != 1) {
-    result = 4;
-  }
-  else if (j != 0) {
-    result = 5;
-  }
-  return result;
+    /* define some values - must be in callee-saved regs */
+    int a = id(2);
+    int b = id(3);
+    int c = id(4);
+    int d = id(5);
+    int e = id(6);
+
+    // validate them/call function to force them into callee-saved regs
+    check_5_ints(a, b, c, d, e, 2);
+
+    int f = a * a;  // now f interferes w/ b, c, d, e but not a
+    int g = b + b;  // now g interferes w/ d, c, e, f but not a or b
+    int h = c - c;  // h interferes with d, e, f, g but not a, b, or c
+    int i = d * d;  // i interferes with e, f, g, h but not a, b, c, d
+    int j = e + e;  // j interferes with f, g, h, i, but not a, b, c, d
+
+    // another function call to make sure f-j are callee-saved
+    check_one_int(0, 0);
+
+    check_one_int(f, 4);
+    check_one_int(g, 6);
+    check_one_int(h, 0);
+    check_one_int(i, 25);
+    check_one_int(j, 12);
+
+    return 0;
 }

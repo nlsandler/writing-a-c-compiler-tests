@@ -1,38 +1,32 @@
-int glob1 = 1;
-int glob2 = 2;
-int glob3 = 3;
-int glob4 = 4;
-int glob5 = 5;
+/* Test that when we need to spill a node, and all nodes have the same degree,
+ * we spill the one with the lowest spill cost (i.e. fewest uses)
+ */
 
-int callee(int a, int b, int c, int d, int e);
-int check_globals(void);
+#include "util.h" // declares check_* and id functions
 
-int target(int a, int b, int c, int d, int e, int flag) {
-    // make sure we spill nodes with lower spill costs first
-    int f = glob1;
+int target(void) {
+    // Define 6 callee-saved regs that interfere with each other;
+    // c is used least, so it should spill.
+    // NOTE: we make c the spill candidate, rather than a or f,
+    // to reduce the risk of a false negative if the compiler happens to
+    // spill the first or last possible pseudo.
+    int a = id(1);
+    int b = id(2);
+    int c = id(10);
+    int d = id(3);
+    int e = id(4);
+    int f = id(5);
 
-    // put uses of these variables in branches to avoid copy prop
-    if (flag) {
-        a = a + 1;
-        b = b - 2;
-        c = c * 3;
-        d = d / 4;
-        e = e % 5;
-    } else {
-        a = a - 1;
-        b = b + 2;
-        c = c / 3;
-        d = d * 4;
-        e = e * e;
-    }
+    // use c once
+    check_one_int(c, 10);
 
-
-    int result = callee(a, b, c, d, e);
-    glob1 = a;
-    glob2 = b;
-    glob3 = c;
-    glob4 = d;
-    glob5 = e + result;
-    check_globals();
-    return f;
+    // use others a few times
+    check_5_ints(a, b, d, e, f, 1);
+    check_5_ints(a + 3, b + 3, d + 3, e + 3, f + 3, 4);
+    check_one_int(a * 2, 2);
+    check_one_int(b * 2, 4);
+    check_one_int(d * 2, 6);
+    check_one_int(e * 2, 8);
+    check_one_int(f * 2, 10);
+    return 0;
 }

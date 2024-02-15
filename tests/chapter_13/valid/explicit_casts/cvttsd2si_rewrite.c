@@ -2,13 +2,13 @@ double glob = 3.0;
 
 int main(void) {
 
-    /* this is a regression test for a bug I found in my reference implementation:
+    /* this is a test for a bug I found in my reference implementation:
      * I rewrote
      *   cvttsd2sil -8(%rbp), -12(%rbp)
      * as
      *   cvttsd2sil -8(%rbp), %r11d
      *   movq       %r11, -12(%rbp)
-     * which potentilly clobbered other things on the stack (e.g. at -8(%rbp))
+     * which potentially clobbered other things on the stack (e.g. at -8(%rbp))
      * we include other variables on the stack in order to catch this
      */
     long l = -1l;

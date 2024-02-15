@@ -1,22 +1,24 @@
-	.literal8
-Lone:
+	## define some floating-point constants
+	.section .rodata
+	.align 8
+.Lone:
 	.double 1.0
-Ltwo:
+.Ltwo:
 	.double 2.0
-Lthree:
+.Lthree:
 	.double 3.0
-Lfour:
+.Lfour:
 	.double 4.0
-Lfive:
+.Lfive:
 	.double 5.0
-Lsix:
+.Lsix:
 	.double 6.0
-Lseven:
+.Lseven:
 	.double 7.0
+	## define main
 	.text
-	.globl	_main
-_main:
-## %bb.0:
+	.globl	main
+main:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	# save callee-saved regs
@@ -25,6 +27,7 @@ _main:
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
+	pushq 	%rdi # to maintain stack alignment
 	# give them arbitrary values
 	movq	$-1, %rbx
 	movq	$-2, %r12
@@ -38,25 +41,26 @@ _main:
 	movl	$4, %ecx
 	movl	$5, %r8d
 	movl	$6, %r9d
-	movsd	Lone(%rip), %xmm0
-	movsd	Ltwo(%rip), %xmm1
-	movsd	Lthree(%rip), %xmm2
-	movsd	Lfour(%rip), %xmm3
-	movsd	Lfive(%rip), %xmm4
-	movsd	Lsix(%rip), %xmm5
-	movsd	Lseven(%rip), %xmm7
-	callq	_target
+	movsd	.Lone(%rip), %xmm0
+	movsd	.Ltwo(%rip), %xmm1
+	movsd	.Lthree(%rip), %xmm2
+	movsd	.Lfour(%rip), %xmm3
+	movsd	.Lfive(%rip), %xmm4
+	movsd	.Lsix(%rip), %xmm5
+	movsd	.Lseven(%rip), %xmm7
+	callq	target
 	# make sure values of callee-saved regs were preserved
 	cmpq	$-1, %rbx
-	jne		Lfail
+	jne		.Lfail
 	cmpq	$-2, %r12
-	jne		Lfail
+	jne		.Lfail
 	cmp		$-3, %r13
-	jne		Lfail
+	jne		.Lfail
 	cmpq	$-4, %r14
-	jne		Lfail
+	jne		.Lfail
 	cmp		$-5, %r15
-	jne		Lfail
+	jne		.Lfail
+	popq 	%rdi
 	popq	%r15
 	popq	%r14
 	popq	%r13
@@ -64,10 +68,10 @@ _main:
 	popq	%rbx
 	popq	%rbp
 	retq
-Lfail:
+.Lfail:
 	# raise SIGSEGV
 	movl	$11, %edi
-	call	_raise
+	call	raise@PLT
 	popq	%r15
 	popq	%r14
 	popq	%r13
@@ -75,4 +79,4 @@ Lfail:
 	popq	%rbx
 	popq	%rbp
 	retq
-
+	.section	".note.GNU-stack","",@progbits

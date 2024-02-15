@@ -1,57 +1,61 @@
-/* test that addl x, y (or similar) causes interference b/t x and y if x is live afterward
- * just test for correctness  */
+/* Test that addl x, y and similar make x and y interfere if x is live
+ * afterward. Just test for correctness, don't inspect assembly.
+ * Only guaranteed to work as intended after implementing register coalescing.
+ */
 
-int glob0 = 0;
-int glob1 = 1;
-int glob2 = 2;
-int glob3 = 3;
-int glob4 = 4;
-int glob5 = 5;
+#include "util.h" // declares check_* and id functions
 
-// use this to force pseudoregs to be callee-saved
-int reset_globals(void) {
-  glob0 = 0;
-  glob1 = 0;
-  glob2 = 0;
-  glob3 = 0;
-  glob4 = 0;
-  glob5 = 0;
-  return 0;
+int main(void) {
+    // addition
+    int a = id(1);
+    /* movl    %a, %b # if we don't recognize that a and b interfere,
+     *                # we'll coalesce them
+     * addl    %a, %b # creates interference b/c a is still live after
+     */
+    int b = a + a;
+
+    // force a and b to be callee-saved so they don't get
+    // coalesced into caller-saved hard regs (which might prevent
+    // them from being coalesced together even if we don't
+    // recognize that they interfere)
+    check_one_int(-1, -1);
+
+    // validate a and b, making them both live
+    check_one_int(a, 1);
+    check_one_int(b, 2);
+
+    // subtraction
+    int c = id(3);
+    /* movl    $c, %d # if we don't recognize that a and b interfere ,
+     *                # we'll coalesce them
+     * subl    $c, %d # creates interference b/c a is still live after
+     */
+    int d = c - c;
+    // force c and d to be callee-saved so they don't get
+    // coalesced into caller-saved hard regs (which might prevent
+    // them from being coalesced together even if we don't
+    // recognize that they interfere)
+    check_one_int(0, 0);
+
+    // validate a and b, making them both live
+    check_one_int(c, 3);
+    check_one_int(d, 0);
+
+    // multiplication
+    int x = id(4);
+    /* movl    %x, %y # if we don't recognzie that x and y interfere ,
+     *                # we'll coalesce them
+     * imul    %x, %y # creates interference b/c x is still live after
+     */
+    int y = x * x;
+    // force x and y to be callee-saved so they don't get
+    // coalesced into caller-saved hard regs (which might prevent
+    // them from being coalesced together even if we don't
+    // recognize that they interfere)
+    check_one_int(-1, -1);
+
+    // validate x and y, making them both live
+    check_one_int(x, 4);
+    check_one_int(y, 16);
+    return 0;
 }
-
-int use_value(int v) {
-  glob0 = glob0 + v;
-  return 0;
-}
-
-int target(void) {
-  /* define some values - must be in calle-saved regs */
-  int a = glob0;
-  int b = glob1;
-  int c = glob2;
-  int d = glob3;
-  reset_globals();
-  int e = a * a; // now e interferes w/ a, b, c, and d
-  use_value(a);
-  int f = b * b; // now f interferes w/ b, d, c and e but not a
-  use_value(b);
-  int g = c * c; // g interferes with c, d, e, f but not a or b
-  use_value(c);
-  int h = d * d; // h interferes with d, e, f, g but not a, b, c
-  use_value(d);
-  int result = 0;
-  if (e != 0) {
-    result = 1;
-  } else if (f != 1) {
-    result = 2;
-  } else if (g != 4) {
-    result = 3;
-  } else if (h != 9) {
-    result = 4;
-  } else {
-    result = glob0;
-  }
-  return result;
-}
-
-int main(void) { return target(); }

@@ -376,33 +376,107 @@
         "chapter_13/valid/libraries/double_params_and_result.c"
     ],
     "libs": {
-        "chapter_19/unreachable_code_elimination/infinite_loop.c": "chapter_19/helper_libs/exit.c",
-        "chapter_19/dead_store_elimination/int_only/static_not_always_live.c": "chapter_19/helper_libs/exit.c"
+        "chapter_19/unreachable_code_elimination/infinite_loop.c": [
+            "chapter_19/helper_libs/exit.c"
+        ],
+        "chapter_19/dead_store_elimination/int_only/static_not_always_live.c": [
+            "chapter_19/helper_libs/exit.c"
+        ],
+        "chapter_20/int_only/no_coalescing/use_all_hardregs.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/track_arg_registers.c": [
+            "chapter_20/libraries/track_arg_registers_lib.c",
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/many_pseudos_fewer_conflicts.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/copy_no_interference.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/idiv_interference.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/optimistic_coloring.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/preserve_across_fun_call.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/same_instr_interference.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/same_instr_no_interference.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/unary_interference.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/track_dbl_arg_registers.c": [
+            "chapter_20/libraries/track_dbl_arg_registers_lib.c"
+        ],
+        "chapter_20/int_only/with_coalescing/callee_saved_live_at_exit.c": [
+            "chapter_20/libraries/callee_saved_live_at_exit_lib.c"
+        ],
+        "chapter_20/int_only/with_coalescing/funcall_generates_args.c": [
+            "chapter_20/libraries/funcall_generates_args_lib.c"
+        ],
+        "chapter_20/int_only/no_coalescing/force_spill.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/loop.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/rewrite_regression_test.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/test_spill_metric.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/trivially_colorable.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/callee_saved_stack_alignment.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/test_spill_metric_2.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/test_spilling_dbls.c": [
+            "chapter_20/libraries/force_spill_dbl_lib.c"
+        ],
+        "chapter_20/all_types/no_coalescing/mixed_ints.c": [
+            "chapter_20/libraries/force_spill_mixed_int_lib.c"
+        ],
+        "chapter_20/int_only/with_coalescing/george_coalesce.c": [
+            "chapter_20/libraries/george_lib.c"
+        ],
+        "chapter_20/int_only/with_coalescing/coalesce_prevents_spill.c": [
+            "chapter_20/libraries/coalesce_prevents_spill_lib.c"
+        ]
     },
     "assembly_libs": {
-        "chapter_10/valid/push_arg_on_page_boundary.c": {
-            "linux": "data_on_page_boundary_linux.s",
-            "os_x": "data_on_page_boundary_osx.s"
-        },
-        "chapter_16/valid/chars/push_arg_on_page_boundary.c": {
-            "linux": "data_on_page_boundary_linux.s",
-            "os_x": "data_on_page_boundary_osx.s"
-        },
-        "chapter_18/valid/parameters/pass_args_on_page_boundary.c": {
-            "linux": "data_on_page_boundary_linux.s",
-            "os_x": "data_on_page_boundary_osx.s"
-        },
-        "chapter_18/valid/params_and_returns/return_struct_on_page_boundary.c": {
-            "linux": "data_on_page_boundary_linux.s",
-            "os_x": "data_on_page_boundary_osx.s"
-        },
-        "chapter_18/valid/params_and_returns/return_big_struct_on_page_boundary.c": {
-            "linux": "big_data_on_page_boundary_linux.s",
-            "os_x": "big_data_on_page_boundary_osx.s"
-        },
-        "chapter_18/valid/params_and_returns/return_space_overlap.c": {
-            "linux": "return_space_address_overlap_linux.s",
-            "os_x": "return_space_address_overlap_osx.s"
-        }
+        "chapter_10/valid/push_arg_on_page_boundary.c": [
+            "chapter_10/valid/data_on_page_boundary"
+        ],
+        "chapter_16/valid/chars/push_arg_on_page_boundary.c": [
+            "chapter_16/valid/chars/data_on_page_boundary"
+        ],
+        "chapter_18/valid/parameters/pass_args_on_page_boundary.c": [
+            "chapter_18/valid/parameters/data_on_page_boundary"
+        ],
+        "chapter_18/valid/params_and_returns/return_struct_on_page_boundary.c": [
+            "chapter_18/valid/params_and_returns/data_on_page_boundary"
+        ],
+        "chapter_18/valid/params_and_returns/return_big_struct_on_page_boundary.c": [
+            "chapter_18/valid/params_and_returns/big_data_on_page_boundary"
+        ],
+        "chapter_18/valid/params_and_returns/return_space_overlap.c": [
+            "chapter_18/valid/params_and_returns/return_space_address_overlap"
+        ],
+        "chapter_20/int_only/no_coalescing/callee_saved_stack_alignment.c": [
+            "chapter_20/libraries/alignment_check_wrapper"
+        ]
     }
 }

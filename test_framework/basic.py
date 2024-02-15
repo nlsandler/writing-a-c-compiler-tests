@@ -8,7 +8,7 @@ import sys
 import unittest
 from enum import Flag, auto, unique
 from pathlib import Path
-from typing import Any, Callable, List, Optional, Sequence, Type
+from typing import Any, Callable, Dict, List, Optional, Sequence, Type
 
 # Constants + per-test info from configuration files
 # TODO should this be in a separate module maybe?
@@ -21,21 +21,27 @@ EXPECTED_RESULTS: dict[str, Any]
 with open(ROOT_DIR / "expected_results.json", "r", encoding="utf-8") as f:
     EXPECTED_RESULTS = json.load(f)
 
-EXTRA_CREDIT_PROGRAMS: dict[str, list[str]]
-REQUIRES_MATHLIB: list[str]
+EXTRA_CREDIT_PROGRAMS: dict[str, List[str]]
+REQUIRES_MATHLIB: List[str]
 
 # TODO Consider handling C and assembly dependencies uniformly
 # (but remember that assembly files have different Linux/OS X variants)
-DEPENDENCIES: dict[str, str]
-ASSEMBLY_DEPENDENCIES: dict[str, dict[str, str]]
+DEPENDENCIES: Dict[str, List[str]]
+ASSEMBLY_DEPENDENCIES: Dict[str, List[str]]
 with open(ROOT_DIR / "test_properties.json", "r", encoding="utf-8") as f:
     test_info = json.load(f)
     EXTRA_CREDIT_PROGRAMS = test_info["extra_credit_tests"]
     REQUIRES_MATHLIB = test_info["requires_mathlib"]
     ASSEMBLY_DEPENDENCIES = test_info["assembly_libs"]
     DEPENDENCIES = test_info["libs"]
+
+MAC_SUFFIX = "_osx.s"
+LINUX_SUFFIX = "_linux.s"
 ASSEMBLY_LIBS = set(
-    lib for libs in ASSEMBLY_DEPENDENCIES.values() for lib in libs.values()
+    Path(platform_specific_lib).name
+    for libs in ASSEMBLY_DEPENDENCIES.values()
+    for lib in libs
+    for platform_specific_lib in [lib + MAC_SUFFIX, lib + LINUX_SUFFIX]
 )
 
 # main TestChapter class + related utilities
@@ -46,6 +52,13 @@ def get_platform() -> str:
         return "os_x"
     else:
         return "linux"
+
+
+def get_platform_suffix() -> str:
+    if IS_OSX:
+        return MAC_SUFFIX
+    else:
+        return LINUX_SUFFIX
 
 
 def get_props_key(source_file: Path) -> str:
@@ -67,17 +80,15 @@ def get_libs(prog: Path) -> List[Path]:
     props_key = get_props_key(prog)
     libs = []
     if props_key in ASSEMBLY_DEPENDENCIES:
-        platfrm: str
-        platfrm = get_platform()
-        asm_filename = ASSEMBLY_DEPENDENCIES[props_key][platfrm]
-        asm_path = prog.with_name(
-            asm_filename
-        )  # assembly file is in the same directory as program under test
-        libs.append(asm_path)
+        for asm_dep in ASSEMBLY_DEPENDENCIES[props_key]:
+            asm_filename = asm_dep + get_platform_suffix()
+            asm_path = TEST_DIR / asm_filename
+            libs.append(asm_path)
     if props_key in DEPENDENCIES:
-        lib_filename = DEPENDENCIES[props_key]
-        lib_path = TEST_DIR / lib_filename
-        libs.append(lib_path)
+        lib_filenames = DEPENDENCIES[props_key]
+        for l in lib_filenames:
+            lib_path = TEST_DIR / l
+            libs.append(lib_path)
     return libs
 
 
@@ -109,7 +120,7 @@ def gcc_compile_and_run(
             ["gcc", "-D", "SUPPRESS_WARNINGS"] + source_files + options + ["-o", exe],
             check=True,
             text=True,
-            capture_output=False,
+            capture_output=True,
         )
         # print any warnings even if it succeeded
         print_stderr(result)
@@ -342,33 +353,42 @@ class TestChapter(unittest.TestCase):
         Link 'em together, run the resulting executable, make validate the results.
 
         Args:
-            file_under_test: Absolute path of one file in a multi-file program
-                          (the one we want to compile with self.cc)
+            file_under_test: Absolute path of one file in a multi-file program.
+                Usually a C file we want to compile with self.cc, but sometimes
+                (in optimization tests) an assembly file that we've alerady
+                compiled with self.cc and inspected
             other_files: Absolute paths to other files in the multi-file program
         """
 
-        # compile file_under_test and make sure it succeeds
-        compilation_result = self.invoke_compiler(file_under_test, cc_opt="-c")
-        self.assertEqual(
-            compilation_result.returncode,
-            0,
-            msg=f"compilation of {file_under_test} failed with error:\n{compilation_result.stderr}",
-        )
+        # If file_under_test is a C program, compile it with self.cc;
+        # otherwise assume it's already been compiled with self.cc
+        if file_under_test.suffix == ".c":
+            # make sure compilation succeeds
+            compilation_result = self.invoke_compiler(file_under_test, cc_opt="-c")
+            self.assertEqual(
+                compilation_result.returncode,
+                0,
+                msg=f"compilation of {file_under_test} failed with error:\n{compilation_result.stderr}",
+            )
+            # print stderr (might have warnings we care about even if compilation succeeded)
+            # TODO make this controlled by verbosity maybe?
+            print_stderr(compilation_result)
+            compiled_file_under_test = file_under_test.with_suffix(".o")
+            validation_key = file_under_test
+        else:
+            compiled_file_under_test = file_under_test
+            validation_key = file_under_test.with_suffix(".c")
 
-        # print stderr (might have warnings we care about even if compilation succeeded)
-        # TODO make this controlled by verbosity maybe?
-        print_stderr(compilation_result)
-
-        # compile other file, link with object file produced by compiler under test,
+        # compile other files, link with object file produced by compiler under test,
         # and run resulting executable
-        source_files = [file_under_test.with_suffix(".o")] + other_files
+        source_files = [compiled_file_under_test] + other_files
         options = []
         if needs_mathlib(file_under_test) or any(needs_mathlib(f) for f in other_files):
             options.append("-lm")
         result = gcc_compile_and_run(source_files, options)
 
         # validate results
-        self.validate_runs(file_under_test, result)
+        self.validate_runs(validation_key, result)
 
     def compile_client_and_run(self, client_path: Path) -> None:
         """Multi-file program test where our compiler compiles the client"""

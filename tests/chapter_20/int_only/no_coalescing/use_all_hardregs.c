@@ -1,24 +1,32 @@
-int glob = 20;
-int glob2 = 30;
-int glob3 = 40;
+/* Make sure we use all hardregs rather than spill;
+ * Create 12 pseudos that all interfere with each other
+ * and make sure we assign all of them to hardregs
+ * This test program is generated from templates/chapter_20_templates/use_all_hardregs.c.jinja
+ * */
+#include "util.h"
 
+int global_one = 1;  // to prevent constant-folding
 
 int target(void) {
-    // create a clique of 7 tmps that interfere
-    // we can color all of them w/out spilling anything (includg callee-saved regs)
-    int a = glob * glob;
-    int b = glob2 + 2;
-    int c = a + 5;
-    int d = b - glob3;
-    int e = glob + 7;
-    int f = glob2 * 2;
-    int g = c * 3;
-    int result;
-    if (a == 400 && b == 32 && c == 405 && d == -8 && e == 27 && f == 60 && g == 1215)
-        result = 0;
-    else {
-        result = 1;
-    }
-    return result;
+    // create a clique of 12 pseudos that interfere
+    // we can color all of them w/out spilling anything
 
+    int one = 2 - global_one;
+    int two = one + one;
+    int three = 2 + one;
+    int four = two * two;
+    int five = 6 - one;
+    int six = two * three;
+    int seven = one + 6;
+    int eight = two * 4;
+    int nine = three * three;
+    int ten = four + six;
+    int eleven = 16 - five;
+    int twelve = six + six;
+
+    // validate one through twelve
+    // (this makes them all live at this point)
+    check_12_ints(one, two, three, four, five, six, seven, eight, nine, ten,
+                  eleven, twelve, 1);
+    return 0;  // success
 }

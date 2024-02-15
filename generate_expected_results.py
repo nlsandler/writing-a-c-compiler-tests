@@ -7,8 +7,9 @@ import argparse
 import itertools
 import json
 import subprocess
+import sys
 from pathlib import Path
-from typing import Any, Iterable, List
+from typing import Any, Iterable
 
 # NOTE: basic loads EXPECTED_RESULTS from a file so this whole script will fail
 # if expected_results.json doesn't already exist
@@ -18,21 +19,9 @@ from test_framework.basic import ROOT_DIR, TEST_DIR
 results: dict[str, dict[str, Any]] = {}
 
 
-def lookup_regalloc_libs(prog: Path) -> List[Path]:
-    """Look up extra library we need to link against for regalloc tests"""
-    # TODO fix copypasta b/t here and test_programs.py
-    test_info = regalloc.REGALLOC_TESTS.get(prog.name)
-    if test_info is None:
-        return []
-    if test_info.extra_lib is None:
-        # this uses the wrapper script b/c test inspects assembly
-        # but doesn't use other library
-        return [regalloc.WRAPPER_SCRIPT]
-    # uses wrapper script and other library
-    return [
-        regalloc.WRAPPER_SCRIPT,
-        TEST_DIR / "chapter_20/libraries" / test_info.extra_lib,
-    ]
+def needs_wrapper(prog: Path) -> bool:
+    """Check whether we need to link against wrapper script"""
+    return prog.name in regalloc.REGALLOC_TESTS
 
 
 def cleanup_keys() -> None:
@@ -111,7 +100,7 @@ def main() -> None:
                 str(rel_path) in changed_files
                 or str(rel_path).replace(".c", "_client.c") in changed_files
                 or str(rel_path).replace("_client.c", ".c") in changed_files
-                or any(lib in changed_files for lib in lookup_regalloc_libs(p))
+                or (needs_wrapper(p) and regalloc.WRAPPER_SCRIPT in changed_files)
                 or any(lib in changed_files for lib in basic.get_libs(p))
                 or any(
                     h
@@ -151,9 +140,9 @@ def main() -> None:
         source_files.extend(basic.get_libs(prog))
 
         if "chapter_20" in prog.parts:
-            # we may need to include wrapper script and other library files
-            extra_libs = lookup_regalloc_libs(prog)
-            source_files.extend(extra_libs)
+            # we may need to include wrapper script too
+            if needs_wrapper(prog):
+                source_files.append(regalloc.WRAPPER_SCRIPT)
 
         opts = []
         if any(basic.needs_mathlib(p) for p in source_files):
@@ -170,6 +159,8 @@ def main() -> None:
 
             key = str(prog.relative_to(TEST_DIR))
             results[key] = result_dict
+            if result.returncode:
+                print(f"Return code for {key} is {result.returncode}", file=sys.stderr)
         finally:
             # delete executable
             exe = source_files[0].with_suffix("")

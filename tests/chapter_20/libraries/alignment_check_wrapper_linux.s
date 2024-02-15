@@ -1,3 +1,4 @@
+	## define some floating-point constants
 	.section .rodata
 	.align 8
 .Lone:
@@ -14,10 +15,10 @@
 	.double 6.0
 .Lseven:
 	.double 7.0
+	## define main
 	.text
 	.globl	main
 main:
-## %bb.0:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	# save callee-saved regs
@@ -26,27 +27,17 @@ main:
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
+	pushq 	%rdi # to maintain stack alignment
 	# give them arbitrary values
 	movq	$-1, %rbx
 	movq	$-2, %r12
 	movq	$-3, %r13
 	movq	$-4, %r14
 	movq	$-5, %r15
-	# call target
-	movl	$1, %edi
-	movl	$2, %esi
-	movl	$3, %edx
-	movl	$4, %ecx
-	movl	$5, %r8d
-	movl	$6, %r9d
-	movsd	.Lone(%rip), %xmm0
-	movsd	.Ltwo(%rip), %xmm1
-	movsd	.Lthree(%rip), %xmm2
-	movsd	.Lfour(%rip), %xmm3
-	movsd	.Lfive(%rip), %xmm4
-	movsd	.Lsix(%rip), %xmm5
-	movsd	.Lseven(%rip), %xmm7
-	callq	target
+	# call test functions, all of which exit early on failure
+	callq	test1
+	callq	test2
+	callq	test3
 	# make sure values of callee-saved regs were preserved
 	cmpq	$-1, %rbx
 	jne		.Lfail
@@ -58,6 +49,7 @@ main:
 	jne		.Lfail
 	cmp		$-5, %r15
 	jne		.Lfail
+	popq 	%rdi
 	popq	%r15
 	popq	%r14
 	popq	%r13
@@ -76,4 +68,25 @@ main:
 	popq	%rbx
 	popq	%rbp
 	retq
+    .text
+    .globl check_alignment
+check_alignment:
+    pushq   %rbp
+    movq    %rsp, %rbp
+    # calculate rsp % 16
+    movq    %rsp, %rax
+    movq    $0, %rdx
+    movq    $16, %rcx
+    div     %rcx
+    # compare result (in rdx) to 0
+    cmpq    $0, %rdx
+    je      .L_OK
+    # it's not zero; exit
+    # using exit code already in EDI
+    call    exit@PLT
+.L_OK:
+    # success; rsp is aligned correctly
+    movl    $0, %eax
+    popq    %rbp
+    retq
 	.section	".note.GNU-stack","",@progbits

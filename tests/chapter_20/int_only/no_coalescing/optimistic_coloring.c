@@ -1,143 +1,105 @@
-/* Make sure we use optimistic coloring:
- * Include:
- *     - Pseudos with low cost and short live ranges which will spill first but
- * don't decrease register pressure
- *     - Pseudos with high cost and long live ranges which spill later
- * Make sure we color the low-cost ones!
- * What if we had: clique ABCDE, clique EFGHI, and clique JKLMN that conflicts
- * with all of them make sure ABCDE have lowest spill cost, so we choose them as
- * spill candidates first then we choose JKLMN as next batch of spill candidates
- * then we prune the rest of the graph
- * then we actually spill JKLMN, which lets us color ABCDE
+/* Make sure we use optimistic coloring; that is, not all spill candidates are
+ * actually spilled. When we color the interference graph, we'll choose 10
+ * spill candidates but only spill 5 of them.
  */
 
-int glob0 = 0;
-int glob1 = 1;
-int glob2 = 2;
-int glob3 = 3;
-int glob4 = 4;
-int glob5 = 0;
-int glob6 = 0;
-int glob7 = 0;
-int glob8 = 0;
-int glob9 = 0;
+#include "util.h"
 
 int flag = 0;
 int result = 0;
-int increase_globals(void) {
-  glob0 = glob0 + 1;
-  glob1 = glob1 + 1;
-  glob2 = glob2 + 1;
-  glob3 = glob3 + 1;
-  glob4 = glob4 + 1;
-  return 0;
-}
 
-int reset_globals(void) {
-  glob0 = 0;
-  glob1 = 1;
-  glob2 = 2;
-  glob3 = 3;
-  glob4 = 4;
-  glob5 = 0;
-  glob6 = 0;
-  glob7 = 0;
-  glob8 = 0;
-  glob9 = 0;
-  return 0;
-}
+// global variables; use these to initialize pseudos while
+// preventing copy propagation
+int glob0;
+int glob1;
+int glob2;
+int glob3;
+int glob4;
 
-int get(void) {
-  static int i = 100;
-  i = i + 3;
-  return i;
-}
-
-int use(int one, int two, int three, int four, int five) {
-  glob5 = glob5 + one;
-  glob6 = glob6 + two;
-  glob7 = glob7 + three;
-  glob8 = glob8 + four;
-  glob9 = glob9 + five;
-  return 0;
-}
-
-int validate_globs(int one, int two, int three, int four, int five) {
-    if (glob5 != one)
-        return 10;
-    if (glob6 != two)
-        return 12;
-    if (glob7 != three)
-        return 13;
-    if (glob8 != four)
-        return 14;
-    if (glob9 != five)
-        return 15;
-    return 0;
-}
-
-int five_spills(void) {
-  // k - o conflict with everything, have higher spill metric than a-e but lower
-  // than f-j
-  int k = get();
-  int l = get();
-  int m = get();
-  int n = get();
-  int o = get();
-  if (!flag) {
-    // make a-e a clique with low spill cost
-    int a = glob0;
-    int b = glob1;
-    int c = glob2;
-    int d = glob3;
-    int e = glob4;
-    increase_globals();
-    use(k, l, m, n, o);
-    result = a == glob0 - 1 && b == glob1 - 1 && c == glob2 - 1 &&
-             d == glob3 - 1 && e == glob4 - 1 && k - glob0 == 102 &&
-             l / glob1 == 53 && m % glob2 == 1 && n + glob3 == 116 &&
-             o % glob4 == 0;
-    ;
-  } else {
-    // make F-I a clique with higher spill cost
-    int f = glob0;
-    int g = glob1;
-    int h = glob2;
-    int i = glob3;
-    int j = glob4;
-    increase_globals();
-    use(f, g, h, i, j);
-    use(g, h, i, j, f);
-    use(h, i, j, f, g);
-    use(i, j, f, g, h);
-    use(j, f, g, h, i);
-    f = f + 1;
-    g = g + 1;
-    h = h + 1;
-    j = j + 1;
-    i = i + 1;
-    result = f == glob0 && g == glob1 && h == glob2 && i == glob3 &&
-             j == glob4 && k - glob0 == 117 &&
-             l + glob1 == 123 && m % glob2 == 1 && n + glob3 == 131 &&
-             o % glob4 == 0;
-  }
-
-  return result;
+// helper functiont set global variables to increasing values starting with
+// start
+int set_globals(int start) {
+    glob0 = start;
+    glob1 = start + 1;
+    glob2 = start + 2;
+    glob3 = start + 3;
+    glob4 = start + 4;
 }
 
 int target(void) {
-  reset_globals();
-  flag = 0;
-  int retval = five_spills();
-  if (!retval)
-    return 1;
-  int globs_expected = validate_globs(103, 106, 109, 112, 115);
-  if (globs_expected)
-    return globs_expected + 100;
-  reset_globals();
-  flag = 1;
-  retval = five_spills();
-  if (!retval)
-    return 2;
-  return validate_globs(10, 10, 10, 10, 10);
+    /*
+     * We create three cliques of five callee-saved pseudos.
+     * The pseudos in the first clique, zero through four, interfere with
+     * all the others. The second clique (five through nine) and the third
+     * (ten through fourteen) don't interfere with each other.
+     * Pseudos five through nine have the lowest spill cost/spill metric,
+     * and ten through fourteen have the highest spill cost.
+     * During the coloring process, we'll:
+     * 1. Prune temporaries that aren't in these cliques.
+     * 2. Get stuck b/c each pseudo interferes with at least nine others
+     *    plus seven caller-saved hard registers.
+     * 3. Prune five through nine as spill candidates because they have
+     *    the lowest spill metrics. Each prune reduces the degree of the nodes
+     *    in this clique and of zero through four, but not by enough to prune
+     *    them, so we stay stuck.
+     * 4. Prune zero through four as spill candidates, reducing degree of
+     *    remaining nodes to less then 12.
+     * 5. Prune nodes ten through thirteen and hard registers.
+     * 6. Color nodes ten through thirteen and hard registers.
+     * 7. Spill nodes zero through four because they interfere with ten through thirteen
+     *    and all caller-saved hard registers, leaving no colors
+     *    available.
+     * 8. Color nodes five through nine; although they were spill candidates,
+     *    they don't interfere with five through nine, so all callee-saved hard
+     *    registers are available.
+     * 9. Color any remaining temporaries.
+     *
+     * TLDR: We choose zero through four and five through nine as spill
+     * candidates but only actually spill zero through four.
+     */
+
+
+
+    // define zero through four, initialize them to 0 through 4
+    set_globals(0);
+    int zero = glob0;
+    int one = glob1;
+    int two = glob2;
+    int three = glob3;
+    int four = glob4;
+
+    // define five through nine, initialize to 5 through 9
+    set_globals(5);
+    int five = glob0;
+    int six = glob1;
+    int seven = glob2;
+    int eight = glob3;
+    int nine = glob4;
+
+    // use each variable once
+    check_5_ints(zero, one, two, three, four, 0);
+    check_5_ints(five, six, seven, eight, nine, 5);
+
+    // define ten through fourteen, initialize to 10 through 14
+    set_globals(10);
+    int ten = glob0;
+    int eleven = glob1;
+    int twelve = glob2;
+    int thirteen = glob3;
+    int fourteen = glob4;
+
+    // check zero-four first to force fourteen to be callee-saved
+    check_5_ints(zero, one, two, three, four, 0);
+
+    // use ten through fourteen a bunch of times to increase spill cost
+    check_5_ints(ten, eleven, twelve, thirteen, fourteen, 10);
+    check_5_ints(ten, eleven, twelve, thirteen, fourteen, 10);
+    check_5_ints(ten, eleven, twelve, thirteen, fourteen, 10);
+    check_5_ints(ten, eleven, twelve, thirteen, fourteen, 10);
+
+    // use zero through four one more time so its spill cost is higher than
+    // five through nine
+    check_5_ints(zero - 3, one - 3, two - 3, three - 3, four - 3, -3);
+
+    return 0;
 }

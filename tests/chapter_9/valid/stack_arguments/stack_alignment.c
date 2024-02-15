@@ -1,4 +1,4 @@
-/* Call functions wtih both even and odd numbers of stack arguments,
+/* Call functions with both even and odd numbers of stack arguments,
  * to make sure the stack is correctly aligned in both cases.
  */
 

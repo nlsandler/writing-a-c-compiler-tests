@@ -1,0 +1,30 @@
+{%- import 'includes/regalloc_macros.c.jinja' as helpers -%}
+{% filter comment_wrap %}
+// create 12 pseudos that all interfere w/ {{ spill_thing }} and each other;
+// this forces a spill, since only 12 hard registers are available
+{% endfilter %}
+{% include 'includes/twelve_regs_conflict.c.jinja' %}
+
+{% filter comment_wrap %}
+// create another clique of twelve pseudos that interfere with each other
+// and {{ spill_thing }}, so {{ spill_thing }} will have
+// more conflicts than other pseudoregisters
+{% endfilter %}
+int thirteen = {{ thirteen_expr }};
+int fourteen = thirteen + 1;
+int fifteen = 28 - thirteen;
+int sixteen = fourteen + 2;
+int seventeen = 4 + thirteen;
+int eighteen = 32 - fourteen;
+int nineteen = 35 - sixteen;
+int twenty = fifteen + 5;
+int twenty_one = thirteen * 2 - 5;
+int twenty_two = fifteen + 7;
+int twenty_three = 6 + seventeen;
+int twenty_four = thirteen + 11;
+
+// validate thirteen through twenty-four
+// (this makes them all live at this point)
+check_12_ints(thirteen, fourteen, fifteen, sixteen, seventeen, eighteen,
+              nineteen, twenty, twenty_one, twenty_two, twenty_three,
+              twenty_four, 13);

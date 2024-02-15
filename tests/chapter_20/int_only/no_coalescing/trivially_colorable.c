@@ -1,13 +1,14 @@
-int glob = 10;
-int glob2 = 11;
+/* A simple function that's easy to color without spilling.
+ * The test script validates that we don't spill any pseudoregisters in target.
+ */
 
-int client(int x, int y, int z) {
-    return x == 13 && y == 143 && z ==  -130;
-}
+#include "util.h"
 
-int target(void) {
-    int x = glob + 3;
-    int y = glob2 * x;
-    int z = x - y;
-    return client(x, y, z);
+int target(int one, int two) {
+    // perform a few calculations that make one, two, three, four, and five
+    // interfere
+    int three = one + two;
+    int four = two * two;
+    int five = three + two;
+    return check_5_ints(one, two, three, four, five, 1);
 }

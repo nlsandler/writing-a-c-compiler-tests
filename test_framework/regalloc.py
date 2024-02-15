@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import subprocess
 from pathlib import Path
-from typing import Callable, List, Mapping, NamedTuple, Optional, Union
+from typing import Callable, List, Mapping, NamedTuple, Union
 
 from . import basic
 from .parser import asm, parse
@@ -16,9 +16,9 @@ TEST_DIR = basic.TEST_DIR.joinpath(f"chapter_{CHAPTER}").resolve()
 # which validates that callee-saved registers are preserved
 WRAPPER_SCRIPT: Path
 if basic.IS_OSX:
-    WRAPPER_SCRIPT = TEST_DIR.joinpath("wrapper_osx.s")
+    WRAPPER_SCRIPT = TEST_DIR.joinpath("libraries", "wrapper_osx.s")
 else:
-    WRAPPER_SCRIPT = TEST_DIR.joinpath("wrapper_linux.s")
+    WRAPPER_SCRIPT = TEST_DIR.joinpath("libraries", "wrapper_linux.s")
 
 
 # TypeGuard would be better return value here, but 3.8 and 3.9 don't support it
@@ -61,12 +61,13 @@ class TestRegAlloc(basic.TestChapter):
             if not f.is_dir()
             and f.suffix not in [".c", ".h"]
             and f.stem not in ["wrapper_osx", "wrapper_linux"]
+            and f.name not in basic.ASSEMBLY_LIBS
         )
 
         for f in garbage_files:
             f.unlink()
 
-    def basic_test(self, program_path: Path, extra_lib: Optional[Path] = None) -> None:
+    def basic_test(self, program_path: Path) -> None:
         """Test that the compiled program behaves correctly but don't inspect the assembly code.
 
         Compile the program, linking against the wrapper script (which defines main) and any extra
@@ -76,38 +77,14 @@ class TestRegAlloc(basic.TestChapter):
         the program behaves correctly, then parse the assembly file and perform further validation.
 
         Args:
-            program_path: Absoulte path to C or assembly file to compile and run
-            extra_lib: An extra library we need to compile with
+            program_path: Absolute path to C or assembly file to compile and run
         """
-
-        if program_path.suffix == ".s":
-            # caller already compiled it to assembly
-            input_files = [program_path, WRAPPER_SCRIPT]
-        else:
-            compilation_result = self.invoke_compiler(program_path, cc_opt="-c")
-            self.assertEqual(
-                compilation_result.returncode,
-                0,
-                msg=f"compilation of {program_path} failed with error:\n\
-                    {compilation_result.stderr}",
-            )
-            input_files = [program_path.with_suffix(".o"), WRAPPER_SCRIPT]
-
-        if extra_lib:
-            input_files.append(self.lib_path / extra_lib)
-
-        actual_result = basic.gcc_compile_and_run(input_files, [])
-        # make sure behavior is the same
-        # NOTE: if program_path is assembly file (because we were called from another test method
-        # that's going to parse this file and perform more validation on it),
-        # we should ook up corresponding C file in EXPECTED_RESULTS
-        key = program_path.with_suffix(".c")
-        self.validate_runs(key, actual_result)
+        extra_libs = basic.get_libs(program_path.with_suffix(".c")) + [WRAPPER_SCRIPT]
+        self.library_test_helper(program_path, extra_libs)
 
     def run_and_parse(
         self,
         program_path: Path,
-        extra_lib: Optional[Path] = None,
         target_fun: str = "target",
     ) -> asm.AssemblyFunction:
         """Shared logic for register allocation tests that validate assembly code.
@@ -118,7 +95,6 @@ class TestRegAlloc(basic.TestChapter):
 
         Args:
             program_path: Absolute path to C file under test
-            extra_lib: Additional library files to link against
             target_fun: Name of function to parse/inspect
         Returns:
             Parsed assembly code for specified target fun
@@ -132,7 +108,7 @@ class TestRegAlloc(basic.TestChapter):
         asm_file = program_path.with_suffix(".s")
 
         # make sure behavior is the same
-        self.basic_test(asm_file, extra_lib=extra_lib)
+        self.basic_test(asm_file)
 
         # make sure we actually performed the optimization
         parsed_asm = parse.parse_file(asm_file)[target_fun]
@@ -142,7 +118,7 @@ class TestRegAlloc(basic.TestChapter):
     def no_spills_test(
         self,
         program_path: Path,
-        extra_lib: Optional[Path] = None,
+        *,
         target_fun: str = "target",
     ) -> None:
         """Test that we allocated every register in target_fun without spilling.
@@ -151,14 +127,12 @@ class TestRegAlloc(basic.TestChapter):
 
         Args:
             program_path: Absolute path to C file under test
-            extra_lib: Additional library files to link against
             target_fun: Name of function to parse/inspect
         """
 
         # validate behavior + get parsed assembly
         parsed_asm = self.run_and_parse(
             program_path=program_path,
-            extra_lib=extra_lib,
             target_fun=target_fun,
         )
 
@@ -177,9 +151,9 @@ class TestRegAlloc(basic.TestChapter):
     def spill_test(
         self,
         program_path: Path,
+        *,
         max_spilled_instructions: int,
         max_spilled_pseudos: int,
-        extra_lib: Optional[Path] = None,
         target_fun: str = "target",
     ) -> None:
         """Test for a program with so many conflicts that it spills.
@@ -191,14 +165,12 @@ class TestRegAlloc(basic.TestChapter):
             program_path: Absolute path to C file under test
             max_spilled_instructions: maximum number of instructions that access the stack
             max_spilled_pseudos: maximum number of distinct stack addresses accessed
-            extra_lib: Additional library files to link against
             target_fun: Name of function to parse/inspect
         """
 
         parsed_asm = self.run_and_parse(
             program_path=program_path,
             target_fun=target_fun,
-            extra_lib=extra_lib,
         )
 
         spill_instructions = [
@@ -241,7 +213,6 @@ class TestRegAlloc(basic.TestChapter):
     def coalescing_test(
         self,
         program_path: Path,
-        extra_lib: Optional[Path] = None,
         target_fun: str = "target",
         max_moves: int = 0,
     ) -> None:
@@ -253,7 +224,6 @@ class TestRegAlloc(basic.TestChapter):
 
         Args:
             program_path: Absolute path to C file under test
-            extra_lib: Additional library files to link against
             target_fun: Name of function to parse/inspect
             max_moves: maximum number of mov instructions between registers
         """
@@ -274,7 +244,6 @@ class TestRegAlloc(basic.TestChapter):
 
         parsed_asm = self.run_and_parse(
             program_path,
-            extra_lib=extra_lib,
             target_fun=target_fun,
         )
 
@@ -305,112 +274,71 @@ class TestRegAlloc(basic.TestChapter):
 
 # define what kind of validation to perform for each C program
 class NoSpillTest(NamedTuple):
-    extra_lib: Optional[Path] = None
     target_fun: str = "target"
 
 
 class SpillTest(NamedTuple):
     max_spilled_pseudos: int
     max_spilled_instructions: int
-    extra_lib: Optional[Path] = None
     target_fun: str = "target"
 
 
 class CoalesceTest(NamedTuple):
-    extra_lib: Optional[Path] = None
     target_fun: str = "target"
     max_moves: int = 0
 
 
-# TODO track extra libs in test_properties.json instead of here?
 REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
     "trivially_colorable.c": NoSpillTest(),
     "use_all_hardregs.c": NoSpillTest(),
-    "spill_callee_saved.c": NoSpillTest(),
     "preserve_across_fun_call.c": NoSpillTest(),
-    "track_arg_registers.c": NoSpillTest(extra_lib=Path("track_arg_registers_lib.c")),
-    "many_pseudos_fewer_conflicts.c": NoSpillTest(
-        extra_lib=Path("many_pseudos_fewer_conflicts_lib.c"),
-        target_fun="no_spills",
-    ),
-    "cmp_liveness.c": NoSpillTest(),
+    "track_arg_registers.c": NoSpillTest(),
+    "many_pseudos_fewer_conflicts.c": NoSpillTest(),
+    "cmp_no_updates.c": NoSpillTest(),
     "copy_no_interference.c": NoSpillTest(),
     "same_instr_no_interference.c": NoSpillTest(),
     "loop.c": NoSpillTest(),
     "dbl_trivially_colorable.c": NoSpillTest(),
     "fourteen_pseudos_interfere.c": NoSpillTest(),
-    "push_xmm.c": NoSpillTest(),
-    "track_dbl_arg_registers.c": NoSpillTest(
-        extra_lib=Path("track_dbl_arg_registers_lib.c")
-    ),
+    "track_dbl_arg_registers.c": NoSpillTest(),
     "store_pointer_in_register.c": NoSpillTest(),
     "callee_saved_live_at_exit.c": NoSpillTest(
-        extra_lib=Path("callee_saved_live_at_exit_lib.c"),
         target_fun="cant_coalesce_fully",
     ),
-    "funcall_generates_args.c": NoSpillTest(
-        extra_lib=Path("funcall_generates_args_lib.c")
-    ),
+    "funcall_generates_args.c": NoSpillTest(),
     "force_spill.c": SpillTest(
         max_spilled_instructions=3,
         max_spilled_pseudos=1,
-        extra_lib=Path("force_spill_lib.c"),
     ),
     # possibly these rewrite instructions don't belong in reg allocation test suite
-    "spills_and_rewrites.c": SpillTest(
+    "rewrite_regression_test.c": SpillTest(
         max_spilled_instructions=10,
         max_spilled_pseudos=3,
-        extra_lib=Path("force_spill_lib.c"),
-    ),
-    "spills_rewrites_compare.c": SpillTest(
-        max_spilled_instructions=3,
-        max_spilled_pseudos=1,
-        extra_lib=Path("force_spill_lib.c"),
-    ),
-    "rewrite_large_multiply.c": SpillTest(
-        max_spilled_instructions=4,
-        max_spilled_pseudos=1,
-        extra_lib=Path("force_spill_lib.c"),
-    ),
-    "spill_movz_dst.c": SpillTest(
-        max_spilled_instructions=6,
-        max_spilled_pseudos=3,
-        extra_lib=Path("force_spill_lib.c"),
     ),
     "test_spill_metric.c": SpillTest(
-        max_spilled_instructions=3,
+        max_spilled_instructions=2,
         max_spilled_pseudos=1,
-        extra_lib=Path("test_spill_metric_lib.c"),
     ),
     "test_spill_metric_2.c": SpillTest(
-        max_spilled_instructions=3,
+        max_spilled_instructions=4,
         max_spilled_pseudos=1,
-        extra_lib=Path("test_spill_metric_2_lib.c"),
-    ),
-    "copy_and_separate_interference.c": SpillTest(
-        max_spilled_pseudos=1, max_spilled_instructions=3
     ),
     "optimistic_coloring.c": SpillTest(
         max_spilled_pseudos=5,
         max_spilled_instructions=20,
-        target_fun="five_spills",
     ),
     "test_spilling_dbls.c": SpillTest(
         max_spilled_instructions=4,
         max_spilled_pseudos=1,
-        extra_lib=Path("force_spill_dbl_lib.c"),
     ),
     "mixed_ints.c": SpillTest(
         max_spilled_instructions=2,
         max_spilled_pseudos=1,
-        extra_lib=Path("force_spill_mixed_int_lib.c"),
     ),
     "briggs_coalesce.c": CoalesceTest(),
     "briggs_coalesce_tmps.c": CoalesceTest(target_fun="briggs"),
-    "george_coalesce.c": CoalesceTest(extra_lib=Path("george_lib.c")),
-    "coalesce_prevents_spill.c": CoalesceTest(
-        extra_lib=Path("coalesce_prevents_spill_lib.c"), max_moves=11
-    ),
+    "george_coalesce.c": CoalesceTest(),
+    "coalesce_prevents_spill.c": CoalesceTest(max_moves=11),
 }
 
 
@@ -429,10 +357,9 @@ def make_regalloc_test(
     if "with_coalescing" in program.parts and no_coalescing:
         # if this is a coalescing test but we haven't implemented coalescing yet,
         # make sure it runs correctly but don't validate assembly
-        extra_lib = test_info.extra_lib
 
         def test(self: TestRegAlloc) -> None:
-            self.basic_test(program, extra_lib=extra_lib)
+            self.basic_test(program)
 
     elif isinstance(test_info, NoSpillTest):
         # assign test_info to another variable to make mypy happy
@@ -442,7 +369,6 @@ def make_regalloc_test(
         def test(self: TestRegAlloc) -> None:
             self.no_spills_test(
                 program,
-                extra_lib=nospilltest_info.extra_lib,
                 target_fun=nospilltest_info.target_fun,
             )
 
@@ -452,9 +378,9 @@ def make_regalloc_test(
         def test(self: TestRegAlloc) -> None:
             self.spill_test(
                 program,
-                spilltest_info.max_spilled_instructions,
-                spilltest_info.max_spilled_pseudos,
-                spilltest_info.extra_lib,
+                max_spilled_instructions=spilltest_info.max_spilled_instructions,
+                max_spilled_pseudos=spilltest_info.max_spilled_pseudos,
+                target_fun=spilltest_info.target_fun,
             )
 
     else:
@@ -464,7 +390,6 @@ def make_regalloc_test(
             self.coalescing_test(
                 program,
                 target_fun=ti.target_fun,
-                extra_lib=ti.extra_lib,
                 max_moves=ti.max_moves,
             )
 

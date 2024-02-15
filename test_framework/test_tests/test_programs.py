@@ -9,22 +9,6 @@ from typing import Callable, List, Iterable, Union
 from .. import basic, regalloc
 
 
-def lookup_regalloc_libs(prog: Path) -> List[Path]:
-    """Look up extra library we need to link against for regalloc tests"""
-    test_info = regalloc.REGALLOC_TESTS.get(prog.name)
-    if test_info is None:
-        return []
-    if test_info.extra_lib is None:
-        # this uses the wrapper script b/c test inspects assembly
-        # but doesn't use other library
-        return [regalloc.WRAPPER_SCRIPT]
-    # uses wrapper script and other library
-    return [
-        regalloc.WRAPPER_SCRIPT,
-        basic.TEST_DIR / "chapter_20/libraries" / test_info.extra_lib,
-    ]
-
-
 def lookup_libs(prog: Path) -> List[Path]:
     """Look up extra libraries we need to link against"""
     k = basic.get_props_key(prog)
@@ -53,9 +37,12 @@ def build_compiler_args(source_file: Path) -> List[str]:
         needs_mathlib |= basic.needs_mathlib(client_path)
 
     # if it's in chapter 20, get extra libs as needed
-    if "chapter_20" in source_file.parts:
-        # we may need to include wrapper script and other library files
-        args.extend(str(lib) for lib in lookup_regalloc_libs(source_file))
+    if (
+        "chapter_20" in source_file.parts
+        and source_file.name in regalloc.REGALLOC_TESTS
+    ):
+        # we may need to include wrapper script
+        args.append(str(regalloc.WRAPPER_SCRIPT))
 
     # some test programs have extra libraries too
     args.extend(str(lib) for lib in lookup_libs(source_file))
