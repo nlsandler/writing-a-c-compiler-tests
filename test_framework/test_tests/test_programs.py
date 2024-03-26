@@ -9,21 +9,6 @@ from typing import Callable, List, Iterable, Union
 from .. import basic, regalloc
 
 
-def lookup_libs(prog: Path) -> List[Path]:
-    """Look up extra libraries we need to link against"""
-    k = basic.get_props_key(prog)
-    if k in basic.ASSEMBLY_DEPENDENCIES:
-        platfrm = basic.get_platform()
-        dep = basic.ASSEMBLY_DEPENDENCIES[k][platfrm]
-
-        return [prog.with_name(dep)]
-    if k in basic.DEPENDENCIES:
-        dep = basic.DEPENDENCIES[k]
-        return [basic.TEST_DIR / dep]
-
-    return []
-
-
 def build_compiler_args(source_file: Path) -> List[str]:
     """Given a source file, build the list of files/extra options we need for standalone compilation"""
     args = [str(source_file)]
@@ -45,7 +30,7 @@ def build_compiler_args(source_file: Path) -> List[str]:
         args.append(str(regalloc.WRAPPER_SCRIPT))
 
     # some test programs have extra libraries too
-    args.extend(str(lib) for lib in lookup_libs(source_file))
+    args.extend(str(lib) for lib in basic.get_libs(source_file))
 
     # add mathlib option if needed
     if needs_mathlib:

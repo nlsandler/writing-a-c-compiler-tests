@@ -24,6 +24,7 @@ int set_globals(int start) {
     glob2 = start + 2;
     glob3 = start + 3;
     glob4 = start + 4;
+    return 0;
 }
 
 int target(void) {
