@@ -1,9 +1,9 @@
 {% extends "includes/wrapper_base.s.jinja" %}
 {% block call %}
 	# call test functions, all of which exit early on failure
-	callq	test1
-	callq	test2
-	callq	test3
+	callq	{{id_prefix}}test1
+	callq	{{id_prefix}}test2
+	callq	{{id_prefix}}test3
 {% endblock %}
 {% block more_functions %}
     .text
@@ -21,7 +21,7 @@
     je      {{local_prefix}}_OK
     # it's not zero; exit
     # using exit code already in EDI
-    call    exit@PLT
+    call    {{id_prefix}}exit{{plt_suffix}}
 {{local_prefix}}_OK:
     # success; rsp is aligned correctly
     movl    $0, %eax

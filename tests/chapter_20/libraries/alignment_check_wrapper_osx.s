@@ -34,9 +34,9 @@ _main:
 	movq	$-4, %r14
 	movq	$-5, %r15
 	# call test functions, all of which exit early on failure
-	callq	test1
-	callq	test2
-	callq	test3
+	callq	_test1
+	callq	_test2
+	callq	_test3
 	# make sure values of callee-saved regs were preserved
 	cmpq	$-1, %rbx
 	jne		Lfail
@@ -82,7 +82,7 @@ _check_alignment:
     je      L_OK
     # it's not zero; exit
     # using exit code already in EDI
-    call    exit@PLT
+    call    _exit
 L_OK:
     # success; rsp is aligned correctly
     movl    $0, %eax
