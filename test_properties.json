@@ -419,6 +419,9 @@
         "chapter_20/int_only/with_coalescing/callee_saved_live_at_exit.c": [
             "chapter_20/libraries/callee_saved_live_at_exit_lib.c"
         ],
+        "chapter_20/int_only/no_coalescing/bin_uses_operands.c": [
+            "chapter_20/libraries/util.c"
+        ],
         "chapter_20/int_only/with_coalescing/funcall_generates_args.c": [
             "chapter_20/libraries/funcall_generates_args_lib.c"
         ],

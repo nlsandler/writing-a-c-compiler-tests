@@ -130,7 +130,9 @@ def gcc_compile_and_run(
         raise RuntimeError(err.stderr) from err
 
     # run it
-    return subprocess.run([exe], check=False, text=True, capture_output=True)
+    return subprocess.run(
+        [exe], check=False, text=True, capture_output=True, timeout=10.0
+    )
 
 
 def replace_stem(path: Path, new_stem: str) -> Path:
@@ -340,7 +342,9 @@ class TestChapter(unittest.TestCase):
         # run the executable
         # TODO cleaner handling if executable doesn't exist? or check that it exists above?
         exe = source_file.with_suffix("")
-        result = subprocess.run([exe], check=False, capture_output=True, text=True)
+        result = subprocess.run(
+            [exe], check=False, capture_output=True, text=True, timeout=10.0
+        )
 
         self.validate_runs(source_file, result)
 
