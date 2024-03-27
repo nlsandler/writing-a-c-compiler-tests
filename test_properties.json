@@ -416,10 +416,10 @@
         "chapter_20/all_types/no_coalescing/track_dbl_arg_registers.c": [
             "chapter_20/libraries/track_dbl_arg_registers_lib.c"
         ],
-        "chapter_20/int_only/with_coalescing/callee_saved_live_at_exit.c": [
-            "chapter_20/libraries/callee_saved_live_at_exit_lib.c"
-        ],
         "chapter_20/int_only/no_coalescing/bin_uses_operands.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/no_coalescing/division_uses_ax.c": [
             "chapter_20/libraries/util.c"
         ],
         "chapter_20/int_only/with_coalescing/funcall_generates_args.c": [
