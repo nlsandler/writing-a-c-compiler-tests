@@ -385,6 +385,9 @@
         "chapter_20/int_only/no_coalescing/use_all_hardregs.c": [
             "chapter_20/libraries/util.c"
         ],
+        "chapter_20/int_only/no_coalescing/eax_live_at_exit.c": [
+            "chapter_20/libraries/util.c"
+        ],
         "chapter_20/int_only/no_coalescing/cmp_generates_operands.c": [
             "chapter_20/libraries/util.c"
         ],
