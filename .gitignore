@@ -1,1 +1,3 @@
-*.out
+**/__pycache__/*
+mycc
+*.s

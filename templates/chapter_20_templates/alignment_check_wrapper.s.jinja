@@ -1,0 +1,30 @@
+{% extends "includes/wrapper_base.s.jinja" %}
+{% block call %}
+	# call test functions, all of which exit early on failure
+	callq	{{id_prefix}}test1
+	callq	{{id_prefix}}test2
+	callq	{{id_prefix}}test3
+{% endblock %}
+{% block more_functions %}
+    .text
+    .globl {{id_prefix}}check_alignment
+{{id_prefix}}check_alignment:
+    pushq   %rbp
+    movq    %rsp, %rbp
+    # calculate rsp % 16
+    movq    %rsp, %rax
+    movq    $0, %rdx
+    movq    $16, %rcx
+    div     %rcx
+    # compare result (in rdx) to 0
+    cmpq    $0, %rdx
+    je      {{local_prefix}}_OK
+    # it's not zero; exit
+    # using exit code already in EDI
+    call    {{id_prefix}}exit{{plt_suffix}}
+{{local_prefix}}_OK:
+    # success; rsp is aligned correctly
+    movl    $0, %eax
+    popq    %rbp
+    retq
+{% endblock %}

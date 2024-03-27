@@ -1,0 +1,17 @@
+int one = {{ one_expr }};
+int two = one + one;
+int three = 2 + one;
+int four = two * two;
+int five = 6 - one;
+int six = two * three;
+int seven = one + 6;
+int eight = two * 4;
+int nine = three * three;
+int ten = four + six;
+int eleven = 16 - five;
+int twelve = six + six;
+
+// validate one through twelve
+// (this makes them all live at this point)
+check_12_ints(one, two, three, four, five, six, seven, eight, nine, ten,
+              eleven, twelve, 1);

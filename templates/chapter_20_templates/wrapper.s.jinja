@@ -1,0 +1,18 @@
+{% extends "includes/wrapper_base.s.jinja" %}
+{% block call %}
+	# call target
+	movl	$1, %edi
+	movl	$2, %esi
+	movl	$3, %edx
+	movl	$4, %ecx
+	movl	$5, %r8d
+	movl	$6, %r9d
+	movsd	{{local_prefix}}one(%rip), %xmm0
+	movsd	{{local_prefix}}two(%rip), %xmm1
+	movsd	{{local_prefix}}three(%rip), %xmm2
+	movsd	{{local_prefix}}four(%rip), %xmm3
+	movsd	{{local_prefix}}five(%rip), %xmm4
+	movsd	{{local_prefix}}six(%rip), %xmm5
+	movsd	{{local_prefix}}seven(%rip), %xmm7
+	callq	{{id_prefix}}target
+{% endblock %}
