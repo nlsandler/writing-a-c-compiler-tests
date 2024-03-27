@@ -457,6 +457,9 @@
         ]
     },
     "assembly_libs": {
+        "chapter_9/valid/stack_arguments/stack_alignment.c": [
+            "chapter_9/valid/stack_arguments/stack_alignment_check"
+        ],
         "chapter_10/valid/push_arg_on_page_boundary.c": [
             "chapter_10/valid/data_on_page_boundary"
         ],

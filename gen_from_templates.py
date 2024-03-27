@@ -26,6 +26,39 @@ def comment_wrap(e: Environment, value: str, width: int = 73) -> str:
     )
 
 
+PLATFORM_PROPS = {
+    "linux": {
+        "local_prefix": ".L",
+        "id_prefix": "",
+        "plt_suffix": "@PLT",
+        "rodata_directives": """\t.section .rodata
+\t.align 8""",
+        "execstack_note": """\t.section	".note.GNU-stack","",@progbits
+""",
+    },
+    "osx": {
+        "local_prefix": "L",
+        "id_prefix": "_",
+        "plt_suffix": "",
+        "rodata_directives": """\t.literal8""",
+        "execstack_note": "",
+    },
+}
+
+
+def gen_assembly(template_file: Path, output_dir: Path) -> None:
+    if not template_file.name.endswith(".s.jinja"):
+        exit(f"Expected assembly template, found {template_file}")
+    templ = env.get_template(str(template_file))
+    basename = template_file.name.removesuffix(".s.jinja")
+    for platform in ["linux", "osx"]:
+        src = templ.render(PLATFORM_PROPS[platform])
+        new_name = f"{basename}_{platform}.s"
+        output_path = Path("tests") / output_dir / new_name
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(src)
+
+
 test_cases = {
     "tests/chapter_11/valid/long_expressions/rewrite_large_multiply_regression.c": {
         "comment": {
@@ -79,6 +112,12 @@ test_cases = {
     },
 }
 
+# TODO better way to track which template corresponds to which final source file
+# for now we'll just map assembly templates to output directories
+assembly_locations = {
+    "stack_alignment_check.s.jinja": "chapter_9/valid/stack_arguments"
+}
+
 env = Environment(
     loader=FileSystemLoader("templates"), trim_blocks=True, lstrip_blocks=True
 )
@@ -91,6 +130,9 @@ for k, v in test_cases.items():
     src = templ.render(v)
     with open(k, "w", encoding="utf-8") as f:
         f.write(src)
+
+for template_file, dest_dir in assembly_locations.items():
+    gen_assembly(Path(template_file), Path(dest_dir))
 
 # chapter 20 tests
 
@@ -105,8 +147,8 @@ template_files = Path("templates/chapter_20_templates").iterdir()
 for t in template_files:
     if t.suffix != ".jinja":
         exit(f"Found non-template {f} in templates directory")
-
-    templ = env.get_template(str(t.relative_to("templates")))
+    relative_path = t.relative_to("templates")
+    templ = env.get_template(str(relative_path))
     if t.name in configurable_templates:
         for dest, templ_vars in configurable_templates[t.name].items():
             src = templ.render(templ_vars)
@@ -114,15 +156,7 @@ for t in template_files:
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(src)
     elif str(t).endswith(".s.jinja"):
-        # generate once per platform
-        basename = t.name.removesuffix(".s.jinja")
-
-        for platform in ["linux", "osx"]:
-            src = templ.render(platform=platform)
-            new_name = f"{basename}_{platform}.s"
-            output_path = Path("tests/chapter_20/libraries") / new_name
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write(src)
+        gen_assembly(relative_path, Path("chapter_20/libraries"))
 
     else:
         src = templ.render()

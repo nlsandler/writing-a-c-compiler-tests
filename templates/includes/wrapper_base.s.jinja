@@ -1,24 +1,3 @@
-{# platform-specific stuff #}
-{% if platform == "linux" %}
-	{% set local_prefix = ".L" %}
-	{% set id_prefix = "" %}
-	{% set plt_suffix = "@PLT" %}
-	{% set rodata_directives %}
-	.section .rodata
-	.align 8
-	{%- endset %}
-	{% set execstack_note %}
-	.section	".note.GNU-stack","",@progbits
-	{% endset %}
-{% else %}
-	{% set local_prefix = "L" %}
-	{% set id_prefix = "_" %}
-	{% set plt_suffix = "" %}
-	{% set rodata_directives %}
-	.literal8
-	{%- endset %}
-	{% set execstack_note="" -%}
-{% endif %}
 	## define some floating-point constants
 {{ rodata_directives }}
 {{local_prefix}}one:
