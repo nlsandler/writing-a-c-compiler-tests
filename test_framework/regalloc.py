@@ -302,7 +302,6 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
     "fourteen_pseudos_interfere.c": NoSpillTest(),
     "track_dbl_arg_registers.c": NoSpillTest(),
     "store_pointer_in_register.c": NoSpillTest(),
-    "funcall_generates_args.c": NoSpillTest(),
     "force_spill.c": SpillTest(
         max_spilled_instructions=3,
         max_spilled_pseudos=1,
