@@ -37,6 +37,7 @@ int target(void) {
     }
     check_one_int(a, -100);
     check_one_int(glob, 101);
+    return 0;
 }
 
 int main(void) {
