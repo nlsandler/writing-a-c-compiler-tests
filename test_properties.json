@@ -419,6 +419,9 @@
         "chapter_20/int_only/no_coalescing/unary_interference.c": [
             "chapter_20/libraries/util.c"
         ],
+        "chapter_20/int_only/no_coalescing/unary_uses_operand.c": [
+            "chapter_20/libraries/util.c"
+        ],
         "chapter_20/all_types/no_coalescing/track_dbl_arg_registers.c": [
             "chapter_20/libraries/track_dbl_arg_registers_lib.c"
         ],
