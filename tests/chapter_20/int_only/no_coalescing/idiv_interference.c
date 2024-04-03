@@ -5,7 +5,7 @@
  * coalescing.
  */
 
-#include "util.h"
+#include "../../libraries/util.h"
 
 int glob = 3;
 

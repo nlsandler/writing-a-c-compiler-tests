@@ -3,7 +3,7 @@
  * NOTE: only works as intended after we've implemented register coalescing.
  * */
 
-#include "util.h"
+#include "../../libraries/util.h"
 
 // defined in funcall_generates_args_lib,
 // exits early with return code -1 if a and b don't have

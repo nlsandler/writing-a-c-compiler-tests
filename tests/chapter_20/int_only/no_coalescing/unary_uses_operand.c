@@ -4,7 +4,7 @@
  * TODO consider using a common template for this and bin_uses_operand
  * */
 
-#include "util.h"
+#include "../../libraries/util.h"
 
 int glob = 1;
 

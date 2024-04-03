@@ -3,7 +3,7 @@
  * and make sure we assign all of them to hardregs
  * This test program is generated from templates/chapter_20_templates/use_all_hardregs.c.jinja
  * */
-#include "util.h"
+#include "../../libraries/util.h"
 
 int global_one = 1;  // to prevent constant-folding
 

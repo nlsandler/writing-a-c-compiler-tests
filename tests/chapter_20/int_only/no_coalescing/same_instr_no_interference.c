@@ -5,7 +5,7 @@
  * allocate every register without spilling.
  */
 
-#include "util.h" // declares check_* and id functions
+#include "../../libraries/util.h" // declares check_* and id functions
 
 int target(void) {
     /* define some values - must be in callee-saved regs */

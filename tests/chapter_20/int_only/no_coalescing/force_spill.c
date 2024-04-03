@@ -7,7 +7,7 @@
  * This test program is generated from templates/chapter_20_templates/force_spill.c.jinja
  * */
 
-#include "util.h"
+#include "../../libraries/util.h"
 
 int glob_three = 3;
 

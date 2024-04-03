@@ -467,6 +467,9 @@
         ],
         "chapter_20/int_only/with_coalescing/coalesce_prevents_spill.c": [
             "chapter_20/libraries/coalesce_prevents_spill_lib.c"
+        ],
+        "chapter_20/int_only/with_coalescing/briggs_coalesce.c": [
+            "chapter_20/libraries/util.c"
         ]
     },
     "assembly_libs": {

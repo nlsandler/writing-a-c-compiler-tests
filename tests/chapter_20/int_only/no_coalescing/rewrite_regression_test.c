@@ -8,7 +8,7 @@
  * This test program is generated from templates/chapter_20_templates/rewrite_regression_test.c.jinja
  * */
 
-#include "util.h"
+#include "../../libraries/util.h"
 
 int glob_three = 3;
 int glob_four = 4;

@@ -2,7 +2,7 @@
  * we spill the one with the lowest spill cost (i.e. fewest uses)
  */
 
-#include "util.h" // declares check_* and id functions
+#include "../../libraries/util.h" // declares check_* and id functions
 
 int target(void) {
     // Define 6 callee-saved regs that interfere with each other;

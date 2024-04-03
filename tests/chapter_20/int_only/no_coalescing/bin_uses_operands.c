@@ -4,7 +4,7 @@
  * NOTE: only works as intended after we've implemented register coalescing.
  */
 
-#include "util.h"
+#include "../../libraries/util.h"
 
 // recognize that add uses its source
 int src_test(int i) {

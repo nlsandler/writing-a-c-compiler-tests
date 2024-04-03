@@ -220,7 +220,7 @@ class TestRegAlloc(basic.TestChapter):
 
         First validate the compiled program's behavior, then make sure we don't
         have more than the expected number of mov instructions where the source
-        and destination are both registers.
+        and destination are both registers. Also validate that there are no spills.
 
         Args:
             program_path: Absolute path to C file under test
@@ -332,7 +332,6 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
         max_spilled_pseudos=1,
     ),
     "briggs_coalesce.c": CoalesceTest(),
-    "briggs_coalesce_tmps.c": CoalesceTest(target_fun="briggs"),
     "george_coalesce.c": CoalesceTest(),
     "coalesce_prevents_spill.c": CoalesceTest(max_moves=11),
 }
