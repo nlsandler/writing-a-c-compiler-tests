@@ -463,7 +463,7 @@
             "chapter_20/libraries/force_spill_mixed_int_lib.c"
         ],
         "chapter_20/int_only/with_coalescing/george_coalesce.c": [
-            "chapter_20/libraries/george_lib.c"
+            "chapter_20/libraries/util.c"
         ],
         "chapter_20/int_only/with_coalescing/coalesce_prevents_spill.c": [
             "chapter_20/libraries/coalesce_prevents_spill_lib.c"
