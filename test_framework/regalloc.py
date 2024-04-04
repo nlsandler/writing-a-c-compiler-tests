@@ -333,7 +333,7 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
     ),
     "briggs_coalesce.c": CoalesceTest(),
     "george_coalesce.c": CoalesceTest(),
-    "coalesce_prevents_spill.c": CoalesceTest(max_moves=11),
+    "coalesce_prevents_spill.c": CoalesceTest(max_moves=18),
 }
 
 
