@@ -335,6 +335,7 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
     "george_coalesce.c": CoalesceTest(),
     "coalesce_prevents_spill.c": CoalesceTest(max_moves=18),
     "briggs_coalesce_hardreg.c": CoalesceTest(),
+    "briggs_dont_coalesce.c": CoalesceTest(max_moves=7),
 }
 
 
