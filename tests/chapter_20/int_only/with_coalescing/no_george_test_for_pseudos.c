@@ -13,7 +13,7 @@
 // from there
 
 int target(void) {
-    // Define a clique of 6 callee-saved values, a-f. We should
+    // Define a clique of 6 callee-saved values, a-f. We should spill
     // c because it has the lowest spill cost. Another variable, x,
     // is connected to c by a mov instruction, and only interferes with
     // registers that also interfere with c. If we apply the George test to x

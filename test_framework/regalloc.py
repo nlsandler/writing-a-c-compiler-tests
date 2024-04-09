@@ -341,6 +341,7 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
     "no_george_test_for_pseudos.c": SpillTest(
         max_spilled_instructions=3, max_spilled_pseudos=1
     ),
+    "george_off_by_one.c": NoSpillTest(),
 }
 
 

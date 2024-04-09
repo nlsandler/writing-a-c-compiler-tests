@@ -485,6 +485,9 @@
         ],
         "chapter_20/int_only/with_coalescing/no_george_test_for_pseudos.c": [
             "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/with_coalescing/george_off_by_one.c": [
+            "chapter_20/libraries/util.c"
         ]
     },
     "assembly_libs": {
