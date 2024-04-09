@@ -37,10 +37,3 @@ int target(int a, int b, int c, int d, int e, int f) {
     check_12_ints(g, h, i, j, k, l, 13, m, n, o, p, q, 7);
     return 0;
 }
-
-int target2(void) {
-    // a-e are callee-saved
-    // they interfere with f-k, which must therefore be caller-saved
-    // which interfere with l-p, which must be callee-save
-    // but we pass l-p as arugments
-}
