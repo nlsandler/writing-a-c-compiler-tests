@@ -476,6 +476,12 @@
         ],
         "chapter_20/int_only/with_coalescing/briggs_dont_coalesce.c": [
             "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/with_coalescing/george_dont_coalesce.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/int_only/with_coalescing/george_dont_coalesce_2.c": [
+            "chapter_20/libraries/util.c"
         ]
     },
     "assembly_libs": {
