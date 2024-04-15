@@ -36,7 +36,10 @@
         "chapter_3/valid/extra_credit/bitwise_shiftr_negative.c": [
             "bitwise"
         ],
-        "chapter_4/valid/extra_credit/bitwise_precedence.c": [
+        "chapter_4/valid/extra_credit/bitwise_shift_precedence.c": [
+            "bitwise"
+        ],
+        "chapter_4/valid/extra_credit/bitwise_and_precedence.c": [
             "bitwise"
         ],
         "chapter_5/invalid_parse/extra_credit/compound_initializer.c": [
