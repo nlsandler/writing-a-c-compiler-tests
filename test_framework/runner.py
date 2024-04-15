@@ -129,6 +129,13 @@ def parse_arguments() -> argparse.Namespace:
         help="Include tests for compound assignment",
     )
     parser.add_argument(
+        "--increment",
+        action="append_const",
+        dest="extra_credit",
+        const=ExtraCredit.INCREMENT,
+        help="Include tests for increment and decrement operators",
+    )
+    parser.add_argument(
         "--goto",
         action="append_const",
         const=ExtraCredit.GOTO,

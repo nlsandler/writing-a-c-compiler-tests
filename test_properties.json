@@ -45,16 +45,52 @@
         "chapter_5/invalid_parse/extra_credit/compound_initializer.c": [
             "compound"
         ],
-        "chapter_5/invalid_parse/extra_credit/compound_invalid_operator.c": [
+        "chapter_5/invalid_parse/extra_credit/binary_decrement.c": [
+            "increment"
+        ],
+        "chapter_5/invalid_parse/extra_credit/binary_increment.c": [
+            "increment"
+        ],
+        "chapter_5/invalid_parse/extra_credit/increment_declaration.c": [
+            "increment"
+        ],
+        "chapter_5/invalid_semantics/extra_credit/undeclared_bitwise_op.c": [
+            "bitwise"
+        ],
+        "chapter_5/invalid_semantics/extra_credit/undeclared_compound_assignment.c": [
             "compound"
         ],
-        "chapter_5/invalid_semantics/extra_credit/compound_initializer.c": [
+        "chapter_5/invalid_semantics/extra_credit/undeclared_compound_assignment_use.c": [
             "compound"
+        ],
+        "chapter_5/invalid_semantics/extra_credit/undeclared_prefix_incr.c": [
+            "increment"
+        ],
+        "chapter_5/invalid_semantics/extra_credit/undeclared_postfix_decr.c": [
+            "increment"
         ],
         "chapter_5/invalid_semantics/extra_credit/compound_invalid_lvalue.c": [
             "compound"
         ],
-        "chapter_5/valid/extra_credit/bitwise_and_vars.c": [
+        "chapter_5/invalid_semantics/extra_credit/compound_invalid_lvalue_2.c": [
+            "compound"
+        ],
+        "chapter_5/invalid_semantics/extra_credit/prefix_incr_non_lvalue.c": [
+            "increment"
+        ],
+        "chapter_5/invalid_semantics/extra_credit/prefix_decr_non_lvalue.c": [
+            "increment"
+        ],
+        "chapter_5/invalid_semantics/extra_credit/postfix_incr_non_lvalue.c": [
+            "increment"
+        ],
+        "chapter_5/invalid_semantics/extra_credit/postfix_decr_non_lvalue.c": [
+            "increment"
+        ],
+        "chapter_5/valid/extra_credit/bitwise_ops_vars.c": [
+            "bitwise"
+        ],
+        "chapter_5/valid/extra_credit/bitwise_in_initializer.c": [
             "bitwise"
         ],
         "chapter_5/valid/extra_credit/bitwise_shiftl_variable.c": [
@@ -67,6 +103,13 @@
             "compound"
         ],
         "chapter_5/valid/extra_credit/compound_assignment_use_result.c": [
+            "compound"
+        ],
+        "chapter_5/valid/extra_credit/compound_assignment_lowest_precedence.c": [
+            "compound"
+        ],
+        "chapter_5/valid/extra_credit/compound_bitwise_assignment_lowest_precedence.c": [
+            "bitwise",
             "compound"
         ],
         "chapter_5/valid/extra_credit/compound_bitwise_and.c": [
@@ -89,6 +132,10 @@
             "bitwise",
             "compound"
         ],
+        "chapter_5/valid/extra_credit/compound_bitwise_chained.c": [
+            "bitwise",
+            "compound"
+        ],
         "chapter_5/valid/extra_credit/compound_divide.c": [
             "compound"
         ],
@@ -103,6 +150,18 @@
         ],
         "chapter_5/valid/extra_credit/compound_plus.c": [
             "compound"
+        ],
+        "chapter_5/valid/extra_credit/postfix_incr_and_decr.c": [
+            "increment"
+        ],
+        "chapter_5/valid/extra_credit/prefix_incr_and_decr.c": [
+            "increment"
+        ],
+        "chapter_5/valid/extra_credit/postfix_precedence.c": [
+            "increment"
+        ],
+        "chapter_5/valid/extra_credit/incr_parenthesized.c": [
+            "increment"
         ],
         "chapter_6/invalid_lex/extra_credit/goto_bad_label.c": [
             "goto"
