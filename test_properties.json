@@ -30,6 +30,12 @@
         "chapter_3/valid/extra_credit/bitwise_xor.c": [
             "bitwise"
         ],
+        "chapter_3/valid/extra_credit/bitwise_variable_shift_count.c": [
+            "bitwise"
+        ],
+        "chapter_3/valid/extra_credit/bitwise_shiftr_negative.c": [
+            "bitwise"
+        ],
         "chapter_4/valid/extra_credit/bitwise_precedence.c": [
             "bitwise"
         ],

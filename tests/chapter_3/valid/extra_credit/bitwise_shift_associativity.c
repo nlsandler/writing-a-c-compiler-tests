@@ -1,3 +1,3 @@
 int main(void) {
-    return 33 << 2 >> 1;
+    return 33 << 4 >> 2;
 }
