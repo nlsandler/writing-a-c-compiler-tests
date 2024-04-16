@@ -163,6 +163,12 @@
         "chapter_5/valid/extra_credit/incr_parenthesized.c": [
             "increment"
         ],
+        "chapter_5/valid/extra_credit/incr_expression_statement.c": [
+            "increment"
+        ],
+        "chapter_5/valid/extra_credit/incr_in_binary_expr.c": [
+            "increment"
+        ],
         "chapter_6/invalid_lex/extra_credit/goto_bad_label.c": [
             "goto"
         ],
@@ -180,6 +186,24 @@
         ],
         "chapter_6/valid/extra_credit/compound_if_expression.c": [
             "compound"
+        ],
+        "chapter_6/valid/extra_credit/compound_assign_ternary.c": [
+            "compound"
+        ],
+        "chapter_6/valid/extra_credit/lh_compound_assignment.c": [
+            "compound"
+        ],
+        "chapter_6/valid/extra_credit/prefix_in_ternary.c": [
+            "increment"
+        ],
+        "chapter_6/valid/extra_credit/postfix_in_ternary.c": [
+            "increment"
+        ],
+        "chapter_6/valid/extra_credit/postfix_if.c": [
+            "increment"
+        ],
+        "chapter_6/valid/extra_credit/prefix_if.c": [
+            "increment"
         ],
         "chapter_6/valid/extra_credit/goto_after_declaration.c": [
             "goto"
