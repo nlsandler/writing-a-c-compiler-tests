@@ -1,3 +1,3 @@
 int main(void) {
-    foo:
+    goto a.b;
 }

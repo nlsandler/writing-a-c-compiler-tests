@@ -169,16 +169,43 @@
         "chapter_5/valid/extra_credit/incr_in_binary_expr.c": [
             "increment"
         ],
-        "chapter_6/invalid_lex/extra_credit/goto_bad_label.c": [
+        "chapter_6/invalid_lex/extra_credit/bad_label.c": [
             "goto"
         ],
-        "chapter_6/invalid_parse/extra_credit/goto_label_without_statement.c": [
+        "chapter_6/invalid_lex/extra_credit/bad_label_2.c": [
+            "goto"
+        ],
+        "chapter_6/invalid_parse/extra_credit/label_declaration.c": [
+            "goto"
+        ],
+        "chapter_6/invalid_parse/extra_credit/label_expression_clause.c": [
+            "goto"
+        ],
+        "chapter_6/invalid_parse/extra_credit/label_without_statement.c": [
+            "goto"
+        ],
+        "chapter_6/invalid_parse/extra_credit/parenthesized_label.c": [
+            "goto"
+        ],
+        "chapter_6/invalid_parse/extra_credit/label_outside_function.c": [
+            "goto"
+        ],
+        "chapter_6/invalid_parse/extra_credit/kw_label.c": [
+            "goto"
+        ],
+        "chapter_6/invalid_parse/extra_credit/goto_without_label": [
             "goto"
         ],
         "chapter_6/invalid_semantics/extra_credit/goto_missing_label.c": [
             "goto"
         ],
         "chapter_6/invalid_semantics/extra_credit/duplicate_labels.c": [
+            "goto"
+        ],
+        "chapter_6/invalid_semantics/extra_credit/goto_variable.c": [
+            "goto"
+        ],
+        "chapter_6/invalid_semantics/extra_credit/undeclared_var_in_labeled_statement.c": [
             "goto"
         ],
         "chapter_6/valid/extra_credit/bitwise_ternary.c": [
@@ -224,6 +251,18 @@
             "goto"
         ],
         "chapter_6/valid/extra_credit/goto_nested_label.c": [
+            "goto"
+        ],
+        "chapter_6/valid/extra_credit/unused_label.c": [
+            "goto"
+        ],
+        "chapter_6/valid/extra_credit/label_all_statements.c": [
+            "goto"
+        ],
+        "chapter_6/valid/extra_credit/label_token.c": [
+            "goto"
+        ],
+        "chapter_6/valid/extra_credit/whitespace_after_label.c": [
             "goto"
         ],
         "chapter_7/invalid_semantics/extra_credit/goto_use_before_declare.c": [
