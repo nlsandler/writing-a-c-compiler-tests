@@ -280,6 +280,12 @@
         "chapter_7/valid/extra_credit/goto_inner_scope.c": [
             "goto"
         ],
+        "chapter_7/valid/extra_credit/goto_outer_scope.c": [
+            "goto"
+        ],
+        "chapter_7/valid/extra_credit/goto_sibling_scope.c": [
+            "goto"
+        ],
         "chapter_8/invalid_parse/extra_credit/compound_assignment_invalid_decl.c": [
             "compound"
         ],
