@@ -265,6 +265,9 @@
         "chapter_6/valid/extra_credit/whitespace_after_label.c": [
             "goto"
         ],
+        "chapter_7/invalid_semantics/extra_credit/different_labels_same_scope.c": [
+            "goto"
+        ],
         "chapter_7/invalid_semantics/extra_credit/goto_use_before_declare.c": [
             "goto"
         ],
@@ -289,6 +292,12 @@
         "chapter_8/invalid_parse/extra_credit/compound_assignment_invalid_decl.c": [
             "compound"
         ],
+        "chapter_8/invalid_parse/extra_credit/label_is_not_block.c": [
+            "goto"
+        ],
+        "chapter_8/invalid_parse/extra_credit/label_in_loop_header.c": [
+            "goto"
+        ],
         "chapter_8/invalid_parse/extra_credit/switch_case_declaration.c": [
             "switch"
         ],
@@ -304,6 +313,12 @@
         ],
         "chapter_8/invalid_parse/extra_credit/switch_no_condition.c": [
             "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/labeled_break_outside_loop.c": [
+            "goto"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/duplicate_label_in_loop.c": [
+            "goto"
         ],
         "chapter_8/invalid_semantics/extra_credit/switch_continue.c": [
             "switch"
@@ -326,11 +341,29 @@
         "chapter_8/valid/extra_credit/compound_assignment_for_loop.c": [
             "compound"
         ],
+        "chapter_8/valid/extra_credit/compound_assignment_controlling_expression.c": [
+            "compound"
+        ],
         "chapter_8/valid/extra_credit/goto_bypass_condition.c": [
             "goto"
         ],
-        "chapter_8/valid/extra_credit/goto_loop_body.c": [
+        "chapter_8/valid/extra_credit/goto_bypass_post_exp.c": [
             "goto"
+        ],
+        "chapter_8/valid/extra_credit/goto_bypass_init_exp.c": [
+            "goto"
+        ],
+        "chapter_8/valid/extra_credit/label_loops_breaks_and_continues.c": [
+            "goto"
+        ],
+        "chapter_8/valid/extra_credit/label_loop_body.c": [
+            "goto"
+        ],
+        "chapter_8/valid/extra_credit/post_exp_incr.c": [
+            "increment"
+        ],
+        "chapter_8/valid/extra_credit/loop_header_postfix_and_prefix.c": [
+            "increment"
         ],
         "chapter_8/valid/extra_credit/switch.c": [
             "switch"
