@@ -205,6 +205,9 @@
         "chapter_6/invalid_semantics/extra_credit/goto_variable.c": [
             "goto"
         ],
+        "chapter_6/invalid_semantics/extra_credit/use_label_as_variable.c": [
+            "goto"
+        ],
         "chapter_6/invalid_semantics/extra_credit/undeclared_var_in_labeled_statement.c": [
             "goto"
         ],
@@ -483,8 +486,32 @@
         "chapter_9/invalid_labels/extra_credit/goto_function.c": [
             "goto"
         ],
-        "chapter_9/invalid_types/extra_credit/compound_assignment_function_call.c": [
+        "chapter_9/invalid_declarations/extra_credit/call_label_as_function.c": [
+            "goto"
+        ],
+        "chapter_9/invalid_declarations/extra_credit/compound_assign_to_fun_call.c": [
             "compound"
+        ],
+        "chapter_9/invalid_declarations/extra_credit/decrement_fun_call.c": [
+            "increment"
+        ],
+        "chapter_9/invalid_declarations/extra_credit/increment_fun_call.c": [
+            "increment"
+        ],
+        "chapter_9/invalid_types/extra_credit/compound_assign_function_lhs.c": [
+            "compound"
+        ],
+        "chapter_9/invalid_types/extra_credit/compound_assign_function_rhs.c": [
+            "compound"
+        ],
+        "chapter_9/invalid_types/extra_credit/postfix_incr_fun_name.c": [
+            "increment"
+        ],
+        "chapter_9/invalid_types/extra_credit/prefix_decr_fun_name.c": [
+            "increment"
+        ],
+        "chapter_9/invalid_types/extra_credit/bitwise_op_function.c": [
+            "bitwise"
         ],
         "chapter_9/invalid_types/extra_credit/switch_on_function.c": [
             "switch"
@@ -496,6 +523,12 @@
             "goto"
         ],
         "chapter_9/valid/extra_credit/goto_shared_name.c": [
+            "goto"
+        ],
+        "chapter_9/valid/extra_credit/dont_clobber_ecx.c": [
+            "bitwise"
+        ],
+        "chapter_9/valid/extra_credit/label_naming_scheme.c": [
             "goto"
         ],
         "chapter_10/invalid_parse/extra_credit/goto_file_scope_label.c": [
