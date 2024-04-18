@@ -323,20 +323,56 @@
         "chapter_8/invalid_semantics/extra_credit/switch_continue.c": [
             "switch"
         ],
-        "chapter_8/invalid_semantics/extra_credit/switch_duplicate_case.c": [
+        "chapter_8/invalid_semantics/extra_credit/case_continue.c": [
             "switch"
         ],
-        "chapter_8/invalid_semantics/extra_credit/switch_duplicate_default.c": [
+        "chapter_8/invalid_semantics/extra_credit/default_continue.c": [
             "switch"
         ],
-        "chapter_8/invalid_semantics/extra_credit/switch_invalid_case.c": [
+        "chapter_8/invalid_semantics/extra_credit/different_cases_same_scope.c": [
             "switch"
         ],
-        "chapter_8/invalid_semantics/extra_credit/switch_invalid_default.c": [
+        "chapter_8/invalid_semantics/extra_credit/duplicate_case.c": [
             "switch"
         ],
-        "chapter_8/invalid_semantics/extra_credit/switch_non_constant_case.c": [
+        "chapter_8/invalid_semantics/extra_credit/duplicate_case_in_labeled_switch.c": [
+            "switch", "goto"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/duplicate_default.c": [
             "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/case_outside_switch.c": [
+            "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/default_outside_switch.c": [
+            "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/non_constant_case.c": [
+            "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/duplicate_variable_in_switch.c": [
+            "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/undeclared_variable_in_case.c": [
+            "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/undeclared_variable_in_default.c": [
+            "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/undefined_label_in_case.c": [
+            "switch", "goto"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/duplicate_case_in_nested_statement.c": [
+            "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/duplicate_default_in_nested_statement.c": [
+            "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/undeclared_var_switch_expression.c": [
+            "switch"
+        ],
+        "chapter_8/invalid_semantics/extra_credit/duplicate_label_in_default.c": [
+            "switch", "goto"
         ],
         "chapter_8/valid/extra_credit/compound_assignment_for_loop.c": [
             "compound"
@@ -374,10 +410,22 @@
         "chapter_8/valid/extra_credit/switch_assign_in_condition.c": [
             "switch"
         ],
-        "chapter_8/valid/extra_credit/switch_block.c": [
+        "chapter_8/valid/extra_credit/case_block.c": [
+            "switch"
+        ],
+        "chapter_8/valid/extra_credit/switch_single_case.c": [
+            "switch"
+        ],
+        "chapter_8/valid/extra_credit/default_only.c": [
             "switch"
         ],
         "chapter_8/valid/extra_credit/switch_break.c": [
+            "switch"
+        ],
+        "chapter_8/valid/extra_credit/duffs_device.c": [
+            "switch"
+        ],
+        "chapter_8/valid/extra_credit/switch_with_continue_2.c": [
             "switch"
         ],
         "chapter_8/valid/extra_credit/switch_decl.c": [
@@ -405,7 +453,7 @@
         "chapter_8/valid/extra_credit/switch_in_loop.c": [
             "switch"
         ],
-        "chapter_8/valid/extra_credit/switch_nested_case.c": [
+        "chapter_8/valid/extra_credit/switch_nested_cases.c": [
             "switch"
         ],
         "chapter_8/valid/extra_credit/switch_nested_not_taken.c": [
@@ -417,10 +465,16 @@
         "chapter_8/valid/extra_credit/switch_no_case.c": [
             "switch"
         ],
+        "chapter_8/valid/extra_credit/switch_not_taken.c": [
+            "switch"
+        ],
+        "chapter_8/valid/extra_credit/switch_default_only.c": [
+            "switch"
+        ],
         "chapter_8/valid/extra_credit/switch_with_continue.c": [
             "switch"
         ],
-        "chapter_8/valid/extra_credit/switch_with_loop.c": [
+        "chapter_8/valid/extra_credit/loop_in_switch.c": [
             "switch"
         ],
         "chapter_9/invalid_labels/extra_credit/goto_cross_function.c": [

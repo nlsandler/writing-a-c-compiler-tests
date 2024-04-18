@@ -1,3 +1,5 @@
+// a switch statement cannot jump to cases in a nested switch statement;
+// here we execute both outer and inner cases
 int main(void){
     switch(3) {
         case 0:

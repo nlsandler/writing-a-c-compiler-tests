@@ -4,6 +4,8 @@
 #endif
 #endif
 
+// test that we can fall through from default to other cases
+// if default isn't last
 int main(void) {
     int a = 5;
     switch(0) {

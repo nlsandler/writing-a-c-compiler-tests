@@ -1,3 +1,4 @@
+// very simple test of switch statements
 int main(void) {
     switch(3) {
         case 0: return 0;

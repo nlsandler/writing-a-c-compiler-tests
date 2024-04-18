@@ -8,10 +8,13 @@ int main(void) {
     int a = 3;
     int b = 0;
     switch(a) {
-        int a = 0;
+        // a is in scope but we skip its initializer
+        int a = (b = 5);
     case 3:
         a = 4;
-        b = a;
+        b = b + a;
     }
-    return a + b;
+
+    // make sure case was executed but initializer (b = 5) was not
+    return a == 3 && b == 4;
 }

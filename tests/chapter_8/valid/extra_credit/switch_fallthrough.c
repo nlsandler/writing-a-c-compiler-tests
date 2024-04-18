@@ -16,7 +16,7 @@ int main(void) {
         case 9:
             c = 2;
         case 1:
-            c = 4;
+            c = c + 4;
     }
     return c;
 }

@@ -1,3 +1,6 @@
+// any of the new statements added in this chapter (do, while, etc)
+// may be labeled
+
 int main(void) {
     int sum = 0;
     goto do_label;
