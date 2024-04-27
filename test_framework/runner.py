@@ -111,7 +111,8 @@ def parse_arguments() -> argparse.Namespace:
     )
     parser.add_argument("--verbose", "-v", action="count", default=0)
     parser.add_argument(
-        "--stage", type=str, choices=["lex", "parse", "validate", "tacky", "codegen"]
+        # by default, compile and run the program
+        "--stage", type=str, default="run", choices=["lex", "parse", "validate", "tacky", "codegen", "run"]
     )
     # options to enable extra-credit tests
     parser.add_argument(
@@ -395,7 +396,6 @@ def main() -> int:
 
     # construct options to pass to compiler under test
     # including optimizations and options to stop after a particular stage
-    stage: str = args.stage or "run"  # by default, compile and run the program
     cc_options: list[str] = args.extra_cc_options
     optimization_flags = get_optimization_flags(args.chapter, args.optimization)
     cc_options.extend(optimization_flags)
@@ -414,7 +414,7 @@ def main() -> int:
                 compiler,
                 chapter,
                 options=cc_options,
-                stage=stage,
+                stage=args.stage,
                 extra_credit_flags=extra_credit,
                 skip_invalid=args.skip_invalid,
             )
