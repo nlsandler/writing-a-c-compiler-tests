@@ -83,11 +83,17 @@ jobs:
       if: runner.arch == 'ARM64'
       run: arch -x86_64 python -m unittest
       working-directory: tests
+      env:
+        NQCC: ${{ github.workspace }}/nqcc/main.exe
+        NQCC_PARTIAL: ${{ github.workspace }}/nqcc-partial/main.exe
 
     - name: Test the test suite (x86-64)
       if: runner.arch != 'ARM64'
       run: python -m unittest
       working-directory: tests
+      env:
+        NQCC: ${{ github.workspace }}/nqcc/main.exe
+        NQCC_PARTIAL: ${{ github.workspace }}/nqcc-partial/main.exe
 
     # Linting
     - name: Install linter dependencies
