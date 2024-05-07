@@ -68,11 +68,13 @@ jobs:
         path: nqcc-partial
 
     # run the test suite
+    # use Rosetta (instead of just using xn x86_64 Github runner) because
+    # that's probably what most readers are doing
     - name: Test the test suite
       run: |
         chmod u+x "$NQCC"
         chmod u+x "$NQCC_PARTIAL"
-        python -m unittest
+        arch -x86_64 python -m unittest
       working-directory: tests
       env:
         NQCC: ${{ github.workspace }}/nqcc/main.exe
