@@ -67,19 +67,29 @@ jobs:
         name: nqcc-${{ matrix.os }}-19
         path: nqcc-partial
 
-    # run the test suite
-    # use Rosetta (instead of just using xn x86_64 Github runner) because
-    # that's probably what most readers are doing
-    - name: Test the test suite
+    - name: Make NQCC executable
       run: |
         chmod u+x "$NQCC"
         chmod u+x "$NQCC_PARTIAL"
-        arch -x86_64 python -m unittest
       working-directory: tests
       env:
         NQCC: ${{ github.workspace }}/nqcc/main.exe
         NQCC_PARTIAL: ${{ github.workspace }}/nqcc-partial/main.exe
 
+    # run the test suite
+    # use Rosetta on macOS (instead of just using an x86_64 Github runner)
+    # because that's probably what most readers are doing
+    - name: Test the test suite (macOS M1)
+      if: runner.arch == 'ARM64'
+      run: arch -x86_64 python -m unittest
+      working-directory: tests
+
+    - name: Test the test suite (x86-64)
+      if: runner.arch != 'ARM64'
+      run: python -m unittest
+      working-directory: tests
+
+    # Linting
     - name: Install linter dependencies
       # note: we do this _after_ running tests, b/c tests should work without
       # these linters or their dependencies (e.g. typing_extensions)
