@@ -112,7 +112,10 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--verbose", "-v", action="count", default=0)
     parser.add_argument(
         # by default, compile and run the program
-        "--stage", type=str, default="run", choices=["lex", "parse", "validate", "tacky", "codegen", "run"]
+        "--stage",
+        type=str,
+        default="run",
+        choices=["lex", "parse", "validate", "tacky", "codegen", "run"],
     )
     # options to enable extra-credit tests
     parser.add_argument(
@@ -225,10 +228,10 @@ def parse_arguments() -> argparse.Namespace:
     elif not (args.cc and args.chapter):
         parser.error("cc and --chapter are required")
 
-    if args.stage and args.chapter >= TACKY_OPT_CHAPTER:
+    if args.stage and args.stage != "run" and args.chapter >= TACKY_OPT_CHAPTER:
         # TODO better error message here
         parser.error(
-            message=f"Option --stage not allowed with Part III tests (chapter {args.chapter})",
+            message=f"Testing intermediate stage not allowed with Part III tests (chapter {args.chapter})",
         )
 
     if (
