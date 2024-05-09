@@ -339,7 +339,8 @@
             "switch"
         ],
         "chapter_8/invalid_semantics/extra_credit/duplicate_case_in_labeled_switch.c": [
-            "switch", "goto"
+            "switch",
+            "goto"
         ],
         "chapter_8/invalid_semantics/extra_credit/duplicate_default.c": [
             "switch"
@@ -363,7 +364,8 @@
             "switch"
         ],
         "chapter_8/invalid_semantics/extra_credit/undefined_label_in_case.c": [
-            "switch", "goto"
+            "switch",
+            "goto"
         ],
         "chapter_8/invalid_semantics/extra_credit/duplicate_case_in_nested_statement.c": [
             "switch"
@@ -375,7 +377,8 @@
             "switch"
         ],
         "chapter_8/invalid_semantics/extra_credit/duplicate_label_in_default.c": [
-            "switch", "goto"
+            "switch",
+            "goto"
         ],
         "chapter_8/valid/extra_credit/compound_assignment_for_loop.c": [
             "compound"
@@ -531,14 +534,50 @@
         "chapter_9/valid/extra_credit/label_naming_scheme.c": [
             "goto"
         ],
-        "chapter_10/invalid_parse/extra_credit/goto_file_scope_label.c": [
+        "chapter_10/invalid_parse/extra_credit/file_scope_label.c": [
+            "goto"
+        ],
+        "chapter_10/invalid_parse/extra_credit/static_label.c": [
+            "goto"
+        ],
+        "chapter_10/invalid_parse/extra_credit/extern_label.c": [
             "goto"
         ],
         "chapter_10/invalid_labels/extra_credit/goto_global_var.c": [
             "goto"
         ],
+        "chapter_10/invalid_types/extra_credit/static_var_case.c": [
+            "switch"
+        ],
         "chapter_10/valid/extra_credit/goto_skip_static_initializer.c": [
             "goto"
+        ],
+        "chapter_10/valid/extra_credit/switch_skip_static_initializer.c": [
+            "switch"
+        ],
+        "chapter_10/valid/extra_credit/bitwise_ops_file_scope_vars.c": [
+            "bitwise"
+        ],
+        "chapter_10/valid/extra_credit/increment_global_vars.c": [
+            "increment"
+        ],
+        "chapter_10/valid/extra_credit/label_file_scope_var_same_name.c": [
+            "goto"
+        ],
+        "chapter_10/valid/extra_credit/label_static_var_same_name.c": [
+            "goto"
+        ],
+        "chapter_10/valid/extra_credit/libraries/same_label_same_fun.c": [
+            "goto"
+        ],
+        "chapter_10/valid/extra_credit/switch_on_extern.c": [
+            "switch"
+        ],
+        "chapter_10/valid/extra_credit/switch_skip_extern_decl.c": [
+            "switch"
+        ],
+        "chapter_10/valid/extra_credit/compound_assignment_static_var.c": [
+            "compound"
         ],
         "chapter_11/invalid_labels/extra_credit/switch_duplicate_cases.c": [
             "switch"
