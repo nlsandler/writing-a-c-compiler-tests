@@ -421,6 +421,7 @@ class TestDirs:
     INVALID_SEMANTICS = "invalid_semantics"
     INVALID_DECLARATIONS = "invalid_declarations"
     INVALID_TYPES = "invalid_types"
+    INVALID_LABELS = "invalid_labels"
     INVALID_STRUCT_TAGS = "invalid_struct_tags"
     # valid test programs for parts I & II
     # (we'll handle part III test sdifferently)
@@ -434,6 +435,7 @@ dirs = {
         TestDirs.INVALID_SEMANTICS,
         TestDirs.INVALID_DECLARATIONS,
         TestDirs.INVALID_TYPES,
+        TestDirs.INVALID_LABELS,
         TestDirs.INVALID_STRUCT_TAGS,
     ],
     "valid": [TestDirs.VALID],
@@ -450,6 +452,7 @@ DIRECTORIES_BY_STAGE = {
             TestDirs.INVALID_SEMANTICS,
             TestDirs.INVALID_DECLARATIONS,
             TestDirs.INVALID_TYPES,
+            TestDirs.INVALID_LABELS,
             TestDirs.INVALID_STRUCT_TAGS,
         ]
         + dirs["valid"],
@@ -460,6 +463,7 @@ DIRECTORIES_BY_STAGE = {
             TestDirs.INVALID_SEMANTICS,
             TestDirs.INVALID_DECLARATIONS,
             TestDirs.INVALID_TYPES,
+            TestDirs.INVALID_LABELS,
             TestDirs.INVALID_STRUCT_TAGS,
         ]
         + dirs["valid"],

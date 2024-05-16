@@ -42,6 +42,12 @@
         "chapter_4/valid/extra_credit/bitwise_and_precedence.c": [
             "bitwise"
         ],
+        "chapter_4/valid/extra_credit/bitwise_or_precedence.c": [
+            "bitwise"
+        ],
+        "chapter_4/valid/extra_credit/bitwise_xor_precedence.c": [
+            "bitwise"
+        ],
         "chapter_5/invalid_parse/extra_credit/compound_initializer.c": [
             "compound"
         ],
@@ -582,7 +588,13 @@
         "chapter_11/invalid_labels/extra_credit/switch_duplicate_cases.c": [
             "switch"
         ],
+        "chapter_11/invalid_labels/extra_credit/switch_duplicate_cases_2.c": [
+            "switch"
+        ],
         "chapter_11/valid/extra_credit/bitwise_long_op.c": [
+            "bitwise"
+        ],
+        "chapter_11/valid/extra_credit/bitshift.c": [
             "bitwise"
         ],
         "chapter_11/valid/extra_credit/compound_assign_to_int.c": [
@@ -590,6 +602,9 @@
         ],
         "chapter_11/valid/extra_credit/compound_assign_to_long.c": [
             "compound"
+        ],
+        "chapter_11/valid/extra_credit/increment_long.c": [
+            "increment"
         ],
         "chapter_11/valid/extra_credit/switch_int.c": [
             "switch"

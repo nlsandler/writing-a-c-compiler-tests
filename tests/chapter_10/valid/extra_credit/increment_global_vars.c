@@ -7,8 +7,8 @@ int incr_i(void){
     if (i == 1) {
         i++;
         ++i;
-        return 0;
     }
+    return 0;
 }
 
 int decr_j(void) {

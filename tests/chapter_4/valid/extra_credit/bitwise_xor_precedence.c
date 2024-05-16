@@ -3,6 +3,6 @@
 #endif
 
 int main(void) {
-    // & has lower precedence than ==
-    return 5 & 7 == 5;
+    // ^ has lower precedence than <
+    return 5 ^ 7 < 5;
 }

@@ -31,16 +31,16 @@ int main(void) {
      * that we get the expected result
      */
     if (switch_on_int(5) != 0)
-        return 0;
+        return 1;
     if (switch_on_int(0) != 1)
-        return 0;
+        return 2;
     if (switch_on_int(-1) != 2)
-        return 0;
+        return 3;
     /* 17179869184 is 2^34; it will be truncated to 0
      * when passed as a parameter to switch_on_int
      */
     if (switch_on_int(17179869184) != 1)
-        return 0;
+        return 4;
 
-    return 1;
+    return 0;
 }
