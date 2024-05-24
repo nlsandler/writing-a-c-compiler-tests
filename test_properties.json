@@ -639,6 +639,9 @@
         "chapter_12/valid/extra_credit/compound_bitwise.c": [
             "compound", "bitwise"
         ],
+        "chapter_12/valid/extra_credit/unsigned_incr_decr.c": [
+            "increment"
+        ],
         "chapter_12/valid/extra_credit/switch_uint.c": [
             "switch"
         ],
@@ -651,8 +654,29 @@
         "chapter_13/invalid_types/extra_credit/bitwise_shift_double.c": [
             "bitwise"
         ],
+        "chapter_13/invalid_types/extra_credit/bitwise_shift_double_2.c": [
+            "bitwise"
+        ],
         "chapter_13/invalid_types/extra_credit/bitwise_xor.c": [
             "bitwise"
+        ],
+        "chapter_13/invalid_types/extra_credit/compound_bitwise_xor.c": [
+            "bitwise", "compound"
+        ],
+        "chapter_13/invalid_types/extra_credit/compound_bitwise_and.c": [
+            "bitwise", "compound"
+        ],
+        "chapter_13/invalid_types/extra_credit/compound_right_bitshift.c": [
+            "bitwise", "compound"
+        ],
+        "chapter_13/invalid_types/extra_credit/compound_left_bitshift.c": [
+            "bitwise", "compound"
+        ],
+        "chapter_13/invalid_types/extra_credit/compound_mod.c": [
+            "compound"
+        ],
+        "chapter_13/invalid_types/extra_credit/compound_mod_2.c": [
+            "compound"
         ],
         "chapter_13/invalid_types/extra_credit/switch_double_case.c": [
             "switch"
@@ -668,6 +692,9 @@
         ],
         "chapter_13/valid/extra_credit/compound_assign.c": [
             "compound"
+        ],
+        "chapter_13/valid/extra_credit/incr_and_decr.c": [
+            "increment"
         ],
         "chapter_13/valid/extra_credit/nan.c": [
             "nan"
@@ -702,6 +729,7 @@
         "chapter_13/valid/libraries/double_params_and_result.c"
     ],
     "libs": {
+        "chapter_13/valid/extra_credit/nan.c": ["chapter_13/helper_libs/nan.c"],
         "chapter_19/unreachable_code_elimination/infinite_loop.c": [
             "chapter_19/helper_libs/exit.c"
         ],

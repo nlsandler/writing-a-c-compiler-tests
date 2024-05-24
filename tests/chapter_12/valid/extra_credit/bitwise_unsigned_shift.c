@@ -20,5 +20,16 @@ int main(void) {
         return 2;
     }
 
+    /* Test unsigned shift with variable shift counts, to make sure we handle
+     * them correctly in codegen/code emission */
+     static int shiftcount = 5;
+    if ((1000000u >> shiftcount) != 31250) {
+        return 3;
+    }
+
+    if ((1000000u << shiftcount) != 32000000) {
+        return 4;
+    }
+
     return 0; // success
 }

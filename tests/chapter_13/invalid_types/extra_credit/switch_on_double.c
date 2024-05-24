@@ -4,7 +4,7 @@ int main(void) {
      * must be an integer, not a double
      */
     switch (d) {
-        case 10.0: return 0;
+        case 10: return 0;
     }
     return 1;
 }
