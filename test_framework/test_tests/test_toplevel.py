@@ -180,6 +180,37 @@ class TopLevelTest(unittest.TestCase):
         actual_test_count = get_test_count(testrun)
         self.assertEqual(expected_test_count, actual_test_count)
 
+    def test_expected_error_code(self) -> None:
+        """The --expected-error-codes option specifies expected error codes when compilation fails."""
+
+        # NQCC throws error code 125 in all cases
+        # This should succeed b/c it specifies the error code we'll actually throw
+        try:
+            testrun = run_test_script(
+                "./test_compiler $NQCC --chapter 1 --expected-error-codes 125"
+            )
+        except subprocess.CalledProcessError as err:
+            self.fail(f"Test command failed with message {err.stderr}")
+
+        # Specify multiple error codes including the one we'll actually throw; this should also succeed
+        try:
+            testrun = run_test_script(
+                "./test_compiler $NQCC --chapter 1 --expected-error-codes 125 127"
+            )
+        except subprocess.CalledProcessError as err:
+            self.fail(f"Test command failed with message {err.stderr}")
+
+        # Here all invalid tests should fail b/c we won't use the expected error code
+        with self.assertRaises(subprocess.CalledProcessError) as expected_failure:
+            run_test_script(
+                "./test_compiler $NQCC --chapter 1 --expected-error-codes 127"
+            )
+        failure_count = get_failure_count(expected_failure.exception)
+        expected_failure_count = len(
+            list((TEST_DIR / "chapter_1").rglob("invalid_*/*.c"))
+        )
+        self.assertEqual(expected_failure_count, failure_count)
+
 
 class BadSourceTest(unittest.TestCase):
     # paths that we'll refer to in setup/teardown

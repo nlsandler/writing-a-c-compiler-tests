@@ -51,6 +51,12 @@ git checkout complete-test-suite # until it's merged into main
 ./test_compiler ~/mycc --chapter 9 --bitwise --compound
 ```
 
+6. Run test cases for chapter 1; specify that the compiler exits with code `1` or `2` if it hits a lexer or parser error. When specified, an invalid test case passes only if the compiler exits with one of these exit codes, and fails otherwise. Useful for distinguishing expected failures (i.e. the compiler detected an error) from unexpected failures (e.g. internal errors, segfaults).
+
+```
+./test_compiler ~/my_cc --chapter 1 --expected-error-codes 1 2
+```
+
 # Note for Early Access Readers
 
 Two things have changed since the initial early access version of the book:

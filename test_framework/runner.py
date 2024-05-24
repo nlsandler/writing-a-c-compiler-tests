@@ -117,6 +117,15 @@ def parse_arguments() -> argparse.Namespace:
         default="run",
         choices=["lex", "parse", "validate", "tacky", "codegen", "run"],
     )
+    parser.add_argument(
+        "--expected-error-codes",
+        type=int,
+        nargs="+",
+        help="Specify one or more exit codes the compiler may return when rejecting a program. "
+        "If specified, invalid test cases will pass only if the compiler exits with one of these error codes. "
+        "If not specified, invalid test cases pass if the compiler exits with any non-zero code. "
+        "Used to distinguish between expected failures (i.e. rejecting an invalid source program) and unexpected failures (segfaults/internal errors).",
+    )
     # options to enable extra-credit tests
     parser.add_argument(
         "--bitwise",
@@ -248,6 +257,11 @@ def parse_arguments() -> argparse.Namespace:
 
     if args.no_coalescing and args.chapter < TACKY_OPT_CHAPTER:
         warnings.warn("Option --no-coalescing has no impact on Part I & Part II tests")
+
+    if args.expected_error_codes and 0 in args.expected_error_codes:
+        parser.error(
+            "0 is not a valid argument to --expected-error-codes; it must indicate success."
+        )
 
     return args
 
@@ -420,6 +434,7 @@ def main() -> int:
                 stage=args.stage,
                 extra_credit_flags=extra_credit,
                 skip_invalid=args.skip_invalid,
+                error_codes=args.expected_error_codes,
             )
             test_instance = unittest.defaultTestLoader.loadTestsFromTestCase(test_class)
             test_suite.addTest(test_instance)

@@ -186,6 +186,9 @@ class TestChapter(unittest.TestCase):
     # last stage of the compiler we're testing; None if we're testing the whole thing
     exit_stage: str
 
+    # expected compiler exit codes when rejecting invalid programs (None if we accept any non-zero exit code)
+    error_codes: list[int]
+
     def tearDown(self) -> None:
         """Delete files produced during this test run (e.g. assembly and object files)"""
         garbage_files = (
@@ -287,11 +290,21 @@ class TestChapter(unittest.TestCase):
         when we use the --stage validate option, test_type_error will call compile_failure
         but when we use the --stage parse option, test_type_error will call compile_success (below)
         """
+        result: subprocess.CompletedProcess[str]
         with self.assertRaises(
             subprocess.CalledProcessError, msg=f"Didn't catch error in {source_file}"
         ):
             result = self.invoke_compiler(source_file)
             result.check_returncode()  # raise CalledProcessError if return code is non-zero
+
+        # make sure we got an expected error code, if specified
+        if self.error_codes:
+            exit_code_list = ", ".join(str(e) for e in self.error_codes)
+            self.assertIn(
+                result.returncode,
+                self.error_codes,
+                msg=f"Compilation failed with exit code {result.returncode}, but expected one of the following exit codes: {exit_code_list}.",
+            )
 
         self.validate_no_output(source_file)
 
@@ -667,6 +680,7 @@ def build_test_class(
     stage: str,
     extra_credit_flags: ExtraCredit,
     skip_invalid: bool,
+    error_codes: list[int],
 ) -> Type[unittest.TestCase]:
     """Construct the test class for a normal (non-optimization) chapter.
 
@@ -681,6 +695,7 @@ def build_test_class(
         stage: only compile programs up through this stage
         extra_credit_flags: extra credit features to test, represented as a bit vector
         skip_invalid: true if we should skip invalid test programs
+        error_codes: expected compiler exit codes when rejecting invalid programs
     """
 
     # base directory with all of this chapter's test programs
@@ -694,6 +709,7 @@ def build_test_class(
         "cc": compiler,
         "options": options,
         "exit_stage": None if stage == "run" else stage,
+        "error_codes": error_codes,
     }
 
     # generate tests for invalid test programs and add them to testclass_attrs
