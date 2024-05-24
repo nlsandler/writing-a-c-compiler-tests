@@ -18,6 +18,12 @@ int main(void) {
         return 3;
     }
 
+    // try shift count > 32 (shift count between 32 and 64 is undefined when
+    // shifting an int, well-defined when shifting a long)
+    if ((40l << 40) !=  43980465111040l) {
+        return 4;
+    }
+
     // use long as right shift operand
     // NOTE: we shouldn't perform usual arithmetic conversions here
     // (result has same type as left operand) but we won't be able to fully
@@ -32,21 +38,21 @@ int main(void) {
 
     // should be -2^28
     if (i >> long_shiftcount != -268435456) {
-        return 4;
+        return 5;
     }
 
     i = -1;
     if (i >> 10l != -1) {
-        return 5;
+        return 6;
     }
 
     // make sure we didn't shift any bits into i's neighbors
     if (i_neighbor1) {
-        return 6;
+        return 7;
     }
 
     if (i_neighbor2) {
-        return 7;
+        return 8;
     }
 
     return 0;
