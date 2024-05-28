@@ -409,7 +409,8 @@ def gen_assembly(failure_case: test_framework.basic.TestChapter) -> None:
     # get name of test method (e.g. test_valid/special_values/infinity)
     test_method_name = failure_case.id().split(".")[-1]
     # now remove "test_" prefix and add ".c" suffix to get e.g. valid/special_values/infinity.c
-    relative_src_path = (test_method_name.removeprefix("test_")) + ".c"
+    # (don't use removeprefix to support Python 3.8)
+    relative_src_path = (test_method_name[len("test_") :]) + ".c"
     # finally, get absolute path to file under test
     absolute_src_path = (failure_case.test_dir / relative_src_path).with_suffix(".c")
     # compile it with -S option (note that we don't need -lm or -c b/c we stop before assembly/linking)
