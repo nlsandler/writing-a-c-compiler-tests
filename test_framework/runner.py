@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Iterable, Optional, List, Type
 
 import test_framework
+import test_framework.basic
 import test_framework.regalloc
 import test_framework.tacky.suite
 from test_framework.basic import ExtraCredit
@@ -125,6 +126,11 @@ def parse_arguments() -> argparse.Namespace:
         "If specified, invalid test cases will pass only if the compiler exits with one of these error codes. "
         "If not specified, invalid test cases pass if the compiler exits with any non-zero code. "
         "Used to distinguish between expected failures (i.e. rejecting an invalid source program) and unexpected failures (segfaults/internal errors).",
+    )
+    parser.add_argument(
+        "--keep-asm-on-failure",
+        action="store_true",
+        help="Recompile any valid test programs that fail with the -S option to preserve assembly output.",
     )
     # options to enable extra-credit tests
     parser.add_argument(
@@ -386,6 +392,33 @@ Then try this command again.
     return True
 
 
+def is_valid_test_case(failure_case: unittest.TestCase) -> bool:
+    invalid_dirs = test_framework.basic.dirs["invalid"]
+    # if the test name (which includes path to the file under test) contains the name
+    # of any invalid subdirectory, the program under test is invalid.
+    if any(dir + "/" in failure_case.id() for dir in invalid_dirs):
+        return False
+    return True
+
+
+def gen_assembly(failure_case: test_framework.basic.TestChapter) -> None:
+    """Recompile failed test with -S option to generate assembly"""
+    # HACK: work backwards from test method name to determine name of file under test
+    # given fully qualified test name (e.g.
+    # test_framework.basic.TestChapter13.test_valid/special_values/infinity),
+    # get name of test method (e.g. test_valid/special_values/infinity)
+    test_method_name = failure_case.id().split(".")[-1]
+    # now remove "test_" prefix and add ".c" suffix to get e.g. valid/special_values/infinity.c
+    relative_src_path = (test_method_name.removeprefix("test_")) + ".c"
+    # finally, get absolute path to file under test
+    absolute_src_path = (failure_case.test_dir / relative_src_path).with_suffix(".c")
+    # compile it with -S option (note that we don't need -lm or -c b/c we stop before assembly/linking)
+    # if compilation fails, don't raise an error or print out stdout/stderr; we've already
+    # reported that issue during test run
+    compiler_args = [failure_case.cc] + failure_case.options + ["-S", absolute_src_path]
+    subprocess.run(compiler_args, check=False, text=True, capture_output=True)
+
+
 def main() -> int:
     """Main entry point for test runner"""
     args = parse_arguments()
@@ -470,4 +503,15 @@ def main() -> int:
     result = runner.run(test_suite)
     if result.wasSuccessful():
         return 0
+
+    if args.keep_asm_on_failure and args.stage == "run":
+        for failure_case, _ in result.failures:
+            assert isinstance(
+                failure_case, test_framework.basic.TestChapter
+            )  # placate mypy
+            # no point in trying to emit assembly for invalid test programs,
+            # since the compiler is supposed to fail before assembly generation
+            if is_valid_test_case(failure_case):
+                gen_assembly(failure_case)
+
     return 1

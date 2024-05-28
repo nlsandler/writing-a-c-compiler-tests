@@ -17,6 +17,7 @@ from typing import Union, Sequence
 
 from ..regalloc import REGALLOC_TESTS
 from ..basic import (
+    ASSEMBLY_LIBS,
     EXPECTED_RESULTS,
     ROOT_DIR,
     TEST_DIR,
@@ -273,6 +274,23 @@ class BadSourceTest(unittest.TestCase):
         shutil.copy(tmp_dse, cls.dse)
         cls.tmpdir.cleanup()
 
+        # remove intermediate files produced by --keep-asm-on-failure
+        for f in (TEST_DIR / f"chapter_1").rglob("*.s"):
+            if f.name not in ASSEMBLY_LIBS:
+                f.unlink(missing_ok=True)
+
+
+    def assert_no_intermediate_files(self, chapter: int) -> None:
+        # Executables, *.i files, etc should have been cleaned up
+        intermediate_files = [
+            str(f)
+            for f in (TEST_DIR / f"chapter_{chapter}").rglob("*")
+            if not f.is_dir()
+            and f.suffix not in [".c", ".h", ".md"]
+            and f.name not in ASSEMBLY_LIBS
+        ]
+        self.assertFalse(intermediate_files, msg=f"Found intermediate files that should have been cleaned up: {", ".join(intermediate_files)}")
+
     def test_bad_retval(self) -> None:
         """Make sure the test fails if retval is different than expected"""
 
@@ -283,6 +301,7 @@ class BadSourceTest(unittest.TestCase):
         failure_count = get_failure_count(cpe.exception)
         self.assertEqual(actual_test_count, expected_test_count)
         self.assertEqual(1, failure_count)
+        self.assert_no_intermediate_files(1)
 
     def test_bad_stdout(self) -> None:
         """Make sure test fails if stdout is different than expected"""
@@ -294,6 +313,7 @@ class BadSourceTest(unittest.TestCase):
         failure_count = get_failure_count(cpe.exception)
         self.assertEqual(actual_test_count, expected_test_count)
         self.assertEqual(1, failure_count)
+        self.assert_no_intermediate_files(9)
 
     def test_optimization_failure(self) -> None:
         """Test fails if code hasn't been optimized as expected"""
@@ -315,6 +335,7 @@ class BadSourceTest(unittest.TestCase):
             msg=f"Expected 1 failure but got {failure_count}",
         )
         self.assertEqual(expected_test_count, test_count)
+        self.assert_no_intermediate_files(19)
 
     def test_intermediate(self) -> None:
         """Changed code shouldn't impact intermediate stages"""
@@ -327,3 +348,26 @@ class BadSourceTest(unittest.TestCase):
 
         actual_test_count = get_test_count(testrun)
         self.assertEqual(expected_test_count, actual_test_count)
+        self.assert_no_intermediate_files(19)
+
+    def test_keep_asm(self) -> None:
+        """Use --keep-asm-on-failure option to generate assembly for failures"""
+        with self.assertRaises(subprocess.CalledProcessError) as cpe:
+            run_test_script("./test_compiler $NQCC --chapter 1")
+        # make sure we preserved .s file for ret0, which should fail
+        expected_asm = self.__class__.ret0.with_suffix(".s")
+        self.assertTrue(
+            expected_asm.exists,
+            msg=f"{expected_asm} should be preserved on failure but wasn't found",
+        )
+
+    def test_keep_asm_optimize(self) -> None:
+        """Make sure --keep-asm-on-failure works for chapter 19 tests"""
+        with self.assertRaises(subprocess.CalledProcessError) as cpe:
+            run_test_script("./test_compiler $NQCC --chapter 19")
+        # make sure we preserved .s file for ret0, which should fail
+        expected_asm = self.__class__.dse.with_suffix(".s")
+        self.assertTrue(
+            expected_asm.exists,
+            msg=f"{expected_asm} should be preserved on failure but wasn't found",
+        )
