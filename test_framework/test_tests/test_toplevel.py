@@ -4,6 +4,7 @@ These assume we have access to two copies of the reference implementation:
 - $$NQCC_PARTIAL is a path to version of the compiler that is implemented
   through chapter 19 but doesn't include register allocation
 """
+
 from __future__ import annotations
 
 import re
@@ -279,7 +280,6 @@ class BadSourceTest(unittest.TestCase):
             if f.name not in ASSEMBLY_LIBS:
                 f.unlink(missing_ok=True)
 
-
     def assert_no_intermediate_files(self, chapter: int) -> None:
         # Executables, *.i files, etc should have been cleaned up
         intermediate_files = [
@@ -289,7 +289,11 @@ class BadSourceTest(unittest.TestCase):
             and f.suffix not in [".c", ".h", ".md"]
             and f.name not in ASSEMBLY_LIBS
         ]
-        self.assertFalse(intermediate_files, msg=f"Found intermediate files that should have been cleaned up: {", ".join(intermediate_files)}")
+        files_str = ", ".join(intermediate_files)
+        self.assertFalse(
+            intermediate_files,
+            msg=f"Found intermediate files that should have been cleaned up: {files_str}",
+        )
 
     def test_bad_retval(self) -> None:
         """Make sure the test fails if retval is different than expected"""
