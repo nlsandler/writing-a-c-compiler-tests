@@ -5,6 +5,8 @@ int main(void) {
         goto other_if;
         sum = 0;  // not executed
     first_if:
+        // when we jump back into block at this label, a is uninitialized, so we need to initialize it again
+        a = 5;
         sum = sum + a;  // sum = 11
     }
     if (0) {
