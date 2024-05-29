@@ -699,10 +699,25 @@
         "chapter_13/valid/extra_credit/nan.c": [
             "nan"
         ],
+        "chapter_14/invalid_declarations/extra_credit/addr_of_label.c": [
+            "goto"
+        ],
+        "chapter_14/invalid_declarations/extra_credit/deref_label.c": [
+            "goto"
+        ],
         "chapter_14/invalid_types/extra_credit/bitwise_or_pointer.c": [
             "bitwise"
         ],
-        "chapter_14/invalid_types/extra_credit/bitwise_shift_pointer.c": [
+        "chapter_14/invalid_types/extra_credit/bitwise_xor_pointer.c": [
+            "bitwise"
+        ],
+        "chapter_14/invalid_types/extra_credit/bitwise_and_pointer.c": [
+            "bitwise"
+        ],
+        "chapter_14/invalid_types/extra_credit/bitwise_lshift_pointer.c": [
+            "bitwise"
+        ],
+        "chapter_14/invalid_types/extra_credit/bitwise_rshift_pointer.c": [
             "bitwise"
         ],
         "chapter_14/invalid_types/extra_credit/compound_divide_pointer.c": [
@@ -711,14 +726,53 @@
         "chapter_14/invalid_types/extra_credit/compound_multiply_pointer.c": [
             "compound"
         ],
+        "chapter_14/invalid_types/extra_credit/compound_mod_pointer.c": [
+            "compound"
+        ],
+        "chapter_14/invalid_types/extra_credit/compound_assignment_not_lval.c": [
+            "compound"
+        ],
+        "chapter_14/invalid_types/extra_credit/compound_assign_thru_ptr_not_lval.c": [
+            "compound"
+        ],
+        "chapter_14/invalid_types/extra_credit/bitwise_compound_assign_to_pointer.c": [
+            "compound", "bitwise"
+        ],
+        "chapter_14/invalid_types/extra_credit/bitwise_compound_assign_with_pointer.c": [
+            "compound", "bitwise"
+        ],
+        "chapter_14/invalid_types/extra_credit/prefix_incr_not_lvalue.c": [
+            "increment"
+        ],
+        "chapter_14/invalid_types/extra_credit/postfix_decr_not_lvalue.c": [
+            "increment"
+        ],
         "chapter_14/invalid_types/extra_credit/switch_on_pointer.c": [
             "switch"
         ],
         "chapter_14/valid/extra_credit/compound_assign_through_pointer.c": [
             "compound"
         ],
-        "chapter_14/valid/extra_credit/incr_through_pointer.c": [
+        "chapter_14/valid/extra_credit/compound_assign_conversion.c": [
+            "compound"
+        ],
+        "chapter_14/valid/extra_credit/incr_and_decr_through_pointer.c": [
             "increment"
+        ],
+        "chapter_14/valid/extra_credit/bitwise_ops_with_dereferenced_ptrs.c": [
+            "bitwise"
+        ],
+        "chapter_14/valid/extra_credit/bitshift_dereferenced_ptrs.c": [
+            "bitwise"
+        ],
+        "chapter_14/valid/extra_credit/eval_compound_lhs_once.c": [
+            "compound"
+        ],
+        "chapter_14/valid/extra_credit/compound_bitwise_dereferenced_ptrs.c": [
+            "compound", "bitwise"
+        ],
+        "chapter_14/valid/extra_credit/switch_dereferenced_pointer.c": [
+            "switch"
         ],
         "chapter_15/valid/extra_credit/incr_ptr.c": [
             "increment"

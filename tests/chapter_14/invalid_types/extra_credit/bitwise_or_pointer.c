@@ -1,6 +1,7 @@
-/* It's illegal to apply bitwise |, &, or ^ to pointers */
+/* It's illegal to apply bitwise operations to pointers */
 int main(void) {
     int *x = 0;
     int *y = 0;
-    return (int) (x | y);
+    x | y;
+    return 0;
 }

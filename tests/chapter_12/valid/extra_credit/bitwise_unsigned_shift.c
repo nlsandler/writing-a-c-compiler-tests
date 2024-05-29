@@ -1,8 +1,7 @@
 /* Tests for bit-shift operations on unsigned integers */
 
 int main(void) {
-
-    unsigned int ui = -1u; // 2^32 - 1, or 4294967295
+    unsigned int ui = -1u;  // 2^32 - 1, or 4294967295
 
     /* Shifting left by 2 is like subtracting 3;
      * note that we don't cast ui to a long first.
@@ -22,7 +21,7 @@ int main(void) {
 
     /* Test unsigned shift with variable shift counts, to make sure we handle
      * them correctly in codegen/code emission */
-     static int shiftcount = 5;
+    static int shiftcount = 5;
     if ((1000000u >> shiftcount) != 31250) {
         return 3;
     }
@@ -31,5 +30,5 @@ int main(void) {
         return 4;
     }
 
-    return 0; // success
+    return 0;  // success
 }
