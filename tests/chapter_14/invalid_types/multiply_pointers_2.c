@@ -2,5 +2,6 @@
 int main(void)
 {
     int *x = 0;
-    return (int)(0 * x);
+    (0 * x);
+    return 0;
 }

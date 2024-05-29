@@ -3,5 +3,6 @@ int main(void)
 {
     int x = 10;
     int *y = &x;
-    return (y / 8);
+    (y / 8);
+    return 0;
 }
