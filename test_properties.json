@@ -645,6 +645,9 @@
         "chapter_12/valid/extra_credit/switch_uint.c": [
             "switch"
         ],
+        "chapter_12/valid/extra_credit/postfix_precedence.c": [
+            "increment"
+        ],
         "chapter_13/invalid_types/extra_credit/bitwise_and.c": [
             "bitwise"
         ],
