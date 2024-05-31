@@ -592,7 +592,8 @@
             "switch"
         ],
         "chapter_11/invalid_labels/extra_credit/bitshift_duplicate_cases.c": [
-            "switch", "bitwise"
+            "switch",
+            "bitwise"
         ],
         "chapter_11/valid/extra_credit/bitwise_long_op.c": [
             "bitwise"
@@ -610,10 +611,12 @@
             "increment"
         ],
         "chapter_11/valid/extra_credit/compound_bitshift.c": [
-            "bitwise", "compound"
+            "bitwise",
+            "compound"
         ],
         "chapter_11/valid/extra_credit/compound_bitwise.c": [
-            "bitwise", "compound"
+            "bitwise",
+            "compound"
         ],
         "chapter_11/valid/extra_credit/switch_int.c": [
             "switch"
@@ -634,10 +637,12 @@
             "compound"
         ],
         "chapter_12/valid/extra_credit/compound_bitshift.c": [
-            "compound", "bitwise"
+            "compound",
+            "bitwise"
         ],
         "chapter_12/valid/extra_credit/compound_bitwise.c": [
-            "compound", "bitwise"
+            "compound",
+            "bitwise"
         ],
         "chapter_12/valid/extra_credit/unsigned_incr_decr.c": [
             "increment"
@@ -664,16 +669,20 @@
             "bitwise"
         ],
         "chapter_13/invalid_types/extra_credit/compound_bitwise_xor.c": [
-            "bitwise", "compound"
+            "bitwise",
+            "compound"
         ],
         "chapter_13/invalid_types/extra_credit/compound_bitwise_and.c": [
-            "bitwise", "compound"
+            "bitwise",
+            "compound"
         ],
         "chapter_13/invalid_types/extra_credit/compound_right_bitshift.c": [
-            "bitwise", "compound"
+            "bitwise",
+            "compound"
         ],
         "chapter_13/invalid_types/extra_credit/compound_left_bitshift.c": [
-            "bitwise", "compound"
+            "bitwise",
+            "compound"
         ],
         "chapter_13/invalid_types/extra_credit/compound_mod.c": [
             "compound"
@@ -739,10 +748,12 @@
             "compound"
         ],
         "chapter_14/invalid_types/extra_credit/bitwise_compound_assign_to_pointer.c": [
-            "compound", "bitwise"
+            "compound",
+            "bitwise"
         ],
         "chapter_14/invalid_types/extra_credit/bitwise_compound_assign_with_pointer.c": [
-            "compound", "bitwise"
+            "compound",
+            "bitwise"
         ],
         "chapter_14/invalid_types/extra_credit/prefix_incr_not_lvalue.c": [
             "increment"
@@ -772,13 +783,77 @@
             "compound"
         ],
         "chapter_14/valid/extra_credit/compound_bitwise_dereferenced_ptrs.c": [
-            "compound", "bitwise"
+            "compound",
+            "bitwise"
         ],
         "chapter_14/valid/extra_credit/switch_dereferenced_pointer.c": [
             "switch"
         ],
-        "chapter_15/valid/extra_credit/incr_ptr.c": [
+        "chapter_15/invalid_types/extra_credit/compound_add_double_to_pointer.c": [
+            "compound"
+        ],
+        "chapter_15/invalid_types/extra_credit/compound_add_two_pointers.c": [
+            "compound"
+        ],
+        "chapter_15/invalid_types/extra_credit/compound_sub_pointer_from_int.c": [
+            "compound"
+        ],
+        "chapter_15/invalid_types/extra_credit/compound_assign_to_array.c": [
             "increment"
+        ],
+        "chapter_15/invalid_types/extra_credit/compound_assign_to_nested_array.c": [
+            "increment"
+        ],
+        "chapter_15/invalid_types/extra_credit/postfix_incr_array.c": [
+            "increment"
+        ],
+        "chapter_15/invalid_types/extra_credit/prefix_decr_array.c": [
+            "increment"
+        ],
+        "chapter_15/invalid_types/extra_credit/prefix_decr_nested_array.c": [
+            "increment"
+        ],
+        "chapter_15/invalid_types/extra_credit/postfix_incr_nested_array.c": [
+            "increment"
+        ],
+        "chapter_15/valid/extra_credit/incr_and_decr_pointers.c": [
+            "increment"
+        ],
+        "chapter_15/valid/extra_credit/incr_and_decr_nested_pointers.c": [
+            "increment"
+        ],
+        "chapter_15/valid/extra_credit/postfix_prefix_precedence.c": [
+            "increment"
+        ],
+        "chapter_15/valid/extra_credit/incr_decr_subscripted_vals.c": [
+            "increment"
+        ],
+        "chapter_15/valid/extra_credit/compound_assign_to_subscripted_val.c": [
+            "compound"
+        ],
+        "chapter_15/valid/extra_credit/compound_assign_to_nested_subscript.c": [
+            "compound"
+        ],
+        "chapter_15/valid/extra_credit/compound_lval_evaluated_once.c": [
+            "compound"
+        ],
+        "chapter_15/valid/extra_credit/compound_pointer_assignment.c": [
+            "compound"
+        ],
+        "chapter_15/valid/extra_credit/compound_nested_pointer_assignment.c": [
+            "compound"
+        ],
+        "chapter_15/valid/extra_credit/compound_assign_array_of_pointers.c": [
+            "compound"
+        ],
+        "chapter_15/valid/extra_credit/compound_assign_and_increment.c": [
+            "compound", "increment"
+        ],
+        "chapter_15/valid/extra_credit/compound_bitwise_subscript.c": [
+            "compound", "bitwise"
+        ],
+        "chapter_15/valid/extra_credit/bitwise_subscript.c": [
+            "bitwise"
         ]
     },
     "requires_mathlib": [
@@ -786,7 +861,9 @@
         "chapter_13/valid/libraries/double_params_and_result.c"
     ],
     "libs": {
-        "chapter_13/valid/extra_credit/nan.c": ["chapter_13/helper_libs/nan.c"],
+        "chapter_13/valid/extra_credit/nan.c": [
+            "chapter_13/helper_libs/nan.c"
+        ],
         "chapter_19/unreachable_code_elimination/infinite_loop.c": [
             "chapter_19/helper_libs/exit.c"
         ],
