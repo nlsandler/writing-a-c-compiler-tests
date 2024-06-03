@@ -816,6 +816,9 @@
         "chapter_15/invalid_types/extra_credit/postfix_incr_nested_array.c": [
             "increment"
         ],
+        "chapter_15/invalid_types/extra_credit/switch_on_array.c": [
+            "switch"
+        ],
         "chapter_15/valid/extra_credit/incr_and_decr_pointers.c": [
             "increment"
         ],

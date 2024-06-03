@@ -23,16 +23,26 @@ int main(void) {
         return 3; // fail
     }
 
+    // make sure postfix ++ is higher precedence than dereference (*) operator
+    if (*ptr++ != 1) {
+        return 4; // fail
+    }
+
+    // check side effect of decrementing pointer
+    if (*ptr != 2) {
+        return 5;
+    }
+
     // first four elements of arr have value as before same
     for (int i = 0; i < 4; i++) {
         if (arr[i] != i + 1) {
-            return 4; // fail
+            return 6; // fail
         }
     }
 
     // check side effect of incrementing last element
     if (arr[4] != 6) {
-        return 5; // fail
+        return 7; // fail
     }
 
     return 0;
