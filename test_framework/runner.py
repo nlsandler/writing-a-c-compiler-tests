@@ -122,7 +122,8 @@ def parse_arguments() -> argparse.Namespace:
         "--expected-error-codes",
         type=int,
         nargs="+",
-        help="Specify one or more exit codes the compiler may return when rejecting a program. "
+        metavar="n",
+        help="Specify one or more exit codes (in range 1-255) that your compiler may return when rejecting a program. "
         "If specified, invalid test cases will pass only if the compiler exits with one of these error codes. "
         "If not specified, invalid test cases pass if the compiler exits with any non-zero code. "
         "Used to distinguish between expected failures (i.e. rejecting an invalid source program) and unexpected failures (segfaults/internal errors).",
@@ -264,10 +265,14 @@ def parse_arguments() -> argparse.Namespace:
     if args.no_coalescing and args.chapter < TACKY_OPT_CHAPTER:
         warnings.warn("Option --no-coalescing has no impact on Part I & Part II tests")
 
-    if args.expected_error_codes and 0 in args.expected_error_codes:
-        parser.error(
-            "0 is not a valid argument to --expected-error-codes; it must indicate success."
-        )
+    if args.expected_error_codes:
+
+        out_of_range = [str(i) for i in args.expected_error_codes if i < 1 or i > 255]
+        if out_of_range:
+            bad_codes = ", ".join(out_of_range)
+            s = "s" if len(out_of_range) > 1 else ""
+            msg = f"Invalid argument{s} to --expected-error-codes: {bad_codes}. Invalid exit codes must be between 1 and 255."
+            parser.error(msg)
 
     return args
 
