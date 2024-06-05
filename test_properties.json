@@ -918,7 +918,8 @@
             "bitwise"
         ],
         "chapter_16/valid/extra_credit/compound_bitwise_ops_chars.c": [
-            "bitwise", "compound"
+            "bitwise",
+            "compound"
         ],
         "chapter_16/valid/extra_credit/promote_switch_cond.c": [
             "switch"
@@ -931,6 +932,61 @@
         ],
         "chapter_16/valid/extra_credit/char_consts_as_cases.c": [
             "switch"
+        ],
+        "chapter_17/invalid_types/extra_credit/bitwise_void.c": [
+            "bitwise"
+        ],
+        "chapter_17/invalid_types/extra_credit/bitshift_void.c": [
+            "bitwise"
+        ],
+        "chapter_17/invalid_types/extra_credit/compound_void_rval.c": [
+            "compound"
+        ],
+        "chapter_17/invalid_types/extra_credit/compound_void_rval_add.c": [
+            "compound"
+        ],
+        "chapter_17/invalid_types/extra_credit/compound_add_void_pointer.c": [
+            "compound"
+        ],
+        "chapter_17/invalid_types/extra_credit/compound_sub_void_pointer.c": [
+            "compound"
+        ],
+        "chapter_17/invalid_types/extra_credit/compound_void_rval_bitshift.c": [
+            "compound",
+            "bitwise"
+        ],
+        "chapter_17/invalid_types/extra_credit/postfix_decr_void.c": [
+            "increment"
+        ],
+        "chapter_17/invalid_types/extra_credit/prefix_incr_void.c": [
+            "increment"
+        ],
+        "chapter_17/invalid_types/extra_credit/postfix_decr_void_pointer.c": [
+            "increment"
+        ],
+        "chapter_17/invalid_types/extra_credit/postfix_incr_void_pointer.c": [
+            "increment"
+        ],
+        "chapter_17/invalid_types/extra_credit/prefix_decr_void_pointer.c": [
+            "increment"
+        ],
+        "chapter_17/invalid_types/extra_credit/prefix_incr_void_pointer.c": [
+            "increment"
+        ],
+        "chapter_17/invalid_types/extra_credit/switch_void.c": [
+            "switch"
+        ],
+        "chapter_17/valid/extra_credit/sizeof_bitwise.c": [
+            "bitwise"
+        ],
+        "chapter_17/valid/extra_credit/sizeof_incr.c": [
+            "increment"
+        ],
+        "chapter_17/valid/extra_credit/sizeof_compound.c": [
+            "compound"
+        ],
+        "chapter_17/valid/extra_credit/sizeof_compound_bitwise.c": [
+            "compound", "bitwise"
         ]
     },
     "requires_mathlib": [
