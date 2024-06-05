@@ -850,13 +850,87 @@
             "compound"
         ],
         "chapter_15/valid/extra_credit/compound_assign_and_increment.c": [
-            "compound", "increment"
+            "compound",
+            "increment"
         ],
         "chapter_15/valid/extra_credit/compound_bitwise_subscript.c": [
-            "compound", "bitwise"
+            "compound",
+            "bitwise"
         ],
         "chapter_15/valid/extra_credit/bitwise_subscript.c": [
             "bitwise"
+        ],
+        "chapter_16/invalid_parse/extra_credit/string_literal_label.c": [
+            "goto"
+        ],
+        "chapter_16/invalid_parse/extra_credit/string_literal_goto.c": [
+            "goto"
+        ],
+        "chapter_16/invalid_parse/extra_credit/character_const_goto.c": [
+            "goto"
+        ],
+        "chapter_16/invalid_parse/extra_credit/character_const_label.c": [
+            "goto"
+        ],
+        "chapter_16/invalid_types/extra_credit/bit_shift_string.c": [
+            "bitwise"
+        ],
+        "chapter_16/invalid_types/extra_credit/bitwise_operation_on_string.c": [
+            "bitwise"
+        ],
+        "chapter_16/invalid_types/extra_credit/case_statement_string.c": [
+            "switch"
+        ],
+        "chapter_16/invalid_types/extra_credit/switch_on_string.c": [
+            "switch"
+        ],
+        "chapter_16/invalid_types/extra_credit/compound_assign_from_string.c": [
+            "compound"
+        ],
+        "chapter_16/invalid_types/extra_credit/compound_assign_to_string.c": [
+            "compound"
+        ],
+        "chapter_16/invalid_types/extra_credit/postfix_incr_string.c": [
+            "increment"
+        ],
+        "chapter_16/invalid_labels/extra_credit/duplicate_case_char_const.c": [
+            "switch"
+        ],
+        "chapter_16/invalid_types/extra_credit/prefix_incr_string.c": [
+            "increment"
+        ],
+        "chapter_16/valid/extra_credit/incr_decr_chars.c": [
+            "increment"
+        ],
+        "chapter_16/valid/extra_credit/incr_decr_unsigned_chars.c": [
+            "increment"
+        ],
+        "chapter_16/valid/extra_credit/compound_assign_chars.c": [
+            "compound"
+        ],
+        "chapter_16/valid/extra_credit/bitshift_chars.c": [
+            "bitwise"
+        ],
+        "chapter_16/valid/extra_credit/bitwise_ops_chars.c": [
+            "bitwise"
+        ],
+        "chapter_16/valid/extra_credit/bitwise_ops_character_constants.c": [
+            "bitwise"
+        ],
+        "chapter_16/valid/extra_credit/compound_bitwise_ops_chars.c": [
+            "bitwise", "compound"
+        ],
+        "chapter_16/valid/extra_credit/promote_switch_cond.c": [
+            "switch"
+        ],
+        "chapter_16/valid/extra_credit/promote_switch_cond_2.c": [
+            "switch"
+        ],
+        "chapter_16/valid/extra_credit/switch_on_char_const.c": [
+            "switch"
+        ],
+        "chapter_16/valid/extra_credit/char_consts_as_cases.c": [
+            "switch"
         ]
     },
     "requires_mathlib": [
