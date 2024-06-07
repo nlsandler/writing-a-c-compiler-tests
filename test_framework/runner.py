@@ -177,6 +177,13 @@ def parse_arguments() -> argparse.Namespace:
         help="Include tests for floating-point NaN",
     )
     parser.add_argument(
+        "--union",
+        action="append_const",
+        const=ExtraCredit.UNION,
+        dest="extra_credit",
+        help="Include tests for union types",
+    )
+    parser.add_argument(
         "--extra-credit",
         action="append_const",
         const=ExtraCredit.ALL,
