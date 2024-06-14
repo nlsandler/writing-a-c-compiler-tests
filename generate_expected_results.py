@@ -144,7 +144,9 @@ def main() -> None:
             if needs_wrapper(prog):
                 source_files.append(regalloc.WRAPPER_SCRIPT)
 
-        opts = []
+        opts = (
+            []
+        )  # to help catch behavior that relies on faulty assumptions about initialization
         if any(basic.needs_mathlib(p) for p in source_files):
             opts.append("-lm")
 

@@ -8,5 +8,5 @@ int main(void) {
     goto x;
     return 0;
 x:
-    return x.x;
+    return x.x; // expected result in 10
 }

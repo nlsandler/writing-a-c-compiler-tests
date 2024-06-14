@@ -199,7 +199,7 @@
         "chapter_6/invalid_parse/extra_credit/kw_label.c": [
             "goto"
         ],
-        "chapter_6/invalid_parse/extra_credit/goto_without_label": [
+        "chapter_6/invalid_parse/extra_credit/goto_without_label.c": [
             "goto"
         ],
         "chapter_6/invalid_semantics/extra_credit/goto_missing_label.c": [
@@ -416,9 +416,6 @@
         "chapter_8/valid/extra_credit/switch.c": [
             "switch"
         ],
-        "chapter_8/valid/extra_credit/switch_assign_in_body.c": [
-            "switch"
-        ],
         "chapter_8/valid/extra_credit/switch_assign_in_condition.c": [
             "switch"
         ],
@@ -426,9 +423,6 @@
             "switch"
         ],
         "chapter_8/valid/extra_credit/switch_single_case.c": [
-            "switch"
-        ],
-        "chapter_8/valid/extra_credit/default_only.c": [
             "switch"
         ],
         "chapter_8/valid/extra_credit/switch_break.c": [
@@ -694,9 +688,6 @@
             "switch"
         ],
         "chapter_13/invalid_types/extra_credit/switch_on_double.c": [
-            "switch"
-        ],
-        "chapter_13/invalid_types/extra_credit/switch_goto_case.c": [
             "switch"
         ],
         "chapter_13/valid/extra_credit/compound_assign_implicit_cast.c": [
@@ -1049,73 +1040,278 @@
         "chapter_18/invalid_parse/extra_credit/union_member_initializer.c": [
             "union"
         ],
-        "chapter_18/invalid_struct_tags/extra_credit/var_undeclared_union_type.c":[
+        "chapter_18/invalid_parse/extra_credit/union_empty_initializer.c": [
             "union"
         ],
-        "chapter_18/invalid_types/extra_credit/duplicate_struct_types.c": [
+        "chapter_18/invalid_parse/extra_credit/union_decl_bad_type_specifier.c": [
+            "union"
+        ],
+        "chapter_18/invalid_struct_tags/extra_credit/var_undeclared_union_type.c": [
+            "union"
+        ],
+        "chapter_18/invalid_struct_tags/extra_credit/sizeof_undeclared_union.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/other_features/duplicate_struct_types_after_label.c": [
             "goto"
         ],
-        "chapter_18/invalid_types/extra_credit/bitwise_op_structure.c": [
+        "chapter_18/invalid_types/extra_credit/other_features/bitwise_op_structure.c": [
             "bitwise"
         ],
-        "chapter_18/invalid_types/extra_credit/compound_assign_to_struct.c": [
+        "chapter_18/invalid_types/extra_credit/other_features/compound_assign_to_struct.c": [
             "compound"
         ],
-        "chapter_18/invalid_types/extra_credit/compound_assign_struct_rval.c": [
+        "chapter_18/invalid_types/extra_credit/other_features/compound_assign_struct_rval.c": [
             "compound"
         ],
-        "chapter_18/invalid_types/extra_credit/compound_assign_to_nested_struct.c": [
+        "chapter_18/invalid_types/extra_credit/other_features/compound_assign_to_nested_struct.c": [
             "compound"
         ],
-        "chapter_18/invalid_types/extra_credit/postfix_incr_struct.c": [
+        "chapter_18/invalid_types/extra_credit/other_features/postfix_incr_struct.c": [
             "increment"
         ],
-        "chapter_18/invalid_types/extra_credit/prefix_decr_struct.c": [
+        "chapter_18/invalid_types/extra_credit/other_features/prefix_decr_struct.c": [
             "increment"
         ],
-        "chapter_18/invalid_types/extra_credit/postfix_decr_struct_arrow.c": [
+        "chapter_18/invalid_types/extra_credit/other_features/postfix_decr_struct_arrow.c": [
             "increment"
         ],
-        "chapter_18/invalid_types/extra_credit/prefix_incr_nested_struct.c": [
+        "chapter_18/invalid_types/extra_credit/other_features/prefix_incr_nested_struct.c": [
             "increment"
         ],
-        "chapter_18/invalid_types/extra_credit/switch_on_struct.c": [
+        "chapter_18/invalid_types/extra_credit/other_features/switch_on_struct.c": [
             "switch"
         ],
-        "chapter_18/invalid_types/extra_credit/conflicting_definitions.c": [
+        "chapter_18/invalid_types/extra_credit/union_initializers/initializer_too_long.c": [
             "union"
         ],
-        "chapter_18/invalid_types/extra_credit/incomplete_union_type.c": [
+        "chapter_18/invalid_types/extra_credit/union_initializers/scalar_union_initializer.c": [
             "union"
         ],
-        "chapter_18/invalid_types/extra_credit/struct_shadowed_by_union.c": [
+        "chapter_18/invalid_types/extra_credit/union_initializers/static_scalar_union_initializer.c": [
             "union"
         ],
-        "chapter_18/invalid_types/extra_credit/union_shadowed_by_incomplete_struct.c": [
+        "chapter_18/invalid_types/extra_credit/union_initializers/static_too_long.c": [
             "union"
         ],
-        "chapter_18/valid/extra_credit/incr_struct_members.c": [
+        "chapter_18/invalid_types/extra_credit/union_initializers/static_union_init_not_constant.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_initializers/static_union_init_wrong_type.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_initializers/union_init_wrong_type.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_initializers/static_aggregate_init_wrong_type.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_initializers/nested_union_init_too_long.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_initializers/static_nested_init_too_long.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_initializers/static_nested_init_not_const.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_type_declarations/incomplete_union_member.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_type_declarations/union_self_reference.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_type_declarations/member_name_conflicts.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_type_declarations/duplicate_union_def.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_type_declarations/array_of_incomplete_union_type.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_struct_conflicts/tag_def_conflicts_with_decl.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_struct_conflicts/conflicting_tag_decl_and_use.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_struct_conflicts/tag_decl_conflicts_with_def.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_struct_conflicts/conflicting_tag_decl_and_use_self_reference.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_struct_conflicts/conflicting_tag_declarations.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_struct_conflicts/union_shadowed_by_incomplete_struct.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_struct_conflicts/struct_shadowed_by_union.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/scalar_required/switch_on_union.c": [
+            "union",
+            "switch"
+        ],
+        "chapter_18/invalid_types/extra_credit/scalar_required/cast_between_unions.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/scalar_required/compare_unions.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/incompatible_union_types/assign_different_union_type.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/incompatible_union_types/union_pointer_branch_mismatch.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/incompatible_union_types/union_branch_mismatch.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/incompatible_union_types/return_type_mismatch.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/incompatible_union_types/assign_scalar_to_union.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_initializers/nested_init_wrong_type.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_tag_resolution/compare_struct_and_union_ptrs.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_tag_resolution/address_of_wrong_union_type.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_tag_resolution/union_wrong_member.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_tag_resolution/distinct_union_types.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_tag_resolution/conflicting_param_union_types.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/union_tag_resolution/union_type_shadows_struct.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/bad_union_member_access/union_bad_member.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/bad_union_member_access/union_bad_pointer_member.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/bad_union_member_access/nested_non_member.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/invalid_union_lvalues/assign_non_lvalue_union_member.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/invalid_union_lvalues/address_of_non_lvalue_union_member.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/scalar_required/union_as_controlling_expression.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/scalar_required/cast_union_to_int.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/incomplete_unions/sizeof_incomplete_union_type.c": [
+            "union"
+        ],
+        "chapter_18/invalid_types/extra_credit/incomplete_unions/define_incomplete_union.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/other_features/incr_struct_members.c": [
             "increment"
         ],
-        "chapter_18/valid/extra_credit/decr_arrow_lexing.c": [
+        "chapter_18/valid/extra_credit/other_features/decr_arrow_lexing.c": [
             "increment"
         ],
-        "chapter_18/valid/extra_credit/bitwise_ops_struct_members.c": [
+        "chapter_18/valid/extra_credit/other_features/bitwise_ops_struct_members.c": [
             "bitwise"
         ],
-        "chapter_18/valid/extra_credit/label_tag_member_namespace.c": [
+        "chapter_18/valid/extra_credit/other_features/label_tag_member_namespace.c": [
             "goto"
         ],
-        "chapter_18/valid/extra_credit/compound_assign_struct_members.c": [
+        "chapter_18/valid/extra_credit/other_features/compound_assign_struct_members.c": [
             "compound"
         ],
-        "chapter_18/valid/extra_credit/struct_decl_in_switch_statement.c": [
+        "chapter_18/valid/extra_credit/other_features/struct_decl_in_switch_statement.c": [
             "switch"
         ],
-        "chapter_18/valid/extra_credit/simple_union.c": [
+        "chapter_18/valid/extra_credit/member_access/union_init_and_member_access.c": [
             "union"
         ],
-        "chapter_18/valid/extra_credit/union_shadows_struct.c": [
+        "chapter_18/valid/extra_credit/semantic_analysis/union_shadows_struct.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/semantic_analysis/struct_shadows_union.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/semantic_analysis/union_namespace.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/semantic_analysis/decl_shadows_decl.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/semantic_analysis/redeclare_union.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/semantic_analysis/union_members_same_type.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/union_copy/assign_to_union.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/size_and_offset/compare_union_pointers.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/semantic_analysis/union_self_pointer.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/union_copy/copy_thru_pointer.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/member_access/static_union_access.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/member_access/nested_union_access.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/union_copy/unions_in_conditionals.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/union_copy/copy_non_scalar_members.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/size_and_offset/union_sizes.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/semantic_analysis/cast_union_to_void.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/semantic_analysis/incomplete_union_types.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/member_access/union_temp_lifetime.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/libraries/union_inits.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/libraries/static_union_inits.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/libraries/classify_unions.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/libraries/param_passing.c": [
+            "union"
+        ],
+        "chapter_18/valid/extra_credit/libraries/union_retvals.c": [
             "union"
         ]
     },

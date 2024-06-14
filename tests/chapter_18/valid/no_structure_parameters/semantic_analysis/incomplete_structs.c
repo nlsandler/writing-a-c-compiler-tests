@@ -16,7 +16,7 @@ int puts(char *s);
 int strcmp(char *s1, char *s2);
 
 // test 1: you can declare a function that accepts/returns incomplete struct
-// types we don't define or use this function, we just need to validate that
+// types. We don't define or use this function, we just need to validate that
 // this declaration doesn't cause a compiler error
 struct never_used;
 struct never_used incomplete_fun(struct never_used x);
