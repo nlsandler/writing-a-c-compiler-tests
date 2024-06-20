@@ -125,6 +125,9 @@ def configure_tests() -> None:
         # TODO refactor getting the key/test name
         test_key = prog.relative_to(basic.TEST_DIR).with_suffix("")
         test_name = f"test_{test_key}"
+        assert not getattr(
+            SanitizerTest, test_name, None
+        )  # sanity check - no duplicate tests
         setattr(SanitizerTest, test_name, make_sanitize_test(prog))
 
 

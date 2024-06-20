@@ -1,6 +1,6 @@
 // test ++/-- with doubles
 int main(void) {
-    double d = 0.75;
+    static double d = 0.75;
     // basic tests
     if (d++ != 0.75) {
         return 1;

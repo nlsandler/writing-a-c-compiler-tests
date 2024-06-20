@@ -1,4 +1,5 @@
 """Tests for TACKY optimizations."""
+
 from __future__ import annotations
 
 import itertools
@@ -67,7 +68,7 @@ def configure_tests(
             continue
         key = program.relative_to(cls.test_dir).with_suffix("")
         name = f"test_{key}"
-
+        assert not getattr(cls, name, None)  # sanity check - no duplicate tests
         setattr(cls, name, test_maker(program))
 
 

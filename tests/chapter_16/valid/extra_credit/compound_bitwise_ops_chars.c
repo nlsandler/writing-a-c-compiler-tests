@@ -14,7 +14,7 @@ int main(void) {
     arr[0] ^= 12345;
     arr[1] |= u_arr[3];
     arr[2] &= u_arr[1] - (unsigned char) 185;
-    arr[3] <<= 7u; // this wraps around to -128, but is well-defined b/c of integer promotions
+    arr[3] <<= 7u; // this wraps around to -128; well-defined b/c of integer promotions
     static long x = 32;
     // it's undefined for shift count to be greater than width of left operand,
     // but this is well-defined b/c of integer promotions

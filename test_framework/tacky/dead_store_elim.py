@@ -10,7 +10,6 @@ from . import common
 
 
 class TestDeadStoreElimination(common.TackyOptimizationTest):
-
     """Test cases for dead store elimination.
 
 
@@ -38,6 +37,8 @@ STORE_ELIMINATED = {
     "aliased_dead_at_exit.c": 50,
     "copy_to_dead_struct.c": 10,
     "getaddr_doesnt_gen.c": 4,
+    "compound_assign_to_dead_struct_member.c": 4,
+    "copy_to_dead_union.c": 123,
 }
 
 # programs to validate with return_const_test, with expected return value
@@ -45,6 +46,9 @@ RETURN_CONST = {
     "delete_arithmetic_ops.c": 5,
     "simple.c": 3,
     "delete_dead_pt_ii_instructions.c": 5,
+    "dead_incr_decr.c": 10,
+    "decr_struct_member.c": 15,
+    "dead_compound_assignment.c": 10,
 }
 
 

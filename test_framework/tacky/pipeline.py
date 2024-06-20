@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Callable, List
 
-from ..basic import IS_OSX
+from ..basic import IS_OSX, make_test_run
 from ..parser.asm import (
     AsmItem,
     Operand,
@@ -165,9 +165,20 @@ RETVAL_TESTS = {
     "remainder_test.c": 1,
     "listing_19_5.c": 9,
     "int_min.c": -2147483648,
+    "fold_negative_bitshift.c": -2500,
+    "fold_incr_and_decr.c": 0,
+    "fold_compound_assignment.c": 0,
+    "fold_bitwise_compound_assignment.c": 0,
+    "evaluate_switch.c": 0,
     # Part II
+    "fold_negative_long_bitshift.c": -262144,
     "listing_19_5_more_types.c": 9,
     "integer_promotions.c": 0,
+    "nan.c": 0,
+    "fold_incr_decr_doubles.c": 0,
+    "fold_incr_decr_unsigned.c": 0,
+    "fold_incr_decr_chars.c": 0,
+    "eval_nan_condition.c": 0,
 }
 STORE_ELIMINATED = {"alias_analysis_change.c": [5, 10]}
 
@@ -201,6 +212,7 @@ GLOBAL_VAR_USE_ELIMINATED = {
     "propagate_into_load.c": "glob",
 }
 
+# Test programs we can constant fold down to a single return statement
 FOLD_CONST_TESTS = {
     "fold_cast_to_double.c",
     "fold_cast_from_double.c",
@@ -210,7 +222,14 @@ FOLD_CONST_TESTS = {
     "signed_unsigned_conversion.c",
     "fold_char_condition.c",
     "fold_extension_and_truncation.c",
+    "fold_compound_assign_all_types.c",
+    "fold_compound_bitwise_assign_all_types.c",
+    "return_nan.c",
 }
+
+# Tests we're just checking for correct behavior rather than inspecting
+# assembly
+BASIC_TESTS = {"compound_assign_exceptions.c"}
 
 
 def make_whole_pipeline_test(program: Path) -> Callable[[TestWholePipeline], None]:
@@ -244,6 +263,9 @@ def make_whole_pipeline_test(program: Path) -> Callable[[TestWholePipeline], Non
 
         def test(self: TestWholePipeline) -> None:
             self.fold_const_test(source_file=program)
+
+    elif program.name in BASIC_TESTS:
+        return make_test_run(program)
 
     else:
         raise RuntimeError(f"Don't know what to do with {program.name}")

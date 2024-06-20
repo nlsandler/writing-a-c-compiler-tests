@@ -43,12 +43,13 @@ def run_test_script(cmd: str) -> subprocess.CompletedProcess[str]:
 
 
 def get_expected_test_count(
-    chapters: Sequence[int], *, excluded_dirs: Sequence[str] = ()
+    chapters: Sequence[int], *, subdir: str = "", excluded_dirs: Sequence[str] = ()
 ) -> int:
     """Calculate the number of test programs in the specified chapters.
     Include invalid test programs, exclude extra credit tests.
     Args:
         * chapters: list of chapters to calculate test count for
+        * subdir: subdirectory within chapter to get test count for (for chapter 19 tests)
         * excluded_dirs: list of directory names to exclude from count
             (used to exclude directories containing helper libraries, or all_types
             directories when running int-only tests)
@@ -63,6 +64,8 @@ def get_expected_test_count(
     count = 0
     for i in chapters:
         chapter_dir = TEST_DIR / f"chapter_{i}"
+        if subdir:
+            chapter_dir = chapter_dir / subdir
         chapter_files = chapter_dir.rglob("*.c")
         count += sum(1 for f in chapter_files if should_include(f))
 
@@ -321,10 +324,8 @@ class BadSourceTest(unittest.TestCase):
 
     def test_optimization_failure(self) -> None:
         """Test fails if code hasn't been optimized as expected"""
-        expected_test_count = (
-            len(  # TODO refactor get_expected_test_count so we can use it here too
-                list((TEST_DIR / "chapter_19/dead_store_elimination").rglob("*.c"))
-            )
+        expected_test_count = get_expected_test_count(
+            [19], subdir="dead_store_elimination"
         )
 
         with self.assertRaises(subprocess.CalledProcessError) as err:

@@ -2,7 +2,7 @@ To validate that all optimization passes were run until the results converge, th
 
 In one test program (`alias_analysis_change.c`) we make sure that stores of specific constants were removed, just like we do for some dead store elimination tests.
 
-Some tests of constant folding validate that we remove all arithmetic instructions, conditional instructions, etc., similar to earlire constant-folding tests.
+Some tests of constant folding validate that we remove all arithmetic instructions, conditional instructions, etc., similar to earlier constant-folding tests.
 
 Some tests of copy propagation make sure that stores to a particular global variable were removed (because copy prop made a store to that variable dead) or uses of a particular global variable were removed (because copy prop replaced all uses of that variable).
 

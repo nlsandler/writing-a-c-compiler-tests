@@ -1,5 +1,4 @@
 /* Test that we recognize call to 'callee' is unreachable;
- * there are two paths to 'exit' but neither will reach it.
  * */
 
 int callee(void) {

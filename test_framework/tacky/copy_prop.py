@@ -1,4 +1,5 @@
 """Copy propagation tests"""
+
 from __future__ import annotations
 
 import itertools
@@ -346,6 +347,8 @@ RETVAL_TESTS = {
     "different_paths_same_copy.c": 3,
     "multi_path_no_kill.c": 3,
     "propagate_static.c": 10,
+    "goto_define.c": 20,
+    "propagate_from_default.c": 3,
     # other types
     "alias_analysis.c": 24,
     "propagate_into_type_conversions.c": 83826,
@@ -357,6 +360,7 @@ RETVAL_TESTS = {
 # programs we'll validate with arg_test, and mappings to callees with their expected arguments
 ARG_TESTS = {
     "kill_and_add_copies.c": {"callee": [10, None]},
+    "propagate_into_case.c": {"callee": [10]},
     "nested_loops.c": {
         "inner_loop1": [None, None, None, None, None, 100],
         "inner_loop2": [None, None, None, None, None, 100],
@@ -372,10 +376,12 @@ SAME_ARG_TESTS = [
     "propagate_static_var.c",
     "propagate_var.c",
     "propagate_params.c",
+    "prefix_result.c",
     # other types
     "store_doesnt_kill.c",
     "copy_struct.c",
     "char_type_conversion.c",
+    "copy_union.c",
 ]
 
 # programs we'll validate with redundant_copies_test
@@ -385,10 +391,16 @@ REDUNDANT_COPIES_TESTS = [
     # other types
     "redundant_double_copies.c",
     "redundant_struct_copies.c",
+    "redundant_nan_copy.c",
+    "redundant_union_copy.c",
 ]
 
 # programs we'll validate with no_computations_test
-NO_COMPUTATIONS_TESTS = ["pointer_arithmetic.c"]
+NO_COMPUTATIONS_TESTS = [
+    "pointer_arithmetic.c",
+    "pointer_incr.c",
+    "pointer_compound_assignment.c",
+]
 
 
 def make_copy_prop_test(program: Path) -> Callable[[TestCopyProp], None]:

@@ -1,4 +1,5 @@
 """Register allocation tests"""
+
 from __future__ import annotations
 
 import subprocess
@@ -438,4 +439,7 @@ def configure_tests(
             continue
         key = program.relative_to(TEST_DIR).with_suffix("")
         name = f"test_{key}"
+        assert not getattr(
+            TestRegAlloc, name, None
+        )  # sanity check - no duplicate tests
         setattr(TestRegAlloc, name, make_regalloc_test(program, no_coalescing))

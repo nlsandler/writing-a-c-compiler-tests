@@ -2,14 +2,14 @@
 
 int main(void) {
 
-    char c = 100;
+    static char c = 100;
     char c2 = 100;
     c += c2; // well-defined b/c of integer promotions
     if (c != -56) {
         return 1; // fail
     }
 
-    unsigned char uc = 200;
+    static unsigned char uc = 200;
     c2 = -100;
     uc /= c2; // convert uc and c2 to int, then convert back
     if (uc != 254) {
@@ -21,7 +21,8 @@ int main(void) {
          return 3;  // fail
     }
 
-    signed char sc = -70;
+    static signed char sc = 70;
+    sc = -sc;
     sc *= c;
     if (sc != 80) {
         return 4; // fail

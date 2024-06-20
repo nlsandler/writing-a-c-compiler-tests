@@ -65,7 +65,12 @@ class TestUnreachableCodeElim(common.TackyOptimizationTest):
 
 # unreachable cdoe elimination removes function calls but not other
 # control flow instructions for these programs
-NO_FUNCALLS_TESTS = ["dead_branch_inside_loop.c", "dead_after_if_else.c"]
+NO_FUNCALLS_TESTS = [
+    "dead_branch_inside_loop.c",
+    "dead_after_if_else.c",
+    "dead_before_first_switch_case.c",
+    "dead_in_switch_body.c",
+]
 
 # don't inspect assembly for this program, just validate its behavior
 BASIC_TESTS = [

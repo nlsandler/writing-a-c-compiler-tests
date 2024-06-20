@@ -4,7 +4,8 @@ int double_isnan(double d); // defined in tests/chapter_13/helper_libs/nan.c
 
 // This should return zero, because all comparisons with NaN are false
 int main(void) {
-    double nan = 0.0 / 0.0;
+    static double zero = 0.0;
+    double nan = 0.0 / zero; // make this constant-folding proof
     if (nan < 0.0 || nan == 0.0 || nan > 0.0 || nan <= 0.0 || nan >= 0.0)
         return 1;
 
