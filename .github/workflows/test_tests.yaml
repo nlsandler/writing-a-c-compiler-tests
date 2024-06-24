@@ -56,13 +56,13 @@ jobs:
    # next, download both versions of NQCC
 
     - name: Get final NQCC
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: nqcc-${{ matrix.os }}-20
         path: nqcc
 
     - name: Get partial NQCC
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: nqcc-${{ matrix.os }}-19
         path: nqcc-partial
