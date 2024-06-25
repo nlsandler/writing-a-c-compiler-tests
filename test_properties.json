@@ -790,10 +790,10 @@
             "compound"
         ],
         "chapter_15/invalid_types/extra_credit/compound_assign_to_array.c": [
-            "increment"
+            "compound"
         ],
         "chapter_15/invalid_types/extra_credit/compound_assign_to_nested_array.c": [
-            "increment"
+            "compound"
         ],
         "chapter_15/invalid_types/extra_credit/postfix_incr_array.c": [
             "increment"
