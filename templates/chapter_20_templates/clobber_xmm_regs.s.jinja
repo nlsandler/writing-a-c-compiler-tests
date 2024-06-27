@@ -1,0 +1,20 @@
+    ## callee returns 10.0 in XMM0 and zeros out all the other XMM registers,
+    ## to test that we don't expect them to be preserved across function calls
+
+    ## return value
+{{ rodata_directives }}
+{{ local_prefix }}retval:
+    .double 10.0
+
+    ## function
+    .text
+    .globl {{id_prefix}}callee
+{{id_prefix}}callee:
+    ## move return value into XMM0
+    movsd {{local_prefix}}retval(%rip), %xmm0
+    ## zero out XMM1-XMM15
+{% for i in range(1, 16) %}
+    xorpd %xmm{{i}}, %xmm{{i}}
+{% endfor %}
+    retq
+{{execstack_note}}

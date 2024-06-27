@@ -3,9 +3,6 @@
  * RSP is aligned correctly and exits early if not.
  * The test script doesn't inspect assembly for this case, just checks the
  * exit code.
- * main, which calls all test* functions, is defined in
- * tests/chapter_20/libraires/calllee_saved_stack_alignment.c
- * so the stack as aligned correctly when we call each test* function.
  * */
 
 #include "../../libraries/util.h" // declares check_* and id functions

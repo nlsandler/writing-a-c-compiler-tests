@@ -3,6 +3,7 @@
 """Autogenerate several very similar test cases where we create specific interference graphs"""
 from pathlib import Path
 from string import ascii_lowercase
+from typing import Any
 
 from jinja2 import Environment, FileSystemLoader, pass_environment
 from jinja2.filters import do_wordwrap
@@ -138,8 +139,18 @@ for template_file, dest_dir in assembly_locations.items():
 
 # for templates we use to generate multiple test cases,
 # specify each test's destination and variables
-configurable_templates = {
-    # none yet!
+configurable_templates: dict[str, dict[str, dict[str, Any]]] = {
+    "division_interference.c.jinja": {
+        "int_only/no_coalescing/idiv_interference.c": {"instr": "idiv", "u": ""},
+        "all_types/no_coalescing/div_interference.c": {
+            "instr": "div",
+            "u": "unsigned ",
+        },
+    },
+    "force_spill.c.jinja": {
+        "int_only/no_coalescing/force_spill.c": {"all_types": False},
+        "all_types/no_coalescing/force_spill_mixed_ints.c": {"all_types": True},
+    },
 }
 
 
@@ -152,7 +163,7 @@ for t in template_files:
     if t.name in configurable_templates:
         for dest, templ_vars in configurable_templates[t.name].items():
             src = templ.render(templ_vars)
-            output_path = Path("tests/chapter_20/int_only/no_coalescing") / dest
+            output_path = Path("tests/chapter_20") / dest
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(src)
     elif str(t).endswith(".s.jinja"):

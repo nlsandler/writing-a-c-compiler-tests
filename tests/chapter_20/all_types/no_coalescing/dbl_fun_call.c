@@ -1,15 +1,14 @@
-/* make sure values of doubles are preserved across function calls (must be on the stack) */
+/* make sure values of doubles are preserved across function calls
+ * (they must be on the stack, since XMM regs are all caller-saved).
+ * Just validate behavior, don't inspect assembly.
+ */
 
 double glob = 3.0;
 
-double foo(void)
-{
-    return 4.0;
-}
+double callee(void); // defined in chapter_20/libraries/clobber_xmm_regs_(linux|os_x).s
 
-int main(void)
-{
+int main(void) {
     double d = glob;
-    double x = foo();
-    return (d + x == 7.0);
+    double x = callee();
+    return (d + x == 13.0);
 }

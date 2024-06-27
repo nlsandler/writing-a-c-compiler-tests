@@ -178,9 +178,6 @@
         "chapter_6/invalid_lex/extra_credit/bad_label.c": [
             "goto"
         ],
-        "chapter_6/invalid_lex/extra_credit/bad_label_2.c": [
-            "goto"
-        ],
         "chapter_6/invalid_parse/extra_credit/label_declaration.c": [
             "goto"
         ],
@@ -1426,7 +1423,8 @@
             "chapter_20/libraries/util.c"
         ],
         "chapter_20/all_types/no_coalescing/track_dbl_arg_registers.c": [
-            "chapter_20/libraries/track_dbl_arg_registers_lib.c"
+            "chapter_20/libraries/track_dbl_arg_registers_lib.c",
+            "chapter_20/libraries/util.c"
         ],
         "chapter_20/int_only/no_coalescing/bin_uses_operands.c": [
             "chapter_20/libraries/util.c"
@@ -1456,14 +1454,23 @@
         "chapter_20/int_only/no_coalescing/callee_saved_stack_alignment.c": [
             "chapter_20/libraries/util.c"
         ],
+        "chapter_20/all_types/no_coalescing/mixed_type_stack_alignment.c": [
+            "chapter_20/libraries/util.c"
+        ],
         "chapter_20/int_only/no_coalescing/test_spill_metric_2.c": [
             "chapter_20/libraries/util.c"
         ],
-        "chapter_20/all_types/no_coalescing/test_spilling_dbls.c": [
-            "chapter_20/libraries/force_spill_dbl_lib.c"
+        "chapter_20/all_types/no_coalescing/force_spill_doubles.c": [
+            "chapter_20/libraries/util.c"
         ],
-        "chapter_20/all_types/no_coalescing/mixed_ints.c": [
-            "chapter_20/libraries/force_spill_mixed_int_lib.c"
+        "chapter_20/all_types/no_coalescing/force_spill_mixed_ints.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/store_pointer_in_register.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/div_interference.c": [
+            "chapter_20/libraries/util.c"
         ],
         "chapter_20/int_only/with_coalescing/george_coalesce.c": [
             "chapter_20/libraries/util.c"
@@ -1517,6 +1524,12 @@
         ],
         "chapter_20/int_only/no_coalescing/callee_saved_stack_alignment.c": [
             "chapter_20/libraries/alignment_check_wrapper"
+        ],
+        "chapter_20/all_types/no_coalescing/mixed_type_stack_alignment.c": [
+            "chapter_20/libraries/alignment_check_wrapper"
+        ],
+        "chapter_20/all_types/no_coalescing/dbl_fun_call.c": [
+            "chapter_20/libraries/clobber_xmm_regs"
         ]
     }
 }

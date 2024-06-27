@@ -3,6 +3,8 @@
  * it behaves correctly.
  * NOTE: this is only guaranteed to work as intended after we implement register
  * coalescing.
+ *
+ * This test program is generated from templates/chapter_20_templates/division_interference.c.jinja
  */
 
 #include "../../libraries/util.h"

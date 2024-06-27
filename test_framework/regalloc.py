@@ -307,6 +307,10 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
         max_spilled_instructions=3,
         max_spilled_pseudos=1,
     ),
+    "force_spill_mixed_ints.c": SpillTest(
+        max_spilled_instructions=3,
+        max_spilled_pseudos=1,
+    ),
     # possibly these rewrite instructions don't belong in reg allocation test suite
     "rewrite_regression_test.c": SpillTest(
         max_spilled_instructions=10,
@@ -324,12 +328,8 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
         max_spilled_pseudos=5,
         max_spilled_instructions=20,
     ),
-    "test_spilling_dbls.c": SpillTest(
-        max_spilled_instructions=4,
-        max_spilled_pseudos=1,
-    ),
-    "mixed_ints.c": SpillTest(
-        max_spilled_instructions=2,
+    "force_spill_doubles.c": SpillTest(
+        max_spilled_instructions=3,
         max_spilled_pseudos=1,
     ),
     "briggs_coalesce.c": CoalesceTest(),
