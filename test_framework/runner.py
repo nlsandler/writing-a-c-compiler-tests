@@ -241,7 +241,11 @@ def parse_arguments() -> argparse.Namespace:
     # if --check-setup is present, shouldn't have any other options
     if args.check_setup:
         ignored_args = [
-            k for k, v in vars(args).items() if bool(v) and (k != "check_setup")
+            k
+            for k, v in vars(args).items()
+            if bool(v)
+            and (k != "check_setup")
+            and (k != "stage" or (k == "stage" and v != "run"))
         ]
         if ignored_args:
             warnings.warn(
@@ -273,7 +277,6 @@ def parse_arguments() -> argparse.Namespace:
         warnings.warn("Option --no-coalescing has no impact on Part I & Part II tests")
 
     if args.expected_error_codes:
-
         out_of_range = [str(i) for i in args.expected_error_codes if i < 1 or i > 255]
         if out_of_range:
             bad_codes = ", ".join(out_of_range)
@@ -436,7 +439,10 @@ def main() -> int:
     """Main entry point for test runner"""
     args = parse_arguments()
     if args.check_setup:
-        return check_setup()
+        success = check_setup()
+        if success:
+            return 0
+        return 1
 
     compiler = Path(args.cc).resolve()
 

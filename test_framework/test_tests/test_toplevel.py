@@ -91,6 +91,27 @@ def get_failure_count(failure: subprocess.CalledProcessError) -> int:
 
 
 class TopLevelTest(unittest.TestCase):
+    def test_check_setup(self) -> None:
+        """Test the check-setup command"""
+        try:
+            check = run_test_script("./test_compiler --check-setup")
+            self.assertEqual(check.stdout, "All system requirements met!\n")
+            self.assertEqual(check.stderr, "")
+        except subprocess.CalledProcessError as err:
+            # Test should still pass if only problem is that GDB isn't installed (it isn't on Github's runners)
+            if (
+                err.stdout.startswith(
+                    "No debugger found. The test script doesn't require a debugger but you probably want one for, ya know, debugging."
+                )
+                and err.stderr == ""
+            ):
+                # okay
+                return
+            # we found some other error
+            self.fail(
+                f"--check-setup option failed.\nstderr:\n{err.stderr}\nstdout:\n{err.stdout}"
+            )
+
     def test_one_chapter(self) -> None:
         """We can run tests for a single chapter with --latest-only"""
         expected_test_count = get_expected_test_count(chapters=[2])
