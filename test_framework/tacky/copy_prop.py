@@ -358,7 +358,7 @@ RETVAL_TESTS = {
 }
 
 # programs we'll validate with arg_test, and mappings to callees with their expected arguments
-ARG_TESTS = {
+ARG_TESTS: dict[str, dict[str, list[Optional[int]]]] = {
     "kill_and_add_copies.c": {"callee": [10, None]},
     "propagate_into_case.c": {"callee": [10]},
     "nested_loops.c": {
