@@ -1,0 +1,68 @@
+	## define some floating-point constants
+{{ rodata_directives }}
+{{local_prefix}}one:
+	.double 1.0
+{{local_prefix}}two:
+	.double 2.0
+{{local_prefix}}three:
+	.double 3.0
+{{local_prefix}}four:
+	.double 4.0
+{{local_prefix}}five:
+	.double 5.0
+{{local_prefix}}six:
+	.double 6.0
+{{local_prefix}}seven:
+	.double 7.0
+	## define main
+	.text
+	.globl	{{id_prefix}}main
+{{id_prefix}}main:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	# save callee-saved regs
+	push	%rbx
+	pushq	%r12
+	pushq	%r13
+	pushq	%r14
+	pushq	%r15
+	pushq 	%rdi # to maintain stack alignment
+	# give them arbitrary values
+	movq	$-1, %rbx
+	movq	$-2, %r12
+	movq	$-3, %r13
+	movq	$-4, %r14
+	movq	$-5, %r15
+	{% block call %}{% endblock %}
+	# make sure values of callee-saved regs were preserved
+	cmpq	$-1, %rbx
+	jne		{{local_prefix}}fail
+	cmpq	$-2, %r12
+	jne		{{local_prefix}}fail
+	cmp		$-3, %r13
+	jne		{{local_prefix}}fail
+	cmpq	$-4, %r14
+	jne		{{local_prefix}}fail
+	cmp		$-5, %r15
+	jne		{{local_prefix}}fail
+	popq 	%rdi
+	popq	%r15
+	popq	%r14
+	popq	%r13
+	popq	%r12
+	popq	%rbx
+	popq	%rbp
+	retq
+{{local_prefix}}fail:
+	# raise SIGSEGV
+	movl	$11, %edi
+	call	{{id_prefix}}raise{{plt_suffix}}
+	popq	%r15
+	popq	%r14
+	popq	%r13
+	popq	%r12
+	popq	%rbx
+	popq	%rbp
+	retq
+{% block more_functions %}{% endblock %}
+{{execstack_note}}

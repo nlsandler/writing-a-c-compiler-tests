@@ -1,0 +1,20 @@
+/* Make sure we use all hardregs rather than spill;
+ * Create 12 pseudos that all interfere with each other
+ * and make sure we assign all of them to hardregs
+ * This test program is generated from templates/{{ self._TemplateReference__context.name }}
+ * */
+#include "../../libraries/util.h"
+
+int global_one = 1;  // to prevent constant-folding
+
+int target(void) {
+    // create a clique of 12 pseudos that interfere
+    // we can color all of them w/out spilling anything
+    {% set one_expr="2 - global_one" %}
+
+    {% filter indent(width=4, first=true) %}
+    {% include 'includes/twelve_regs_conflict.c.jinja' %}
+    {% endfilter %}
+
+    return 0;  // success
+}

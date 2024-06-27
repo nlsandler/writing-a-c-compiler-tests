@@ -1,0 +1,47 @@
+{%- import 'includes/regalloc_macros.c.jinja' as helpers -%}
+{% set one_expr = "glob_three - 2" %}
+{% set thirteen_expr = "10 + glob_three" %}
+{% set spill_thing="imul, add, and sub results" %}
+/* This isn't really a test of the register allocator.
+ * Verify that we correctly rewrite add/sub/imul instructions with operands in
+ * memory. Test programs for earlier chapters exercise these rewrite rules only
+ * when register allocation and optimizations are disabled. But once we complete
+ * Part III, these are either optimized away entirely in earlier chapters' test
+ * programs, or their operands are all hard registers.
+ *
+ * This test program is generated from templates/{{ self._TemplateReference__context.name }}
+ * */
+
+#include "../../libraries/util.h"
+
+int glob_three = 3;
+int glob_four = 4;
+
+int target(void) {
+    // We'll force the results of imul, add, and sub instructions to spill
+    // to memory (by making them conflict with more registers and have fewer
+    // uses then any other pseudo) to verify that we rewrite them correctly
+
+    // These results will conflict with all other pseudos and only be used once
+    // each, so they'll all spill
+    int imul_result = glob_three * glob_four;
+    int add_result = glob_three + glob_four;
+    int sub_result = glob_four - glob_three;
+
+    {% filter indent(width=4, first=true) %}
+    {% include 'includes/spill_var.c.jinja' %}
+    {% endfilter %}
+
+
+    if (imul_result != 12) {
+        return 100;
+    }
+    if (add_result != 7) {
+        return 101;
+    }
+    if (sub_result != 1) {
+        return 102;
+    }
+
+    return 0;  // success
+}

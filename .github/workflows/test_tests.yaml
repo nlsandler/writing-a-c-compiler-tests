@@ -1,0 +1,110 @@
+# This workflow will test out our test suite; yes, it is a test for our tests
+# It runs the unit tests in tests/test_tests, and runs the whole test script to validate its results
+
+name: Compiler Test Suite CI
+
+on:
+  pull_request:
+    branches: [ "main", "complete-test-suite" ]
+
+  workflow_dispatch:
+
+jobs:
+
+  build-final-nqcc:
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    uses: nlsandler/nqcc2/.github/workflows/build.yaml@main
+    with:
+      chapter: 20
+      os: ${{ matrix.os }}
+
+  build-partial-nqcc:
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    uses: nlsandler/nqcc2/.github/workflows/build.yaml@main
+    with:
+      chapter: 19
+      os: ${{ matrix.os }}
+
+  test:
+
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: ["3.8", "3.12"] #, "3.9", "3.10", "3.11"]
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    needs: [build-final-nqcc, build-partial-nqcc]
+    steps:
+
+    # now checkout test suite
+    - uses: actions/checkout@v4
+      with:
+        path: tests
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+   # next, download both versions of NQCC
+
+    - name: Get final NQCC
+      uses: actions/download-artifact@v4
+      with:
+        name: nqcc-${{ matrix.os }}-20
+        path: nqcc
+
+    - name: Get partial NQCC
+      uses: actions/download-artifact@v4
+      with:
+        name: nqcc-${{ matrix.os }}-19
+        path: nqcc-partial
+
+    - name: Make NQCC executable
+      run: |
+        chmod u+x "$NQCC"
+        chmod u+x "$NQCC_PARTIAL"
+      working-directory: tests
+      env:
+        NQCC: ${{ github.workspace }}/nqcc/main.exe
+        NQCC_PARTIAL: ${{ github.workspace }}/nqcc-partial/main.exe
+
+    # run the test suite
+    # use Rosetta on macOS (instead of just using an x86_64 Github runner)
+    # because that's probably what most readers are doing
+    - name: Test the test suite (macOS M1)
+      if: runner.arch == 'ARM64'
+      run: arch -x86_64 python -m unittest
+      working-directory: tests
+      env:
+        NQCC: ${{ github.workspace }}/nqcc/main.exe
+        NQCC_PARTIAL: ${{ github.workspace }}/nqcc-partial/main.exe
+
+    - name: Test the test suite (x86-64)
+      if: runner.arch != 'ARM64'
+      run: python -m unittest
+      working-directory: tests
+      env:
+        NQCC: ${{ github.workspace }}/nqcc/main.exe
+        NQCC_PARTIAL: ${{ github.workspace }}/nqcc-partial/main.exe
+
+    # Linting
+    - name: Install linter dependencies
+      # note: we do this _after_ running tests, b/c tests should work without
+      # these linters or their dependencies (e.g. typing_extensions)
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install mypy pylint
+    - name: Lint with mypy and pylint
+      run: |
+        # stop the build if there are errors
+        pylint -E tests/test_framework
+        # stop the build if there are type errors
+        mypy tests/test_framework

@@ -1,0 +1,54 @@
+{%- import 'includes/regalloc_macros.c.jinja' as helpers -%}
+{% set head_comment | replace("\n", " ") | wordwrap(width=76, break_long_words=False, wrapstring="\n * ") %}
+Regression test for rewriting {{ comment.instr}} instructions whose destinations are
+memory operands{{ comment.extra_desc }}.
+{% if comment.other_test is defined %}
+The test program in {{ comment.other_test }} exercises this rewrite rule until we implement register allocation.
+But once we implement register allocation, {{ comment.instr }} destination operands in that program will be
+allocated to hard registers, not memory.
+{% else %}
+The other test programs for this chapter exercise this rewrite rule until we implement register allocation.
+But once we implement register allocation, {{ comment.instr }} destination operands in those programs will be
+allocated to hard registers, not memory.
+{% endif %}
+{% endset %}
+
+{%- set head_comment2 | replace("\n", " ") | wordwrap(width=76, break_long_words=False, wrapstring="\n * ")%}
+In this program, we include {{ comment.operation_desc }} whose destination will be spilled during register allocation,
+so we'll still have test coverage for this rewrite rule when we run the chapter 20 test commands.
+{% endset -%}
+/* {{ head_comment }}
+ *
+ * {{ head_comment2 }}
+ *
+ * This test program is generated from templates/{{ self._TemplateReference__context.name }}.
+ * */
+
+{{ helpers.check_12_ints_decl }}
+
+// use a variable with static storage duration in operations below
+// so they can't be constant folded
+{{ glob.type }} glob = {{ glob.init }};
+
+int main(void) {
+    // The {{ comment.operation_name }} operation whose result we want to spill;
+    // this is our best spill candidate b/c it has the most conflicts with other
+    // pseudos and is tied for fewest uses. NOTE: optimizations must be enabled
+    // so we propagate the temporary variable holding the result of this
+    // expression instead of copying it into should_spill.
+    {{ should_spill.type }} should_spill = {{ should_spill.expr }};
+
+    {% set spill_thing = comment.instr + " result" %}
+    {% filter indent(width=4, first=true) %}
+    {% include 'includes/spill_var.c.jinja' %}
+    {% endfilter %}
+
+    // use {{ comment.instr }} result to make it interfere with other pseudos
+    // and validate that it wasn't clobbered
+    if (should_spill != {{ should_spill.val }}) {
+        return -1;
+    }
+    return 0;  // success
+}
+
+{{ helpers.check_12_ints }}

@@ -1,0 +1,38 @@
+{# macros #}
+{% set arg_operands=["%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d", "16(%rbp)", "24(%rbp)"] %}
+{% macro alignment_check(fn_name, arg_count) %}
+    {% set fn_label=id_prefix~fn_name %}
+    .globl {{fn_label}}
+{{fn_label}}:
+    pushq   %rbp
+    movq    %rsp, %rbp
+    # validate arguments, from 1 to {{arg_count}}
+    {% for i in range(arg_count) %}
+    cmpl    ${{i+1}}, {{ arg_operands[i]}}
+    jne     {{local_prefix}}fail_{{fn_name}}
+    {% endfor %}
+    # calculate rsp % 16; should be 0
+    movq    %rsp, %rax
+    movq    $0, %rdx
+    movq    $16, %rcx
+    div     %rcx
+    # compare result (in rdx) to 0
+    cmpq    $0, %rdx
+    jne     {{local_prefix}}fail_{{fn_name}}
+    # all checks passed; return 1
+    movl    $1, %eax
+    popq    %rbp
+    retq
+    # failure case; exit w/ code -1
+{{local_prefix}}fail_{{fn_name}}:
+    # exit w/ code -1
+    movl    $-1, %edi
+    call    {{id_prefix}}exit{{plt_suffix}}
+    popq    %rbp
+    retq
+{% endmacro %}
+{# actual program starts here #}
+    # generated from templates/{{ self._TemplateReference__context.name }}
+    .text
+{{alignment_check("even_arguments", 8)}}
+{{alignment_check("odd_arguments", 7)}}

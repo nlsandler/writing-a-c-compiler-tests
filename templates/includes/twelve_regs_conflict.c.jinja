@@ -1,0 +1,22 @@
+{{t1|default("int")}} one = {{ one_expr }};
+{{t2|default("int")}} two = one + one;
+{{t3|default("int")}} three = 2 + one;
+{{t4|default("int")}} four = two * two;
+{{t5|default("int")}} five = 6 - one;
+{{t6|default("int")}} six = two * three;
+{{t7|default("int")}} seven = one + 6;
+{{t2|default("int")}} eight = two * 4;
+{{t3|default("int")}} nine = three * three;
+{{t4|default("int")}} ten = four + six;
+{% if all_types %}
+{{t8}} eleven = &glob_11;
+{{t9}} twelve = &glob_12;
+{% else %}
+int eleven = 16 - five;
+int twelve = six + six;
+{% endif %}
+
+// validate one through twelve
+// (this makes them all live at this point)
+{{check_fn|default("check_12_ints")}}(one, two, three, four, five, six, seven, eight, nine, ten,
+              eleven, twelve, 1);

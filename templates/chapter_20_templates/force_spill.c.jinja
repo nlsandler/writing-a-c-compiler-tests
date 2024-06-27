@@ -1,0 +1,51 @@
+{%- import 'includes/regalloc_macros.c.jinja' as helpers -%}
+{% set one_expr = "glob_three - 2" %}
+{% set thirteen_expr = "10 + glob_three" %}
+{% set spill_thing="should_spill" %}
+{% if all_types %}
+{% set t1 = "unsigned int" %}
+{% set t2 = "long" %}
+{% set t3 = "unsigned long" %}
+{% set t4 = "char" %}
+{% set t5 = "signed char" %}
+{% set t6 = "int" %}
+{% set t7 = "unsigned char" %}
+{% set t8 = "long*" %}
+{% set t9 = "double*" %}
+{% set check_fn = "check_12_vals" %}
+{% endif %}
+/* Test that we can handle spilling correctly.
+ * We have to spill one pseudo. The test script will validate that
+ * we spill only one and it's the cheapest one.
+ * Note that this isn't a foolproof test of spill cost calculation;
+ * because of optimistic coloring, we might end up spilling should_spill
+ * even if it's not the first spill candidate we select.
+ * This test program is generated from templates/{{ self._TemplateReference__context.name }}
+ * */
+
+#include "../../libraries/util.h"
+
+{{t1|default("int")}} glob_three = 3;
+{% if all_types %}
+long glob_11 = 11l;
+double glob_12 = 12.0;
+long glob_23 = 23l;
+double glob_24 = 24.0;
+{% endif %}
+
+int target(void) {
+    // This is our spill candidate: it has the highest degree and is
+    // used only once.
+    {{t2|default("int")}} should_spill = glob_three + 3;
+
+    {% filter indent(width=4, first=true) %}
+    {% include 'includes/spill_var.c.jinja' %}
+    {% endfilter %}
+
+
+    if (should_spill != 6) {
+        return -1;  // fail
+    }
+
+    return 0;  // success
+}

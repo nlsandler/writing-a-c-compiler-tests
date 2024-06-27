@@ -1,0 +1,26 @@
+{% set check_12_ints_decl -%}
+// for validation
+int check_12_ints(int start, int a, int b, int c, int d, int e, int f, int g,
+                  int h, int i, int j, int k, int l);
+{%- endset %}
+
+{% set check_12_ints %}
+// validate that a == start, b == start + 1, ...l == start + 11
+// NOTE: 'start' is the last param because if it were first, every
+// arg in the caller would interfere with EDI and we'd have to spill more than
+// one pseudo
+int check_12_ints(int a, int b, int c, int d, int e, int f, int g, int h, int i,
+                  int j, int k, int l, int start) {
+    int expected = 0;
+    {% set args = letters %}
+    {% for arg in args %}
+
+    expected = start + {{ loop.index0 }};
+    if ({{ arg }} != expected) {
+        return expected;
+    }
+    {% endfor %}
+
+    return 0;  // success
+}
+{% endset %}
