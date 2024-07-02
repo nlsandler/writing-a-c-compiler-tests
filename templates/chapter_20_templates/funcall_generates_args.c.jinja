@@ -1,0 +1,60 @@
+{% if dbl %}
+{% set typ = "double" %}
+{% set regs = "XMM0/XMM1" %}
+{% set callee = "use_dbls" %}
+{% set validate_fun = "check_one_double" %}
+{% set mov_instr = "movsd" %}
+{% set mul_instr = "mulsd" %}
+{% set reg_desc="XMM registers" %}
+{% else %}
+{% set typ = "int" %}
+{% set regs = "EDI/ESI" %}
+{% set callee = "f" %}
+{% set validate_fun = "check_one_int" %}
+{% set mov_instr = "movl " %}
+{% set mul_instr = "imull" %}
+{% set reg_desc="registers" %}
+{% endif %}
+{% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
+/* Make sure we recognize that a function uses some parameter-passing
+ * {{reg_desc}}, determined by its declaration. Don't inspect assembly,
+ * just validate behavior.
+ * NOTE: only works as intended after we've implemented register coalescing.
+ *
+ * This test program is generated from templates/{{ self._TemplateReference__context.name }}
+ * */
+
+#include "../util.h"
+
+// defined in tests/chapter_20/libraries/funcall_generates_args_lib.c,
+// exits early with return code -1 if a and b don't have
+// the correct values
+int {{callee}}({{typ}} a, {{typ}} b);
+
+{{typ}} glob = {{const(10)}};
+{{typ}} x = {{const(0)}};
+{{typ}} y = {{const(0)}};
+int target(void) {
+    {{typ}} a = glob + {{const(1)}};
+    {{typ}} b = glob + {{const(2)}};
+    // We'll coalesce a and b with {{regs}} because they're copied into those
+    // registers. If we don't recognize that {{regs}} are live when we call
+    // {{callee}}, we'll coalesce the temporaries that hold a * glob and b * glob
+    // with {{regs}} too, since we'll generate the following assembly:
+    // {{mov_instr}}  %a, %tmp
+    // {{mul_instr}}  %glob, %tmp
+    // {{mov_instr}}  %tmp, %x
+    // and similar for y/b
+    x = a * glob;
+    y = b * glob;
+    // validate a and b
+    {{callee}}(a, b);
+    // validate x and y
+    {{validate_fun}}(x, {{const(110)}});
+    {{validate_fun}}(y, {{const(120)}});
+    return 0;
+}
+
+int main(void) {
+    return target();
+}

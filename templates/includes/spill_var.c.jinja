@@ -3,7 +3,7 @@
 // create 12 pseudos that all interfere w/ {{ spill_thing }} and each other;
 // this forces a spill, since only 12 hard registers are available
 {% endfilter %}
-{% include 'includes/twelve_regs_conflict.c.jinja' %}
+{% include 'includes/twelve_regs_conflict_validation.c.jinja' %}
 
 {% filter comment_wrap %}
 // create another clique of twelve pseudos that interfere with each other

@@ -1,0 +1,36 @@
+{% if dbl %}
+{% set typ = "double" %}
+{% set reg_name = "XMM0" %}
+{% else %}
+{% set typ = "int" %}
+{% set reg_name = "EAX" %}
+{% endif %}
+{% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
+/* Make sure we recognize that {{reg_name}} is live at exit.
+ * Don't inspect assembly; just validate the program's behavior.
+ * Note: only works as intended once we've implemented register coalescing.
+ *
+ * This test program is generated from templates/{{ self._TemplateReference__context.name }}
+ * */
+
+#include "../util.h"
+
+{{typ}} glob = {{const(10)}};
+{{typ}} glob2 = {{const(0)}};
+
+// The first round of coalescing will coalesce x into {{reg_name}}.
+// Then, if we don't realize that {{reg_name}} is live at exit, we'll
+// coalesce the temporary that holds x + glob into {{reg_name}}, clobbering x.
+
+{{typ}} target(void) {
+    {{typ}} x = glob + {{const(1)}};  // {{const(11)}}
+    glob2 = x + glob;
+    return x;
+}
+
+int main(void) {
+    {{typ}} retval = target();
+    check_one_{{typ}}(retval, {{const(11)}});
+    check_one_{{typ}}(glob2, {{const(21)}});
+    return 0;
+}

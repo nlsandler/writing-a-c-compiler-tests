@@ -1,6 +1,6 @@
 /* Helper functions defined in tests/chapter_20/libraries/util.c */
 
-/* The validate_* functions return 0 on success,
+/* The check_* functions return 0 on success,
  * print and exit with code -1 on failure.
  */
 

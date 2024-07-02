@@ -1,10 +1,10 @@
 /* Make sure our analysis recognizes which registers are used by each function
- * call/return statement. The test script validates that we don't spill.
+ * call. The test script validates that we don't spill.
  * Liveness analysis should recognize that only EDI, ESI,
- * and EDX are live right before we call callee(). If we assume ECX, R8 and R9
- * are also live, we'll conclude that they're live from the start of the function
- * until the function call (since they're never updated) and won't be able to
- * allocate them, resulting in spills.
+ * and EDX are live right before we call callee(). If we assume ECX, R8D and R9D
+ * are also live, we'll conclude that they're live from the start of the
+ * function until the function call (since they're never updated) and won't be
+ * able to allocate them, resulting in spills.
  * */
 
 #include "../util.h"
@@ -23,8 +23,12 @@ int glob9;
 // exits early if a, b, c don't have expected values
 int callee(int a, int b, int c);
 
+// Note: we deliberately give target the same number of params as callee;
+// if liveness incorrectly thought that some reg was used by callee and
+// therefore live, it still wouldn't interfere with the parameter passed to
+// target in that reg, so the error wouldn't necessarily force a spill. (I think
+// having _fewer_ params in target than in callee would be be fine.)
 int target(int one, int two, int three) {
-
     /* Create a clique of 12 pseudos, and pass
      * three of them to callee.
      * */
@@ -56,7 +60,8 @@ int target(int one, int two, int three) {
     callee(ten, eleven, twelve);
 
     // validate globals
-    check_12_ints(glob1, glob2, glob3, glob4, glob5, glob6, glob7, glob8, glob9, ten, eleven, twelve, 1);
+    check_12_ints(glob1, glob2, glob3, glob4, glob5, glob6, glob7, glob8, glob9,
+                  ten, eleven, twelve, 1);
 
     return 0;
 }
