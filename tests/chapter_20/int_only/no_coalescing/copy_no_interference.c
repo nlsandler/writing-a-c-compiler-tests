@@ -3,7 +3,7 @@
  * pseudoregisters conflict at any time.
  * */
 
-#include "../../libraries/util.h"
+#include "../util.h"
 
 int glob0 = 0;
 int glob1 = 1;

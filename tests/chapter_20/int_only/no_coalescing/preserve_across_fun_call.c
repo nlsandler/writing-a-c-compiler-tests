@@ -5,7 +5,7 @@
  * accident.
  */
 
-#include "../../libraries/util.h"
+#include "../util.h"
 
 int glob1 = 1;
 int glob2 = 2;

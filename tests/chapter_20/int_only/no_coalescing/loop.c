@@ -1,6 +1,6 @@
 /* Test that liveness analysis for registers handles loop correctly */
 
-#include "../../libraries/util.h"
+#include "../util.h"
 
 int counter = 5;
 int expected_a = 2;

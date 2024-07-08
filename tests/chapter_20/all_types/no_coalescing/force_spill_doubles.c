@@ -1,4 +1,4 @@
-#include "../../libraries/util.h"
+#include "../util.h"
 
 int glob = 3;
 double glob2 = 4.0;

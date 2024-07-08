@@ -4,7 +4,7 @@
  * NOTE: only works as intended once we implement coalescing.
  */
 
-#include "../../libraries/util.h"
+#include "../util.h"
 
 int main(void) {
     // we'll coalesce this into EAX because it's a function's return value,
