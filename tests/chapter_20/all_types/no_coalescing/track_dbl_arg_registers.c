@@ -9,7 +9,7 @@
  * in spills.
  * */
 
-#include "../../libraries/util.h"
+#include "../util.h"
 
 // defined in libraries/trakc_dbl_arg_registers_lib.c
 int callee(double a, double b, double c);

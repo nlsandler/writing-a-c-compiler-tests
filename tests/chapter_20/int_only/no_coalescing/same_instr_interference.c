@@ -3,7 +3,7 @@
  * Only guaranteed to work as intended after implementing register coalescing.
  */
 
-#include "../../libraries/util.h" // declares check_* and id functions
+#include "../util.h" // declares check_* and id functions
 
 int main(void) {
     // addition

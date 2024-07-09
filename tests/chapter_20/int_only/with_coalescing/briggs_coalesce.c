@@ -6,7 +6,7 @@
  * mov %rbp, %rsp in the prologue and epilogue)
  * */
 
-#include "../../libraries/util.h"
+#include "../util.h"
 
 int glob0;
 int glob1;

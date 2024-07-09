@@ -7,7 +7,7 @@
  * make sure it has no more than the expected number of spill instructions.
  * */
 
-#include "../../libraries/util.h"  // declares check_* and id functions
+#include "../util.h"  // declares check_* and id functions
 
 // TODO consider refactoring with spill_test_metric, some of this is copy-pasted
 // from there

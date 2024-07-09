@@ -4,7 +4,7 @@
  * adequately covered by other tests.
  * */
 
-#include "../../libraries/util.h"
+#include "../util.h"
 
 int glob = 0;
 

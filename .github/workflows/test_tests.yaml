@@ -5,7 +5,7 @@ name: Compiler Test Suite CI
 
 on:
   pull_request:
-    branches: [ "main", "complete-test-suite" ]
+    branches: [ "main" ]
 
   workflow_dispatch:
 

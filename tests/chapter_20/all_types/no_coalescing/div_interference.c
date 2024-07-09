@@ -7,7 +7,7 @@
  * This test program is generated from templates/chapter_20_templates/division_interference.c.jinja
  */
 
-#include "../../libraries/util.h"
+#include "../util.h"
 
 unsigned int glob = 3;
 

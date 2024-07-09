@@ -5,7 +5,7 @@
  * and destination are both general-purpose registers (except mov %rsp, %rbp and
  * mov %rbp, %rsp in the prologue and epilogue)
  * */
-#include "../../libraries/util.h"
+#include "../util.h"
 
 int glob = 1;
 

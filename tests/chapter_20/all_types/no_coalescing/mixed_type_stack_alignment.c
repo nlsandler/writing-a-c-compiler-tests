@@ -7,7 +7,7 @@
  * but with a mix of types.
  * */
 
-#include "../../libraries/util.h" // declares check_* and id functions
+#include "../util.h" // declares check_* and id functions
 
  // check alignment of RSP and exit with exit_code if it's misaligned
  // defined in tests/chapter_20/libraries/alignment_check_<PLATFORM>.s

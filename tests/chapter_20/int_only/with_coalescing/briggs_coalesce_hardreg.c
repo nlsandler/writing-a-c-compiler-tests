@@ -10,7 +10,7 @@
  * even if we don't perform register coalescing.
  * */
 
-#include "../../libraries/util.h"
+#include "../util.h"
 
 int flag = 1;
 

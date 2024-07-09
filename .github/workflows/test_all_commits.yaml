@@ -1,0 +1,15 @@
+# Run test_each_chapter.yaml, from nqcc2 repo, to make sure we're not
+# e.g. using a language feature before the test where it's added
+
+name: Test All Chapters
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test_all_chapters:
+    uses: nlsandler/nqcc2/.github/workflows/test_each_chapter.yaml@extra-credit
+    with:
+      tests-branch: ${{ github.head_ref }}
+      cc-branch: extra-credit
