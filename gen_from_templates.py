@@ -116,7 +116,8 @@ test_cases = {
 # TODO better way to track which template corresponds to which final source file
 # for now we'll just map assembly templates to output directories
 assembly_locations = {
-    "stack_alignment_check.s.jinja": "chapter_9/valid/stack_arguments"
+    "stack_alignment_check.s.jinja": "chapter_9/valid/stack_arguments",
+    "validate_return_pointer.s.jinja": "chapter_18/valid/params_and_returns",
 }
 
 env = Environment(

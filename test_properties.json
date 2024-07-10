@@ -1522,6 +1522,9 @@
         "chapter_18/valid/params_and_returns/return_space_overlap.c": [
             "chapter_18/valid/params_and_returns/return_space_address_overlap"
         ],
+        "chapter_18/valid/params_and_returns/return_pointer_in_rax.c": [
+            "chapter_18/valid/params_and_returns/validate_return_pointer"
+        ],
         "chapter_20/int_only/no_coalescing/callee_saved_stack_alignment.c": [
             "chapter_20/libraries/alignment_check_wrapper"
         ],
