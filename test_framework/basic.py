@@ -1,6 +1,7 @@
 """Basic tests for Parts I & II"""
 from __future__ import annotations
 
+import difflib
 import json
 import platform
 import subprocess
@@ -144,6 +145,49 @@ def replace_stem(path: Path, new_stem: str) -> Path:
     return path.with_name(new_stem).with_suffix(path.suffix)
 
 
+def build_error_message(
+    expected_retcode: int,
+    expected_stdout: str,
+    actual: subprocess.CompletedProcess[str],
+    exe_name: str,
+) -> str:
+    """Build the error message for when a compiled test program behaves incorrectly
+    Called when a unittest assert* message fails
+    Args:
+        expected_retcode: expected return code from EXPECTED_RESULTS
+        expected_stdout: expected stdout from EXPECTED_RESULTS (often empty)
+        actual: result from calling subprocess.run() on compiled test program
+        exe_name: full path to compiled test program
+    Returns:
+        an error message
+    """
+
+    msg_lines = [f"Incorrect behavior in {exe_name}"]
+
+    # report on incorrect return code
+    if expected_retcode != actual.returncode:
+        msg_lines += [
+            f"* Bad return code: expected {expected_retcode} and got {actual.returncode}"
+        ]
+
+    # report on incorrect stdout
+    if actual.stdout != expected_stdout:
+        msg_lines.append(
+            f"* Bad stdout: expected {repr(expected_stdout)} and got {repr(actual.stdout)}"
+        )
+        diff = list(
+            difflib.ndiff(expected_stdout.splitlines(), actual.stdout.splitlines())
+        )
+        msg_lines.extend(diff)
+
+    # report on incorrect stderr (note: we always expect stderr to be empty)
+    if actual.stderr:
+        msg_lines.append("* Expected no output to stderr, but found:\n")
+        msg_lines.extend(actual.stderr)
+
+    return "\n".join(msg_lines)
+
+
 class TestChapter(unittest.TestCase):
     """Base per-chapter test class - should be subclassed, not instantiated directly.
 
@@ -269,17 +313,18 @@ class TestChapter(unittest.TestCase):
         self.assertEqual(
             expected_retcode,
             actual.returncode,
-            msg=f"Expected return code {expected_retcode}, found {actual.returncode} in {exe}",
+            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
         )
         self.assertEqual(
             expected_stdout,
             actual.stdout,
-            msg=f"Expected output {expected_stdout}, found {actual.stdout} in {exe}",
+            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
         )
 
         # none of our test programs write to stderr
         self.assertFalse(
-            actual.stderr, msg=f"Unexpected error output {actual.stderr} in {exe}"
+            actual.stderr,
+            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
         )
 
     def compile_failure(self, source_file: Path) -> None:
@@ -437,7 +482,7 @@ class TestDirs:
     INVALID_LABELS = "invalid_labels"
     INVALID_STRUCT_TAGS = "invalid_struct_tags"
     # valid test programs for parts I & II
-    # (we'll handle part III test sdifferently)
+    # (we'll handle part III tests differently)
     VALID = "valid"
 
 

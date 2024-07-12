@@ -183,8 +183,8 @@ class TestRegAlloc(basic.TestChapter):
             len(spill_instructions),
             max_spilled_instructions,
             msg=common.build_msg(
-                f"Should only need {max_spilled_instructions} instructions \
-                    involving spilled pseudo but found {len(spill_instructions)}",
+                f"Should only need {max_spilled_instructions} instructions "
+                "involving spilled pseudo but found {len(spill_instructions)}",
                 bad_instructions=spill_instructions,
                 full_prog=parsed_asm,
                 program_path=program_path,
@@ -203,8 +203,8 @@ class TestRegAlloc(basic.TestChapter):
             len(spilled_operands),
             max_spilled_pseudos,
             msg=common.build_msg(
-                f"At most {max_spilled_pseudos} pseudoregs should have been spilled, \
-                    looks like {len(spilled_operands)} were",
+                f"At most {max_spilled_pseudos} pseudoregs should have been spilled, "
+                "looks like {len(spilled_operands)} were",
                 bad_instructions=spill_instructions,
                 full_prog=parsed_asm,
                 program_path=program_path,

@@ -159,6 +159,7 @@ def build_msg(
     bad_instructions: Optional[Sequence[asm.AsmItem]] = None,
     full_prog: Optional[asm.AssemblyFunction] = None,
     program_path: Optional[Path] = None,
+    max_prog_disp_length: int = 20,
 ) -> str:
     """Utility function for validators to report invalid assembly code"""
     msg_lines = [msg]
@@ -167,7 +168,10 @@ def build_msg(
         msg_lines.append("Bad instructions:")
         msg_lines.extend(printed_instructions)
     if full_prog:
-        msg_lines.extend(["Complete program:", str(full_prog)])
+        if len(full_prog.instructions) > max_prog_disp_length:
+            msg_lines.append("Complete assembly function: <too long, not shown>")
+        else:
+            msg_lines.extend(["Complete assembly function:", str(full_prog)])
     if program_path:
         msg_lines.append(f"Program: {program_path}")
     return "\n".join(msg_lines)

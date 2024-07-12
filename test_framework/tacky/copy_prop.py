@@ -275,8 +275,8 @@ class TestCopyProp(common.TackyOptimizationTest):
         )
         self.assertTrue(
             same_value,
-            msg=f"Bad arguments {actual_args[0]} and {actual_args[1]} to callee: \
-                both args should have same value",
+            msg=f"Bad arguments {actual_args[0]} and {actual_args[1]} to callee: "
+            "both args should have same value",
         )
 
     def redundant_copies_test(self, program: Path) -> None:
