@@ -7,6 +7,7 @@ These assume we have access to two copies of the reference implementation:
 
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import subprocess
@@ -24,8 +25,13 @@ from ..basic import (
     TEST_DIR,
     excluded_extra_credit,
     ExtraCredit,
+    build_test_class,
 )
 from ..tacky.dead_store_elim import STORE_ELIMINATED
+
+NQCC = os.getenv("NQCC")
+assert NQCC  # make sure this environment variable is actually set
+NQCC_PATH: Path = Path(NQCC)
 
 TEST_PATTERN = re.compile("^Ran ([0-9]+) tests", flags=re.MULTILINE)
 FAILURE_PATTERN = re.compile("failures=([0-9]+)")
@@ -212,7 +218,7 @@ class TopLevelTest(unittest.TestCase):
         # NQCC throws error code 125 in all cases
         # This should succeed b/c it specifies the error code we'll actually throw
         try:
-            testrun = run_test_script(
+            run_test_script(
                 "./test_compiler $NQCC --chapter 1 --expected-error-codes 125"
             )
         except subprocess.CalledProcessError as err:
@@ -220,7 +226,7 @@ class TopLevelTest(unittest.TestCase):
 
         # Specify multiple error codes including the one we'll actually throw; this should also succeed
         try:
-            testrun = run_test_script(
+            run_test_script(
                 "./test_compiler $NQCC --chapter 1 --expected-error-codes 125 127"
             )
         except subprocess.CalledProcessError as err:
@@ -243,6 +249,8 @@ class BadSourceTest(unittest.TestCase):
     ret2 = TEST_DIR / "chapter_1/valid/return_2.c"
     ret0 = TEST_DIR / "chapter_1/valid/return_0.c"
     hello_world = TEST_DIR / "chapter_9/valid/arguments_in_registers/hello_world.c"
+    # like hello_world, this writes to stdout
+    static_recursive_call = TEST_DIR / "chapter_10/valid/static_recursive_call.c"
     dse_relative = Path("chapter_19/dead_store_elimination/int_only/fig_19_11.c")
     dse = TEST_DIR / dse_relative
 
@@ -254,8 +262,13 @@ class BadSourceTest(unittest.TestCase):
         # save these to a temporary directory before overwriting them
         cls.tmpdir = tempfile.TemporaryDirectory()
         shutil.copy(cls.hello_world, cls.tmpdir.name)
+        shutil.copy(cls.static_recursive_call, cls.tmpdir.name)
         shutil.copy(cls.ret0, cls.tmpdir.name)
         shutil.copy(cls.dse, cls.tmpdir.name)
+
+        # overwrite static_recursive_call with another file that has
+        # a different retcode and different stdout
+        shutil.copy(cls.ret2, cls.static_recursive_call)
 
         # overwrite hello_world with another file that has same retcode but different stdout
         shutil.copy(cls.ret0, cls.hello_world)
@@ -292,17 +305,41 @@ class BadSourceTest(unittest.TestCase):
         tmp_path = Path(cls.tmpdir.name)
         tmp_ret0 = tmp_path / cls.ret0.name
         tmp_helloworld = tmp_path / cls.hello_world.name
+        tmp_static_recursive_call = tmp_path / cls.static_recursive_call.name
         tmp_dse = tmp_path / cls.dse.name
 
         shutil.copy(tmp_ret0, cls.ret0)
         shutil.copy(tmp_helloworld, cls.hello_world)
         shutil.copy(tmp_dse, cls.dse)
+        shutil.copy(tmp_static_recursive_call, cls.static_recursive_call)
         cls.tmpdir.cleanup()
 
         # remove intermediate files produced by --keep-asm-on-failure
         for f in (TEST_DIR / f"chapter_1").rglob("*.s"):
             if f.name not in ASSEMBLY_LIBS:
                 f.unlink(missing_ok=True)
+
+    @classmethod
+    def run_chapter_tests(cls, chapter: int) -> unittest.TestResult:
+        """Utility function to run test suite for a given chapter and return TestResult.
+        Use this instead of run_test_script so we can inspect individual test results.
+        """
+        test_class = build_test_class(
+            NQCC_PATH,
+            chapter,
+            options=[],
+            stage="run",
+            extra_credit_flags=ExtraCredit.NONE,
+            skip_invalid=True,
+            error_codes=[],
+        )
+        test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(test_class)
+
+        # test failure is expected and shouldn't be displayed to stdout,
+        # so direct test output to /dev/null
+        with open(os.devnull, "w") as devnull:
+            result = unittest.TextTestRunner(stream=devnull).run(test_suite)
+            return result
 
     def assert_no_intermediate_files(self, chapter: int) -> None:
         # Executables, *.i files, etc should have been cleaned up
@@ -378,7 +415,7 @@ class BadSourceTest(unittest.TestCase):
 
     def test_keep_asm(self) -> None:
         """Use --keep-asm-on-failure option to generate assembly for failures"""
-        with self.assertRaises(subprocess.CalledProcessError) as cpe:
+        with self.assertRaises(subprocess.CalledProcessError):
             run_test_script("./test_compiler $NQCC --chapter 1")
         # make sure we preserved .s file for ret0, which should fail
         expected_asm = self.__class__.ret0.with_suffix(".s")
@@ -389,7 +426,7 @@ class BadSourceTest(unittest.TestCase):
 
     def test_keep_asm_optimize(self) -> None:
         """Make sure --keep-asm-on-failure works for chapter 19 tests"""
-        with self.assertRaises(subprocess.CalledProcessError) as cpe:
+        with self.assertRaises(subprocess.CalledProcessError):
             run_test_script("./test_compiler $NQCC --chapter 19")
         # make sure we preserved .s file for ret0, which should fail
         expected_asm = self.__class__.dse.with_suffix(".s")
@@ -397,3 +434,52 @@ class BadSourceTest(unittest.TestCase):
             expected_asm.exists,
             msg=f"{expected_asm} should be preserved on failure but wasn't found",
         )
+
+    def test_bad_retcode_output(self) -> None:
+        """If return code is incorrect, only report that, not stdout or stderr."""
+
+        chapter1_results = self.run_chapter_tests(chapter=1)
+
+        # Expected failure in return_0.c, which we replaced with return_2.c
+        self.assertEqual(len(chapter1_results.failures), 1)
+        # chapter1_results.failures is a list of (TestCase instance, error message) tuples
+        err_output: str = chapter1_results.failures[0][1]
+        expected_err = (
+            "/tests/chapter_1/valid/return_0"
+            "\n* Bad return code: expected 0 and got 2\n"
+        )
+        err_output_end = err_output[-len(expected_err) :]
+        self.assertEqual(err_output_end, expected_err)
+
+    def test_bad_stdout_output(self) -> None:
+        """If only stdout is incorrect, report that but not return code."""
+        chapter9_results = self.run_chapter_tests(chapter=9)
+
+        # Expected failure in hello_world.c, which we replaced with return_0.c
+        self.assertEqual(len(chapter9_results.failures), 1)
+        # chapter9_results.failures is a list of (TestCase instance, error message) tuples
+        err_output: str = chapter9_results.failures[0][1]
+        expected_err = (
+            "/tests/chapter_9/valid/arguments_in_registers/hello_world"
+            "\n* Bad stdout: expected 'Hello, World!\\n' and got ''"
+            "\n- Hello, World!\n"
+        )
+        err_output_end = err_output[-len(expected_err) :]
+        self.assertEqual(err_output_end, expected_err)
+
+    def test_bad_stdout_and_retcode(self) -> None:
+        """If stdout and return code are both incorrect, report both of them."""
+        chapter10_results = self.run_chapter_tests(chapter=10)
+
+        # Expected failure in static_recursive_call.c, which we replaced with return_2.c
+        self.assertEqual(len(chapter10_results.failures), 1)
+        # chapter10_results.failures is a list of (TestCase instance, error message) tuples
+        err_output: str = chapter10_results.failures[0][1]
+        expected_err = (
+            "/tests/chapter_10/valid/static_recursive_call"
+            "\n* Bad return code: expected 0 and got 2"
+            "\n* Bad stdout: expected 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' and got ''"
+            "\n- ABCDEFGHIJKLMNOPQRSTUVWXYZ\n"
+        )
+        err_output_end = err_output[-len(expected_err) :]
+        self.assertEqual(err_output_end, expected_err)
