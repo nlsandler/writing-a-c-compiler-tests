@@ -7,7 +7,7 @@
 /* Validating ints */
 
 int check_one_int(int actual, int expected);
-
+int check_one_double(double actual, double expected);
 // Validates a == start, b == start + 1, ...e == start + 5
 int check_5_ints(int a, int b, int c, int d, int e, int start);
 
