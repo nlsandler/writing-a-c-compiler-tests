@@ -27,6 +27,22 @@ def comment_wrap(e: Environment, value: str, width: int = 73) -> str:
     )
 
 
+@pass_environment
+def multiline_comment_wrap(e: Environment, value: str, width: int = 80) -> str:
+    lines = [(l.strip()) for l in value.splitlines()]
+    oneline = "/*" + "".join(lines) + " * */"
+    return (
+        do_wordwrap(
+            e,
+            oneline,
+            width=width,
+            break_long_words=False,
+            wrapstring="\n * ",
+        )
+        + "\n"
+    )
+
+
 PLATFORM_PROPS = {
     "linux": {
         "local_prefix": ".L",
@@ -125,6 +141,7 @@ env = Environment(
 )
 env.globals["letters"] = list(ascii_lowercase[0:12])
 env.filters["comment_wrap"] = comment_wrap
+env.filters["multiline_comment_wrap"] = multiline_comment_wrap
 
 # pre-chapter 20 tests
 for k, v in test_cases.items():
@@ -177,6 +194,9 @@ configurable_templates: dict[str, dict[str, dict[str, Any]]] = {
     "division_uses_ax.c.jinja": {
         "int_only/no_coalescing/division_uses_ax.c": {"unsigned": False},
         "all_types/no_coalescing/div_uses_ax.c": {"unsigned": True},
+    },
+    "george_coalesce.c.jinja": {
+        # none yet
     },
 }
 
