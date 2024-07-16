@@ -1,9 +1,9 @@
 /* Test that we coalesce pseudos into hard registers when they pass the George
- * test. In this case, coalescing lets us get rid of all moves
- * between registers. We inspect the assembly for the target function
- * to validate that it contains no spills and no mov instructions whose source
- * and destination are both general-purpose registers (except mov %rsp, %rbp and
- * mov %rbp, %rsp in the prologue and epilogue)
+ * test. In this case, coalescing lets us get rid of all moves between registers.
+ * We inspect the assembly for the target function to validate that it contains no
+ * spills and no mov instructions whose source and destination are both general
+ * purpose registers (except mov %rsp, %rbp and mov %rbp, %rsp in the prologue and
+ * epilogue)
  * */
 #include "../util.h"
 
@@ -110,17 +110,17 @@ int target(int a, int b, int c, int d, int e, int f) {
     if (twelve != 12) {
         return 18;
     }
-
     // Now make sure values passed as arguments are coalesced into
     // parameter-passing registers. Calculate using glob so we can't
     // copy prop or constant fold them, and don't need to mov values
-    // between registers to calcualte them.
+    // between registers to calculate them.
     int u = glob - 3;      // 1
     int v = glob - 2;      // 2
     int w = glob - 1;      // 3
     int x = glob * 2 - 4;  // 4
     int y = glob + 1;      // 5
     check_5_ints(u, v, w, x, y, 1);
+
 
     // make sure return value is coalesced into EAX
     return check_one_int(glob, 4);

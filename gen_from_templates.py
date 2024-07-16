@@ -30,7 +30,7 @@ def comment_wrap(e: Environment, value: str, width: int = 73) -> str:
 @pass_environment
 def multiline_comment_wrap(e: Environment, value: str, width: int = 80) -> str:
     lines = [(l.strip()) for l in value.splitlines()]
-    oneline = "/*" + "".join(lines) + " * */"
+    oneline = "/* " + " ".join(lines) + "\n*/"
     return (
         do_wordwrap(
             e,
@@ -41,6 +41,10 @@ def multiline_comment_wrap(e: Environment, value: str, width: int = 80) -> str:
         )
         + "\n"
     )
+
+
+def format_string(text: str, fmt: str) -> str:
+    return fmt.format(text)
 
 
 PLATFORM_PROPS = {
@@ -142,6 +146,7 @@ env = Environment(
 env.globals["letters"] = list(ascii_lowercase[0:12])
 env.filters["comment_wrap"] = comment_wrap
 env.filters["multiline_comment_wrap"] = multiline_comment_wrap
+env.filters["format_string"] = format_string
 
 # pre-chapter 20 tests
 for k, v in test_cases.items():
@@ -196,7 +201,8 @@ configurable_templates: dict[str, dict[str, dict[str, Any]]] = {
         "all_types/no_coalescing/div_uses_ax.c": {"unsigned": True},
     },
     "george_coalesce.c.jinja": {
-        # none yet
+        "int_only/with_coalescing/george_coalesce.c": {"dbl": False},
+        "all_types/with_coalescing/george_coalesce_xmm.c": {"dbl": True},
     },
 }
 
