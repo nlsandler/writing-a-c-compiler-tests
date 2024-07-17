@@ -24,22 +24,24 @@ int test_movsx_src(int i) {
 /* Test that we recognize movsx a, b updates b */
 signed char glob_char = 10;
 int test_movsx_dst(void) {
-    // Create six callee-saved pseudos, several of which are defined via movsx;
+    // Create six callee-saved pseudos that are defined via movsx;
     // if we don't recognize that movsx updates its destination,
     // we won't recognize that they conflict, and we'll put at least
     // two of them in the same pseudoregister.
     // Use a mix of sign-extension from char and from int.
     unsigned long a = id(-1);
     unsigned long b = id(2);
-    int c = (int)-glob_char;
+    char neg_char = -glob_char;
+    char not_char = ~glob_char;
+    int c = (int)glob_char;
     long d = id(4);
-    unsigned int e = (unsigned int)(glob_char + 4);
-    long f = (long)~glob_char;
+    unsigned int e = (unsigned int)neg_char;
+    long f = (long) not_char;
     check_one_ulong(a, 18446744073709551615ul);
     check_one_ulong(b, 2ul);
-    check_one_int(c, -10);
+    check_one_int(c, 10);
     check_one_long(d, 4l);
-    check_one_uint(e, 14);
+    check_one_uint(e, -10);
     check_one_long(f, -11);
     return 0;
 }
