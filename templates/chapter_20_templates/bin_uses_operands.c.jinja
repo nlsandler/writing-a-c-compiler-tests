@@ -4,8 +4,6 @@
 {% set reg = "XMM0" %}
 {% set typ = "double" %}
 {% set dst_instr = "divsd" %}
-{% set dst_operation = "a / 2.0" %}
-{% set dst_result = "50.0" %}
 {% macro operand(const) -%}.Lconst_{{const}}(%rip){%- endmacro %}
 {% else %}
 {% set instr_descriptor = " " %}
@@ -13,8 +11,6 @@
 {% set reg = "EDI" %}
 {% set typ = "int" %}
 {% set dst_instr = "subl" %}
-{% set dst_operation = "a - 1" %}
-{% set dst_result = "99" %}
 {% macro operand(const) -%}${{const}}{%- endmacro %}
 {% endif %}
 {% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}

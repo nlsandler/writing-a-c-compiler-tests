@@ -191,11 +191,11 @@ int test_cvttsd2si_dst(void) {
     int e = (int)dbl_id(-600.0);
     long f = (long)dbl_id(-700.0);
     check_one_int(a, -200);
-    check_one_long(b, -300);
+    check_one_long(b, -300l);
     check_one_int(c, -400);
-    check_one_int(d, -500);
+    check_one_long(d, -500l);
     check_one_int(e, -600);
-    check_one_int(f, -700);
+    check_one_long(f, -700l);
     return 0;
 }
 
