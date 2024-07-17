@@ -152,6 +152,32 @@ configurable_templates: dict[str, dict[str, dict[str, Any]]] = {
         "int_only/no_coalescing/force_spill.c": {"all_types": False},
         "all_types/no_coalescing/force_spill_mixed_ints.c": {"all_types": True},
     },
+    "bin_uses_operands.c.jinja": {
+        "int_only/no_coalescing/bin_uses_operands.c": {"dbl": False},
+        "all_types/no_coalescing/dbl_bin_uses_operands.c": {"dbl": True},
+    },
+    "funcall_generates_args.c.jinja": {
+        "int_only/no_coalescing/funcall_generates_args.c": {"dbl": False},
+        "all_types/no_coalescing/dbl_funcall_generates_args.c": {"dbl": True},
+    },
+    "reg_live_at_exit.c.jinja": {
+        "int_only/no_coalescing/eax_live_at_exit.c": {"dbl": False},
+        "all_types/no_coalescing/xmm0_live_at_exit.c": {"dbl": True},
+    },
+    "fourteen_pseudos_interfere.c.jinja": {
+        "all_types/no_coalescing/fourteen_pseudos_interfere.c": {
+            "return_struct": False
+        },
+        "all_types/no_coalescing/return_all_int_struct.c": {"return_struct": True},
+    },
+    "twelve_pseudos_interfere.c.jinja": {
+        "all_types/no_coalescing/return_double.c": {"return_struct": False},
+        "all_types/no_coalescing/return_double_struct.c": {"return_struct": True},
+    },
+    "division_uses_ax.c.jinja": {
+        "int_only/no_coalescing/division_uses_ax.c": {"unsigned": False},
+        "all_types/no_coalescing/div_uses_ax.c": {"unsigned": True},
+    },
 }
 
 

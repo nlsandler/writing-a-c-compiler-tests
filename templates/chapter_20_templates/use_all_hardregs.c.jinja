@@ -13,7 +13,7 @@ int target(void) {
     {% set one_expr="2 - global_one" %}
 
     {% filter indent(width=4, first=true) %}
-    {% include 'includes/twelve_regs_conflict.c.jinja' %}
+    {% include 'includes/twelve_regs_conflict_validation.c.jinja' %}
     {% endfilter %}
 
     return 0;  // success

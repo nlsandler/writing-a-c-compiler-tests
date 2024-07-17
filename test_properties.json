@@ -1426,6 +1426,10 @@
             "chapter_20/libraries/track_dbl_arg_registers_lib.c",
             "chapter_20/libraries/util.c"
         ],
+        "chapter_20/all_types/no_coalescing/mixed_type_funcall_generates_args.c": [
+            "chapter_20/libraries/mixed_type_funcall_generates_args_lib.c",
+            "chapter_20/libraries/util.c"
+        ],
         "chapter_20/int_only/no_coalescing/bin_uses_operands.c": [
             "chapter_20/libraries/util.c"
         ],
@@ -1457,6 +1461,13 @@
         "chapter_20/all_types/no_coalescing/mixed_type_stack_alignment.c": [
             "chapter_20/libraries/util.c"
         ],
+        "chapter_20/all_types/no_coalescing/indexed_operand_reads_regs.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/dbl_funcall_generates_args.c": [
+            "chapter_20/libraries/funcall_generates_args_lib.c",
+            "chapter_20/libraries/util.c"
+        ],
         "chapter_20/int_only/no_coalescing/test_spill_metric_2.c": [
             "chapter_20/libraries/util.c"
         ],
@@ -1466,11 +1477,45 @@
         "chapter_20/all_types/no_coalescing/force_spill_mixed_ints.c": [
             "chapter_20/libraries/util.c"
         ],
+        "chapter_20/all_types/no_coalescing/div_uses_ax.c": [
+            "chapter_20/libraries/util.c"
+        ],
         "chapter_20/all_types/no_coalescing/store_pointer_in_register.c": [
             "chapter_20/libraries/util.c"
         ],
         "chapter_20/all_types/no_coalescing/div_interference.c": [
             "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/dbl_bin_uses_operands.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/type_conversion_interference.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/gp_xmm_mixed.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/one_aliased_var.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/xmm0_live_at_exit.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/ptr_rax_live_at_exit.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/no_coalescing/return_all_int_struct.c": [
+            "chapter_20/libraries/return_all_int_struct_lib.c"
+        ],
+        "chapter_20/all_types/no_coalescing/return_double.c": [
+            "chapter_20/libraries/return_double_lib.c"
+        ],
+        "chapter_20/all_types/no_coalescing/return_double_struct.c": [
+            "chapter_20/libraries/return_double_struct_lib.c"
+        ],
+        "chapter_20/all_types/no_coalescing/mixed_type_arg_registers.c": [
+            "chapter_20/libraries/util.c",
+            "chapter_20/libraries/mixed_type_arg_registers_lib.c"
         ],
         "chapter_20/int_only/with_coalescing/george_coalesce.c": [
             "chapter_20/libraries/util.c"

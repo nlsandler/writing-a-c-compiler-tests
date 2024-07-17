@@ -1,9 +1,15 @@
-// validation helper function used by a few tests
+/* Helper functions used by several tests */
 
 // okay to use standard library b/c we compile this file with
 // the system compiler, not the reader's compiler
 #include <stdio.h>
 #include <stdlib.h>
+
+/* The check_* functions return 0 on success,
+ * print and exit with code -1 on failure.
+ */
+
+/* Validating ints */
 
 int check_one_int(int actual, int expected) {
     if (actual != expected) {
@@ -52,34 +58,48 @@ int check_12_ints(int a, int b, int c, int d, int e, int f, int g, int h, int i,
     return 0;  // success
 }
 
-// Validates a == start, b == start + 1, ..., *k == start + 10, *l == start + 11
-// and exits early if they don't have those values
-int check_12_vals(int a, int b, int c, int d, int e, int f, int g, int h, int i,
-                  int j, long* k, double* l, int start) {
-    int args[10] = {a, b, c, d, e, f, g, h, i, j};
-    for (int i = 0; i < 10; i++) {
-        int expected = start + i;
-        if (args[i] != expected) {
-            printf(
-                "Expected argument %d to have value %d, actual value was %d\n",
-                i, start + i, args[i]);
-            exit(-1);
-        }
-    }
+/* Validating other types */
 
-    if (*k != start + 10) {
-        printf("Expected *k to point to have value %d, actual value was %ld\n",
-               start + 10, *k);
+int check_one_uchar(unsigned char actual, unsigned char expected) {
+    if (actual != expected) {
+        printf("Expected %c but found %c\n", expected, actual);
         exit(-1);
     }
+    return 0;
+}
 
-    if (*l != start + 11) {
-        printf("Expected *l to point to have value %d, actual value was %f\n",
-               start + 11, *l);
+
+int check_one_uint(unsigned int actual, unsigned int expected) {
+    if (actual != expected) {
+        printf("Expected %u but found %u\n", expected, actual);
         exit(-1);
     }
+    return 0;
+}
 
-    return 0;  // success
+int check_one_long(long actual, long expected) {
+    if (actual != expected) {
+        printf("Expected %ld but found %ld\n", expected, actual);
+        exit(-1);
+    }
+    return 0;
+}
+
+int check_one_ulong(unsigned long actual, unsigned long expected) {
+    if (actual != expected) {
+        printf("Expected %lu but found %lu\n", expected, actual);
+        exit(-1);
+    }
+    return 0;
+}
+
+
+int check_one_double(double actual, double expected) {
+    if (actual != expected) {
+        printf("Expected %f but found %f\n", expected, actual);
+        exit(-1);
+    }
+    return 0;
 }
 
 // validates a == start, b == start + 1, ... n == start + 13
@@ -102,6 +122,57 @@ int check_14_doubles(double a, double b, double c, double d, double e, double f,
     return 0;  // success
 }
 
+// Used in force_spill_mixed_ints; validates a == start, b == start + 1, ...,
+// *k == start + 10, *l == start + 11,
+// and exits early if they don't have those values
+int check_12_vals(int a, int b, int c, int d, int e, int f, int g, int h, int i,
+                  int j, long* k, double* l, int start) {
+    int args[10] = {a, b, c, d, e, f, g, h, i, j};
+    for (int i = 0; i < 10; i++) {
+        int expected = start + i;
+        if (args[i] != expected) {
+            printf(
+                "Expected argument %d to have value %d, actual value was %d\n",
+                i, expected, args[i]);
+            exit(-1);
+        }
+    }
+
+    if (*k != start + 10) {
+        printf("Expected *k to point to have value %d, actual value was %ld\n",
+               start + 10, *k);
+        exit(-1);
+    }
+
+    if (*l != start + 11) {
+        printf("Expected *l to point to have value %d, actual value was %f\n",
+               start + 11, *l);
+        exit(-1);
+    }
+
+    return 0;  // success
+}
+
+/* Identity functions that return x;
+ * used to get constants in a way that can't be optimized away
+ */
+
 int id(int x) {
     return x;
+}
+
+double dbl_id(double x) {
+    return x;
+}
+
+long long_id(long l) {
+    return l;
+}
+
+unsigned unsigned_id(unsigned u) {
+    return u;
+}
+
+unsigned char uchar_id(unsigned char uc) {
+    return uc;
 }

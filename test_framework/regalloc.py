@@ -301,8 +301,18 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
     "loop.c": NoSpillTest(),
     "dbl_trivially_colorable.c": NoSpillTest(),
     "fourteen_pseudos_interfere.c": NoSpillTest(),
+    "return_double.c": NoSpillTest(target_fun="return_double"),
+    "return_all_int_struct.c": SpillTest(
+        max_spilled_instructions=10, max_spilled_pseudos=6, target_fun="return_struct"
+    ),
+    "return_double_struct.c": SpillTest(
+        max_spilled_instructions=8, max_spilled_pseudos=4, target_fun="return_struct"
+    ),
     "track_dbl_arg_registers.c": NoSpillTest(),
     "store_pointer_in_register.c": NoSpillTest(),
+    "aliasing_optimized_away.c": NoSpillTest(),
+    "gp_xmm_mixed.c": NoSpillTest(),
+    "one_aliased_var.c": SpillTest(max_spilled_instructions=3, max_spilled_pseudos=2),
     "force_spill.c": SpillTest(
         max_spilled_instructions=3,
         max_spilled_pseudos=1,
@@ -310,6 +320,9 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
     "force_spill_mixed_ints.c": SpillTest(
         max_spilled_instructions=3,
         max_spilled_pseudos=1,
+    ),
+    "mixed_type_arg_registers.c": SpillTest(
+        max_spilled_instructions=12, max_spilled_pseudos=8
     ),
     # possibly these rewrite instructions don't belong in reg allocation test suite
     "rewrite_regression_test.c": SpillTest(

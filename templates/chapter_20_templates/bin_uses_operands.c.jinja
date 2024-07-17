@@ -1,0 +1,82 @@
+{% if dbl %}
+{% set instr_descriptor = " SSE " %}
+{% set suffix = "sd" %}
+{% set reg = "XMM0" %}
+{% set typ = "double" %}
+{% set dst_instr = "divsd" %}
+{% macro operand(const) -%}.Lconst_{{const}}(%rip){%- endmacro %}
+{% else %}
+{% set instr_descriptor = " " %}
+{% set suffix = "l" %}
+{% set reg = "EDI" %}
+{% set typ = "int" %}
+{% set dst_instr = "subl" %}
+{% macro operand(const) -%}${{const}}{%- endmacro %}
+{% endif %}
+{% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
+/* Test that we recognize that a binary{{instr_descriptor}}instruction uses its source and
+ * destination; e.g. add{{suffix}} %a, %b makes a and b live. Don't inspect assembly,
+ * just validate behavior.
+ * NOTE: only works as intended after we've implemented register coalescing.
+ *
+ * This test program is generated from templates/{{ self._TemplateReference__context.name }}
+ */
+
+#include "../util.h"
+
+// recognize that add{{suffix}} uses its source
+{{typ}} src_test({{typ}} arg) {
+    // this becomes:
+    // mov{{suffix}} {{operand(5)}}, %x
+    // add{{suffix}} %arg, %x
+    // if we don't recognize that add{{suffix}} makes arg live, we'll coalesce both
+    // arg and x into {{reg}}, and check_one_{{typ}} will fail
+    {{typ}} x = 5 + arg;
+    check_one_{{typ}}(x, {{const(6)}});
+    return 0;
+}
+
+{{typ}} glob = 1;
+{{typ}} glob2;
+int flag = 1;
+// recognize that {{"divsd" if dbl else "sub" }} uses its destination
+int dst_test(void) {
+    {{typ}} a = {{"dbl_" if dbl else ""}}id({{const(100)}});
+
+    // wrap this in if statement so we can't copy prop temporary values
+    // into check_one_{{typ}} calls below
+    if (flag) {
+        // this addition becomes:
+        // mov{{suffix}} %a, %tmp
+        // add{{suffix}} %glob, %tmp
+        // mov{{suffix}} %tmp, %glob2
+        // so we'll coalesce a & tmp unless we recognize that a is still live,
+        // which requires us to realize that the {{dst_instr}} instruction below
+        // doesn't kill it
+        glob2 = a + glob;
+
+        // first round of coalescing will coalesce a with temporary result of
+{% if dbl %}
+        // a / 2.0, so this will be
+        // divsd .Lconst_2(%rip), %a.0
+        // so we need to recognize that this divsd instruction uses a
+        a = a / 2.0;
+        {% set result = "50.0" %}
+{% else %}
+        // a - 1, so this will be
+        // subl $1, %a.0
+        // so we need to recognize that this subl instruction uses a
+        a = a - 1;
+        {% set result = "99" %}
+{% endif %}
+    }
+
+    check_one_{{typ}}(a, {{result}});
+    check_one_{{typ}}(glob2, {{const(101)}});
+    return 0;
+}
+
+int main(void) {
+    src_test(1);
+    dst_test();
+}

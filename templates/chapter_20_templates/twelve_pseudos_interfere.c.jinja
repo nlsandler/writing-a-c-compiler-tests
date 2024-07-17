@@ -1,0 +1,64 @@
+{% if return_struct %}
+{% set typ = "struct s" %}
+{% set retval_desc="a struct in XMM registers" %}
+{% set fn_name = "return_struct" %}
+{% set lib = "return_double_struct_lib.c" %}
+{% else %}
+{% set typ = "double" %}
+{% set retval_desc="a double" %}
+{% set fn_name = "return_double" %}
+{% set lib = "return_double_lib.c" %}
+{% endif %}
+/* Test that we recognize EAX is not live at exit when we return
+ * {{retval_desc}}. If we think EAX is live we won't be able
+ * to allocate pseudoregisters to it, which will lead to spills.
+ * The test script validates that the assembly program
+ {% if return_struct %}
+ * doesn't use any memory access instructions except to populate and
+ * transfer the return value struct. There should be at most eight
+ * memory access instructions: for each of this function's two return
+ * statements (success and failure), two instructions populate the return
+ * value struct and two move it into the XMM0/XMM1 registers.
+ {% else %}
+ * doesn't use any memory access instructions.
+ {% endif %}
+ * The target function, defined in tests/chapter_20/libraries/{{lib}},
+ * calls return_double and validates the result.
+ *
+ * This test program is generated from templates/{{ self._TemplateReference__context.name }}.
+ */
+{% if return_struct %}
+struct s {
+    double d1;
+    double d2;
+};
+{% endif %}
+int global_one = 1;  // to prevent constant-folding
+
+{{typ}} {{fn_name}}(void) {
+    // create a clique of 12 pseudos that interfere
+    // we can color all of them w/out spilling anything
+    {% set one_expr="2 - global_one" %}
+
+    {% filter indent(width=4, first=true) %}
+    {% include 'includes/twelve_regs_conflict.c.jinja' %}
+    {% endfilter %}
+
+    // validate them
+    if (one == 1 && two == 2 && three == 3 && four == 4 && five == 5 &&
+        six == 6 && seven == 7 && eight == 8 && nine == 9 && ten == 10 &&
+        eleven == 11 && twelve == 12) {
+{% if return_struct %}
+        struct s retval = {0.0, 200.0};
+        return retval; // success
+    } else {
+        struct s retval = {1.0, -1.0};
+        return retval; // fail
+    }
+{% else %}
+        return 0.0; // success
+    } else {
+        return 1.0; // fail
+    }
+{% endif %}
+}

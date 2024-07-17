@@ -15,8 +15,3 @@
 int eleven = 16 - five;
 int twelve = six + six;
 {% endif %}
-
-// validate one through twelve
-// (this makes them all live at this point)
-{{check_fn|default("check_12_ints")}}(one, two, three, four, five, six, seven, eight, nine, ten,
-              eleven, twelve, 1);
