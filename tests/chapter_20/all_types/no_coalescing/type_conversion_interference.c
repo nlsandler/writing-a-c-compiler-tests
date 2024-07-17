@@ -76,8 +76,8 @@ int test_movzx_dst(void) {
     long e = (long)unsigned_id(2147483650u);
     unsigned long f = (unsigned long)unsigned_id(80u);
 
-    check_one_int(a, 2000l);
-    check_one_uint(b, 1000u);
+    check_one_long(a, 2000l);
+    check_one_ulong(b, 1000ul);
     check_one_ulong(c, 255ul);
     check_one_long(d, 4294967295l);
     check_one_long(e, 2147483650l);
