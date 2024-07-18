@@ -6,7 +6,7 @@
  * */
 #include "../util.h"
 
-double glob = 1.0;
+double glob = 4.0;
 
 
 /* 1. Validate eight function parameters.
@@ -70,4 +70,10 @@ double dbl_target(double a, double b, double c, double d, double e, double f, do
 
     // make sure return value is coalesced into XMM0
     return check_one_double(glob, 4.0);
+}
+
+int target(void) {
+    // a shim for dbl_target, since wrapper script expects
+    // a 'target' function with an integer return value
+    return dbl_target(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
 }

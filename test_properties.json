@@ -1311,53 +1311,149 @@
         "chapter_18/valid/extra_credit/libraries/union_retvals.c": [
             "union"
         ],
-        "chapter_19/constant_folding/int_only/extra_credit/fold_bitwise.c": ["bitwise"],
-        "chapter_19/constant_folding/all_types/extra_credit/fold_bitwise_long.c": ["bitwise"],
-        "chapter_19/constant_folding/all_types/extra_credit/fold_bitwise_unsigned.c": ["bitwise"],
-        "chapter_19/constant_folding/all_types/extra_credit/fold_nan.c": ["nan"],
-        "chapter_19/constant_folding/all_types/extra_credit/return_nan.c": ["nan"],
-        "chapter_19/constant_folding/all_types/extra_credit/cast_nan_not_executed.c": ["nan"],
-        "chapter_19/unreachable_code_elimination/extra_credit/goto_skips_over_code.c": ["goto"],
-        "chapter_19/unreachable_code_elimination/extra_credit/remove_unused_label.c": ["goto"],
-        "chapter_19/unreachable_code_elimination/extra_credit/dead_before_first_switch_case.c": ["switch"],
-        "chapter_19/unreachable_code_elimination/extra_credit/unreachable_switch_body.c": ["switch"],
-        "chapter_19/unreachable_code_elimination/extra_credit/dead_in_switch_body.c": ["switch"],
-        "chapter_19/copy_propagation/int_only/extra_credit/prefix_result.c": ["increment"],
-        "chapter_19/copy_propagation/int_only/extra_credit/goto_define.c": ["goto"],
-        "chapter_19/copy_propagation/int_only/extra_credit/dont_propagate/decr_kills_dest.c": ["increment"],
-        "chapter_19/copy_propagation/int_only/extra_credit/propagate_into_case.c": ["switch"],
-        "chapter_19/copy_propagation/int_only/extra_credit/propagate_from_default.c": ["switch"],
-        "chapter_19/copy_propagation/int_only/extra_credit/dont_propagate/switch_fallthrough.c": ["switch"],
-        "chapter_19/copy_propagation/all_types/extra_credit/pointer_incr.c": ["increment"],
-        "chapter_19/copy_propagation/all_types/extra_credit/pointer_compound_assignment.c": ["compound"],
-        "chapter_19/copy_propagation/all_types/extra_credit/redundant_nan_copy.c": ["nan"],
-        "chapter_19/copy_propagation/all_types/extra_credit/copy_union.c": ["union"],
-        "chapter_19/copy_propagation/all_types/extra_credit/redundant_union_copy.c": ["union"],
-        "chapter_19/copy_propagation/all_types/extra_credit/dont_propagate/update_union_member.c": ["union"],
-        "chapter_19/copy_propagation/all_types/extra_credit/dont_propagate/update_union_member_2.c": ["union"],
-        "chapter_19/dead_store_elimination/int_only/extra_credit/dead_incr_decr.c": ["increment"],
-        "chapter_19/dead_store_elimination/int_only/extra_credit/dont_elim/incr_and_dead_store.c": ["increment"],
-        "chapter_19/dead_store_elimination/int_only/extra_credit/dead_compound_assignment.c": ["compound"],
-        "chapter_19/dead_store_elimination/all_types/extra_credit/decr_struct_member.c": ["increment"],
-        "chapter_19/dead_store_elimination/all_types/extra_credit/compound_assign_to_dead_struct_member.c": ["compound"],
-        "chapter_19/dead_store_elimination/all_types/extra_credit/dont_elim/incr_through_pointer.c": ["increment"],
-        "chapter_19/dead_store_elimination/all_types/extra_credit/copy_to_dead_union.c": ["union"],
-        "chapter_19/dead_store_elimination/all_types/extra_credit/dont_elim/type_punning.c": ["union"],
-        "chapter_19/dead_store_elimination/all_types/extra_credit/dont_elim/copy_generates_union.c": ["union"],
-        "chapter_19/whole_pipeline/int_only/extra_credit/fold_negative_bitshift.c": ["bitwise"],
-        "chapter_19/whole_pipeline/int_only/extra_credit/fold_incr_and_decr.c": ["increment"],
-        "chapter_19/whole_pipeline/int_only/extra_credit/compound_assign_exceptions.c": ["compound"],
-        "chapter_19/whole_pipeline/int_only/extra_credit/fold_compound_assignment.c": ["compound"],
-        "chapter_19/whole_pipeline/int_only/extra_credit/fold_bitwise_compound_assignment.c": ["bitwise", "compound"],
-        "chapter_19/whole_pipeline/int_only/extra_credit/evaluate_switch.c": ["switch"],
-        "chapter_19/whole_pipeline/all_types/extra_credit/fold_negative_long_bitshift.c": ["bitwise"],
-        "chapter_19/whole_pipeline/all_types/extra_credit/fold_incr_decr_doubles.c": ["increment"],
-        "chapter_19/whole_pipeline/all_types/extra_credit/fold_incr_decr_unsigned.c": ["increment"],
-        "chapter_19/whole_pipeline/all_types/extra_credit/fold_incr_decr_chars.c": ["increment"],
-        "chapter_19/whole_pipeline/all_types/extra_credit/fold_compound_assign_all_types.c": ["compound"],
-        "chapter_19/whole_pipeline/all_types/extra_credit/fold_compound_bitwise_assign_all_types.c": ["bitwise", "compound"],
-        "chapter_19/whole_pipeline/all_types/extra_credit/nan.c": ["nan"],
-        "chapter_19/whole_pipeline/all_types/extra_credit/eval_nan_condition.c": ["nan"]
+        "chapter_19/constant_folding/int_only/extra_credit/fold_bitwise.c": [
+            "bitwise"
+        ],
+        "chapter_19/constant_folding/all_types/extra_credit/fold_bitwise_long.c": [
+            "bitwise"
+        ],
+        "chapter_19/constant_folding/all_types/extra_credit/fold_bitwise_unsigned.c": [
+            "bitwise"
+        ],
+        "chapter_19/constant_folding/all_types/extra_credit/fold_nan.c": [
+            "nan"
+        ],
+        "chapter_19/constant_folding/all_types/extra_credit/return_nan.c": [
+            "nan"
+        ],
+        "chapter_19/constant_folding/all_types/extra_credit/cast_nan_not_executed.c": [
+            "nan"
+        ],
+        "chapter_19/unreachable_code_elimination/extra_credit/goto_skips_over_code.c": [
+            "goto"
+        ],
+        "chapter_19/unreachable_code_elimination/extra_credit/remove_unused_label.c": [
+            "goto"
+        ],
+        "chapter_19/unreachable_code_elimination/extra_credit/dead_before_first_switch_case.c": [
+            "switch"
+        ],
+        "chapter_19/unreachable_code_elimination/extra_credit/unreachable_switch_body.c": [
+            "switch"
+        ],
+        "chapter_19/unreachable_code_elimination/extra_credit/dead_in_switch_body.c": [
+            "switch"
+        ],
+        "chapter_19/copy_propagation/int_only/extra_credit/prefix_result.c": [
+            "increment"
+        ],
+        "chapter_19/copy_propagation/int_only/extra_credit/goto_define.c": [
+            "goto"
+        ],
+        "chapter_19/copy_propagation/int_only/extra_credit/dont_propagate/decr_kills_dest.c": [
+            "increment"
+        ],
+        "chapter_19/copy_propagation/int_only/extra_credit/propagate_into_case.c": [
+            "switch"
+        ],
+        "chapter_19/copy_propagation/int_only/extra_credit/propagate_from_default.c": [
+            "switch"
+        ],
+        "chapter_19/copy_propagation/int_only/extra_credit/dont_propagate/switch_fallthrough.c": [
+            "switch"
+        ],
+        "chapter_19/copy_propagation/all_types/extra_credit/pointer_incr.c": [
+            "increment"
+        ],
+        "chapter_19/copy_propagation/all_types/extra_credit/pointer_compound_assignment.c": [
+            "compound"
+        ],
+        "chapter_19/copy_propagation/all_types/extra_credit/redundant_nan_copy.c": [
+            "nan"
+        ],
+        "chapter_19/copy_propagation/all_types/extra_credit/copy_union.c": [
+            "union"
+        ],
+        "chapter_19/copy_propagation/all_types/extra_credit/redundant_union_copy.c": [
+            "union"
+        ],
+        "chapter_19/copy_propagation/all_types/extra_credit/dont_propagate/update_union_member.c": [
+            "union"
+        ],
+        "chapter_19/copy_propagation/all_types/extra_credit/dont_propagate/update_union_member_2.c": [
+            "union"
+        ],
+        "chapter_19/dead_store_elimination/int_only/extra_credit/dead_incr_decr.c": [
+            "increment"
+        ],
+        "chapter_19/dead_store_elimination/int_only/extra_credit/dont_elim/incr_and_dead_store.c": [
+            "increment"
+        ],
+        "chapter_19/dead_store_elimination/int_only/extra_credit/dead_compound_assignment.c": [
+            "compound"
+        ],
+        "chapter_19/dead_store_elimination/all_types/extra_credit/decr_struct_member.c": [
+            "increment"
+        ],
+        "chapter_19/dead_store_elimination/all_types/extra_credit/compound_assign_to_dead_struct_member.c": [
+            "compound"
+        ],
+        "chapter_19/dead_store_elimination/all_types/extra_credit/dont_elim/incr_through_pointer.c": [
+            "increment"
+        ],
+        "chapter_19/dead_store_elimination/all_types/extra_credit/copy_to_dead_union.c": [
+            "union"
+        ],
+        "chapter_19/dead_store_elimination/all_types/extra_credit/dont_elim/type_punning.c": [
+            "union"
+        ],
+        "chapter_19/dead_store_elimination/all_types/extra_credit/dont_elim/copy_generates_union.c": [
+            "union"
+        ],
+        "chapter_19/whole_pipeline/int_only/extra_credit/fold_negative_bitshift.c": [
+            "bitwise"
+        ],
+        "chapter_19/whole_pipeline/int_only/extra_credit/fold_incr_and_decr.c": [
+            "increment"
+        ],
+        "chapter_19/whole_pipeline/int_only/extra_credit/compound_assign_exceptions.c": [
+            "compound"
+        ],
+        "chapter_19/whole_pipeline/int_only/extra_credit/fold_compound_assignment.c": [
+            "compound"
+        ],
+        "chapter_19/whole_pipeline/int_only/extra_credit/fold_bitwise_compound_assignment.c": [
+            "bitwise",
+            "compound"
+        ],
+        "chapter_19/whole_pipeline/int_only/extra_credit/evaluate_switch.c": [
+            "switch"
+        ],
+        "chapter_19/whole_pipeline/all_types/extra_credit/fold_negative_long_bitshift.c": [
+            "bitwise"
+        ],
+        "chapter_19/whole_pipeline/all_types/extra_credit/fold_incr_decr_doubles.c": [
+            "increment"
+        ],
+        "chapter_19/whole_pipeline/all_types/extra_credit/fold_incr_decr_unsigned.c": [
+            "increment"
+        ],
+        "chapter_19/whole_pipeline/all_types/extra_credit/fold_incr_decr_chars.c": [
+            "increment"
+        ],
+        "chapter_19/whole_pipeline/all_types/extra_credit/fold_compound_assign_all_types.c": [
+            "compound"
+        ],
+        "chapter_19/whole_pipeline/all_types/extra_credit/fold_compound_bitwise_assign_all_types.c": [
+            "bitwise",
+            "compound"
+        ],
+        "chapter_19/whole_pipeline/all_types/extra_credit/nan.c": [
+            "nan"
+        ],
+        "chapter_19/whole_pipeline/all_types/extra_credit/eval_nan_condition.c": [
+            "nan"
+        ]
     },
     "requires_mathlib": [
         "chapter_13/valid/function_calls/standard_library_call.c",
@@ -1367,13 +1463,13 @@
         "chapter_13/valid/extra_credit/nan.c": [
             "chapter_13/helper_libs/nan.c"
         ],
-        "chapter_19/constant_folding/all_types/extra_credit/fold_nan.c":[
+        "chapter_19/constant_folding/all_types/extra_credit/fold_nan.c": [
             "chapter_13/helper_libs/nan.c"
         ],
-        "chapter_19/constant_folding/all_types/extra_credit/return_nan.c":[
+        "chapter_19/constant_folding/all_types/extra_credit/return_nan.c": [
             "chapter_13/helper_libs/nan.c"
         ],
-        "chapter_19/copy_propagation/all_types/extra_credit/redundant_nan_copy.c":[
+        "chapter_19/copy_propagation/all_types/extra_credit/redundant_nan_copy.c": [
             "chapter_13/helper_libs/nan.c"
         ],
         "chapter_19/unreachable_code_elimination/infinite_loop.c": [
@@ -1542,6 +1638,15 @@
             "chapter_20/libraries/util.c"
         ],
         "chapter_20/int_only/with_coalescing/george_off_by_one.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/with_coalescing/george_coalesce_xmm.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/with_coalescing/briggs_coalesce_xmm.c": [
+            "chapter_20/libraries/util.c"
+        ],
+        "chapter_20/all_types/with_coalescing/george_off_by_one_xmm.c": [
             "chapter_20/libraries/util.c"
         ]
     },

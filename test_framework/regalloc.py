@@ -43,7 +43,7 @@ class TestRegAlloc(basic.TestChapter):
 
     * basic_test: make sure the program behaves correctly but don't inspect the assembly code
     * no_spills_test: make sure we can allocate every register without spilling
-    * spill_test: the number of spilled pesudos and the number of instructions that
+    * spill_test: the number of spilled pseudos and the number of instructions that
         access the stack should both be below some upper bound
     """
 
@@ -177,14 +177,16 @@ class TestRegAlloc(basic.TestChapter):
         spill_instructions = [
             i
             for i in parsed_asm.instructions
-            if uses_stack(i) and i.opcode == Opcode.MOV  # type: ignore # use_stack guarantees this is an instruction
+            if uses_stack(i)
+            # lea doesn't actually read from memory
+            and i.opcode != Opcode.LEA  # type: ignore # use_stack guarantees this is an instruction
         ]
         self.assertLessEqual(
             len(spill_instructions),
             max_spilled_instructions,
             msg=common.build_msg(
                 f"Should only need {max_spilled_instructions} instructions "
-                "involving spilled pseudo but found {len(spill_instructions)}",
+                f"involving spilled pseudo but found {len(spill_instructions)}",
                 bad_instructions=spill_instructions,
                 full_prog=parsed_asm,
                 program_path=program_path,
@@ -204,7 +206,7 @@ class TestRegAlloc(basic.TestChapter):
             max_spilled_pseudos,
             msg=common.build_msg(
                 f"At most {max_spilled_pseudos} pseudoregs should have been spilled, "
-                "looks like {len(spilled_operands)} were",
+                f"looks like {len(spilled_operands)} were",
                 bad_instructions=spill_instructions,
                 full_prog=parsed_asm,
                 program_path=program_path,
@@ -216,17 +218,22 @@ class TestRegAlloc(basic.TestChapter):
         program_path: Path,
         target_fun: str = "target",
         max_moves: int = 0,
+        max_spilled_instructions: int = 0,
+        max_spilled_pseudos: int = 0,
     ) -> None:
         """Test that we perform register coalescing properly.
 
         First validate the compiled program's behavior, then make sure we don't
         have more than the expected number of mov instructions where the source
-        and destination are both registers. Also validate that there are no spills.
+        and destination are both registers. Also validate that there are no more
+        than the permitted number of spilled operands/spill instructions.
 
         Args:
             program_path: Absolute path to C file under test
             target_fun: Name of function to parse/inspect
             max_moves: maximum number of mov instructions between registers
+            max_spilled_instructions: maximum number of instructions that access the stack
+            max_spilled_pseudos: maximum number of distinct stack addresses accessed
         """
 
         def is_mov_between_regs(i: asm.AsmItem) -> bool:
@@ -248,19 +255,57 @@ class TestRegAlloc(basic.TestChapter):
             target_fun=target_fun,
         )
 
-        bad_instructions = [i for i in parsed_asm.instructions if uses_stack(i)]
+        # check # of memory access instructions
+        spill_instructions = [i for i in parsed_asm.instructions if uses_stack(i)]
         mov_instructions = [
             i for i in parsed_asm.instructions if is_mov_between_regs(i)
         ]
-        self.assertFalse(
-            bad_instructions,
+
+        base_msg: str
+        if max_spilled_instructions:
+            base_msg = (
+                f"Should only need {max_spilled_instructions} instructions "
+                f"involving spilled pseudo but found {len(spill_instructions)}"
+            )
+        else:
+            base_msg = "Found instructions that use operands on the stack"
+
+        self.assertLessEqual(
+            len(spill_instructions),
+            max_spilled_instructions,
             msg=common.build_msg(
-                "Found instructions that use operands on the stack",
-                bad_instructions=bad_instructions,
+                base_msg,
+                bad_instructions=spill_instructions,
                 full_prog=parsed_asm,
                 program_path=program_path,
             ),
         )
+
+        # if any spills are allowed, check # of accessed operands
+        if max_spilled_instructions:
+            spilled_operands = set(
+                [
+                    str(
+                        op
+                    )  # convert to string b/c Operands themselves are not hashable
+                    for i in spill_instructions
+                    for op in i.operands  # type: ignore
+                    if isinstance(op, asm.Memory)
+                ]
+            )
+            self.assertLessEqual(
+                len(spilled_operands),
+                max_spilled_pseudos,
+                msg=common.build_msg(
+                    f"At most {max_spilled_pseudos} pseudoregs should have been spilled, "
+                    f"looks like {len(spilled_operands)} were",
+                    bad_instructions=spill_instructions,
+                    full_prog=parsed_asm,
+                    program_path=program_path,
+                ),
+            )
+
+        # check number of mov instructions
         self.assertLessEqual(
             len(mov_instructions),
             max_moves,
@@ -286,6 +331,8 @@ class SpillTest(NamedTuple):
 
 class CoalesceTest(NamedTuple):
     target_fun: str = "target"
+    max_spilled_pseudos: int = 0
+    max_spilled_instructions: int = 0
     max_moves: int = 0
 
 
@@ -322,7 +369,7 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
         max_spilled_pseudos=1,
     ),
     "mixed_type_arg_registers.c": SpillTest(
-        max_spilled_instructions=12, max_spilled_pseudos=8
+        max_spilled_instructions=15, max_spilled_pseudos=8
     ),
     # possibly these rewrite instructions don't belong in reg allocation test suite
     "rewrite_regression_test.c": SpillTest(
@@ -356,6 +403,11 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
         max_spilled_instructions=3, max_spilled_pseudos=1
     ),
     "george_off_by_one.c": NoSpillTest(),
+    "george_coalesce_xmm.c": CoalesceTest(
+        target_fun="dbl_target", max_spilled_pseudos=1, max_spilled_instructions=4
+    ),
+    "briggs_coalesce_xmm.c": CoalesceTest(),
+    "george_off_by_one_xmm.c": NoSpillTest(),
 }
 
 
@@ -408,6 +460,8 @@ def make_regalloc_test(
                 program,
                 target_fun=ti.target_fun,
                 max_moves=ti.max_moves,
+                max_spilled_instructions=ti.max_spilled_instructions,
+                max_spilled_pseudos=ti.max_spilled_pseudos,
             )
 
     return test
