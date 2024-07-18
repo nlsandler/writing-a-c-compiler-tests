@@ -15,6 +15,8 @@
 	.double 6.0
 .Lseven:
 	.double 7.0
+.Leight:
+	.double 8.0
 	## define main
 	.text
 	.globl	main

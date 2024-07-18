@@ -14,6 +14,8 @@ Lsix:
 	.double 6.0
 Lseven:
 	.double 7.0
+Leight:
+	.double 8.0
 	## define main
 	.text
 	.globl	_main
@@ -46,7 +48,8 @@ _main:
 	movsd	Lfour(%rip), %xmm3
 	movsd	Lfive(%rip), %xmm4
 	movsd	Lsix(%rip), %xmm5
-	movsd	Lseven(%rip), %xmm7
+	movsd	Lseven(%rip), %xmm6
+	movsd	Leight(%rip), %xmm7
 	callq	_target
 	# make sure values of callee-saved regs were preserved
 	cmpq	$-1, %rbx
