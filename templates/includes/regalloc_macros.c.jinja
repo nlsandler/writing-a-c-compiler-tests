@@ -24,3 +24,10 @@ int check_12_ints(int a, int b, int c, int d, int e, int f, int g, int h, int i,
     return 0;  // success
 }
 {% endset %}
+
+{# start is everything before arg list and suffix is everything after (not counting paren) #}
+{% macro arg_wrap(start, args, suffix) %}
+{% set start_len = start | length %}
+{% set wrapstring = '\n ' + ' ' * start_len %}
+{{start}}({% filter wordwrap(width=78-start_len, wrapstring=wrapstring)%}{{args|join(", ")}}){{suffix}} {% endfilter %}
+{% endmacro %}

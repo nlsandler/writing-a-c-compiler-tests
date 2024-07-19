@@ -141,7 +141,10 @@ assembly_locations = {
 }
 
 env = Environment(
-    loader=FileSystemLoader("templates"), trim_blocks=True, lstrip_blocks=True
+    loader=FileSystemLoader("templates"),
+    trim_blocks=True,
+    lstrip_blocks=True,
+    extensions=["jinja2.ext.do"],
 )
 env.globals["letters"] = list(ascii_lowercase[0:12])
 env.filters["comment_wrap"] = comment_wrap
@@ -203,6 +206,10 @@ configurable_templates: dict[str, dict[str, dict[str, Any]]] = {
     "george_coalesce.c.jinja": {
         "int_only/with_coalescing/george_coalesce.c": {"dbl": False},
         "all_types/with_coalescing/george_coalesce_xmm.c": {"dbl": True},
+    },
+    "briggs_coalesce.c.jinja": {
+        "int_only/with_coalescing/briggs_coalesce.c": {"dbl": False},
+        "all_types/with_coalescing/briggs_coalesce_xmm.c": {"dbl": True},
     },
 }
 
