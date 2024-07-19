@@ -17,8 +17,8 @@ double glob = 4.0;
  * 3. Validate ninth pseudoregister.
  *    Purpose: make this pseudoregister conflict with all hard registers,
  *    ensuring that all hard registers have significant degree. This prevents
- *    us from coalescing pseudos into hardregs using the Briggs test to make
- *    force the compiler to us the George test.
+ *    us from coalescing pseudos into hardregs using the Briggs test, to
+ *    force the compiler to use the George test.
  * 4. Call check_one_double and return the result.
  *    Purpose: make sure return value is coalesced into XMM0.
  */
