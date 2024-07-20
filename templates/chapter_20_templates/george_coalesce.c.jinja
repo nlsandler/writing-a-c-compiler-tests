@@ -20,6 +20,8 @@ between registers. We inspect the assembly for the target function
 to validate that it contains {{"at most one spill," if dbl else "no spills"}}
 and no mov instructions whose source and destination are both
 {{"XMM registers" if dbl else "general purpose registers (except mov %rsp, %rbp and mov %rbp, %rsp in the prologue and epilogue)"}}
+
+This test was generated from templates/{{ self._TemplateReference__context.name }}.
 {% endfilter %}
 #include "../util.h"
 
@@ -36,12 +38,13 @@ int increment_glob(void) {
  *    Purpose: make sure they're coalesced into param-passing registers.
 {% if dbl %}
  * 2. Calculate nine pseudoregisters and pass eight of them into
- *    check_eight_doubles.
+ *    check_14_doubles.
 {% else %}
- * 2. Define and validate some other pseudoregisters that are preserved across
+ * 2. Define and validate twelve other pseudoregisters that are preserved across
  *    function calls and have significant degree. Purpose: make sure the
- *    caller-saved registers all have more than 12 neighbors with significant
- *    degree, so the coalescing decisions we validate in steps 1 & 3 depend on
+ *    caller-saved hard registers (including EAX and param-passing registers)
+ *    all have more than 12 neighbors with significant degree, so the coalescing
+ *    decisions we validate in steps 1 & 3 depend on
  *    the George test and not Briggs. Otherwise, this test might succeed even
  *    if we weren't using the George test.
  * 3. Calculate five pseudoregisters and pass them into check_five_ints.
@@ -134,21 +137,24 @@ int increment_glob(void) {
     // parameter-passing registers. Calculate using glob so we can't
     // copy prop or constant fold them, and don't need to mov values
     // between registers to calculate them.
-    {{typ}} u = glob - {{const(3)}};      // {{const(1)}}
-    {{typ}} v = glob - {{const(2)}};      // {{const(2)}}
-    {{typ}} w = glob - {{const(1)}};      // {{const(3)}}
-    {{typ}} x = glob * {{const(2)}} - {{const(4)}};  // {{const(4)}}
-    {{typ}} y = glob + {{const(1)}};      // {{const(5)}}
+    {{typ}} s = glob - {{const(3)}};  // {{const(1)}}
+    {{typ}} t = glob - {{const(2)}};  // {{const(2)}}
+    {{typ}} u = glob - {{const(1)}};  // {{const(3)}}
+    {{typ}} v = glob * {{const(2)}} - {{const(4)}};  // {{const(4)}}
+    {{typ}} w = glob + {{const(1)}};  // {{const(5)}}
 {% if dbl %}
-    double spill = y * 10.0;
-    check_14_doubles(u, v, w, x, y, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 1.0);
+    {{typ}} x = glob + {{const(2)}};  // {{const(6)}}
+    {{typ}} y = glob + {{const(3)}};  // {{const(7)}}
+    {{typ}} z = glob * {{const(2)}};  // {{const(8)}}
+    double spill = w * 10.0;  // {{const(50)}}
+    check_14_doubles(s, t, u, v, w, x, y, z, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 1.0);
 
     // validate spill
     if (spill != 50.0) {
         return 9.0;
     }
 {% else %}
-    check_5_ints(u, v, w, x, y, 1);
+    check_5_ints(s, t, u, v, w, 1);
 {% endif %}
 
 

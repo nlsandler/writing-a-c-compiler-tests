@@ -1,0 +1,75 @@
+{% from 'includes/regalloc_macros.c.jinja' import arg_wrap %}
+{% if dbl %}
+{% set typ = "double" %}
+{% set reg = "XMM0" %}
+{% set validate_fn = "check_14_doubles" %}
+{% set pseudo_count = "fourteen" %}
+{% else %}
+{% set typ = "int"%}
+{% set reg = "EDI" %}
+{% set validate_fn = "check_12_ints" %}
+{% set pseudo_count = "twelve" %}
+{% endif %}
+{% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
+/* Check for off-by-one errors in the George test. Make sure we don't coalesce
+ * pseudo p into hardreg h if p has a neighbor whose degree is exactly k.
+ * The test script validates that there are no spills - we shouldn't need to
+ * spill any pseudos, but we'll be forced to spill if we coalesce a pseudo
+ * into a hard register when we shouldn't.
+ * NOTE: we don't have an equivalent off-by-one test for Briggs b/c it's
+ * adequately covered by other tests.
+ *
+ * This test was generated from
+ * templates/{{ self._TemplateReference__context.name }}.
+ * */
+
+#include "../util.h"
+
+{{typ}} glob = {{const(0)}};
+
+int target({{typ}} a) {
+
+{% filter indent(width=4, first=true) %}{% filter comment_wrap %}
+    // Make sure we don't coalesce a into {{reg}}; this would fail the George test
+    // because a's neighbor, one, has degree k.
+    // First we define a clique of {{pseudo_count}} registers, one-{{pseudo_count}}.
+    // one interferes with a and has exactly {{pseudo_count}} neighbors.
+    // Once we prune a, we can prune one, then two-{{pseudo_count}}.
+    // To avoid spilling, one must go in {{reg}}, because two-{{pseudo_count}} all conflict with {{reg}}.
+    // If we coalesce a with {{reg}}, we won't be able to prune one and we'll have
+    // to spill something.
+{% endfilter %}{% endfilter %}
+    // NOTE - some of this is copy/pasted from twelve_regs_conflict.c.jinja;
+    // it's just different enough that using the template arguably isn't worth
+    // it.
+
+    {{typ}} one = {{const(2)}} - a;
+    {{typ}} two = one + one;
+    {{typ}} three = {{const(2)}} + one;
+    {{typ}} four = two * two;
+    {{typ}} five = {{const(6)}} - one;
+    {{typ}} six = two * three;
+    {{typ}} seven = one + {{const(6)}};
+    {{typ}} eight = two * {{const(4)}};
+    {{typ}} nine = three * three;
+    {{typ}} ten = four + six;
+    {{typ}} eleven = {{const(16)}} - five;
+    {{typ}} twelve = eleven + one;
+{% if dbl %}
+    double thirteen = five + eight;
+    double fourteen = seven * two;
+{% endif %}
+
+    // save one to validate later/make it conflict with all the others
+    glob = one;
+
+    // validate others/make them conflict with {{reg}}
+{% set args = ["1", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+               "ten", "eleven", "twelve"] %}
+{% if dbl %}{% do args.extend(["thirteen", "fourteen"]) %}{% endif %}
+{{arg_wrap(' '*4 ~ validate_fn, args + ["1"], ";")}}
+
+    // validate one
+    check_one_{{typ}}(glob, {{const(1)}});
+    return 0;
+}

@@ -207,6 +207,10 @@ configurable_templates: dict[str, dict[str, dict[str, Any]]] = {
         "int_only/with_coalescing/george_coalesce.c": {"dbl": False},
         "all_types/with_coalescing/george_coalesce_xmm.c": {"dbl": True},
     },
+    "george_off_by_one.c.jinja": {
+        "int_only/with_coalescing/george_off_by_one.c": {"dbl": False},
+        "all_types/with_coalescing/george_off_by_one_xmm.c": {"dbl": True},
+    },
     "briggs_coalesce.c.jinja": {
         "int_only/with_coalescing/briggs_coalesce.c": {"dbl": False},
         "all_types/with_coalescing/briggs_coalesce_xmm.c": {"dbl": True},
