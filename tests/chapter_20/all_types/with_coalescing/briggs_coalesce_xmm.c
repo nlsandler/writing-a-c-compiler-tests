@@ -1,9 +1,8 @@
 /* Test that we performing coalescing between pseudos that pass the
  * Briggs test. In this case, coalescing lets us get rid of all moves
- * between registers. We inspect the assembly for the target function
+ * between registers. We inspect the assembly for the dbl_target function
  * to validate that it contains no spills and no mov instructions whose source
- * and destination are both general-purpose registers (except mov %rsp, %rbp and
- * mov %rbp, %rsp in the prologue and epilogue)
+ * and destination are both XMM registers.
  *
  * This test was generated from templates/chapter_20_templates/briggs_coalesce.c.jinja.
  * */

@@ -18,10 +18,14 @@
 {% set globs = range(arg_count+1, arg_count+glob_count+1)|map('format_string', "glob{}")|list %}
 /* Test that we performing coalescing between pseudos that pass the
  * Briggs test. In this case, coalescing lets us get rid of all moves
- * between registers. We inspect the assembly for the target function
+ * between registers. We inspect the assembly for the {{target_name}} function
  * to validate that it contains no spills and no mov instructions whose source
+ {% if dbl %}
+ * and destination are both XMM registers.
+ {% else %}
  * and destination are both general-purpose registers (except mov %rsp, %rbp and
  * mov %rbp, %rsp in the prologue and epilogue)
+ {% endif %}
  *
  * This test was generated from templates/{{ self._TemplateReference__context.name }}.
  * */

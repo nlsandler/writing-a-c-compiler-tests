@@ -46,7 +46,7 @@ def get_spilled_operand_count(spill_instructions: List[asm.AsmItem]) -> int:
             str(op)  # convert to string b/c Operands themselves are not hashable
             for i in spill_instructions
             for op in i.operands  # type: ignore
-            if isinstance(op, asm.Memory)
+            if isinstance(op, asm.Memory) and op.base == Register.BP
         ]
     )
     return len(spilled_operands)

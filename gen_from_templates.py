@@ -50,7 +50,7 @@ def arg_wrap(
     Arg
         args: list of arguments or parameters
         start: everything before arg list (not including open paren)
-               i.e. function name (and type specifier, for declarations
+               i.e. function name (and type specifier, for declarations)
         end: everything after arg list (not including close paren)
              i.e. semicolon or open brace
     """

@@ -3,7 +3,7 @@
  * We inspect the assembly for the target function to validate that it contains no
  * spills and no mov instructions whose source and destination are both general
  * purpose registers (except mov %rsp, %rbp and mov %rbp, %rsp in the prologue and
- * epilogue)  This test was generated from
+ * epilogue).  This test was generated from
  * templates/chapter_20_templates/george_coalesce.c.jinja.
  * */
 #include "../util.h"

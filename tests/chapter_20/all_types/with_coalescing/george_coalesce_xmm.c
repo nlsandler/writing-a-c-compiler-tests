@@ -1,8 +1,8 @@
 /* Test that we coalesce floating-point pseudos into XMM registers when they
  * pass the George test. In this case, coalescing lets us get rid of all moves
- * between registers. We inspect the assembly for the target function to validate
- * that it contains at most one spill, and no mov instructions whose source and
- * destination are both XMM registers  This test was generated from
+ * between registers. We inspect the assembly for the dbl_target function to
+ * validate that it contains at most one spill, and no mov instructions whose
+ * source and destination are both XMM registers  This test was generated from
  * templates/chapter_20_templates/george_coalesce.c.jinja.
  * */
 #include "../util.h"
@@ -23,7 +23,8 @@ double glob = 4.0;
  * 4. Call check_one_double and return the result.
  *    Purpose: make sure return value is coalesced into XMM0.
  */
-double dbl_target(double a, double b, double c, double d, double e, double f, double g, double h) {
+double dbl_target(double a, double b, double c, double d, double e, double f,
+                  double g, double h) {
     // Validate parameters a-h (not with check_* functions, to avoid adding
     // new interference)
     if (a != 1.0) {
