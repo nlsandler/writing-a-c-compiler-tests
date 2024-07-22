@@ -64,10 +64,10 @@ int target({{typ}} a) {
     glob = one;
 
     // validate others/make them conflict with {{reg}}
-{% set args = ["1", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-               "ten", "eleven", "twelve"] %}
-{% if dbl %}{% do args.extend(["thirteen", "fourteen"]) %}{% endif %}
-{{arg_wrap(' '*4 ~ validate_fn, args + ["1"], ";")}}
+    {% set args = ["1", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+                "ten", "eleven", "twelve"] %}
+    {% if dbl %}{% do args.extend(["thirteen", "fourteen"]) %}{% endif %}
+    {{- (args + ["1"]) | arg_wrap(validate_fn, ";", indent=4)}}
 
     // validate one
     check_one_{{typ}}(glob, {{const(1)}});

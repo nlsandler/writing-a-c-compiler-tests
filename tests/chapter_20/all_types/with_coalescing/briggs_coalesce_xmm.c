@@ -19,8 +19,8 @@ double glob12;
 double glob13;
 double glob14;
 
-double target(double one, double two, double three, double four, double five,
-              double six, double seven, double eight) {
+double dbl_target(double one, double two, double three, double four,
+                  double five, double six, double seven, double eight) {
 
     // Define 6 variables that interfere with each other and with arguments,
     // initializing each one with a complex expression that requires an
@@ -60,4 +60,10 @@ double target(double one, double two, double three, double four, double five,
     check_one_double(glob13, 13.0);
     check_one_double(glob14, 14.0);
     return 0;
+}
+
+int target(void) {
+    // a shim for dbl_target, since wrapper script expects
+    // a 'target' function with an integer return value
+    return dbl_target(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
 }

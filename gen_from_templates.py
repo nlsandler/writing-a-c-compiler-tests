@@ -43,6 +43,31 @@ def multiline_comment_wrap(e: Environment, value: str, width: int = 80) -> str:
     )
 
 
+def arg_wrap(
+    args: list[str], start: str, end: str, indent: int = 0, width: int = 80
+) -> str:
+    """Format a function call or declaration.
+    IMPORTANT: assumes all commas are arg separators (so it won't work properly
+    if e.g. one of the arguments is a string literal that includes commas
+    """
+    lines = [" " * indent + start + "("]
+    next_line_indent = " " * (len(start) + indent + 1)
+    args = list(args)
+    for i, arg in enumerate(args):
+        is_last = i == len(args) - 1
+        if is_last:
+            new_stuff = arg + ")" + end
+        else:
+            new_stuff = arg + ", "
+
+        if len(lines[-1]) + len(new_stuff) <= 80:
+            lines[-1] += new_stuff
+        else:
+            lines.append(next_line_indent + new_stuff)
+
+    return "\n".join([l.rstrip() for l in lines])
+
+
 def format_string(text: str, fmt: str) -> str:
     return fmt.format(text)
 
@@ -150,6 +175,7 @@ env.globals["letters"] = list(ascii_lowercase[0:12])
 env.filters["comment_wrap"] = comment_wrap
 env.filters["multiline_comment_wrap"] = multiline_comment_wrap
 env.filters["format_string"] = format_string
+env.filters["arg_wrap"] = arg_wrap
 
 # pre-chapter 20 tests
 for k, v in test_cases.items():
