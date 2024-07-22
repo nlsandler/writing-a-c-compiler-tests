@@ -3,7 +3,7 @@
 """Autogenerate several very similar test cases where we create specific interference graphs"""
 from pathlib import Path
 from string import ascii_lowercase
-from typing import Any
+from typing import Any, Iterable
 
 from jinja2 import Environment, FileSystemLoader, pass_environment
 from jinja2.filters import do_wordwrap
@@ -44,26 +44,33 @@ def multiline_comment_wrap(e: Environment, value: str, width: int = 80) -> str:
 
 
 def arg_wrap(
-    args: list[str], start: str, end: str, indent: int = 0, width: int = 80
+    args: Iterable[str], start: str, end: str, indent: int = 0, width: int = 80
 ) -> str:
     """Format a function call or declaration.
-    IMPORTANT: assumes all commas are arg separators (so it won't work properly
-    if e.g. one of the arguments is a string literal that includes commas
+    Arg
+        args: list of arguments or parameters
+        start: everything before arg list (not including open paren)
+               i.e. function name (and type specifier, for declarations
+        end: everything after arg list (not including close paren)
+             i.e. semicolon or open brace
     """
     lines = [" " * indent + start + "("]
-    next_line_indent = " " * (len(start) + indent + 1)
+    subsequent_line_indent = " " * len(lines[0])
     args = list(args)
     for i, arg in enumerate(args):
+        # figure out what comes right after this arg
         is_last = i == len(args) - 1
         if is_last:
             new_stuff = arg + ")" + end
         else:
             new_stuff = arg + ", "
 
+        # add arg to existing line if there's enough space,
+        # or start a new line if not
         if len(lines[-1]) + len(new_stuff) <= 80:
             lines[-1] += new_stuff
         else:
-            lines.append(next_line_indent + new_stuff)
+            lines.append(subsequent_line_indent + new_stuff)
 
     return "\n".join([l.rstrip() for l in lines])
 

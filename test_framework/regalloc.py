@@ -39,6 +39,19 @@ def uses_stack(i: asm.AsmItem) -> bool:
     return any(is_stack(op) for op in i.operands)
 
 
+def get_spilled_operand_count(spill_instructions: List[asm.AsmItem]) -> int:
+    """Count number of distinct stack operands in spill instructions"""
+    spilled_operands = set(
+        [
+            str(op)  # convert to string b/c Operands themselves are not hashable
+            for i in spill_instructions
+            for op in i.operands  # type: ignore
+            if isinstance(op, asm.Memory)
+        ]
+    )
+    return len(spilled_operands)
+
+
 class TestRegAlloc(basic.TestChapter):
     """Test class for register allocation.
 
@@ -184,27 +197,20 @@ class TestRegAlloc(basic.TestChapter):
             max_spilled_instructions,
             msg=common.build_msg(
                 f"Should only need {max_spilled_instructions} instructions "
-                f"involving spilled pseudo but found {len(spill_instructions)}",
+                f"involving spilled pseudos but found {len(spill_instructions)}",
                 bad_instructions=spill_instructions,
                 full_prog=parsed_asm,
                 program_path=program_path,
             ),
         )
 
-        spilled_operands = set(
-            [
-                str(op)  # convert to string b/c Operands themselves are not hashable
-                for i in spill_instructions
-                for op in i.operands  # type: ignore
-                if isinstance(op, asm.Memory)
-            ]
-        )
+        spilled_operand_count = get_spilled_operand_count(spill_instructions)
         self.assertLessEqual(
-            len(spilled_operands),
+            spilled_operand_count,
             max_spilled_pseudos,
             msg=common.build_msg(
                 f"At most {max_spilled_pseudos} pseudoregs should have been spilled, "
-                f"looks like {len(spilled_operands)} were",
+                f"looks like {spilled_operand_count} were",
                 bad_instructions=spill_instructions,
                 full_prog=parsed_asm,
                 program_path=program_path,
@@ -263,7 +269,7 @@ class TestRegAlloc(basic.TestChapter):
         if max_spilled_instructions:
             base_msg = (
                 f"Should only need {max_spilled_instructions} instructions "
-                f"involving spilled pseudo but found {len(spill_instructions)}"
+                f"involving spilled pseudos but found {len(spill_instructions)}"
             )
         else:
             base_msg = "Found instructions that use operands on the stack"
@@ -281,22 +287,13 @@ class TestRegAlloc(basic.TestChapter):
 
         # if any spills are allowed, check # of accessed operands
         if max_spilled_instructions:
-            spilled_operands = set(
-                [
-                    str(
-                        op
-                    )  # convert to string b/c Operands themselves are not hashable
-                    for i in spill_instructions
-                    for op in i.operands  # type: ignore
-                    if isinstance(op, asm.Memory)
-                ]
-            )
+            spilled_operand_count = get_spilled_operand_count(spill_instructions)
             self.assertLessEqual(
-                len(spilled_operands),
+                spilled_operand_count,
                 max_spilled_pseudos,
                 msg=common.build_msg(
                     f"At most {max_spilled_pseudos} pseudoregs should have been spilled, "
-                    f"looks like {len(spilled_operands)} were",
+                    f"looks like {spilled_operand_count} were",
                     bad_instructions=spill_instructions,
                     full_prog=parsed_asm,
                     program_path=program_path,
