@@ -29,6 +29,10 @@ def uses_stack(i: asm.AsmItem) -> bool:
     if isinstance(i, asm.Label):
         return False
 
+    if i.opcode == Opcode.LEA:
+        # lea doesn't actually access the memory address it loads
+        return False
+
     def is_stack(operand: asm.Operand) -> bool:
         return isinstance(operand, asm.Memory) and operand.base == Register.BP
 
@@ -174,13 +178,7 @@ class TestRegAlloc(basic.TestChapter):
             target_fun=target_fun,
         )
 
-        spill_instructions = [
-            i
-            for i in parsed_asm.instructions
-            if uses_stack(i)
-            # lea doesn't actually read from memory
-            and i.opcode != Opcode.LEA  # type: ignore # use_stack guarantees this is an instruction
-        ]
+        spill_instructions = [i for i in parsed_asm.instructions if uses_stack(i)]
         self.assertLessEqual(
             len(spill_instructions),
             max_spilled_instructions,
