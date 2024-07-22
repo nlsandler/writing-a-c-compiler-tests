@@ -1,4 +1,4 @@
-{% set numbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen"] %}
+{% from 'includes/regalloc_macros.c.jinja' import numbers%}
 {% if dbl %}
 {% set typ = "double" %}
 {% set arg_count = 8 -%} {# one through eight #}
