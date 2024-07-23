@@ -10,7 +10,6 @@
 {% set reg_desc="registers" %}
 {% endif %}
 {% set regs = "{}/{}".format(arg_regs[0], arg_regs[1]) %}
-{% set validate_fun = "check_one_" ~ typ %}
 {% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
 /* Make sure we recognize that a function uses some parameter-passing
  * {{reg_desc}}, determined by its declaration. Don't inspect assembly,
@@ -46,8 +45,8 @@ int target(void) {
     // validate a and b
     {{callee}}(a, b);
     // validate x and y
-    {{validate_fun}}(x, {{const(110)}});
-    {{validate_fun}}(y, {{const(120)}});
+    check_one_{{typ}}(x, {{const(110)}});
+    check_one_{{typ}}(y, {{const(120)}});
     return 0;
 }
 
