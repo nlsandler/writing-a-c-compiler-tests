@@ -1641,10 +1641,12 @@
             "chapter_20/libraries/util.c"
         ],
         "chapter_20/all_types/with_coalescing/george_coalesce_xmm.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/libraries/util.c",
+            "chapter_20/libraries/target_shim.c"
         ],
         "chapter_20/all_types/with_coalescing/briggs_coalesce_xmm.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/libraries/util.c",
+            "chapter_20/libraries/target_shim.c"
         ],
         "chapter_20/all_types/with_coalescing/george_off_by_one_xmm.c": [
             "chapter_20/libraries/util.c"

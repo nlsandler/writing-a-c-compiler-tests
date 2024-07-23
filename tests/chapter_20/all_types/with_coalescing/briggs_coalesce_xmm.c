@@ -60,9 +60,3 @@ double dbl_target(double one, double two, double three, double four,
     check_one_double(glob14, 14.0);
     return 0.0;
 }
-
-int target(void) {
-    // a shim for dbl_target, since wrapper script expects
-    // a 'target' function with an integer return value
-    return (int) dbl_target(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
-}
