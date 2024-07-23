@@ -1,15 +1,10 @@
 {% if dbl %}
-{% set typ = "double" %}
-{% set param_count = 8 %}
-{% set ret_reg = "XMM0" %}
 {% set target_name = "dbl_target" %}
 {% else %}
-{% set typ = "int" %}
-{% set param_count = 6 %}
-{% set ret_reg = "EAX" %}
 {% set target_name = "target" %}
 {% endif %}
 {% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
+{% set param_count = arg_regs|length %}
 {% set params = letters[:param_count] %}
 {% set param_count_str = numbers[param_count - 1] %}
 {% filter multiline_comment_wrap %}
@@ -81,7 +76,7 @@ int increment_glob(void) {
     int four = glob * 4;
     // validate these to increase their degree more
     if (one != 1) {
-        return (7);
+        return 7;
     }
     if (two != 2) {
         return 8;

@@ -18,11 +18,11 @@ int target(double a) {
 
     // Make sure we don't coalesce a into XMM0; this would fail the George
     // test because a's neighbor, one, has degree k. First we define a clique of
-    // fourteen registers, one-fourteen. one interferes with a and has exactly
-    // fourteen neighbors. Once we prune a, we can prune one, then two-fourteen.
-    // To avoid spilling, one must go in XMM0, because two-fourteen all conflict
-    // with XMM0. If we coalesce a with XMM0, we won't be able to prune one and
-    // we'll have to spill something.
+    // 14 registers, one-fourteen. one interferes with a and has exactly 14
+    // neighbors. Once we prune a, we can prune one, then two-fourteen. To avoid
+    // spilling, one must go in XMM0, because two-fourteen all conflict with
+    // XMM0. If we coalesce a with XMM0, we won't be able to prune one and we'll
+    // have to spill something.
     // NOTE - some of this is copy/pasted from twelve_regs_conflict.c.jinja;
     // it's just different enough that using the template arguably isn't worth
     // it.
