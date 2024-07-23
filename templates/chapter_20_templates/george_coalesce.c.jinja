@@ -1,24 +1,23 @@
 {% if dbl %}
 {% set typ = "double" %}
 {% set param_count = 8 %}
-{% set param_count_str = "eight" %}
 {% set ret_reg = "XMM0" %}
 {% set target_name = "dbl_target" %}
 {% else %}
 {% set typ = "int" %}
 {% set param_count = 6 %}
-{% set param_count_str = "six" %}
 {% set ret_reg = "EAX" %}
 {% set target_name = "target" %}
 {% endif %}
 {% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
 {% set params = letters[:param_count] %}
+{% set param_count_str = numbers[param_count - 1] %}
 {% filter multiline_comment_wrap %}
 Test that we coalesce {{"floating-point " if dbl }}pseudos
 into {{ "XMM" if dbl else "hard" }} registers when they pass the George
 test. In this case, coalescing lets us get rid of all moves
 between registers. We inspect the assembly for the {{target_name}} function
-to validate that it contains {{"at most one spill," if dbl else "no spills"}}
+to validate that it contains {{"at most one spilled operand," if dbl else "no spills"}}
 and no mov instructions whose source and destination are both
 {{"XMM registers" if dbl else "general purpose registers (except mov %rsp, %rbp and mov %rbp, %rsp in the prologue and epilogue)."}}
 

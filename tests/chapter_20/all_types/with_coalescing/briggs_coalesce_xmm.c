@@ -37,7 +37,7 @@ double dbl_target(double one, double two, double three, double four,
     double eleven = (glob * two) + one;
     double twelve = (glob + 1.0) * two;
     double thirteen = (2. * two) + 9.;
-    double fourteen = (3. + four) * 2;
+    double fourteen = (3. + four) * 2.;
 
     // Save to global variables to validate later
     glob9 = nine;
@@ -58,11 +58,11 @@ double dbl_target(double one, double two, double three, double four,
     check_one_double(glob12, 12.0);
     check_one_double(glob13, 13.0);
     check_one_double(glob14, 14.0);
-    return 0;
+    return 0.0;
 }
 
 int target(void) {
     // a shim for dbl_target, since wrapper script expects
     // a 'target' function with an integer return value
-    return dbl_target(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
+    return (int) dbl_target(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
 }

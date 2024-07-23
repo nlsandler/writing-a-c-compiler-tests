@@ -1,9 +1,9 @@
 /* Test that we coalesce floating-point pseudos into XMM registers when they
  * pass the George test. In this case, coalescing lets us get rid of all moves
  * between registers. We inspect the assembly for the dbl_target function to
- * validate that it contains at most one spill, and no mov instructions whose
- * source and destination are both XMM registers  This test was generated from
- * templates/chapter_20_templates/george_coalesce.c.jinja.
+ * validate that it contains at most one spilled operand, and no mov instructions
+ * whose source and destination are both XMM registers  This test was generated
+ * from templates/chapter_20_templates/george_coalesce.c.jinja.
  * */
 #include "../util.h"
 
@@ -80,5 +80,5 @@ double dbl_target(double a, double b, double c, double d, double e, double f,
 int target(void) {
     // a shim for dbl_target, since wrapper script expects
     // a 'target' function with an integer return value
-    return dbl_target(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
+    return (int) dbl_target(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
 }

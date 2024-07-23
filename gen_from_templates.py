@@ -179,6 +179,22 @@ env = Environment(
     extensions=["jinja2.ext.do"],
 )
 env.globals["letters"] = list(ascii_lowercase[0:12])
+env.globals["numbers"] = [
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+]
 env.filters["comment_wrap"] = comment_wrap
 env.filters["multiline_comment_wrap"] = multiline_comment_wrap
 env.filters["format_string"] = format_string
