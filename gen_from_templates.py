@@ -3,7 +3,7 @@
 """Autogenerate several very similar test cases where we create specific interference graphs"""
 from pathlib import Path
 from string import ascii_lowercase
-from typing import Any
+from typing import Any, Iterable
 
 from jinja2 import Environment, FileSystemLoader, pass_environment
 from jinja2.filters import do_wordwrap
@@ -25,6 +25,58 @@ def comment_wrap(e: Environment, value: str, width: int = 73) -> str:
         )
         + "\n"
     )
+
+
+@pass_environment
+def multiline_comment_wrap(e: Environment, value: str, width: int = 80) -> str:
+    lines = [(l.strip()) for l in value.splitlines()]
+    oneline = "/* " + " ".join(lines) + "\n*/"
+    return (
+        do_wordwrap(
+            e,
+            oneline,
+            width=width,
+            break_long_words=False,
+            wrapstring="\n * ",
+        )
+        + "\n"
+    )
+
+
+def arg_wrap(
+    args: Iterable[str], start: str, end: str, indent: int = 0, width: int = 80
+) -> str:
+    """Format a function call or declaration.
+    Arg
+        args: list of arguments or parameters
+        start: everything before arg list (not including open paren)
+               i.e. function name (and type specifier, for declarations)
+        end: everything after arg list (not including close paren)
+             i.e. semicolon or open brace
+    """
+    lines = [" " * indent + start + "("]
+    subsequent_line_indent = " " * len(lines[0])
+    args = list(args)
+    for i, arg in enumerate(args):
+        # figure out what comes right after this arg
+        is_last = i == len(args) - 1
+        if is_last:
+            new_stuff = arg + ")" + end
+        else:
+            new_stuff = arg + ", "
+
+        # add arg to existing line if there's enough space,
+        # or start a new line if not
+        if len(lines[-1]) + len(new_stuff) <= 80:
+            lines[-1] += new_stuff
+        else:
+            lines.append(subsequent_line_indent + new_stuff)
+
+    return "\n".join([l.rstrip() for l in lines])
+
+
+def format_string(text: str, fmt: str) -> str:
+    return fmt.format(text)
 
 
 PLATFORM_PROPS = {
@@ -121,10 +173,32 @@ assembly_locations = {
 }
 
 env = Environment(
-    loader=FileSystemLoader("templates"), trim_blocks=True, lstrip_blocks=True
+    loader=FileSystemLoader("templates"),
+    trim_blocks=True,
+    lstrip_blocks=True,
+    extensions=["jinja2.ext.do"],
 )
 env.globals["letters"] = list(ascii_lowercase[0:12])
+env.globals["numbers"] = [
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+]
 env.filters["comment_wrap"] = comment_wrap
+env.filters["multiline_comment_wrap"] = multiline_comment_wrap
+env.filters["format_string"] = format_string
+env.filters["arg_wrap"] = arg_wrap
 
 # pre-chapter 20 tests
 for k, v in test_cases.items():
@@ -177,6 +251,18 @@ configurable_templates: dict[str, dict[str, dict[str, Any]]] = {
     "division_uses_ax.c.jinja": {
         "int_only/no_coalescing/division_uses_ax.c": {"unsigned": False},
         "all_types/no_coalescing/div_uses_ax.c": {"unsigned": True},
+    },
+    "george_coalesce.c.jinja": {
+        "int_only/with_coalescing/george_coalesce.c": {"dbl": False},
+        "all_types/with_coalescing/george_coalesce_xmm.c": {"dbl": True},
+    },
+    "george_off_by_one.c.jinja": {
+        "int_only/with_coalescing/george_off_by_one.c": {"dbl": False},
+        "all_types/with_coalescing/george_off_by_one_xmm.c": {"dbl": True},
+    },
+    "briggs_coalesce.c.jinja": {
+        "int_only/with_coalescing/briggs_coalesce.c": {"dbl": False},
+        "all_types/with_coalescing/briggs_coalesce_xmm.c": {"dbl": True},
     },
 }
 

@@ -2,7 +2,7 @@
  * and Briggs tests - specifically, when they're connected by a mov of the form
  * movl %pseudoreg, %hardreg. (See george_dont_coalesce.c for an equivalent
  * test where the hardreg is the first instruction.) Coalescing registers
- * that fail the George test here wOuld force us to spill, so we inspect the
+ * that fail the George test here would force us to spill, so we inspect the
  * assembly for target to make sure there are no spills.
  * */
 

@@ -1,9 +1,10 @@
 /* Test that we coalesce pseudos into hard registers when they pass the George
- * test. In this case, coalescing lets us get rid of all moves
- * between registers. We inspect the assembly for the target function
- * to validate that it contains no spills and no mov instructions whose source
- * and destination are both general-purpose registers (except mov %rsp, %rbp and
- * mov %rbp, %rsp in the prologue and epilogue)
+ * test. In this case, coalescing lets us get rid of all moves between registers.
+ * We inspect the assembly for the target function to validate that it contains no
+ * spills and no mov instructions whose source and destination are both general
+ * purpose registers (except mov %rsp, %rbp and mov %rbp, %rsp in the prologue and
+ * epilogue).  This test was generated from
+ * templates/chapter_20_templates/george_coalesce.c.jinja.
  * */
 #include "../util.h"
 
@@ -16,10 +17,11 @@ int increment_glob(void) {
 
 /* 1. Validate six function parameters.
  *    Purpose: make sure they're coalesced into param-passing registers.
- * 2. Define and validate some other pseudoregisters that are preserved across
+ * 2. Define and validate twelve other pseudoregisters that are preserved across
  *    function calls and have significant degree. Purpose: make sure the
- *    caller-saved registers all have more than 12 neighbors with significant
- *    degree, so the coalescing decisions we validate in steps 1 & 3 depend on
+ *    caller-saved hard registers (including EAX and param-passing registers)
+ *    all have more than 12 neighbors with significant degree, so the coalescing
+ *    decisions we validate in steps 1 & 3 depend on
  *    the George test and not Briggs. Otherwise, this test might succeed even
  *    if we weren't using the George test.
  * 3. Calculate five pseudoregisters and pass them into check_five_ints.
@@ -110,17 +112,17 @@ int target(int a, int b, int c, int d, int e, int f) {
     if (twelve != 12) {
         return 18;
     }
-
     // Now make sure values passed as arguments are coalesced into
     // parameter-passing registers. Calculate using glob so we can't
     // copy prop or constant fold them, and don't need to mov values
-    // between registers to calcualte them.
-    int u = glob - 3;      // 1
-    int v = glob - 2;      // 2
-    int w = glob - 1;      // 3
-    int x = glob * 2 - 4;  // 4
-    int y = glob + 1;      // 5
-    check_5_ints(u, v, w, x, y, 1);
+    // between registers to calculate them.
+    int s = glob - 3;  // 1
+    int t = glob - 2;  // 2
+    int u = glob - 1;  // 3
+    int v = glob * 2 - 4;  // 4
+    int w = glob + 1;  // 5
+    check_5_ints(s, t, u, v, w, 1);
+
 
     // make sure return value is coalesced into EAX
     return check_one_int(glob, 4);

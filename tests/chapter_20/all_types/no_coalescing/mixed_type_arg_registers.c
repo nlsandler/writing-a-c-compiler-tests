@@ -6,9 +6,9 @@
  * we'll conclude they're live from the start of the function until the
  * function call (since they're never updated) and won't be able to allocate
  * them, resulting in spills.
- * Test script validates that only 12 instructions in target access memory:
- * 8 to populate structures, and 4 to transfer those structures into
- * param-passing registers
+ * Test script validates that only 15 instructions in target access memory:
+ * 8 to populate structures, and 7 to transfer those structures into
+ * param-passing registers/push them onto the stack
  * */
 
 #include "../util.h"

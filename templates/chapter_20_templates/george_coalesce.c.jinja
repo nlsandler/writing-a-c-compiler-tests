@@ -1,0 +1,163 @@
+{% if dbl %}
+{% set typ = "double" %}
+{% set param_count = 8 %}
+{% set ret_reg = "XMM0" %}
+{% set target_name = "dbl_target" %}
+{% else %}
+{% set typ = "int" %}
+{% set param_count = 6 %}
+{% set ret_reg = "EAX" %}
+{% set target_name = "target" %}
+{% endif %}
+{% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
+{% set params = letters[:param_count] %}
+{% set param_count_str = numbers[param_count - 1] %}
+{% filter multiline_comment_wrap %}
+Test that we coalesce {{"floating-point " if dbl }}pseudos
+into {{ "XMM" if dbl else "hard" }} registers when they pass the George
+test. In this case, coalescing lets us get rid of all moves
+between registers. We inspect the assembly for the {{target_name}} function
+to validate that it contains {{"at most one spilled operand," if dbl else "no spills"}}
+and no mov instructions whose source and destination are both
+{{"XMM registers" if dbl else "general purpose registers (except mov %rsp, %rbp and mov %rbp, %rsp in the prologue and epilogue)."}}
+
+This test was generated from templates/{{ self._TemplateReference__context.name }}.
+{% endfilter %}
+#include "../util.h"
+
+{{typ}} glob = {{"4.0" if dbl else "1"}};
+
+{% if not dbl %}
+int increment_glob(void) {
+    glob = glob + {{const(1)}};
+    return 0;
+}
+{% endif %}
+
+/* 1. Validate {{param_count_str}} function parameters.
+ *    Purpose: make sure they're coalesced into param-passing registers.
+{% if dbl %}
+ * 2. Calculate nine pseudoregisters and pass eight of them into
+ *    check_14_doubles.
+{% else %}
+ * 2. Define and validate twelve other pseudoregisters that are preserved across
+ *    function calls and have significant degree. Purpose: make sure the
+ *    caller-saved hard registers (including EAX and param-passing registers)
+ *    all have more than 12 neighbors with significant degree, so the coalescing
+ *    decisions we validate in steps 1 & 3 depend on
+ *    the George test and not Briggs. Otherwise, this test might succeed even
+ *    if we weren't using the George test.
+ * 3. Calculate five pseudoregisters and pass them into check_five_ints.
+{% endif %}
+ *    Purpose: make sure they're coalesced into param-passing registers.
+{% if dbl %}
+ * 3. Validate ninth pseudoregister.
+ *    Purpose: make this pseudoregister conflict with all hard registers,
+ *    ensuring that all hard registers have significant degree. This prevents
+ *    us from coalescing pseudos into hardregs using the Briggs test, to
+ *    force the compiler to use the George test.
+ {% endif %}
+ * 4. Call check_one_{{typ}} and return the result.
+ *    Purpose: make sure return value is coalesced into {{ret_reg}}.
+ */
+{{params|map('format_string', typ ~ " {}")|arg_wrap(typ ~ " " ~ target_name, " {")}}
+    // Validate parameters a-{{params[-1]}} (not with check_* functions, to avoid adding
+    // new interference)
+{% for p in params %}
+{% set expected=const(loop.index) %}
+    if ({{p}} != {{expected}}) {
+        return {{expected}};
+    }
+{% endfor %}
+
+{% if not dbl %}
+    // Create/validate a bunch of callee-saved pseudos with significant degree.
+
+    // Initialize these using glob, instead of id(), to avoid mov instructions
+    // between registers (e.g. movl %eax, %callee1)
+    int one = glob * 1;
+    int two = glob * 2;
+    int three = glob * 3;
+    int four = glob * 4;
+    // validate these to increase their degree more
+    if (one != 1) {
+        return (7);
+    }
+    if (two != 2) {
+        return 8;
+    }
+    if (three != 3) {
+        return 9;
+    }
+    if (four != 4) {
+        return 10;
+    }
+    // force them to be callee-saved
+    increment_glob();
+    // define new vars using the old ones, then validate them
+    int five = 4 + one;
+    int six = 4 + two;
+    int seven = 4 + three;
+    int eight = 4 + four;
+    if (five != 5) {
+        return 11;
+    }
+    if (six != 6) {
+        return 12;
+    }
+    if (seven != 7) {
+        return 13;
+    }
+    if (eight != 8) {
+        return 14;
+    }
+    increment_glob();
+    // define one last batch
+    int nine = 14 - five;
+    int ten = 16 - six;
+    int eleven = 18 - seven;
+    int twelve = 20 - eight;
+    // force them to be callee-saved
+    increment_glob();
+    // validate them
+    if (nine != 9) {
+        return 15;
+    }
+    if (ten != 10) {
+        return 16;
+    }
+    if (eleven != 11) {
+        return 17;
+    }
+    if (twelve != 12) {
+        return 18;
+    }
+{% endif %}
+    // Now make sure values passed as arguments are coalesced into
+    // parameter-passing registers. Calculate using glob so we can't
+    // copy prop or constant fold them, and don't need to mov values
+    // between registers to calculate them.
+    {{typ}} s = glob - {{const(3)}};  // {{const(1)}}
+    {{typ}} t = glob - {{const(2)}};  // {{const(2)}}
+    {{typ}} u = glob - {{const(1)}};  // {{const(3)}}
+    {{typ}} v = glob * {{const(2)}} - {{const(4)}};  // {{const(4)}}
+    {{typ}} w = glob + {{const(1)}};  // {{const(5)}}
+{% if dbl %}
+    {{typ}} x = glob + {{const(2)}};  // {{const(6)}}
+    {{typ}} y = glob + {{const(3)}};  // {{const(7)}}
+    {{typ}} z = glob * {{const(2)}};  // {{const(8)}}
+    double spill = w * 10.0;  // {{const(50)}}
+    check_14_doubles(s, t, u, v, w, x, y, z, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 1.0);
+
+    // validate spill
+    if (spill != 50.0) {
+        return 9.0;
+    }
+{% else %}
+    check_5_ints(s, t, u, v, w, 1);
+{% endif %}
+
+
+    // make sure return value is coalesced into {{ret_reg}}
+    return check_one_{{typ}}(glob, {{const(4)}});
+}

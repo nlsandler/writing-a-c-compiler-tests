@@ -1,0 +1,87 @@
+{% if dbl %}
+{% set typ = "double" %}
+{% set arg_count = 8 -%} {# one through eight #}
+{% set glob_count = 6 -%} {# nine through fourteen #}
+{% set validate = "check_14_doubles" %}
+{% set target_name = "dbl_target" %}
+{% else %}
+{% set typ = "int" %}
+{% set arg_count = 6 -%} {# one through six #}
+{% set glob_count = 6 -%} {# seven through twelve #}
+{% set validate = "check_12_ints" %}
+{% set target_name = "target" %}
+{% endif %}
+{% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
+{% set args = numbers[:arg_count] %}
+{% set other_vars = numbers[arg_count:arg_count+glob_count] %}
+{% set globs = range(arg_count+1, arg_count+glob_count+1)|map('format_string', "glob{}")|list %}
+/* Test that we performing coalescing between pseudos that pass the
+ * Briggs test. In this case, coalescing lets us get rid of all moves
+ * between registers. We inspect the assembly for the {{target_name}} function
+ * to validate that it contains no spills and no mov instructions whose source
+ {% if dbl %}
+ * and destination are both XMM registers.
+ {% else %}
+ * and destination are both general-purpose registers (except mov %rsp, %rbp and
+ * mov %rbp, %rsp in the prologue and epilogue).
+ {% endif %}
+ *
+ * This test was generated from templates/{{ self._TemplateReference__context.name }}.
+ * */
+
+#include "../util.h"
+
+{{typ}} glob = {{const(5)}};
+
+{% for g in globs %}
+{{typ}} {{g}};
+{% endfor %}
+
+{{args|map('format_string', typ ~ " {}")|arg_wrap(typ ~ " " ~ target_name, " {")}}
+
+    {% filter indent(width=4, first=true) %}{% filter comment_wrap %}
+    // Define {{glob_count}} variables that interfere with each other
+    // and with arguments, initializing each one with a complex expression
+    // that requires an intermediate result. The pseudoregister holding each result should
+    // be coalesced into the corresponding variable.
+    // Once these have been coalesced only {{arg_count + glob_count}} pseudos
+    // will be left, and we'll have reduced the number of nodes with significant degree
+    // by enough that we can coalesce all the arguments into parameter-passing registers.
+
+    // This test coalesces temporary values into {{glob_count}} different variables, which
+    // must all be placed in different registers, to validate that we actually performed coalescing
+    // and didn't just happen to assign a variable and the corresponding intermediate result to the same
+    // hard register.
+    {% endfilter %}{% endfilter %}
+{% if not dbl %}
+    int seven = (glob - 2) + four;
+    int eight = (glob - 1) * two;
+{% endif %}
+    {{typ}} nine = (glob - {{const(2)}}) * three;
+    {{typ}} ten = ({{const(10)}} - glob) * two;
+    {{typ}} eleven = (glob * two) + one;
+    {{typ}} twelve = (glob + {{const(1)}}) * two;
+{% if dbl %}
+    double thirteen = (2. * two) + 9.;
+    double fourteen = (3. + four) * 2.;
+{% endif %}
+
+    // Save to global variables to validate later
+{% for v in other_vars %}
+    {{globs[loop.index0]}} = {{v}};
+{% endfor %}
+
+    // Validate arguments
+    {% set validate_args = args %}
+    {% for c in range(arg_count+1, arg_count+glob_count+1) %}
+        {% do validate_args.append(const(c)) %}
+    {% endfor %}
+    {% do validate_args.append(const(1)) %}
+    {{-validate_args|arg_wrap(validate, ";", indent=4)}}
+
+    // Validate globals
+{% for glob in globs %}
+    check_one_{{typ}}({{glob}}, {{const(loop.index + arg_count)}});
+{% endfor %}
+    return {{const(0)}};
+}
