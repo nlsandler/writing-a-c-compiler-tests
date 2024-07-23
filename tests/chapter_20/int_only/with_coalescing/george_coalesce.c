@@ -61,7 +61,7 @@ int target(int a, int b, int c, int d, int e, int f) {
     int four = glob * 4;
     // validate these to increase their degree more
     if (one != 1) {
-        return (7);
+        return 7;
     }
     if (two != 2) {
         return 8;

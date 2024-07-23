@@ -1,16 +1,6 @@
-{% if dbl %}
-{% set typ = "double" %}
-{% set reg = "XMM0" %}
-{% set validate_fn = "check_14_doubles" %}
-{% set reg_count = 14 %}
-{% else %}
-{% set typ = "int"%}
-{% set reg = "EDI" %}
-{% set validate_fn = "check_12_ints" %}
-{% set reg_count = 12 %}
-{% endif %}
 {% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
-{% set reg_count_name = numbers[reg_count - 1] %}
+{% set reg_count_name = numbers[k - 1] %}
+{% set arg_reg  = arg_regs[0] %}
 /* Check for off-by-one errors in the George test. Make sure we don't coalesce
  * pseudo p into hardreg h if p has a neighbor whose degree is exactly k.
  * The test script validates that there are no spills - we shouldn't need to
@@ -30,13 +20,13 @@
 int target({{typ}} a) {
 
 {% filter indent(width=4, first=true) %}{% filter comment_wrap %}
-    // Make sure we don't coalesce a into {{reg}}; this would fail the George test
+    // Make sure we don't coalesce a into {{arg_reg}}; this would fail the George test
     // because a's neighbor, one, has degree k.
-    // First we define a clique of {{reg_count_name}} registers, one-{{reg_count_name}}.
-    // one interferes with a and has exactly {{reg_count_name}} neighbors.
+    // First we define a clique of {{k}} registers, one-{{reg_count_name}}.
+    // one interferes with a and has exactly {{k}} neighbors.
     // Once we prune a, we can prune one, then two-{{reg_count_name}}.
-    // To avoid spilling, one must go in {{reg}}, because two-{{reg_count_name}} all conflict with {{reg}}.
-    // If we coalesce a with {{reg}}, we won't be able to prune one and we'll have
+    // To avoid spilling, one must go in {{arg_reg}}, because two-{{reg_count_name}} all conflict with {{arg_reg}}.
+    // If we coalesce a with {{arg_reg}}, we won't be able to prune one and we'll have
     // to spill something.
 {% endfilter %}{% endfilter %}
     // NOTE - some of this is copy/pasted from twelve_regs_conflict.c.jinja;
@@ -63,8 +53,8 @@ int target({{typ}} a) {
     // save one to validate later/make it conflict with all the others
     glob = one;
 
-    // validate others/make them conflict with {{reg}}
-    {% set args = ["1"] + numbers[1:reg_count] + ["1"] %}
+    // validate others/make them conflict with {{arg_reg}}
+    {% set args = ["1"] + numbers[1:k] + ["1"] %}
     {{- args | arg_wrap(validate_fn, ";", indent=4)}}
 
     // validate one

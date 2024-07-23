@@ -1,15 +1,11 @@
 {% if dbl %}
 {% set instr_descriptor = " SSE " %}
 {% set suffix = "sd" %}
-{% set reg = "XMM0" %}
-{% set typ = "double" %}
 {% set dst_instr = "divsd" %}
 {% macro operand(const) -%}.Lconst_{{const}}(%rip){%- endmacro %}
 {% else %}
 {% set instr_descriptor = " " %}
 {% set suffix = "l" %}
-{% set reg = "EDI" %}
-{% set typ = "int" %}
 {% set dst_instr = "subl" %}
 {% macro operand(const) -%}${{const}}{%- endmacro %}
 {% endif %}
@@ -30,7 +26,7 @@
     // mov{{suffix}} {{operand(5)}}, %x
     // add{{suffix}} %arg, %x
     // if we don't recognize that add{{suffix}} makes arg live, we'll coalesce both
-    // arg and x into {{reg}}, and check_one_{{typ}} will fail
+    // arg and x into {{arg_regs[0]}}, and check_one_{{typ}} will fail
     {{typ}} x = 5 + arg;
     check_one_{{typ}}(x, {{const(6)}});
     return 0;

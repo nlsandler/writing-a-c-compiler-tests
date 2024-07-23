@@ -1,18 +1,12 @@
 {% if dbl %}
-{% set typ = "double" %}
-{% set arg_count = 8 -%} {# one through eight #}
-{% set glob_count = 6 -%} {# nine through fourteen #}
-{% set validate = "check_14_doubles" %}
 {% set target_name = "dbl_target" %}
 {% else %}
-{% set typ = "int" %}
-{% set arg_count = 6 -%} {# one through six #}
-{% set glob_count = 6 -%} {# seven through twelve #}
-{% set validate = "check_12_ints" %}
 {% set target_name = "target" %}
 {% endif %}
 {% macro const(c) -%} {{c}}{{".0" if dbl else ""}} {%- endmacro %}
+{% set arg_count = arg_regs|length %}
 {% set args = numbers[:arg_count] %}
+{% set glob_count = k - arg_count %}
 {% set other_vars = numbers[arg_count:arg_count+glob_count] %}
 {% set globs = range(arg_count+1, arg_count+glob_count+1)|map('format_string', "glob{}")|list %}
 /* Test that we performing coalescing between pseudos that pass the
@@ -77,7 +71,7 @@
         {% do validate_args.append(const(c)) %}
     {% endfor %}
     {% do validate_args.append(const(1)) %}
-    {{-validate_args|arg_wrap(validate, ";", indent=4)}}
+    {{-validate_args|arg_wrap(validate_fn, ";", indent=4)}}
 
     // Validate globals
 {% for glob in globs %}

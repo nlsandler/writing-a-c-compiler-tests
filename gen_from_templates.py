@@ -98,6 +98,23 @@ PLATFORM_PROPS = {
     },
 }
 
+TYPE_PROPS = {
+    "double": {
+        "typ": "double",
+        "k": 14,
+        "ret_reg": "XMM0",
+        "arg_regs": ["XMM0", "XMM1", "XMM2", "XMM3", "XMM4", "XMM5", "XMM6", "XMM7"],
+        "validate_fn": "check_14_doubles",
+    },
+    "int": {
+        "typ": "int",
+        "k": 12,
+        "ret_reg": "EAX",
+        "arg_regs": ["EDI", "ESI", "EDX", "ECX", "R8D", "R9D"],
+        "validate_fn": "check_12_ints",
+    },
+}
+
 
 def gen_assembly(template_file: Path, output_dir: Path) -> None:
     if not template_file.name.endswith(".s.jinja"):
@@ -275,6 +292,11 @@ for t in template_files:
     templ = env.get_template(str(relative_path))
     if t.name in configurable_templates:
         for dest, templ_vars in configurable_templates[t.name].items():
+            if "dbl" in templ_vars:
+                if templ_vars.get("dbl"):
+                    templ_vars = templ_vars | TYPE_PROPS["double"]
+                else:
+                    templ_vars = templ_vars | TYPE_PROPS["int"]
             src = templ.render(templ_vars)
             output_path = Path("tests/chapter_20") / dest
             with open(output_path, "w", encoding="utf-8") as f:
