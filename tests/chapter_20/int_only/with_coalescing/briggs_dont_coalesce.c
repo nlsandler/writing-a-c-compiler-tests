@@ -1,5 +1,5 @@
 /* Test that we don't coalesce two pseudos that fail the Briggs test. In this
- * case, coalescing two candidates that are connected by a mov instuction would
+ * case, coalescing two candidates that are connected by a mov instruction would
  * cause a spill, so we inspect the assembly for the target function to make
  * sure there are no spills.
  * */
