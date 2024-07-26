@@ -1,6 +1,6 @@
 /* Make sure that when we apply the Briggs test to floating-point
- * pseudoregisters, we consider a node significant only if it has 14 or more
- * neighbors (not 12 or more as for integer pseudoregisters).
+ * registers, we consider a node significant only if it has 14 or more
+ * neighbors (not 12 or more as for integer registers).
  * The test script validates that there are no spills and no movsd instructions
  * where both operands are XMM registers.
  * */
@@ -75,7 +75,7 @@ int target(void) {
     glob_zero = zero;  // save zero here so it doesn't interfere with fourteen
     double fourteen = glob2 * 7.;
 
-    // Save one-thirteen to global variables (so we can then
+    // Save one-fourteen to global variables (so we can then
     // validate those global variables without causing any new interference
     // with pseudos)
     glob_one = one;
@@ -113,7 +113,7 @@ int target(void) {
     check_one_double(glob_thirteen, 13.0);
     check_one_double(glob_fourteen, 14.0);
 
-    // make sure we actually called glob1
+    // make sure we actually called incr_glob1
     check_one_double(glob1, 2.);
 
     return 0;
