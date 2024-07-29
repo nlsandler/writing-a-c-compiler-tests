@@ -30,7 +30,6 @@ double glob_eleven;
 double glob_twelve;
 double glob_thirteen;
 double glob_fourteen;
-double glob_fifteen;
 
 // use this to prevent copy prop into check_one_double calls
 void incr_glob1(void) {
