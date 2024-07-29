@@ -1,25 +1,25 @@
-/* Test that we performing coalescing between pseudos that pass the Briggs test.
- * In this case, coalescing lets us get rid of all moves between registers. We
- * inspect the assembly for the target function to validate that it contains no
- * spills and no mov instructions whose source and destination are both general-
- * purpose registers (except mov %rsp, %rbp and mov %rbp, %rsp in the prologue
- * and epilogue).
+/* Test that we performing coalescing between quadword pseudos that pass the
+ * Briggs test. In this case, coalescing lets us get rid of all moves between
+ * registers. We inspect the assembly for the target function to validate that
+ * it contains no spills and no mov instructions whose source and destination
+ * are both general-purpose registers (except mov %rsp, %rbp and mov %rbp, %rsp
+ * in the prologue and epilogue).
  *
  * This test was generated from templates/chapter_20_templates/briggs_coalesce.c.jinja.
  * */
 
 #include "../util.h"
 
-int glob = 5;
+long glob = 5l;
 
-int glob7;
-int glob8;
-int glob9;
-int glob10;
-int glob11;
-int glob12;
+long glob7;
+long glob8;
+long glob9;
+long glob10;
+long glob11;
+long glob12;
 
-int target(int one, int two, int three, int four, int five, int six) {
+int target(long one, long two, long three, long four, long five, long six) {
 
     // Define 6 variables that interfere with each other and with arguments,
     // initializing each one with a complex expression that requires an
@@ -32,12 +32,12 @@ int target(int one, int two, int three, int four, int five, int six) {
     // registers, to validate that we actually performed coalescing and didn't
     // just happen to assign a variable and the corresponding intermediate
     // result to the same hard register.
-    int seven = (glob - 2) + four;
-    int eight = (glob - 1) * two;
-    int nine = (glob - 2) * three;
-    int ten = (10 - glob) * two;
-    int eleven = (glob * two) + one;
-    int twelve = (glob + 1) * two;
+    long seven = (glob - 2l) + four;
+    long eight = (glob - 1l) * two;
+    long nine = (glob - 2l) * three;
+    long ten = (10l - glob) * two;
+    long eleven = (glob * two) + one;
+    long twelve = (glob + 1l) * two;
 
     // Save to global variables to validate later
     glob7 = seven;
@@ -48,14 +48,15 @@ int target(int one, int two, int three, int four, int five, int six) {
     glob12 = twelve;
 
     // Validate arguments
-    check_12_ints(one, two, three, four, five, six, 7, 8, 9, 10, 11, 12, 1);
+    check_12_longs(one, two, three, four, five, six, 7l, 8l, 9l, 10l, 11l, 12l,
+                   1l);
 
     // Validate globals
-    check_one_int(glob7, 7);
-    check_one_int(glob8, 8);
-    check_one_int(glob9, 9);
-    check_one_int(glob10, 10);
-    check_one_int(glob11, 11);
-    check_one_int(glob12, 12);
+    check_one_long(glob7, 7l);
+    check_one_long(glob8, 8l);
+    check_one_long(glob9, 9l);
+    check_one_long(glob10, 10l);
+    check_one_long(glob11, 11l);
+    check_one_long(glob12, 12l);
     return 0;
 }

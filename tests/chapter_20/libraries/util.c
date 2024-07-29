@@ -102,6 +102,24 @@ int check_one_double(double actual, double expected) {
     return 0;
 }
 
+// identical to check_12_ints, but w/ longs
+int check_12_longs(long a, long b, long c, long d, long e, long f, long g, long h, long i,
+                  long j, long k, long l, long start) {
+    // validate that a == start + 11, b == start + 10, ...l == start
+    long args[12] = {a, b, c, d, e, f, g, h, i, j, k, l};
+    for (int i = 0; i < 12; i++) {
+        long expected = start + i;
+        if (args[i] != expected) {
+            printf(
+                "Expected argument %d to have value %ld, actual value was %ld\n",
+                i, start + i, args[i]);
+            exit(-1);
+        }
+    }
+
+    return 0;  // success
+}
+
 // validates a == start, b == start + 1, ... n == start + 13
 // and exits early if they don't have those values
 // NOTE: assumes a-n are small integral values that can be represented exactly

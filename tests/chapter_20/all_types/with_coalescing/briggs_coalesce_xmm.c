@@ -1,8 +1,8 @@
-/* Test that we performing coalescing between pseudos that pass the
- * Briggs test. In this case, coalescing lets us get rid of all moves
- * between registers. We inspect the assembly for the dbl_target function
- * to validate that it contains no spills and no mov instructions whose source
- * and destination are both XMM registers.
+/* Test that we performing coalescing between floating-point pseudos that pass
+ * the Briggs test. In this case, coalescing lets us get rid of all moves
+ * between registers. We inspect the assembly for the target function to
+ * validate that it contains no spills and no mov instructions whose source and
+ * destination are both XMM registers.
  *
  * This test was generated from templates/chapter_20_templates/briggs_coalesce.c.jinja.
  * */
@@ -18,8 +18,8 @@ double glob12;
 double glob13;
 double glob14;
 
-double dbl_target(double one, double two, double three, double four,
-                  double five, double six, double seven, double eight) {
+int target(double one, double two, double three, double four, double five,
+           double six, double seven, double eight) {
 
     // Define 6 variables that interfere with each other and with arguments,
     // initializing each one with a complex expression that requires an
@@ -58,5 +58,5 @@ double dbl_target(double one, double two, double three, double four,
     check_one_double(glob12, 12.0);
     check_one_double(glob13, 13.0);
     check_one_double(glob14, 14.0);
-    return 0.0;
+    return 0;
 }
