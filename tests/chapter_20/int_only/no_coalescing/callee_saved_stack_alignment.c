@@ -8,7 +8,7 @@
 #include "../util.h" // declares check_* and id functions
 
 // check alignment of RSP and exit with exit_code if it's misaligned
-// defined in tests/chapter_20/libraries/alignment_check_<PLATFORM>.s
+// defined in tests/chapter_20/helper_libs/alignment_check_<PLATFORM>.s
 int check_alignment(int exit_code);
 
 // odd number of callee-saved registers, no local vars on stack

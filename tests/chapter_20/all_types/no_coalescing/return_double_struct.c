@@ -7,7 +7,7 @@
  * memory access instructions: for each of this function's two return
  * statements (success and failure), two instructions populate the return
  * value struct and two move it into the XMM0/XMM1 registers.
- * The target function, defined in tests/chapter_20/libraries/return_double_struct_lib.c,
+ * The target function, defined in tests/chapter_20/helper_libs/return_double_struct_lib.c,
  * calls return_double and validates the result.
  *
  * This test program is generated from templates/chapter_20_templates/twelve_pseudos_interfere.c.jinja.

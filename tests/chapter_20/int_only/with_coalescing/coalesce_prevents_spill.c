@@ -5,7 +5,7 @@
 int glob = 5;
 int flag = 0;
 
-// defined in tests/chapter_20/libraries/coalesce_prevents_spill_lib.c
+// defined in tests/chapter_20/helper_libs/coalesce_prevents_spill_lib.c
 int validate(int a, int b, int c, int d, int e, int f, int g, int h, int i,
              int j, int k, int l, int m);
 

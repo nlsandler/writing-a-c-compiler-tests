@@ -17,9 +17,9 @@ TEST_DIR = basic.TEST_DIR.joinpath(f"chapter_{CHAPTER}").resolve()
 # which validates that callee-saved registers are preserved
 WRAPPER_SCRIPT: Path
 if basic.IS_OSX:
-    WRAPPER_SCRIPT = TEST_DIR.joinpath("libraries", "wrapper_osx.s")
+    WRAPPER_SCRIPT = TEST_DIR.joinpath("helper_libs", "wrapper_osx.s")
 else:
-    WRAPPER_SCRIPT = TEST_DIR.joinpath("libraries", "wrapper_linux.s")
+    WRAPPER_SCRIPT = TEST_DIR.joinpath("helper_libs", "wrapper_linux.s")
 
 
 # TypeGuard would be better return value here, but 3.8 and 3.9 don't support it
@@ -63,11 +63,6 @@ class TestRegAlloc(basic.TestChapter):
     * spill_test: the number of spilled pseudos and the number of instructions that
         access the stack should both be below some upper bound
     """
-
-    @property
-    def lib_path(self) -> Path:
-        """Directory containing extra library code"""
-        return self.test_dir.joinpath("libraries")
 
     def tearDown(self) -> None:
         """Delete files produced during this test run (e.g. assembly and object files)
