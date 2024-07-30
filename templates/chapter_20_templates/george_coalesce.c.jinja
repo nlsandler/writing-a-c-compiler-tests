@@ -8,16 +8,16 @@
 {% set params = letters[:param_count] %}
 {% set param_count_str = numbers[param_count - 1] %}
 {% filter multiline_comment_wrap %}
-Test that we coalesce {{"floating-point " if dbl }}pseudos
-into {{ "XMM" if dbl else "hard" }} registers when they pass the George
-test. In this case, coalescing lets us get rid of all moves
-between registers. We inspect the assembly for the {{target_name}} function
-to validate that it contains {{"at most one spilled operand," if dbl else "no spills"}}
-and no mov instructions whose source and destination are both
-{{"XMM registers" if dbl else "general purpose registers (except mov %rsp, %rbp and mov %rbp, %rsp in the prologue and epilogue)."}}
-
-This test was generated from templates/{{ self._TemplateReference__context.name }}.
+Test that we coalesce {{"floating-point " if dbl }}pseudos into {{ "XMM" if dbl else "hard" }}
+registers when they pass the George test. In this case, coalescing lets us get rid of all moves
+between registers. We inspect the assembly for the {{target_name}} function to validate that it
+contains {{"at most one spilled operand," if dbl else "no spills"}} and no mov instructions
+whose source and destination are both {{"XMM registers" if dbl else "general purpose registers (except mov %rsp, %rbp and mov %rbp, %rsp in the prologue and epilogue)"}}.
 {% endfilter %}
+ *
+ * This test was generated from templates/{{ self._TemplateReference__context.name }}.
+ * */
+
 #include "../util.h"
 
 {{typ}} glob = {{"4.0" if dbl else "1"}};

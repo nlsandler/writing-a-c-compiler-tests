@@ -24,6 +24,9 @@ int check_one_ulong(unsigned long actual, unsigned long expected);
 
 int check_one_double(double actual, double expected);
 
+int check_12_longs(long a, long b, long c, long d, long e, long f, long g,
+                   long h, long i, long j, long k, long l, long start);
+
 // validates a == start, b == start + 1, ... n == start + 13
 // and exits early if they don't have those values
 // NOTE: assumes a-n are small integral values that can be represented exactly
@@ -31,7 +34,6 @@ int check_one_double(double actual, double expected);
 int check_14_doubles(double a, double b, double c, double d, double e, double f,
                      double g, double h, double i, double j, double k, double l,
                      double m, double n, double start);
-
 
 // Used in force_spill_mixed_ints; validates a == start, b == start + 1, ...,
 // *k == start + 10, *l == start + 11

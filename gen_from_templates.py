@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 """Autogenerate several very similar test cases where we create specific interference graphs"""
+import textwrap
+
 from pathlib import Path
 from string import ascii_lowercase
 from typing import Any, Iterable
@@ -27,17 +29,14 @@ def comment_wrap(e: Environment, value: str, width: int = 73) -> str:
     )
 
 
-@pass_environment
-def multiline_comment_wrap(e: Environment, value: str, width: int = 80) -> str:
-    lines = [(l.strip()) for l in value.splitlines()]
-    oneline = "/* " + " ".join(lines) + "\n*/"
+def multiline_comment_wrap(value: str, width: int = 80) -> str:
     return (
-        do_wordwrap(
-            e,
-            oneline,
+        textwrap.fill(
+            value,
             width=width,
-            break_long_words=False,
-            wrapstring="\n * ",
+            initial_indent="/* ",
+            subsequent_indent=" * ",
+            replace_whitespace=True,
         )
         + "\n"
     )
@@ -112,6 +111,13 @@ TYPE_PROPS = {
         "ret_reg": "EAX",
         "arg_regs": ["EDI", "ESI", "EDX", "ECX", "R8D", "R9D"],
         "validate_fn": "check_12_ints",
+    },
+    "long": {
+        "typ": "long",
+        "k": 12,
+        "ret_reg": "RAX",
+        "arg_regs": ["RDI", "RSI", "RDX", "RCX", "R8", "R9"],
+        "validate_fn": "check_12_longs",
     },
 }
 
@@ -279,6 +285,10 @@ configurable_templates: dict[str, dict[str, dict[str, Any]]] = {
     },
     "briggs_coalesce.c.jinja": {
         "int_only/with_coalescing/briggs_coalesce.c": {"dbl": False},
+        "all_types/with_coalescing/briggs_coalesce_long.c": {
+            "dbl": False,
+            "long": True,
+        },
         "all_types/with_coalescing/briggs_coalesce_xmm.c": {"dbl": True},
     },
 }
@@ -295,6 +305,8 @@ for t in template_files:
             if "dbl" in templ_vars:
                 if templ_vars.get("dbl"):
                     templ_vars = templ_vars | TYPE_PROPS["double"]
+                elif templ_vars.get("long"):
+                    templ_vars = templ_vars | TYPE_PROPS["long"]
                 else:
                     templ_vars = templ_vars | TYPE_PROPS["int"]
             src = templ.render(templ_vars)
