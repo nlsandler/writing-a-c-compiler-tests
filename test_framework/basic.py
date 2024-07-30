@@ -1,4 +1,5 @@
 """Basic tests for Parts I & II"""
+
 from __future__ import annotations
 
 import difflib
@@ -109,7 +110,7 @@ def gcc_compile_and_run(
         options: command-line options
 
     Returns:
-        a CompletedProecess object that captures the executable's return code and output
+        a CompletedProcess object that captures the executable's return code and output
     """
 
     # output file is same as first input without suffix
@@ -202,7 +203,7 @@ class TestChapter(unittest.TestCase):
         compiling the client with our compiler and library with the system compiler,
         run the compiled program, and validate the result
     * compile_lib_and_run:
-        like compile_client_and_run, but compile the *library* withour compiler
+        like compile_client_and_run, but compile the *library* without compiler
         and *client* with the system compiler
     * compile_with_helper_lib_and_run:
         like compile_client_and_run except the library is defined in test_properties.json and is not under test
@@ -210,7 +211,7 @@ class TestChapter(unittest.TestCase):
     * compile_with_asm_lib_and_run:
         like compile_client_and_run except the library is an assembly file defined in test_properties.json, not a C file
 
-    The other methods in TestChapter are all utilties called by the compile_* methods.
+    The other methods in TestChapter are all utilities called by the compile_* methods.
     """
 
     longMessage = False
@@ -417,7 +418,7 @@ class TestChapter(unittest.TestCase):
         Args:
             file_under_test: Absolute path of one file in a multi-file program.
                 Usually a C file we want to compile with self.cc, but sometimes
-                (in optimization tests) an assembly file that we've alerady
+                (in optimization tests) an assembly file that we've already
                 compiled with self.cc and inspected
             other_files: Absolute paths to other files in the multi-file program
         """

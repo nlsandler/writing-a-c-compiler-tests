@@ -8,7 +8,7 @@
 
 #include "../util.h"
 
-// defined in tests/chapter_20/libraries/funcall_generates_args_lib.c,
+// defined in tests/chapter_20/helper_libs/funcall_generates_args_lib.c,
 // exits early with return code -1 if a and b don't have
 // the correct values
 int use_dbls(double a, double b);

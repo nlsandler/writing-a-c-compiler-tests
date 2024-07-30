@@ -6,7 +6,7 @@
  * There should be at most ten memory access instructions: for each
  * of this function's two return statements (success and failure), three
  * instructions populate the return value struct and two move it into registers.
- * tests/chapter_20/libraries/return_all_instr_struct_lib.c defines a
+ * tests/chapter_20/helper_libs/return_all_instr_struct_lib.c defines a
  * 'target' function that calls 'return_struct' and validates the result.
  *
  * This test program is generated from templates/chapter_20_templates/fourteen_pseudos_interfere.c.jinja.

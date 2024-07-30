@@ -168,7 +168,7 @@ class TopLevelTest(unittest.TestCase):
             chapters=list(range(1, 11))
         ) + get_expected_test_count(
             chapters=[19, 20],
-            excluded_dirs=["all_types", "helper_libs", "libraries"],
+            excluded_dirs=["all_types", "helper_libs"],
         )
 
         try:
@@ -182,7 +182,7 @@ class TopLevelTest(unittest.TestCase):
     def test_regalloc_failure(self) -> None:
         """Partially-completed NQCC fails register allocation tests"""
         expected_test_count = get_expected_test_count(
-            chapters=[20], excluded_dirs=["libraries"]
+            chapters=[20], excluded_dirs=["helper_libs"]
         )
 
         expected_failure_count = len(REGALLOC_TESTS.keys())

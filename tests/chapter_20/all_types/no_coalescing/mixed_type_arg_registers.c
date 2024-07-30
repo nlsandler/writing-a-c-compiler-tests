@@ -36,7 +36,7 @@ struct s3 {
 };
 
 // helper functions defined in
-// tests/chapter_20/libraries/mixed_type_arg_registers_lib.c;
+// tests/chapter_20/helper_libs/mixed_type_arg_registers_lib.c;
 // both of these functions print an error message and exit if
 // arguments don't have the expected values
 int callee(struct s1 a, struct s2 b, char c, struct s3 in_mem);

@@ -314,7 +314,7 @@ for t in template_files:
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(src)
     elif str(t).endswith(".s.jinja"):
-        gen_assembly(relative_path, Path("chapter_20/libraries"))
+        gen_assembly(relative_path, Path("chapter_20/helper_libs"))
 
     else:
         src = templ.render()

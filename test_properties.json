@@ -1479,185 +1479,185 @@
             "chapter_19/helper_libs/exit.c"
         ],
         "chapter_20/int_only/no_coalescing/use_all_hardregs.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/eax_live_at_exit.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/cmp_generates_operands.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/track_arg_registers.c": [
-            "chapter_20/libraries/track_arg_registers_lib.c",
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/track_arg_registers_lib.c",
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/many_pseudos_fewer_conflicts.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/copy_no_interference.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/idiv_interference.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/optimistic_coloring.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/preserve_across_fun_call.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/same_instr_interference.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/same_instr_no_interference.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/unary_interference.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/unary_uses_operand.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/track_dbl_arg_registers.c": [
-            "chapter_20/libraries/track_dbl_arg_registers_lib.c",
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/track_dbl_arg_registers_lib.c",
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/mixed_type_funcall_generates_args.c": [
-            "chapter_20/libraries/mixed_type_funcall_generates_args_lib.c",
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/mixed_type_funcall_generates_args_lib.c",
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/bin_uses_operands.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/division_uses_ax.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/funcall_generates_args.c": [
-            "chapter_20/libraries/funcall_generates_args_lib.c",
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/funcall_generates_args_lib.c",
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/force_spill.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/loop.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/rewrite_regression_test.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/test_spill_metric.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/trivially_colorable.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/callee_saved_stack_alignment.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/mixed_type_stack_alignment.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/indexed_operand_reads_regs.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/dbl_funcall_generates_args.c": [
-            "chapter_20/libraries/funcall_generates_args_lib.c",
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/funcall_generates_args_lib.c",
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/no_coalescing/test_spill_metric_2.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/force_spill_doubles.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/force_spill_mixed_ints.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/div_uses_ax.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/store_pointer_in_register.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/div_interference.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/dbl_bin_uses_operands.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/type_conversion_interference.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/gp_xmm_mixed.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/one_aliased_var.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/xmm0_live_at_exit.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/ptr_rax_live_at_exit.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/no_coalescing/return_all_int_struct.c": [
-            "chapter_20/libraries/return_all_int_struct_lib.c"
+            "chapter_20/helper_libs/return_all_int_struct_lib.c"
         ],
         "chapter_20/all_types/no_coalescing/return_double.c": [
-            "chapter_20/libraries/return_double_lib.c"
+            "chapter_20/helper_libs/return_double_lib.c"
         ],
         "chapter_20/all_types/no_coalescing/return_double_struct.c": [
-            "chapter_20/libraries/return_double_struct_lib.c"
+            "chapter_20/helper_libs/return_double_struct_lib.c"
         ],
         "chapter_20/all_types/no_coalescing/mixed_type_arg_registers.c": [
-            "chapter_20/libraries/util.c",
-            "chapter_20/libraries/mixed_type_arg_registers_lib.c"
+            "chapter_20/helper_libs/util.c",
+            "chapter_20/helper_libs/mixed_type_arg_registers_lib.c"
         ],
         "chapter_20/int_only/with_coalescing/george_coalesce.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/with_coalescing/coalesce_prevents_spill.c": [
-            "chapter_20/libraries/coalesce_prevents_spill_lib.c"
+            "chapter_20/helper_libs/coalesce_prevents_spill_lib.c"
         ],
         "chapter_20/int_only/with_coalescing/briggs_coalesce.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/with_coalescing/briggs_coalesce_hardreg.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/with_coalescing/briggs_dont_coalesce.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/with_coalescing/george_dont_coalesce.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/with_coalescing/george_dont_coalesce_2.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/with_coalescing/no_george_test_for_pseudos.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/int_only/with_coalescing/george_off_by_one.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/with_coalescing/george_coalesce_xmm.c": [
-            "chapter_20/libraries/util.c",
-            "chapter_20/libraries/target_shim.c"
+            "chapter_20/helper_libs/util.c",
+            "chapter_20/helper_libs/target_shim.c"
         ],
         "chapter_20/all_types/with_coalescing/briggs_coalesce_xmm.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/with_coalescing/george_off_by_one_xmm.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/with_coalescing/briggs_xmm_k_value.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/with_coalescing/george_xmm_k_value.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ],
         "chapter_20/all_types/with_coalescing/briggs_coalesce_long.c": [
-            "chapter_20/libraries/util.c"
+            "chapter_20/helper_libs/util.c"
         ]
     },
     "assembly_libs": {
@@ -1686,13 +1686,13 @@
             "chapter_18/valid/params_and_returns/validate_return_pointer"
         ],
         "chapter_20/int_only/no_coalescing/callee_saved_stack_alignment.c": [
-            "chapter_20/libraries/alignment_check_wrapper"
+            "chapter_20/helper_libs/alignment_check_wrapper"
         ],
         "chapter_20/all_types/no_coalescing/mixed_type_stack_alignment.c": [
-            "chapter_20/libraries/alignment_check_wrapper"
+            "chapter_20/helper_libs/alignment_check_wrapper"
         ],
         "chapter_20/all_types/no_coalescing/dbl_fun_call.c": [
-            "chapter_20/libraries/clobber_xmm_regs"
+            "chapter_20/helper_libs/clobber_xmm_regs"
         ]
     }
 }

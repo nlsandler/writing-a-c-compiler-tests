@@ -19,7 +19,7 @@ int glob7;
 int glob8;
 int glob9;
 
-// defined in libraries/track_arg_registers_lib.c,
+// defined in tests/chapter_20/helper_libs/track_arg_registers_lib.c,
 // exits early if a, b, c don't have expected values
 int callee(int a, int b, int c);
 

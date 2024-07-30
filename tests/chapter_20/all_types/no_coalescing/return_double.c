@@ -3,7 +3,7 @@
  * to allocate pseudoregisters to it, which will lead to spills.
  * The test script validates that the assembly program
  * doesn't use any memory access instructions.
- * The target function, defined in tests/chapter_20/libraries/return_double_lib.c,
+ * The target function, defined in tests/chapter_20/helper_libs/return_double_lib.c,
  * calls return_double and validates the result.
  *
  * This test program is generated from templates/chapter_20_templates/twelve_pseudos_interfere.c.jinja.
