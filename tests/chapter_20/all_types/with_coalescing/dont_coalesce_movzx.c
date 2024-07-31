@@ -1,6 +1,6 @@
 /* When converting uint to double, make sure we use MovZeroExtend rather than
  * mov to convert uint to long before converting to double, and that
- *  we don't coalesce the MovZeroExtend instruction. Just validate
+ * we don't coalesce the MovZeroExtend instruction. Just validate
  * behavior, don't inspect assembly.
  * */
 
@@ -17,7 +17,7 @@ int main(void) {
     // movl   %tmp2, %uint_max
     // movzx  %uint_max, %r
     // cvtsi2sdq %r, %d
-    //
+    // ...
     // where %r is some hard register.
     // If we use a mov instruction instead of movzx,
     // we'll coalesce tmp1, neg1, tmp2, and uint_max into r,
