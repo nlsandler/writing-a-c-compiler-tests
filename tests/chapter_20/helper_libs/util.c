@@ -22,7 +22,6 @@ int check_one_int(int actual, int expected) {
 // validates a == start, b == start + 1, ...e == start + 5
 // and exits early if they don't have those values
 int check_5_ints(int a, int b, int c, int d, int e, int start) {
-    // validate that a == start + 11, b == start + 10, ...l == start
     int args[5] = {a, b, c, d, e};
     for (int i = 0; i < 5; i++) {
         int expected = start + i;
@@ -43,7 +42,6 @@ int check_5_ints(int a, int b, int c, int d, int e, int start) {
 // library instead?
 int check_12_ints(int a, int b, int c, int d, int e, int f, int g, int h, int i,
                   int j, int k, int l, int start) {
-    // validate that a == start + 11, b == start + 10, ...l == start
     int args[12] = {a, b, c, d, e, f, g, h, i, j, k, l};
     for (int i = 0; i < 12; i++) {
         int expected = start + i;
@@ -67,7 +65,6 @@ int check_one_uchar(unsigned char actual, unsigned char expected) {
     }
     return 0;
 }
-
 
 int check_one_uint(unsigned int actual, unsigned int expected) {
     if (actual != expected) {
@@ -93,7 +90,6 @@ int check_one_ulong(unsigned long actual, unsigned long expected) {
     return 0;
 }
 
-
 int check_one_double(double actual, double expected) {
     if (actual != expected) {
         printf("Expected %f but found %f\n", expected, actual);
@@ -103,15 +99,16 @@ int check_one_double(double actual, double expected) {
 }
 
 // identical to check_12_ints, but w/ longs
-int check_12_longs(long a, long b, long c, long d, long e, long f, long g, long h, long i,
-                  long j, long k, long l, long start) {
-    // validate that a == start + 11, b == start + 10, ...l == start
+int check_12_longs(long a, long b, long c, long d, long e, long f, long g,
+                   long h, long i, long j, long k, long l, long start) {
+    // validate that a == start, b == start + 1, ...l == start + 11
     long args[12] = {a, b, c, d, e, f, g, h, i, j, k, l};
     for (int i = 0; i < 12; i++) {
         long expected = start + i;
         if (args[i] != expected) {
             printf(
-                "Expected argument %d to have value %ld, actual value was %ld\n",
+                "Expected argument %d to have value %ld, actual value was "
+                "%ld\n",
                 i, start + i, args[i]);
             exit(-1);
         }
@@ -120,12 +117,10 @@ int check_12_longs(long a, long b, long c, long d, long e, long f, long g, long 
     return 0;  // success
 }
 
-
-// similar to check_5_ints but with chars;
+// similar to check_5_ints but with 6 chars;
 // validates a == start, b == start + 1, ...f == start + 6
 // and exits early if they don't have those values
 int check_six_chars(char a, char b, char c, char d, char e, char f, int start) {
-    // validate that a == start + 11, b == start + 10, ...l == start
     char args[6] = {a, b, c, d, e, f};
     for (int i = 0; i < 6; i++) {
         int expected = start + i;
