@@ -27,6 +27,8 @@ int check_one_double(double actual, double expected);
 int check_12_longs(long a, long b, long c, long d, long e, long f, long g,
                    long h, long i, long j, long k, long l, long start);
 
+int check_six_chars(char a, char b, char c, char d, char e, char f, int start);
+
 // validates a == start, b == start + 1, ... n == start + 13
 // and exits early if they don't have those values
 // NOTE: assumes a-n are small integral values that can be represented exactly

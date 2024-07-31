@@ -401,6 +401,7 @@ REGALLOC_TESTS: Mapping[str, Union[CoalesceTest, NoSpillTest, SpillTest]] = {
     "george_off_by_one_xmm.c": NoSpillTest(),
     "briggs_xmm_k_value.c": CoalesceTest(),
     "george_xmm_k_value.c": CoalesceTest(),
+    "coalesce_char.c": CoalesceTest(),
 }
 
 

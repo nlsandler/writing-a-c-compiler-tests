@@ -120,6 +120,26 @@ int check_12_longs(long a, long b, long c, long d, long e, long f, long g, long 
     return 0;  // success
 }
 
+
+// similar to check_5_ints but with chars;
+// validates a == start, b == start + 1, ...f == start + 6
+// and exits early if they don't have those values
+int check_six_chars(char a, char b, char c, char d, char e, char f, int start) {
+    // validate that a == start + 11, b == start + 10, ...l == start
+    char args[6] = {a, b, c, d, e, f};
+    for (int i = 0; i < 6; i++) {
+        int expected = start + i;
+        if (args[i] != expected) {
+            printf(
+                "Expected argument %d to have value %d, actual value was %d\n",
+                i, start + i, args[i]);
+            exit(-1);
+        }
+    }
+
+    return 0;  // success
+}
+
 // validates a == start, b == start + 1, ... n == start + 13
 // and exits early if they don't have those values
 // NOTE: assumes a-n are small integral values that can be represented exactly
