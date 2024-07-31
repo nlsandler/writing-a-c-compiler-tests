@@ -70,7 +70,7 @@ def get_optimization_flags(
             "--eliminate-dead-stores",
         ]
 
-    # we got an unrecognizeable option (or ALL, which should never be passed
+    # we got an unrecognizable option (or ALL, which should never be passed
     # to this function)
     raise NotImplementedError(f"Don't know how to handle option {optimization_opt}")
 
@@ -325,7 +325,7 @@ Then try running this script again from that shell.
                 )
 
         else:
-            # We're running some other (very old) architecture, we can't run x86-64 binar
+            # We're running some other (very old) architecture, we can't run x86-64 binary
             print(
                 f"This architecture isn't supported. (Machine name is {machine}, we need x86_64/AMD64.)"
             )
