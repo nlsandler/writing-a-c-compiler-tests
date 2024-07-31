@@ -22,7 +22,7 @@ from .tokenize import Token, TokType
 
 
 class ParseError(RuntimeError):
-    """We encountered nvalid assembly (or, more likely, valid assembly that don't support)"""
+    """We encountered invalid assembly (or, more likely, valid assembly that don't support)"""
 
 
 # regex to identify function names (and global variables, though we don't care about those)
@@ -62,11 +62,11 @@ def parse_opcode(tok: str) -> tuple[Opcode, Optional[int]]:
     # deal w/ special cases
     # Sign-extension from RAX to RDX is cqo in Intel syntax, cdq in AT&T syntax
     # but assemblers accept Intel mnemonics even when using AT&T syntax
-    # (and we use the intenl mnemonics in the book)
+    # (and we use the intel mnemonics in the book)
     if tok in ["cqo", "cqto"]:
         return Opcode.CDQ, 8
 
-    # Sign-extend EAX to EDX: cdq is Intel menmonic, cltd is AT&T mnemonic
+    # Sign-extend EAX to EDX: cdq is Intel mnemonic, cltd is AT&T mnemonic
     if tok in ["cdq", "cltd"]:
         return Opcode.CDQ, 4
 
@@ -354,7 +354,7 @@ def fix_immediate(op: Operand, size: Optional[int]) -> Operand:
     if isinstance(op, Immediate):
         if size is None:
             raise ParseError(
-                "Can't interpret immediate b/c instruction size is ambigous"
+                "Can't interpret immediate b/c instruction size is ambiguous"
             )
         if op < 0:
             return op
@@ -384,7 +384,7 @@ def parse_operand(toks: List[Token]) -> tuple[Operand, Optional[int]]:
     if start_tok_type == TokType.STAR:
         # jump targets like *%rax (not supported in the book)
         # HACK just return the register itself as an operand,
-        # since we don't analyze jump targets aside from functino names
+        # since we don't analyze jump targets aside from function names
         toks.pop(0)
         return parse_register(toks)
     if (
@@ -447,7 +447,7 @@ def parse_directive(tok_list: List[Token]) -> Directive:
     <non-text-section> ::= ".section" <non-text-section name> | ".bss" | ".data" | etc.
     <other-section> ::= <non-section directive> { <any-token> }+
     <non-text-section-name> ::= ? anything other than .text or __TEXT,__text ?
-    <non-section-directve> ::= ? any symbol starting with "." other than ".section", ".text", ".bss", etc ?
+    <non-section-directive> ::= ? any symbol starting with "." other than ".section", ".text", ".bss", etc ?
     """
     if tok_list[0].tok_str == ".text":
         return EnterTextSection()
@@ -523,7 +523,7 @@ def parse_statement(
 
     if cur_line[0].tok_str.startswith("."):
         # it's a directive - figure out whether it's text directive,
-        # another section direcive, or some other directive we don't care about
+        # another section directive, or some other directive we don't care about
         # NOTE: we would treat floating-point values like .100 as directives
         # except that we should never see one at the start of a line
         return parse_directive(cur_line)
