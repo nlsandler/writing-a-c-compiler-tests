@@ -1661,6 +1661,9 @@
         ],
         "chapter_20/all_types/with_coalescing/dont_coalesce_movzx.c": [
             "chapter_20/helper_libs/util.c"
+        ],
+        "chapter_20/all_types/with_coalescing/coalesce_char.c": [
+            "chapter_20/helper_libs/util.c"
         ]
     },
     "assembly_libs": {
