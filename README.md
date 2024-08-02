@@ -15,7 +15,6 @@ You need the `gcc` command on your path. (On macOS this is an alias for Clang; t
 ```
 git clone https://github.com/nlsandler/writing-a-c-compiler-tests.git
 cd writing-a-c-compiler-tests
-git checkout complete-test-suite # until it's merged into main
 ./test_compiler --check-setup # make sure you meet all the system requirements
 ```
 
