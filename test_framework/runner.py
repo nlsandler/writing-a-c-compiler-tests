@@ -6,6 +6,7 @@ import argparse
 import itertools
 import platform
 import subprocess
+import sys
 import unittest
 import warnings
 from functools import reduce
@@ -445,6 +446,9 @@ def main() -> int:
         return 1
 
     compiler = Path(args.cc).resolve()
+
+    if args.verbose == 0:
+        sys.tracebacklimit = 0
 
     # merge list of extra-credit features into bitvector
 
