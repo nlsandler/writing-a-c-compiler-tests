@@ -338,7 +338,7 @@ class TestChapter(unittest.TestCase):
         """
         result: subprocess.CompletedProcess[str]
         with self.assertRaises(
-            subprocess.CalledProcessError, msg=f"Didn't catch error in {source_file}"
+            subprocess.CalledProcessError, msg=f"Didn't catch error in '{source_file.relative_to(TEST_DIR)}'"
         ):
             result = self.invoke_compiler(source_file)
             result.check_returncode()  # raise CalledProcessError if return code is non-zero
