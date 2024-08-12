@@ -212,7 +212,7 @@ class TestCopyProp(common.TackyOptimizationTest):
         self.assertEqual(
             expected_op,
             actual_retval,
-            msg=f"Expected {expected_op} as return value, found {actual_retval} ({program_path})",
+            msg=f"Expected {expected_op} as return value, found {actual_retval} ({program_path.relative_to(basic.TEST_DIR)})",
         )
 
     def arg_test(
