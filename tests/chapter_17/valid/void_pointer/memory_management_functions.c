@@ -49,7 +49,7 @@ int main(void) {
     }
     free(double_buffer);
 
-    // allocate a buffer with aligned_alloc, make sure it has the correct alignemnt
+    // allocate a buffer with aligned_alloc, make sure it has the correct alignment
     char_buffer = aligned_alloc(256, 256);
     // make sure it's 256 byte-aligned
     if ((unsigned long) char_buffer % 256) {
