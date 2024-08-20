@@ -11,5 +11,5 @@ jobs:
   test_all_chapters:
     uses: nlsandler/nqcc2/.github/workflows/test_each_chapter.yaml@extra-credit
     with:
-      tests-branch: ${{ github.head_ref }}
+      tests-branch: ${{ github.ref }}
       cc-branch: extra-credit
