@@ -34,7 +34,7 @@ int main(void) {
     // note: effective type of this object is unsigned int,
     // so we're allowed to access it with an expression of
     // the corresponding signed type, int.
-    // if this object were void_ptr instead of array, this would be udnefined
+    // if this object were void_ptr instead of array, this would be undefined
     int array_element = my_array[1];
 
     if (array_element != 2) {
