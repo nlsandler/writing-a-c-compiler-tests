@@ -6,13 +6,12 @@ import argparse
 import itertools
 import platform
 import subprocess
-import sys
 import unittest
 import warnings
 from functools import reduce
 from operator import ior
 from pathlib import Path
-from typing import Iterable, Optional, List, Type
+from typing import Iterable, Optional, List, Type, Any
 
 import test_framework
 import test_framework.basic
@@ -22,6 +21,11 @@ from test_framework.basic import ExtraCredit
 from test_framework.regalloc import CHAPTER as REGALLOC_CHAPTER
 from test_framework.tacky.common import CHAPTER as TACKY_OPT_CHAPTER
 from test_framework.tacky.suite import Optimizations
+
+
+class MyTextTestResult(unittest.TextTestResult):
+    def addFailure(self, test: Any, err: Any) -> None:
+        super(MyTextTestResult, self).addFailure(test, (err[0], err[1], None))
 
 
 def get_optimization_flags(
@@ -447,9 +451,6 @@ def main() -> int:
 
     compiler = Path(args.cc).resolve()
 
-    if args.verbose == 0:
-        sys.tracebacklimit = 0
-
     # merge list of extra-credit features into bitvector
 
     if args.extra_credit is not None:
@@ -522,7 +523,11 @@ def main() -> int:
     unittest.installHandler()
 
     # run it
-    runner = unittest.TextTestRunner(verbosity=args.verbose, failfast=args.failfast)
+    runner = unittest.TextTestRunner(
+        verbosity=args.verbose,
+        failfast=args.failfast,
+        resultclass=MyTextTestResult,
+    )
     result = runner.run(test_suite)
     if result.wasSuccessful():
         return 0
