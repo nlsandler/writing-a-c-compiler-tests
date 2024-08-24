@@ -410,8 +410,11 @@ class TestChapter(unittest.TestCase):
         print_stderr(compile_result)
 
         # run the executable
-        # TODO cleaner handling if executable doesn't exist? or check that it exists above?
         exe = source_file.with_suffix("")
+        self.assertTrue(
+            exe.exists(), msg=f"Compilation did not produce executable {exe}!"
+        )
+
         result = subprocess.run(
             [exe], check=False, capture_output=True, text=True, timeout=10.0
         )
