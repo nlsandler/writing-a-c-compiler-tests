@@ -151,6 +151,7 @@ def build_error_message(
     expected_stdout: str,
     actual: subprocess.CompletedProcess[str],
     exe_name: str,
+    source_file: Path,
 ) -> str:
     """Build the error message for when a compiled test program behaves incorrectly
     Called when a unittest assert* message fails
@@ -163,7 +164,7 @@ def build_error_message(
         an error message
     """
 
-    msg_lines = [f"Incorrect behavior in {exe_name}"]
+    msg_lines = [f"Incorrect behavior in {exe_name} built from {source_file}"]
 
     # report on incorrect return code
     if expected_retcode != actual.returncode:
@@ -310,22 +311,27 @@ class TestChapter(unittest.TestCase):
         expected_retcode = expected["return_code"]
         expected_stdout = expected.get("stdout", "")
 
+        def build_error_message_wrapped():
+            build_error_message(
+                expected_retcode, expected_stdout, actual, exe, source_file
+            )
+
         exe = actual.args[0]
         self.assertEqual(
             expected_retcode,
             actual.returncode,
-            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
+            msg=build_error_message_wrapped(),
         )
         self.assertEqual(
             expected_stdout,
             actual.stdout,
-            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
+            msg=build_error_message_wrapped(),
         )
 
         # none of our test programs write to stderr
         self.assertFalse(
             actual.stderr,
-            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
+            msg=build_error_message_wrapped(),
         )
 
     def compile_failure(self, source_file: Path) -> None:
@@ -338,7 +344,8 @@ class TestChapter(unittest.TestCase):
         """
         result: subprocess.CompletedProcess[str]
         with self.assertRaises(
-            subprocess.CalledProcessError, msg=f"Didn't catch error in '{source_file.relative_to(TEST_DIR)}'"
+            subprocess.CalledProcessError,
+            msg=f"Didn't catch error in '{source_file.relative_to(TEST_DIR)}'",
         ):
             result = self.invoke_compiler(source_file)
             result.check_returncode()  # raise CalledProcessError if return code is non-zero
