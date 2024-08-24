@@ -151,7 +151,6 @@ def build_error_message(
     expected_stdout: str,
     actual: subprocess.CompletedProcess[str],
     exe_name: str,
-    source_file: Path,
 ) -> str:
     """Build the error message for when a compiled test program behaves incorrectly
     Called when a unittest assert* message fails
@@ -160,14 +159,11 @@ def build_error_message(
         expected_stdout: expected stdout from EXPECTED_RESULTS (often empty)
         actual: result from calling subprocess.run() on compiled test program
         exe_name: full path to compiled test program
-        source_file: full path to source of the test program
     Returns:
         an error message
     """
 
-    msg_lines = [
-        f"Incorrect behavior in {exe_name} built from {source_file.relative_to(TEST_DIR)}"
-    ]
+    msg_lines = [f"Incorrect behavior in {exe_name}"]
 
     # report on incorrect return code
     if expected_retcode != actual.returncode:
@@ -291,7 +287,7 @@ class TestChapter(unittest.TestCase):
         assembly_file = source_file.parent / f"{stem}.s"
         self.assertFalse(
             assembly_file.exists(),
-            msg=f"Found assembly file {assembly_file.relative_to(TEST_DIR)} for invalid program!",
+            msg=f"Found assembly file {assembly_file} for invalid program!",
         )
 
         # now look for /path/to/foo
@@ -318,24 +314,18 @@ class TestChapter(unittest.TestCase):
         self.assertEqual(
             expected_retcode,
             actual.returncode,
-            msg=build_error_message(
-                expected_retcode, expected_stdout, actual, exe, source_file
-            ),
+            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
         )
         self.assertEqual(
             expected_stdout,
             actual.stdout,
-            msg=build_error_message(
-                expected_retcode, expected_stdout, actual, exe, source_file
-            ),
+            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
         )
 
         # none of our test programs write to stderr
         self.assertFalse(
             actual.stderr,
-            msg=build_error_message(
-                expected_retcode, expected_stdout, actual, exe, source_file
-            ),
+            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
         )
 
     def compile_failure(self, source_file: Path) -> None:
@@ -348,8 +338,7 @@ class TestChapter(unittest.TestCase):
         """
         result: subprocess.CompletedProcess[str]
         with self.assertRaises(
-            subprocess.CalledProcessError,
-            msg=f"Didn't catch error in {source_file.relative_to(TEST_DIR)}",
+            subprocess.CalledProcessError, msg=f"Didn't catch error in '{source_file.relative_to(TEST_DIR)}'"
         ):
             result = self.invoke_compiler(source_file)
             result.check_returncode()  # raise CalledProcessError if return code is non-zero
@@ -360,7 +349,7 @@ class TestChapter(unittest.TestCase):
             self.assertIn(
                 result.returncode,
                 self.error_codes,
-                msg=f"Compilation of {source_file.relative_to(TEST_DIR)} failed with exit code {result.returncode}, but expected one of the following exit codes: {exit_code_list}.",
+                msg=f"Compilation failed with exit code {result.returncode}, but expected one of the following exit codes: {exit_code_list}.",
             )
 
         self.validate_no_output(source_file)
@@ -376,7 +365,7 @@ class TestChapter(unittest.TestCase):
         self.assertEqual(
             result.returncode,
             0,
-            msg=f"compilation of {source_file.relative_to(TEST_DIR)} failed with error:\n{result.stderr}",
+            msg=f"compilation of {source_file} failed with error:\n{result.stderr}",
         )
 
         # make sure we didn't emit executable or assembly code
@@ -402,7 +391,7 @@ class TestChapter(unittest.TestCase):
         self.assertEqual(
             compile_result.returncode,
             0,
-            msg=f"compilation of {source_file.relative_to(TEST_DIR)} failed with error:\n{compile_result.stderr}",
+            msg=f"compilation of {source_file} failed with error:\n{compile_result.stderr}",
         )
 
         # print stderr (might have warnings we care about even if compilation succeeded)
@@ -445,7 +434,7 @@ class TestChapter(unittest.TestCase):
             self.assertEqual(
                 compilation_result.returncode,
                 0,
-                msg=f"compilation of {file_under_test.relative_to(TEST_DIR)} failed with error:\n{compilation_result.stderr}",
+                msg=f"compilation of {file_under_test} failed with error:\n{compilation_result.stderr}",
             )
             # print stderr (might have warnings we care about even if compilation succeeded)
             # TODO make this controlled by verbosity maybe?

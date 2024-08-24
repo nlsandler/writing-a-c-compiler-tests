@@ -173,7 +173,7 @@ def build_msg(
         else:
             msg_lines.extend(["Complete assembly function:", str(full_prog)])
     if program_path:
-        msg_lines.append(f"Program: {program_path.relative_to(basic.TEST_DIR)}")
+        msg_lines.append(f"Program: {program_path}")
     return "\n".join(msg_lines)
 
 
