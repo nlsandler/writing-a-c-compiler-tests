@@ -594,8 +594,6 @@ def make_invalid_test(program: Path) -> Callable[[TestChapter], None]:
     def test_invalid(self: TestChapter) -> None:
         self.compile_failure(program)
 
-    test_invalid.__doc__ = str(program.relative_to(TEST_DIR))
-
     return test_invalid
 
 
@@ -673,6 +671,7 @@ def make_invalid_tests(
             test_name = f"test_{key}"
 
             test_method = make_invalid_test(program)
+            test_method.__doc__ = str(program.relative_to(TEST_DIR))
             tests.append((test_name, test_method))
 
     return tests
@@ -725,6 +724,7 @@ def make_valid_tests(
             else:
                 # for stages besides "run", just test that compilation succeeds
                 test_method = make_test_valid(program)
+            test_method.__doc__ = str(program.relative_to(TEST_DIR))
             tests.append((test_name, test_method))
     return tests
 
