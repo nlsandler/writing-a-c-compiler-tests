@@ -596,6 +596,8 @@ def make_invalid_test(program: Path) -> Callable[[TestChapter], None]:
     def test_invalid(self: TestChapter) -> None:
         self.compile_failure(program)
 
+    test_invalid.__doc__ = str(program.relative_to(TEST_DIR))
+
     return test_invalid
 
 

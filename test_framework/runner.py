@@ -27,6 +27,11 @@ class MyTextTestResult(unittest.TextTestResult):
     def addFailure(self, test: Any, err: Any) -> None:
         super(MyTextTestResult, self).addFailure(test, (err[0], err[1], None))
 
+    def getDescription(self, test: unittest.TestCase) -> str:
+        return test.shortDescription() or super(MyTextTestResult, self).getDescription(
+            test
+        )
+
 
 def get_optimization_flags(
     latest_chapter: int,
