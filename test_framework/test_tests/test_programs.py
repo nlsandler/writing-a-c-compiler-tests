@@ -66,6 +66,14 @@ class SanitizerTest(unittest.TestCase):
             "-O3",
             "-fsanitize=undefined",
         ]
+        if not basic.IS_OSX:
+            subproc_args.extend(
+                [
+                    # Linux only: executable stack should produce linker error (this catches missing execstack note in assembly test files)
+                    "-Xlinker",
+                    "--error-execstack",
+                ]
+            )
         subproc_args.extend(build_compiler_args(source_file))
 
         # compile it

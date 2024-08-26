@@ -40,7 +40,6 @@ even_arguments:
     call    exit@PLT
     popq    %rbp
     retq
-
     .globl odd_arguments
 odd_arguments:
     pushq   %rbp
@@ -79,3 +78,4 @@ odd_arguments:
     call    exit@PLT
     popq    %rbp
     retq
+	.section	".note.GNU-stack","",@progbits

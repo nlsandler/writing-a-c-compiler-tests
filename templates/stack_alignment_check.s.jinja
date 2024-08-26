@@ -1,6 +1,6 @@
 {# macros #}
 {% set arg_operands=["%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d", "16(%rbp)", "24(%rbp)"] %}
-{% macro alignment_check(fn_name, arg_count) %}
+{% macro alignment_check(fn_name, arg_count) -%}
     {% set fn_label=id_prefix~fn_name %}
     .globl {{fn_label}}
 {{fn_label}}:
@@ -30,9 +30,10 @@
     call    {{id_prefix}}exit{{plt_suffix}}
     popq    %rbp
     retq
-{% endmacro %}
+{%- endmacro %}
 {# actual program starts here #}
     # generated from templates/{{ self._TemplateReference__context.name }}
     .text
 {{alignment_check("even_arguments", 8)}}
 {{alignment_check("odd_arguments", 7)}}
+{{execstack_note}}

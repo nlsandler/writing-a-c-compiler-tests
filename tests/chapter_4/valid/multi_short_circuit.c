@@ -1,5 +1,7 @@
 #ifdef SUPPRESS_WARNINGS
-#ifndef __clang__
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wlogical-op-parentheses"
+#else
 #pragma GCC diagnostic ignored "-Wparentheses"
 #endif
 #endif

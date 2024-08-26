@@ -30,7 +30,8 @@ int main(void) {
     }
 
     /* use unsigned type specifier in for loop
-     * we'll iterate through this loop 11 times before dropping below 0 and wrapping around
+     * we'll iterate through this loop 11 times before dropping below 0 and
+     * wrapping around
      */
     int counter = 0;
     for (unsigned int index = 10; index < 4294967295U; index = index - 1) {
@@ -43,4 +44,3 @@ int main(void) {
 
     return 0;
 }
-
