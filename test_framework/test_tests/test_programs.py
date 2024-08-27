@@ -8,6 +8,26 @@ from typing import Callable, List, Iterable, Union
 
 from .. import basic, regalloc
 
+LD_HAS_ERROR_EXECSTACK: bool
+# Check whether our version of ld supports the --error-execstack option
+# Linux w/ binutils 2.42 or later does; earlier binutils and macOS linker don't
+
+if basic.IS_OSX:
+    LD_HAS_ERROR_EXECSTACK = False
+else:
+    try:
+        subprocess.run(
+            "ld --error-execstack -v",
+            shell=True,
+            check=True,
+            text=True,
+            capture_output=True,
+        )
+        # if that didn't throw a CalledProcessError, this option is supported
+        LD_HAS_ERROR_EXECSTACK = True
+    except subprocess.CalledProcessError:
+        LD_HAS_ERROR_EXECSTACK = False
+
 
 def build_compiler_args(source_file: Path) -> List[str]:
     """Given a source file, build the list of files/extra options we need for standalone compilation"""
@@ -66,6 +86,15 @@ class SanitizerTest(unittest.TestCase):
             "-O3",
             "-fsanitize=undefined",
         ]
+
+        if LD_HAS_ERROR_EXECSTACK:
+            subproc_args.extend(
+                [
+                    # Linux only: executable stack should produce linker error (this catches missing execstack note in assembly test files)
+                    "-Xlinker",
+                    "--error-execstack",
+                ]
+            )
         subproc_args.extend(build_compiler_args(source_file))
 
         # compile it

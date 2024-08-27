@@ -2,7 +2,7 @@
 
 /* A fully initialized array of constants */
 int test_simple(void) {
-    int arr[3][3] = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+    int arr[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 
     // check the value of each element
     for (int i = 0; i < 3; i = i + 1) {
@@ -13,7 +13,7 @@ int test_simple(void) {
         }
     }
 
-    return 1; // success
+    return 1;  // success
 }
 
 /* A partially initialized array of constants.
@@ -21,12 +21,11 @@ int test_simple(void) {
  * (including nested arrays) should be zeroed out.
  * */
 int test_partial(void) {
-
     // explicitly initialize only the first half of each array,
     // at each dimension
     int first_half_only[4][2][6] = {
-        {{1, 2, 3}},
-        {{4, 5, 6}}
+        {{1, 2, 3}},  // first_half_only[0][0][0-2]
+        {{4, 5, 6}}   // first_half_only[1][0][0-2]
     };
 
     int expected = 1;
@@ -34,7 +33,7 @@ int test_partial(void) {
         for (int j = 0; j < 2; j = j + 1) {
             for (int k = 0; k < 6; k = k + 1) {
                 int val = first_half_only[i][j][k];
-                if (i > 1 || j > 0 || k > 2 ) {
+                if (i > 1 || j > 0 || k > 2) {
                     // this wasn't explicitly initialized, should be zero
                     if (val) {
                         return 0;
@@ -49,15 +48,13 @@ int test_partial(void) {
         }
     }
 
-    return 1; // success
+    return 1;  // success
 }
-
 
 /* elements in a compound initializer may include non-constant expressions
  * and expressions of other types, which are converted to the right type
  * as if by assignment */
 int test_non_constant_and_type_conversion(void) {
-
     // first let's define some value (that can't be copy propagated
     // or constant-folded away in Part III)
     extern unsigned int three(void);
@@ -66,8 +63,8 @@ int test_non_constant_and_type_conversion(void) {
     int *ptr = &negative_four;
 
     double arr[3][2] = {
-        { x, x / *ptr },
-        { three() }
+        {x, x / *ptr},
+        {three()},
     };
 
     if (arr[0][0] != 2000.0 || arr[0][1] != -500.0 || arr[1][0] != 3.0) {
@@ -78,7 +75,7 @@ int test_non_constant_and_type_conversion(void) {
         return 0;
     }
 
-    return 1; // success
+    return 1;  // success
 }
 
 // helper function for previous test
@@ -89,19 +86,17 @@ unsigned int three(void) {
 /* Initializing an array must not corrupt other objects on the stack. */
 long one = 1l;
 int test_preserve_stack(void) {
-
     int i = -1;
 
     /* Initialize with expressions of long type - make sure they're truncated
      * before being copied into the array.
      * Also use an array of < 16 bytes so it's not 16-byte aligned, so there are
      * eightbytes that include both array elements and other values.
-     * Also leave last element uninitialized; in assembly, we should set it to zero without
-     * overwriting what follows
+     * Also leave last element uninitialized; in assembly, we should set it to
+     * zero without overwriting what follows
      */
-    int arr[3][1] = { {one * 2l}, {one + three()} };
+    int arr[3][1] = {{one * 2l}, {one + three()}};
     unsigned int u = 2684366905;
-
 
     if (i != -1) {
         return 0;
@@ -111,11 +106,11 @@ int test_preserve_stack(void) {
         return 0;
     }
 
-    if ( arr[0][0] != 2 || arr[1][0] != 4 || arr[2][0] != 0 ) {
+    if (arr[0][0] != 2 || arr[1][0] != 4 || arr[2][0] != 0) {
         return 0;
     }
 
-    return 1; // success
+    return 1;  // success
 }
 
 int main(void) {
@@ -135,6 +130,5 @@ int main(void) {
         return 4;
     }
 
-    return 0; // success
+    return 0;  // success
 }
-

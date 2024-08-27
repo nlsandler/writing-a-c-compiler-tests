@@ -40,7 +40,6 @@ Lfail_even_arguments:
     call    _exit
     popq    %rbp
     retq
-
     .globl _odd_arguments
 _odd_arguments:
     pushq   %rbp
