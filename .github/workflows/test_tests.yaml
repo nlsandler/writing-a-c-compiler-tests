@@ -107,4 +107,4 @@ jobs:
         # stop the build if there are errors
         pylint -E tests/test_framework
         # stop the build if there are type errors
-        mypy tests/test_framework
+        mypy tests/test_framework --strict
