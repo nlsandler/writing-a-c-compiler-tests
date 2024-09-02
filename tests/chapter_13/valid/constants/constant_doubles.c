@@ -1,8 +1,8 @@
 int main(void) {
     /* Define constant doubles in a few different formats,
      * and make sure we can lex all of them.
-     * Note that these can all be respresented exactly,
-     * without rounding
+     * Note that these can all be represented exactly,
+     * without rounding.
      */
 
     /* Several ways to define 1 */
