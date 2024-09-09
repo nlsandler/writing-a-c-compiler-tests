@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04, macos-latest]
+        os: [ubuntu-22.04, macos-latest]
     uses: nlsandler/nqcc2/.github/workflows/build.yaml@main
     with:
       chapter: 20
@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04, macos-latest]
+        os: [ubuntu-22.04, macos-latest]
     uses: nlsandler/nqcc2/.github/workflows/build.yaml@main
     with:
       chapter: 19
@@ -41,6 +41,10 @@ jobs:
         os: [ubuntu-22.04, ubuntu-24.04, macos-latest]
     runs-on: ${{ matrix.os }}
     needs: [build-final-nqcc, build-partial-nqcc]
+    env:
+      # workaround for the fact that we can't build NQCC on Ubuntu 24.04 (https://github.com/actions/runner-images/issues/10476)
+      # use NQCC build in ubuntu-22.04 runner when running tests in Ubuntu 24.04
+      NQCC_OS: ${{ matrix.os == 'ubuntu-24.04' && 'ubuntu-22.04' ||  matrix.os }}
     steps:
 
     # now checkout test suite
@@ -58,13 +62,13 @@ jobs:
     - name: Get final NQCC
       uses: actions/download-artifact@v4
       with:
-        name: nqcc-${{ matrix.os }}-20
+        name: nqcc-${{ env.NQCC_OS }}-20
         path: nqcc
 
     - name: Get partial NQCC
       uses: actions/download-artifact@v4
       with:
-        name: nqcc-${{ matrix.os }}-19
+        name: nqcc-${{ env.NQCC_OS }}-19
         path: nqcc-partial
 
     - name: Make NQCC executable
