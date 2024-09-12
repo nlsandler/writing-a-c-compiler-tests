@@ -287,7 +287,7 @@ class TestChapter(unittest.TestCase):
         assembly_file = source_file.parent / f"{stem}.s"
         self.assertFalse(
             assembly_file.exists(),
-            msg=f"Found assembly file {assembly_file} for invalid program!",
+            msg=f"Found assembly file {assembly_file} when testing invalid program or intermediate stage!",
         )
 
         # now look for /path/to/foo
