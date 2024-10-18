@@ -11,7 +11,7 @@ int main(void) {
     /* Make sure subnormal numbers are not rounded to zero */
     double subnormal = 2.5e-320;
 
-    /* Perform an operation on a subnroaml number to produce a normal number */
+    /* Perform an operation on a subnormal number to produce a normal number */
     if (multiply_by_large_num(subnormal) != 4.99994433591341498562e-300) {
         return 2;
     }

@@ -9,7 +9,7 @@ int main(void) {
     }
 
     unsigned long ul = 18446744073709551586ul;
-    /* We'll promote e to the nearest double,
+    /* We'll promote ul to the nearest double,
      * which is 18446744073709551616,
      * then subtract 1.5 * 10^19, which
      * results in 3446744073709551616.0,
