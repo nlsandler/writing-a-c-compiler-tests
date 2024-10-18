@@ -9,7 +9,7 @@ int main(void) {
     if (nan < 0.0 || nan == 0.0 || nan > 0.0 || nan <= 0.0 || nan >= 0.0)
         return 1;
 
-    if (1 > nan || 1 == nan || 1 > nan || 1 <= nan || 1 >= nan)
+    if (1 < nan || 1 == nan || 1 > nan || 1 <= nan || 1 >= nan)
         return 2;
 
     if (nan == nan)
