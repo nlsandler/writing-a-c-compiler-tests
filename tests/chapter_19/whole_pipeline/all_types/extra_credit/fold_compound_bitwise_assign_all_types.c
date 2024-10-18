@@ -121,8 +121,8 @@ int target_long_bitwise(void) {
     // if lval is int, convert to common type, perform operation, then convert back
     i = -2147483648l; // 0x80000000
     // check result and side effect
-    // 1. sign extend 0x80000000 to 0x0000000080000000
-    // 2. calculate 0x0000000080000000 | 0x00ff00ff00ff00ff = 0x000ff00ff80ff00ff
+    // 1. sign extend 0x80000000 to 0xffffffff80000000
+    // 2. calculate 0xffffffff80000000 | 0x00ff00ff00ff00ff = 0xffffffff80ff00ff
     // 3. truncate to 0x80ff00ff on assignment
     if ((i |= 71777214294589695l) != -2130771713) {
         return 5;
@@ -187,7 +187,7 @@ int target_unsigned_bitwise(void) {
     // result to four-byte ui variable
     int i = 123456;
     unsigned int ui = 4042322160u; // 0xf0f0f0f0
-    long l = -252645136; // 0xffffffffff0f0f0f0
+    long l = -252645136; // 0xfffffffff0f0f0f0
     // 1. zero-extend ui to 8-bytes
     // 2. XOR w/ l, resulting in 0xffffffff00000000
     // 3. truncate back to 4 bytes, resulting in 0

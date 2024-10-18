@@ -18,7 +18,7 @@ int main(void) {
     }
     int i = 123456;
     unsigned int ui = 4042322160u; // 0xf0f0f0f0
-    long l = -252645136; // 0xffffffffff0f0f0f0
+    long l = -252645136; // 0xfffffffff0f0f0f0
     unsigned int *ui_ptr = &ui;
     long *l_ptr = &l;
     if (*ui_ptr ^= *l_ptr) {

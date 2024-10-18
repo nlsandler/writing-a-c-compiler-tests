@@ -17,7 +17,7 @@ int main(void) {
     // result to four-byte ui variable
     int i = 123456;
     unsigned int ui = 4042322160u; // 0xf0f0f0f0
-    long l = -252645136; // 0xffffffffff0f0f0f0
+    long l = -252645136; // 0xfffffffff0f0f0f0
     // 1. zero-extend ui to 8-bytes
     // 2. XOR w/ l, resulting in 0xffffffff00000000
     // 3. truncate back to 4 bytes, resulting in 0

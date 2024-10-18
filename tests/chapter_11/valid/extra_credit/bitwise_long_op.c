@@ -18,7 +18,7 @@ int main(void) {
         return 2;
     }
 
-    if ((l1 ^ l2) != -71777218556133121 /* 0x0ff00ff0000ff00ff */) {
+    if ((l1 ^ l2) != -71777218556133121 /* 0xff00ff0000ff00ff */) {
         return 3;
     }
 
