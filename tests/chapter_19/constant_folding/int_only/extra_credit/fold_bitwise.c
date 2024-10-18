@@ -1,17 +1,17 @@
 /* Test constant-folding the bitwise &, |, ^, >>, and << expressions */
 
 int target_and(void) {
-    // 0x0f0f0f0f & 0x00ff00ff
+    // 0x0f0f_0f0f & 0x00ff_00ff
     return 252645135 & 16711935;
 }
 
 int target_or(void) {
-    // 0x0f0f0f0f | 0x00ff00ff
+    // 0x0f0f_0f0f | 0x00ff_00ff
     return 252645135 | 16711935;
 }
 
 int target_xor(void){
-    // 0x0f0f0f0f ^ 0x00ff00ff
+    // 0x0f0f_0f0f ^ 0x00ff_00ff
     return 252645135 ^ 16711935;
 }
 

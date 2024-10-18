@@ -18,7 +18,7 @@ int main(void) {
     }
 
     // now inspect a double -- only upper bit should be set
-    double d = -0.0; // 0x8000000000000000
+    double d = -0.0; // 0x8000_0000_0000_0000
     byte_ptr = (char *) &d;
     if (byte_ptr[7] != -128) {
         return 3;
@@ -34,7 +34,7 @@ int main(void) {
     unsigned int array[3][2][1] = {
         {{-1}, {-1}},
         {{-1}, {-1}},
-        {{4294901760u}} // 0xffff0000
+        {{4294901760u}} // 0xffff_0000
     };
     byte_ptr = (char *) array;
     byte_ptr = byte_ptr + 16; // each row is 8 bytes since it has 2 ints
