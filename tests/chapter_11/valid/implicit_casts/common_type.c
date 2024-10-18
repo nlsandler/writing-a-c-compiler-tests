@@ -28,7 +28,7 @@ int division(void) {
      * the range of int.)
 
      * If instead we truncated l to an int before performing division,
-     * the result would be 1 / 10, or 0.
+     * the result would be -2147483647 / 10, or -214748364.
      */
     int int_result = l / i;
     return (int_result == 214748364);
@@ -36,7 +36,7 @@ int division(void) {
 
 int comparison(void) {
     // i = -100
-    // l = 4294967296, i.e. 2^32
+    // l = 2147483648, i.e. 2^31
 
     /* Make sure we convert i to a long instead of converting l to an int.
      * If we convert l to an int its value will be -2147483648,
@@ -73,7 +73,7 @@ int main(void) {
 
     // Comparison
     i = -100;
-    l = 4294967296; // 2^32
+    l = 2147483648; // 2^31
     if (!comparison()) {
         return 3;
     }
