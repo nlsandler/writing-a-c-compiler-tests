@@ -220,3 +220,17 @@ def is_zero_instr(i: asm.AsmItem) -> bool:
         and i.opcode == Opcode.XOR
         and i.operands[0] == i.operands[1]
     )
+
+def check_constant_folds(parsed_asm, program_source_file):
+    for fn_name, fn_body in parsed_asm.items():
+        if fn_name.startswith("target"):
+            bad_instructions = [i for i in fn_body.instructions if not ok(i)]
+            self.assertFalse(
+                bad_instructions,
+                msg=common.build_msg(
+                    "Found instructions that should have been constant folded",
+                    bad_instructions=bad_instructions,
+                    full_prog=fn_body,
+                    program_path=program_source_file,
+                ),
+            )
