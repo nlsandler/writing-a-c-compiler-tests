@@ -104,7 +104,7 @@ int one_twenty_eight = 128;
 int main(void) {
     // truncate longs
 
-    // 0x00002008000004d2 --> 0x000004d2
+    // 0x0000_2008_0000_04d2 --> 0x0000_04d2
     if (long_to_int() != 1234) {
         return 1;
     }
@@ -112,24 +112,24 @@ int main(void) {
         return 2;
     }
 
-    // 0x7fffffffffffffff --> 0xff
+    // 0x7fff_ffff_ffff_ffff --> 0xff
     if (long_to_char() != -one) {
         return 3;
     }
 
-    // 0x4000000000000080 --> 0x80
+    // 0x4000_0000_0000_0080 --> 0x80
     if (long_to_schar() != -one_twenty_eight) {
         return 4;
     }
 
-    // 0x00000000ffffffff -> 0xff
+    // 0x0000_0000_ffff_ffff -> 0xff
     if (long_to_uchar() != 255) {
         return 5;
     }
 
     // truncate ulongs
 
-    // 0xffffffffffffffff --> 0xffffffff
+    // 0xffff_ffff_ffff_ffff --> 0xffff_ffff
     if (ulong_to_int() != -one) {
         return 6;
     }
@@ -137,50 +137,50 @@ int main(void) {
         return 7;
     }
 
-    // 0x7fffffffffffffff --> 0xff
+    // 0x7fff_ffff_ffff_ffff --> 0xff
     if (ulong_to_char() != -one) {
         return 8;
     }
 
-    // 0x4000000000000080 --> 0x80
+    // 0x4000_0000_0000_0080 --> 0x80
     if (ulong_to_schar() != -one_twenty_eight) {
         return 9;
     }
 
-    // 0x00000000ffffffff -> 0xff
+    // 0x0000_0000_ffff_ffff -> 0xff
     if (ulong_to_uchar() != 255) {
         return 10;
     }
 
     // truncate ints
 
-    // 0x000004fa -> 0xfa
+    // 0x0000_04fa -> 0xfa
     if (int_to_char() != -six) {
         return 11;
     }
 
-    // 0x7fffffff -> 0xff
+    // 0x7fff_ffff -> 0xff
     if (int_to_schar() != -one) {
         return 12;
     }
 
-    // 0x000004fa -> 0xfa
+    // 0x0000_04fa -> 0xfa
     if (int_to_uchar() != 250) {
         return 13;
     }
 
     // truncate uints
 
-    // 0x800000fd --> 0xfd
+    // 0x8000_00fd --> 0xfd
     if (uint_to_char() != -three) {
         return 14;
     }
 
-    // 0x8000000c -> 0x0c
+    // 0x8000_000c -> 0x0c
     if (uint_to_schar() != 12) {
         return 15;
     }
-    // 0x800000fd --> 0xfd
+    // 0x8000_00fd --> 0xfd
     if (uint_to_uchar() != 253) {
         return 16;
     }
