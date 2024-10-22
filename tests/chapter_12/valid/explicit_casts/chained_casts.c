@@ -7,7 +7,7 @@ int main(void) {
 
 
     /* In this case we
-     * 1. convert ui to a signed int by computing 2^32 - ui, producing -96
+     * 1. convert ui to a signed int by computing ui - 2^32, producing -96
      * 2. signed-extend the result, which preserves the value of -96
      * Note that if we cast ui directly to a signed long, its value wouldn't change
      */
@@ -15,7 +15,7 @@ int main(void) {
         return 1;
 
     /* In this case we
-     * 1. convert ui to a signed int by computing 2^32 - ui, producing -96
+     * 1. convert ui to a signed int by computing ui - 2^32, producing -96
      * 2. convert this signed int to an unsigned long by computing -96 + 2^64
      * Note that if we converted ui directly to an unsigned long, its value
      * wouldn't change
