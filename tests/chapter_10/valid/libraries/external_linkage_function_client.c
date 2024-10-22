@@ -19,8 +19,9 @@ int sum(int x, int y);
 
 
 int add_three_and_four(void) {
-    int f = 3;
-    if (f > 2) {
+    /* Define a sum variable shadowing the sum function */
+    int sum = 3;
+    if (sum > 2) {
         /* The extern keyword can bring a shadowed
          * function identifier back into scope
          */
