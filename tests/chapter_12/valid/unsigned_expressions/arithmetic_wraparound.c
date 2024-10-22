@@ -28,7 +28,7 @@ int neg(void) {
 
 int main(void) {
     ui_a = 4294967293u;
-    ui_b = 2u;
+    ui_b = 3u;
     if (!addition()) {
         return 1;
     }
