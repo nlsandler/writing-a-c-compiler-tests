@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
 """Autogenerate several very similar test cases where we create specific interference graphs"""
+import sys
 import textwrap
 
 from pathlib import Path
 from string import ascii_lowercase
 from typing import Any, Iterable
-
-import sys
 
 from jinja2 import Environment, FileSystemLoader, pass_environment
 from jinja2.filters import do_wordwrap
