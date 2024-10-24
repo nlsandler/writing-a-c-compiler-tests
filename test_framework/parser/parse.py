@@ -252,7 +252,7 @@ def parse_immediate(toks: list[Token]) -> Immediate:
     if tok_type == TokType.INT:
         val = int(next_tok.tok_str, base=0)
         return Immediate(val)
-    elif tok_type in [TokType.PLUS_SIGN, TokType.MINUS_SIGN]:
+    if tok_type in [TokType.PLUS_SIGN, TokType.MINUS_SIGN]:
         # next tok should val
         num_tok = toks.pop(0)
         if num_tok.tok_type != TokType.INT:
@@ -261,8 +261,7 @@ def parse_immediate(toks: list[Token]) -> Immediate:
         if tok_type == TokType.MINUS_SIGN:
             return Immediate(-val)
         return Immediate(val)
-    else:
-        raise ParseError(f"Bad immediate value: ${next_tok}")
+    raise ParseError(f"Bad immediate value: ${next_tok}")
 
 
 def parse_expr(toks: list[Token]) -> Expr:

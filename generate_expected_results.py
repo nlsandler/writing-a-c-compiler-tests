@@ -34,7 +34,6 @@ def cleanup_keys() -> None:
         full_path = TEST_DIR / k
         if not full_path.exists():
             del results[k]
-    return
 
 
 def main() -> None:

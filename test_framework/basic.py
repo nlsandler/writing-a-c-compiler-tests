@@ -50,17 +50,11 @@ ASSEMBLY_LIBS = set(
 
 
 def get_platform() -> str:
-    if IS_OSX:
-        return "os_x"
-    else:
-        return "linux"
+    return "os_x" if IS_OSX else "linux"
 
 
 def get_platform_suffix() -> str:
-    if IS_OSX:
-        return MAC_SUFFIX
-    else:
-        return LINUX_SUFFIX
+    return MAC_SUFFIX if IS_OSX else LINUX_SUFFIX
 
 
 def get_props_key(source_file: Path) -> str:
