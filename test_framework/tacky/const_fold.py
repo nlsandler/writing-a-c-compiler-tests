@@ -32,7 +32,7 @@ class TestConstantFolding(common.TackyOptimizationTest):
                 or common.is_zero_instr(i)
             )
 
-        common.check_constant_folds(parsed_asm, program)
+        self.check_instructions(parsed_asm, program, ok, "Found instructions that should have been constant folded")
 
 def make_constant_fold_test(program: Path) -> Callable[[TestConstantFolding], None]:
     """Generate test method for a single test program."""

@@ -60,7 +60,7 @@ class TestWholePipeline(common.TackyOptimizationTest):
             # source isn't immediate or RIP-relative
             return False
 
-        common.check_constant_folds(parsed_asm, source_file)
+        self.check_instructions(parsed_asm, source_file, ok, "Found instructions that should have been constant folded")
 
     def global_var_unused_test(self, *, source_file: Path, unused_var: str) -> None:
         """
