@@ -8,7 +8,7 @@ from typing import List, Optional, Sequence
 
 from .. import basic
 from ..parser import asm, parse
-from ..parser.asm import AsmItem, Opcode, Register
+from ..parser.asm import Opcode, Register
 
 CHAPTER = 19
 TEST_DIR = basic.TEST_DIR / f"chapter_{CHAPTER}"
