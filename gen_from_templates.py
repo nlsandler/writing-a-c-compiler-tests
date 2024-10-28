@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 """Autogenerate several very similar test cases where we create specific interference graphs"""
+import sys
 import textwrap
 
 from pathlib import Path
@@ -124,7 +125,7 @@ TYPE_PROPS = {
 
 def gen_assembly(template_file: Path, output_dir: Path) -> None:
     if not template_file.name.endswith(".s.jinja"):
-        exit(f"Expected assembly template, found {template_file}")
+        sys.exit(f"Expected assembly template, found {template_file}")
     templ = env.get_template(str(template_file))
     basename = template_file.name.removesuffix(".s.jinja")
     for platform in ["linux", "osx"]:
@@ -297,7 +298,7 @@ configurable_templates: dict[str, dict[str, dict[str, Any]]] = {
 template_files = Path("templates/chapter_20_templates").iterdir()
 for t in template_files:
     if t.suffix != ".jinja":
-        exit(f"Found non-template {f} in templates directory")
+        sys.exit(f"Found non-template {f} in templates directory")
     relative_path = t.relative_to("templates")
     templ = env.get_template(str(relative_path))
     if t.name in configurable_templates:

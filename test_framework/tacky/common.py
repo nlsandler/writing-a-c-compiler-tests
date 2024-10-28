@@ -1,6 +1,7 @@
 """Base class for TACKY optimization tests"""
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 from typing import List, Optional, Sequence
 
@@ -152,6 +153,28 @@ class TackyOptimizationTest(basic.TestChapter):
             ),
         )
 
+    def check_instructions(
+            self,
+            parsed_asm: dict[str, asm.AssemblyFunction],
+            program_source_file: Path,
+            ok: Callable[[asm.AsmItem], bool],
+            error_string: str
+    ) -> None:
+        """Check that all assembly instructions in all `target_*` functions of a parsed program
+           satisfy a given predicate and raise a unit test failure if not.
+        """
+        for fn_name, fn_body in parsed_asm.items():
+            if fn_name.startswith("target"):
+                bad_instructions = [i for i in fn_body.instructions if not ok(i)]
+                self.assertFalse(
+                    bad_instructions,
+                    msg=build_msg(
+                        error_string,
+                        bad_instructions=bad_instructions,
+                        full_prog=fn_body,
+                        program_path=program_source_file,
+                    ),
+                )
 
 def build_msg(
     msg: str,

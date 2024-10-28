@@ -41,14 +41,12 @@ def uses_stack(i: asm.AsmItem) -> bool:
 
 def get_spilled_operand_count(spill_instructions: List[asm.AsmItem]) -> int:
     """Count number of distinct stack operands in spill instructions"""
-    spilled_operands = set(
-        [
-            str(op)  # convert to string b/c Operands themselves are not hashable
-            for i in spill_instructions
-            for op in i.operands  # type: ignore
-            if isinstance(op, asm.Memory) and op.base == Register.BP
-        ]
-    )
+    spilled_operands = {
+        str(op)  # convert to string b/c Operands themselves are not hashable
+        for i in spill_instructions
+        for op in i.operands  # type: ignore
+        if isinstance(op, asm.Memory) and op.base == Register.BP
+    }
     return len(spilled_operands)
 
 
