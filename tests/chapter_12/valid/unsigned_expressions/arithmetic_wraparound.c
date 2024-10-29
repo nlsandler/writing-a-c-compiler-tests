@@ -8,7 +8,7 @@ unsigned long ul_b;
 
 int addition(void) {
     // ui_a = UINT_MAX - 2
-    // ui_b = 2
+    // ui_b = 3
     // result wraps around to 0
     return ui_a + ui_b == 0u;
 }
