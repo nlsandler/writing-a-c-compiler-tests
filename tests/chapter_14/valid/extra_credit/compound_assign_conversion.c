@@ -1,4 +1,4 @@
-// Test compound assignment through pointers that require type conversions
+// Test compound assignment through pointers involving type conversions
 
 int main(void) {
     // lval is pointer
@@ -16,7 +16,6 @@ int main(void) {
     if (*i_ptr != 46) {
         return 2; // fail
     }
-
 
     // rval is pointer
     unsigned int ui = 4294967295U; // 2^32 - 1
