@@ -9,9 +9,9 @@ int main(void) {
     /* if a constant is too large to store as an int,
      * it's automatically converted to a long, even if it
      * doesn't have an 'l' suffix
-     * if we parsed 17179869184 as an int, it would be negative
+     * if we parsed 19327352832 as an int, it would be negative
      */
-    if (17179869184 < 100l) { // 17179869184 == 2^34
+    if (19327352832 < 100l) { // 19327352832 == 2^34 + 2^31
         return 2;
     }
     return 0;

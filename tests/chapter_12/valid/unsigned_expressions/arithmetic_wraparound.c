@@ -8,7 +8,7 @@ unsigned long ul_b;
 
 int addition(void) {
     // ui_a = UINT_MAX - 2
-    // ui_b = 2
+    // ui_b = 3
     // result wraps around to 0
     return ui_a + ui_b == 0u;
 }
@@ -28,7 +28,7 @@ int neg(void) {
 
 int main(void) {
     ui_a = 4294967293u;
-    ui_b = 2u;
+    ui_b = 3u;
     if (!addition()) {
         return 1;
     }
