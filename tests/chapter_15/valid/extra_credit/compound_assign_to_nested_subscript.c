@@ -32,7 +32,7 @@ int main(void) {
         return 4;  // fail
     }
 
-    // make sure the other elemnts of dbl_nested_array are unchanged
+    // make sure the other elements of dbl_nested_arr are unchanged
     for (int i = 0; i < 3; i += 1) {
         for (int j = 0; j < 2; j += 1) {
             if (i == 1 && j == 1) {

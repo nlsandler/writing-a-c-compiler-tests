@@ -91,7 +91,7 @@ int test_preserve_stack(void) {
     /* Initialize with expressions of long type - make sure they're truncated
      * before being copied into the array.
      * Also use an array of < 16 bytes so it's not 16-byte aligned, so there are
-     * eightbytes that include both array elements and other values.
+     * quadwords that include both array elements and other values.
      * Also leave last element uninitialized; in assembly, we should set it to
      * zero without overwriting what follows
      */
