@@ -393,7 +393,8 @@ def parse_operand(toks: List[Token]) -> tuple[Operand, Optional[int]]:
         and toks[2].tok_type == TokType.SYMBOL
     ):
         # it's a function name with a relocation, e.g. foo@PLT
-        target = f"{toks[0].tok_str}@{toks[2].tok_str}"
+        # we don't need the relocation symbol, keep only the function name
+        target = toks[0].tok_str
         # consume all tokens from list
         toks.clear()
         return (target, None)

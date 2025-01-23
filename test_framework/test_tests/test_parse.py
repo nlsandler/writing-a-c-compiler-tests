@@ -225,7 +225,7 @@ main:
                 Instruction(Opcode.CALL, ["_foo12_3"]),
                 Instruction(Opcode.CALL, ["f_"]),
                 Instruction(Opcode.CALL, ["__"]),
-                Instruction(Opcode.CALL, ["f@PLT"]),
+                Instruction(Opcode.CALL, ["f"]),
             ],
         )
         self.assertExpectedAssembly(asm, expected_assembly)
