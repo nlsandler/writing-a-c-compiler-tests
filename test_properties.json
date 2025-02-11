@@ -699,6 +699,14 @@
         "chapter_13/valid/extra_credit/nan.c": [
             "nan"
         ],
+        "chapter_13/valid/extra_credit/nan_compound_assign.c": [
+            "compound",
+            "nan"
+        ],
+        "chapter_13/valid/extra_credit/nan_incr_and_decr.c": [
+            "increment",
+            "nan"
+        ],
         "chapter_14/invalid_declarations/extra_credit/addr_of_label.c": [
             "goto"
         ],
@@ -1461,6 +1469,12 @@
     ],
     "libs": {
         "chapter_13/valid/extra_credit/nan.c": [
+            "chapter_13/helper_libs/nan.c"
+        ],
+        "chapter_13/valid/extra_credit/nan_compound_assign.c": [
+            "chapter_13/helper_libs/nan.c"
+        ],
+        "chapter_13/valid/extra_credit/nan_incr_and_decr.c": [
             "chapter_13/helper_libs/nan.c"
         ],
         "chapter_19/constant_folding/all_types/extra_credit/fold_nan.c": [

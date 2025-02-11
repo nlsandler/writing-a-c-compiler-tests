@@ -35,7 +35,51 @@ int main(void) {
         return 8;
     }
 
-    // TODO other test cases for compound and ++/-- with NaN
+    if (!nan) {
+        return 9;
+    }
+
+    if (nan) {
+    }
+    else if (nan) {
+    }
+    else {
+        return 10;
+    }
+
+    int b_isnan;
+    for (b_isnan = 0; nan;) {
+        b_isnan = 1;
+        break;
+    }
+    if (!b_isnan) {
+        return 11;
+    }
+
+    b_isnan = 0;
+    while (nan) {
+        b_isnan = 1;
+        break;
+    }
+    if (!b_isnan) {
+        return 12;
+    }
+
+    b_isnan = -1;
+    do {
+        b_isnan = b_isnan + 1;
+        if(b_isnan) {
+            break;
+        }
+    } while(nan);
+    if (!b_isnan) {
+        return 13;
+    }
+
+    b_isnan = nan ? 1 : 0;
+    if (!b_isnan) {
+        return 14;
+    }
 
     return 0;
 }
