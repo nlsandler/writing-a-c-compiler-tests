@@ -35,7 +35,50 @@ int main(void) {
         return 8;
     }
 
-    // TODO other test cases for compound and ++/-- with NaN
+    // NaN should always evaluate to nonzero
+
+    if (!nan) {
+        return 9;
+    }
+
+    if (nan) {
+    } else {
+        return 10;
+    }
+
+    int nan_is_nonzero;
+    for (nan_is_nonzero = 0; nan;) {
+        nan_is_nonzero = 1;
+        break;
+    }
+    if (!nan_is_nonzero) {
+        return 11;
+    }
+
+    nan_is_nonzero = 0;
+    while (nan) {
+        nan_is_nonzero = 1;
+        break;
+    }
+    if (!nan_is_nonzero) {
+        return 12;
+    }
+
+    nan_is_nonzero = -1;
+    do {
+        nan_is_nonzero = nan_is_nonzero + 1;
+        if (nan_is_nonzero) {
+            break;
+        }
+    } while (nan);
+    if (!nan_is_nonzero) {
+        return 13;
+    }
+
+    nan_is_nonzero = nan ? 1 : 0;
+    if (!nan_is_nonzero) {
+        return 14;
+    }
 
     return 0;
 }
