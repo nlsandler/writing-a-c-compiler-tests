@@ -35,49 +35,48 @@ int main(void) {
         return 8;
     }
 
+    // NaN should always evaluate to nonzero
+
     if (!nan) {
         return 9;
     }
 
     if (nan) {
-    }
-    else if (nan) {
-    }
-    else {
+    } else {
         return 10;
     }
 
-    int b_isnan;
-    for (b_isnan = 0; nan;) {
-        b_isnan = 1;
+    int nan_is_nonzero;
+    for (nan_is_nonzero = 0; nan;) {
+        nan_is_nonzero = 1;
         break;
     }
-    if (!b_isnan) {
+    if (!nan_is_nonzero) {
         return 11;
     }
 
-    b_isnan = 0;
+    nan_is_nonzero = 0;
     while (nan) {
-        b_isnan = 1;
+        nan_is_nonzero = 1;
         break;
     }
-    if (!b_isnan) {
+    if (!nan_is_nonzero) {
         return 12;
     }
 
-    b_isnan = -1;
+    nan_is_nonzero = -1;
     do {
-        b_isnan = b_isnan + 1;
-        if(b_isnan) {
+        nan_is_nonzero = nan_is_nonzero + 1;
+        if (nan_is_nonzero) {
             break;
         }
-    } while(nan);
-    if (!b_isnan) {
+    } while (nan);
+    if (!nan_is_nonzero) {
         return 13;
     }
 
-    b_isnan = nan ? 1 : 0;
-    if (!b_isnan) {
+    nan_is_nonzero = nan ? 1 : 0;
+    if (!nan_is_nonzero) {
         return 14;
     }
 
