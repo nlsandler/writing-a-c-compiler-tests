@@ -8,6 +8,11 @@ int *print_A(void) {
     return &i;
 }
 
+int *print_B(void) {
+    putchar(66); // write B to stdout
+    return &i;
+}
+
 int main(void) {
 
     // we should print "A" to stdout only ONCE
@@ -15,5 +20,12 @@ int main(void) {
     if (i != 5) {
         return 1;
     }
+
+    // print "B" to stdout only ONCE. testing with casting operations
+    *print_B() += 5l;
+    if (i != 10) {
+        return 2;
+    }
+
     return 0; // success
 }
