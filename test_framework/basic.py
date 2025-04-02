@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ctypes
 import difflib
 import json
 import platform
@@ -63,7 +64,7 @@ def get_props_key(source_file: Path) -> str:
     """
     if source_file.stem.endswith("_client"):
         source_file = replace_stem(source_file, source_file.stem[: -len("_client")])
-    return str(source_file.relative_to(TEST_DIR))
+    return str(source_file.relative_to(TEST_DIR)).replace("\\", "/")
 
 
 def needs_mathlib(prog: Path) -> bool:
@@ -307,7 +308,7 @@ class TestChapter(unittest.TestCase):
         exe = actual.args[0]
         self.assertEqual(
             expected_retcode,
-            actual.returncode,
+            ctypes.c_uint8(actual.returncode).value,
             msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
         )
         self.assertEqual(
@@ -555,7 +556,6 @@ def excluded_extra_credit(source_prog: Path, extra_credit_flags: ExtraCredit) ->
     Returns:
         true if we should _exclude_ this program from test run, false if we should include it.
     """
-
     if "extra_credit" not in source_prog.parts:
         # this isn't an extra-credit test so we shouldn't exclude it
         return False
