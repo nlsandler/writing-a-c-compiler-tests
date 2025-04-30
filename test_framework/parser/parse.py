@@ -75,6 +75,9 @@ def parse_opcode(tok: str) -> tuple[Opcode, Optional[int]]:
         return Opcode.CDQE, 4
 
     # overlapping prefixes
+    if tok.startswith("leave"):
+        return Opcode.LEAVE, None
+
     if tok.startswith("movsd"):
         return Opcode.MOV, None
 
@@ -482,7 +485,7 @@ def parse_directive(tok_list: List[Token]) -> Directive:
 
 
 def parse_statement(
-    tokens: Generator[Token, None, None]
+    tokens: Generator[Token, None, None],
 ) -> Union[asm.AsmItem, Directive]:
     """Parse the next instruction, label or directive
 
