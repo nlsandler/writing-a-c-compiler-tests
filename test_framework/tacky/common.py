@@ -211,6 +211,7 @@ def is_prologue_or_epilogue(i: asm.AsmItem) -> bool:
 
     return (
         is_ret(i)
+        or (i.opcode == Opcode.LEAVE)
         or (i.opcode in [Opcode.PUSH, Opcode.POP] and i.operands[0] == Register.BP)
         or (i.opcode == Opcode.SUB and i.operands[1] == Register.SP)
         or (
