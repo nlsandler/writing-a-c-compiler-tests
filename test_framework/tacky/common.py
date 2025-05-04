@@ -1,4 +1,5 @@
 """Base class for TACKY optimization tests"""
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -15,7 +16,6 @@ TEST_DIR = basic.TEST_DIR / f"chapter_{CHAPTER}"
 
 
 class TackyOptimizationTest(basic.TestChapter):
-
     """Base class for TACKY (chapter 19) tests.
 
     There are two kinds of tests for these chapters. The first is the same kind of test we use
@@ -154,14 +154,14 @@ class TackyOptimizationTest(basic.TestChapter):
         )
 
     def check_instructions(
-            self,
-            parsed_asm: dict[str, asm.AssemblyFunction],
-            program_source_file: Path,
-            ok: Callable[[asm.AsmItem], bool],
-            error_string: str
+        self,
+        parsed_asm: dict[str, asm.AssemblyFunction],
+        program_source_file: Path,
+        ok: Callable[[asm.AsmItem], bool],
+        error_string: str,
     ) -> None:
         """Check that all assembly instructions in all `target_*` functions of a parsed program
-           satisfy a given predicate and raise a unit test failure if not.
+        satisfy a given predicate and raise a unit test failure if not.
         """
         for fn_name, fn_body in parsed_asm.items():
             if fn_name.startswith("target"):
@@ -175,6 +175,7 @@ class TackyOptimizationTest(basic.TestChapter):
                         program_path=program_source_file,
                     ),
                 )
+
 
 def build_msg(
     msg: str,
@@ -210,6 +211,7 @@ def is_prologue_or_epilogue(i: asm.AsmItem) -> bool:
 
     return (
         is_ret(i)
+        or (i.opcode == Opcode.LEAVE)
         or (i.opcode in [Opcode.PUSH, Opcode.POP] and i.operands[0] == Register.BP)
         or (i.opcode == Opcode.SUB and i.operands[1] == Register.SP)
         or (
@@ -229,7 +231,7 @@ def is_control_flow(i: asm.AsmItem) -> bool:
 
 
 def is_ret(i: asm.AsmItem) -> bool:
-    return isinstance(i, asm.Instruction) and i.opcode in [Opcode.RET, Opcode.LEAVE]
+    return isinstance(i, asm.Instruction) and i.opcode == Opcode.RET
 
 
 def is_mov(i: asm.AsmItem) -> bool:
