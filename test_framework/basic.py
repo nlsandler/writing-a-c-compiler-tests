@@ -624,7 +624,7 @@ def make_test_lib(program: Path) -> Callable[[TestChapter], None]:
 
 
 def make_invalid_tests(
-    test_dir: Path, stage: str, extra_credit_flags: ExtraCredit
+    test_dir: Path, stage: str, extra_credit_flags: ExtraCredit, ignore_list: list[str] = []
 ) -> list[tuple[str, Callable[[TestChapter], None]]]:
     """Generate one test method for each invalid test program in test_dir.
 
@@ -637,6 +637,8 @@ def make_invalid_tests(
                are considered invalid (e.g. if stage is "parse" programs with type errors
                are valid, because we stop before typechecking)
         extra_credit_flags: extra credit features to test (specified on the command line)
+        ignore_list: a list of tests to ignore, given as the last three path components of
+                     the test file, e.g. ['chapter_1/invalid_parse/missing_type.c',...]
 
     Returns:
         A list of (name, test method) tuples, intended to be included on a dynamically generated
@@ -646,6 +648,9 @@ def make_invalid_tests(
     for invalid_subdir in DIRECTORIES_BY_STAGE[stage]["invalid"]:
         invalid_test_dir = test_dir / invalid_subdir
         for program in invalid_test_dir.rglob("*.c"):
+            if str(Path(*program.parts[-3:])) in ignore_list:
+                # TODO based on verbosity, print that we are ignoring this test?
+                continue
             if excluded_extra_credit(program, extra_credit_flags):
                 continue
 
@@ -662,7 +667,7 @@ def make_invalid_tests(
 
 
 def make_valid_tests(
-    test_dir: Path, stage: str, extra_credit_flags: ExtraCredit
+    test_dir: Path, stage: str, extra_credit_flags: ExtraCredit, ignore_list: list[str] = []
 ) -> list[tuple[str, Callable[[TestChapter], None]]]:
     """Generate one test method for each valid test program in test_dir.
 
@@ -677,6 +682,8 @@ def make_valid_tests(
                are considered valid (e.g. if stage is "parse" programs with type errors
                are valid, because we stop before typechecking)
         extra_credit_flags: extra credit features to test (specified on the command line)
+        ignore_list: a list of tests to ignore, given as the last three path components of
+                     the test file, e.g. ['chapter_1/invalid_parse/missing_type.c',...]
 
     Returns:
         A list of (name, test method) tuples, intended to be included on a dynamically generated
@@ -686,6 +693,9 @@ def make_valid_tests(
     for valid_subdir in DIRECTORIES_BY_STAGE[stage]["valid"]:
         valid_testdir = test_dir / valid_subdir
         for program in valid_testdir.rglob("*.c"):
+            if str(Path(*program.parts[-3:])) in ignore_list:
+                # TODO based on verbosity, print that we are ignoring this test?
+                continue
             if excluded_extra_credit(program, extra_credit_flags):
                 # this requires extra credit features that aren't enabled
                 continue
@@ -721,6 +731,7 @@ def build_test_class(
     extra_credit_flags: ExtraCredit,
     skip_invalid: bool,
     error_codes: list[int],
+    ignore_list: list[str],
 ) -> Type[unittest.TestCase]:
     """Construct the test class for a normal (non-optimization) chapter.
 
@@ -736,6 +747,7 @@ def build_test_class(
         extra_credit_flags: extra credit features to test, represented as a bit vector
         skip_invalid: true if we should skip invalid test programs
         error_codes: expected compiler exit codes when rejecting invalid programs
+        ignore_list: a list of tests to ignore
     """
 
     # base directory with all of this chapter's test programs
@@ -754,13 +766,13 @@ def build_test_class(
 
     # generate tests for invalid test programs and add them to testclass_attrs
     if not skip_invalid:
-        invalid_tests = make_invalid_tests(test_dir, stage, extra_credit_flags)
+        invalid_tests = make_invalid_tests(test_dir, stage, extra_credit_flags, ignore_list)
         # test_name is the method name
         for test_name, test_cls in invalid_tests:
             testclass_attrs[test_name] = test_cls
 
     # generate tests for valid test programs
-    valid_tests = make_valid_tests(test_dir, stage, extra_credit_flags)
+    valid_tests = make_valid_tests(test_dir, stage, extra_credit_flags, ignore_list)
     for test_name, test_cls in valid_tests:
         # test_name is the method name
         testclass_attrs[test_name] = test_cls
