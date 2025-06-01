@@ -33,16 +33,16 @@ int main(void) {
     }
 
     if (!structs_and_scalars(10, 10.0, odd, mem, one_xmm)) {
-        return 2;
+        return 3;
     }
 
     if (!struct_in_mem(10.0, 11.125, 12.0, xmm_and_int, 13.0, two_xmm, 0,
                        int_and_xmm, one_xmm)) {
-        return 3;
+        return 4;
     }
     if (!pass_borderline_struct_in_memory(two_ints, '!', int_and_xmm, 0,
                                           two_ints_nested, 7.8)) {
-        return 4;
+        return 5;
     }
 
     // define some more structs to use in last two test cases
@@ -52,11 +52,11 @@ int main(void) {
     struct memory m = {5.345, {-1, -2, -3}, 4294967300l, 10000};
     if (!pass_uneven_struct_in_mem(struct1, 9223372036854775805l,
                                    9223372036854775800l, struct2, os, m)) {
-        return 5;
+        return 6;
     }
 
     if (!pass_later_structs_in_regs(m, struct1, one_xmm)) {
-        return 6;
+        return 7;
     }
 
     // success!
