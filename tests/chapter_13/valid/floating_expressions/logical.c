@@ -40,15 +40,15 @@ int main(void) {
 
     /* ! operator */
     if (!non_zero) {
-        return 4;
-    }
-
-    if (!(!zero)) {
         return 5;
     }
 
-    if (!(!rounded_to_zero)) {
+    if (!(!zero)) {
         return 6;
+    }
+
+    if (!(!rounded_to_zero)) {
+        return 7;
     }
 
     /* && operator - test w/ mix of floating-point and non-floating-point operands */
@@ -58,46 +58,46 @@ int main(void) {
     }
 
     if (3.0 && zero) {
-        return 8;
+        return 9;
     }
 
     if (rounded_to_zero && 1000e10) {
-        return 9;
+        return 10;
     }
 
 
     // mix of double and integer operands
     if (18446744073709551615UL && zero) {
-        return 10;
+        return 11;
     }
 
     if (!(non_zero && 5l)) {
-        return 11;
+        return 12;
     }
 
 
     /* || operator */
 
     if (!(5.0 || zero)) {
-        return 12;
-    }
-
-    if (zero || rounded_to_zero) {
         return 13;
     }
 
-    if (!(rounded_to_zero || 0.0001)) {
+    if (zero || rounded_to_zero) {
         return 14;
+    }
+
+    if (!(rounded_to_zero || 0.0001)) {
+        return 15;
     }
 
     // mix of double and integer operands
     if (!(non_zero || 0u)) {
-        return 15;
+        return 16;
     }
 
     // try || with two constants
     if (!(0 || 0.0000005)) {
-        return 16;
+        return 17;
     }
 
     return 0;
