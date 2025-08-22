@@ -18,6 +18,7 @@ from typing import Any, Callable, Dict, List, Optional, Sequence, Type
 ROOT_DIR = Path(__file__).parent.parent  # ROOT of test repo
 TEST_DIR = ROOT_DIR / "tests"  # directory containing all test programs
 IS_OSX = platform.system().lower() == "darwin"
+IS_AARCH64 = platform.machine() == "arm64"
 EXPECTED_RESULTS: dict[str, Any]
 
 with open(ROOT_DIR / "expected_results.json", "r", encoding="utf-8") as f:
@@ -38,12 +39,17 @@ with open(ROOT_DIR / "test_properties.json", "r", encoding="utf-8") as f:
     DEPENDENCIES = test_info["libs"]
 
 MAC_SUFFIX = "_osx.s"
+MAC_AARCH64_SUFFIX = "_mac.s"
 LINUX_SUFFIX = "_linux.s"
 ASSEMBLY_LIBS = set(
     Path(platform_specific_lib).name
     for libs in ASSEMBLY_DEPENDENCIES.values()
     for lib in libs
-    for platform_specific_lib in [lib + MAC_SUFFIX, lib + LINUX_SUFFIX]
+    for platform_specific_lib in [
+        lib + MAC_SUFFIX,
+        lib + LINUX_SUFFIX,
+        lib + MAC_AARCH64_SUFFIX,
+    ]
 )
 
 # main TestChapter class + related utilities
@@ -54,7 +60,7 @@ def get_platform() -> str:
 
 
 def get_platform_suffix() -> str:
-    return MAC_SUFFIX if IS_OSX else LINUX_SUFFIX
+    return MAC_AARCH64_SUFFIX if IS_AARCH64 else MAC_SUFFIX if IS_OSX else LINUX_SUFFIX
 
 
 def get_props_key(source_file: Path) -> str:
@@ -95,7 +101,7 @@ def print_stderr(proc: subprocess.CompletedProcess[str]) -> None:
 
 
 def gcc_compile_and_run(
-    source_files: List[Path], options: List[str]
+    source_files: List[Path], options: List[str], exe: str
 ) -> subprocess.CompletedProcess[str]:
     """Compile input files using 'gcc' command and run the resulting executable
 
@@ -106,9 +112,6 @@ def gcc_compile_and_run(
     Returns:
         a CompletedProcess object that captures the executable's return code and output
     """
-
-    # output file is same as first input without suffix
-    exe = source_files[0].with_suffix("")
 
     # compile it
     try:
@@ -242,7 +245,7 @@ class TestChapter(unittest.TestCase):
             junk.unlink()
 
     def invoke_compiler(
-        self, source_file: Path, cc_opt: Optional[str] = None
+        self, source_file: Path, cc_opt: List[str] = None
     ) -> subprocess.CompletedProcess[str]:
         """Compile the test program (possibly up to some intermediate stage), but don't run it.
 
@@ -261,8 +264,8 @@ class TestChapter(unittest.TestCase):
             cc_opt = f"--{self.exit_stage}"
 
         args = [self.cc] + self.options
-        if cc_opt is not None:
-            args.append(cc_opt)
+        if cc_opt:
+            args.extend(cc_opt)
 
         args.append(source_file)
 
@@ -374,14 +377,15 @@ class TestChapter(unittest.TestCase):
             self.library_test_helper(source_file, extra_libs)
             return
 
+        exe = self.cc.joinpath("../../output/a.out").resolve()
+        cc_opts = ["-o", exe]
+
         # include -lm for standard library test on linux
         if needs_mathlib(source_file):
-            cc_opt = "-lm"
-        else:
-            cc_opt = None
+            cc_opts.append("-lm")
 
         # run compiler, make sure it succeeds
-        compile_result = self.invoke_compiler(source_file, cc_opt=cc_opt)
+        compile_result = self.invoke_compiler(source_file, cc_opt=cc_opts)
         self.assertEqual(
             compile_result.returncode,
             0,
@@ -394,7 +398,7 @@ class TestChapter(unittest.TestCase):
 
         # run the executable
         # TODO cleaner handling if executable doesn't exist? or check that it exists above?
-        exe = source_file.with_suffix("")
+
         result = subprocess.run(
             [exe], check=False, capture_output=True, text=True, timeout=10.0
         )
@@ -419,9 +423,13 @@ class TestChapter(unittest.TestCase):
 
         # If file_under_test is a C program, compile it with self.cc;
         # otherwise assume it's already been compiled with self.cc
+        objfile = str(self.cc.joinpath("../../output/obj.o").resolve())
+        exe = str(self.cc.joinpath("../../output/a.out").resolve())
+        cc_opts = ["-o", objfile, "-c"]
+
         if file_under_test.suffix == ".c":
             # make sure compilation succeeds
-            compilation_result = self.invoke_compiler(file_under_test, cc_opt="-c")
+            compilation_result = self.invoke_compiler(file_under_test, cc_opt=cc_opts)
             self.assertEqual(
                 compilation_result.returncode,
                 0,
@@ -430,7 +438,7 @@ class TestChapter(unittest.TestCase):
             # print stderr (might have warnings we care about even if compilation succeeded)
             # TODO make this controlled by verbosity maybe?
             print_stderr(compilation_result)
-            compiled_file_under_test = file_under_test.with_suffix(".o")
+            compiled_file_under_test = objfile
             validation_key = file_under_test
         else:
             compiled_file_under_test = file_under_test
@@ -442,7 +450,7 @@ class TestChapter(unittest.TestCase):
         options = []
         if needs_mathlib(file_under_test) or any(needs_mathlib(f) for f in other_files):
             options.append("-lm")
-        result = gcc_compile_and_run(source_files, options)
+        result = gcc_compile_and_run(source_files, options, exe)
 
         # validate results
         self.validate_runs(validation_key, result)
