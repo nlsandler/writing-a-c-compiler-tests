@@ -49,7 +49,7 @@ class TackyOptimizationTest(basic.TestChapter):
         """
 
         # first compile to assembly
-        compile_result = self.invoke_compiler(source_file, cc_opt="-s")
+        compile_result = self.invoke_compiler(source_file, cc_opt="-S")
         self.assertEqual(
             compile_result.returncode,
             0,
