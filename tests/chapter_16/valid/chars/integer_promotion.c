@@ -42,7 +42,7 @@ int main(void) {
     }
 
     unsigned char one = 1;
-    // because of ineger promotion, this won't wrap around to 255
+    // because of integer promotion, this won't wrap around to 255
     if (negate(one) != -1) {
         return 2;
     }
