@@ -113,7 +113,7 @@ class TestRegAlloc(basic.TestChapter):
 
         # first compile to assembly
         try:
-            self.invoke_compiler(program_path, cc_opt="-s").check_returncode()
+            self.invoke_compiler(program_path, cc_opt="-S").check_returncode()
         except subprocess.CalledProcessError as e:
             self.fail(f"Compilation failed:\n{e.stderr}")
         asm_file = program_path.with_suffix(".s")
