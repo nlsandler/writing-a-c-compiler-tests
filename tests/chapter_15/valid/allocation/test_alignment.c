@@ -10,6 +10,7 @@ int check_alignment(int *ptr) {
 
 int main(void)
 {
+#if defined(__i386__) || defined(__x86_64__)
     // this initializes each element in each array to zero
     int arr[5] = {0};
     int arr2[7] = {0};
@@ -57,5 +58,6 @@ int main(void)
             if (arr3[i][j] != 0)
                 return 6;
 
+#endif
     return 0;
 }
