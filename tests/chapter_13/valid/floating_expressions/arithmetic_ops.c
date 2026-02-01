@@ -64,7 +64,7 @@ int main(void) {
     }
 
     if (!complex_expression()) {
-        return 5;
+        return 6;
     }
 
     return 0;
