@@ -108,6 +108,14 @@ def parse_arguments() -> argparse.Namespace:
         help="Only run valid test programs (useful when testing backend changes)",
     )
     parser.add_argument(
+        "--ignore",
+        type=str,
+        help=(
+            "A comma-separated list of tests to ignore, e.g. "
+            "chapter_1/invalid_parse/missing_type.c,chapter_2/valid/neg.c"
+        )
+    )
+    parser.add_argument(
         "--failfast", "-f", action="store_true", help="Stop on first test failure"
     )
     parser.add_argument("--verbose", "-v", action="count", default=0)
@@ -487,6 +495,7 @@ def main() -> int:
                 extra_credit_flags=extra_credit,
                 skip_invalid=args.skip_invalid,
                 error_codes=args.expected_error_codes,
+                ignore_list=(args.ignore or "").split(','),
             )
             test_instance = unittest.defaultTestLoader.loadTestsFromTestCase(test_class)
             test_suite.addTest(test_instance)
