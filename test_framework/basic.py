@@ -145,6 +145,7 @@ def build_error_message(
     expected_stdout: str,
     actual: subprocess.CompletedProcess[str],
     exe_name: str,
+    source_file: Path,
 ) -> str:
     """Build the error message for when a compiled test program behaves incorrectly
     Called when a unittest assert* message fails
@@ -157,7 +158,7 @@ def build_error_message(
         an error message
     """
 
-    msg_lines = [f"Incorrect behavior in {exe_name}"]
+    msg_lines = [f"Incorrect behavior in {exe_name} built from {source_file}"]
 
     # report on incorrect return code
     if expected_retcode != actual.returncode:
@@ -304,22 +305,27 @@ class TestChapter(unittest.TestCase):
         expected_retcode = expected["return_code"]
         expected_stdout = expected.get("stdout", "")
 
+        def build_error_message_wrapped():
+            build_error_message(
+                expected_retcode, expected_stdout, actual, exe, source_file
+            )
+
         exe = actual.args[0]
         self.assertEqual(
             expected_retcode,
             actual.returncode,
-            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
+            msg=build_error_message_wrapped(),
         )
         self.assertEqual(
             expected_stdout,
             actual.stdout,
-            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
+            msg=build_error_message_wrapped(),
         )
 
         # none of our test programs write to stderr
         self.assertFalse(
             actual.stderr,
-            msg=build_error_message(expected_retcode, expected_stdout, actual, exe),
+            msg=build_error_message_wrapped(),
         )
 
     def compile_failure(self, source_file: Path) -> None:
@@ -393,8 +399,11 @@ class TestChapter(unittest.TestCase):
         print_stderr(compile_result)
 
         # run the executable
-        # TODO cleaner handling if executable doesn't exist? or check that it exists above?
         exe = source_file.with_suffix("")
+        self.assertTrue(
+            exe.exists(), msg=f"Compilation did not produce executable {exe}!"
+        )
+
         result = subprocess.run(
             [exe], check=False, capture_output=True, text=True, timeout=10.0
         )
@@ -656,6 +665,7 @@ def make_invalid_tests(
             test_name = f"test_{key}"
 
             test_method = make_invalid_test(program)
+            test_method.__doc__ = str(program.relative_to(TEST_DIR))
             tests.append((test_name, test_method))
 
     return tests
@@ -708,6 +718,7 @@ def make_valid_tests(
             else:
                 # for stages besides "run", just test that compilation succeeds
                 test_method = make_test_valid(program)
+            test_method.__doc__ = str(program.relative_to(TEST_DIR))
             tests.append((test_name, test_method))
     return tests
 
