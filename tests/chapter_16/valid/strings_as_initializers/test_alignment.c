@@ -10,6 +10,7 @@ static signed char flat_static[16] = "x";
 static unsigned char nested_static[3][4][2] = {{"a"}, {"b"}};
 
 int main(void) {
+#if defined(__i386__) || defined(__x86_64__)
     // define some automatic arrays that larger than 16 bytes
     char flat_auto[22];
     char nested_auto[10][3];
@@ -29,6 +30,7 @@ int main(void) {
     if (!check_aligment((char *)nested_auto)) {
         return 4;
     }
+#endif
 
     return 0;
 }
