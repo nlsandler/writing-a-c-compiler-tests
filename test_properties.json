@@ -1232,6 +1232,13 @@
         "chapter_18/valid/extra_credit/other_features/incr_struct_members.c": [
             "increment"
         ],
+        "chapter_18/valid/extra_credit/other_features/incr_postfix_struct_dot.c": [
+            "increment"
+        ],
+        "chapter_18/valid/extra_credit/other_features/incr_postfix_union_dot.c": [
+            "increment",
+            "union"
+        ],
         "chapter_18/valid/extra_credit/other_features/decr_arrow_lexing.c": [
             "increment"
         ],
