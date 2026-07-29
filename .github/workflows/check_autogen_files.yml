@@ -23,6 +23,8 @@ jobs:
 
     # make sure those files were already up-to-date
     # (i.e. no untracked changes)
+    # print clean diff for expected_results.json
     - name: Check for changes
       run: |
         git diff --exit-code
+        ./diff_expected_results.sh 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
