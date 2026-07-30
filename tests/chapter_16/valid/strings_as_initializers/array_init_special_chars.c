@@ -1,4 +1,11 @@
 /* Test that we can handle escape sequences in string literals */
+
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wunterminated-string-initialization"
+#endif
+#endif
+
 int main(void) {
     // a mix of escaped and unescaped special characters
     char special[6] = "\a\b\n	";

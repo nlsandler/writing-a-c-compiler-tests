@@ -1,6 +1,12 @@
 /* make sure we can use a mix of string literals and compound initializers to
  * initialize a single nested array */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wunterminated-string-initialization"
+#endif
+#endif
+
 // array wih static storage duration
 signed char static_array[3][4] = {{'a', 'b', 'c', 'd'}, "efgh", "ijk"};
 
