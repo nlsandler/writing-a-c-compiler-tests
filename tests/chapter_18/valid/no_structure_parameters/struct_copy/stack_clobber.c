@@ -8,6 +8,12 @@
  * validate, and go undetected).
  */
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wunterminated-string-initialization"
+#endif
+#endif
+
 void exit(int status);
 
 struct chars {

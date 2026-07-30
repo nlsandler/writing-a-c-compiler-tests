@@ -6,6 +6,7 @@
 #ifdef SUPPRESS_WARNINGS
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
+#pragma clang diagnostic ignored "-Wunterminated-string-initialization"
 #else
 #pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
 #endif

@@ -10,6 +10,9 @@
 
 #ifdef SUPPRESS_WARNINGS
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wunterminated-string-initialization"
+#endif
 #endif
 
 double get_double(void) {

@@ -1,6 +1,12 @@
 /* Test that we return a wide range of struct types according to the ABI */
 #include "return_calling_conventions.h"
 
+#ifdef SUPPRESS_WARNINGS
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wunterminated-string-initialization"
+#endif
+#endif
+
 struct one_int return_int_struct(void) {
     struct one_int retval = {1, 2};
     return retval;
